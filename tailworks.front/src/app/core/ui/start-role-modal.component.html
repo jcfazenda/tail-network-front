@@ -1,0 +1,198 @@
+<div class="backdrop"
+     *ngIf="(startModal.open$ | async)"
+     (click)="close()">
+
+  <div class="modal"
+       role="dialog"
+       aria-modal="true"
+       (click)="$event.stopPropagation()">
+
+    <!-- ============================================================
+         TOP HEADER
+         ============================================================ -->
+    <div class="top">
+      <div class="title">
+        <b>Começar no TailWorks</b>
+        <span class="muted">
+          Escolha seu perfil e complete seus dados iniciais.
+        </span>
+      </div>
+
+      <button class="x"
+              type="button"
+              (click)="close()"
+              aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+
+    <!-- ============================================================
+         ROLE SELECT (Recruiter | Talent)
+         ============================================================ -->
+    <div class="segmented">
+      <button
+        type="button"
+        class="seg"
+        [class.active]="role === 'recruiter'"
+        (click)="selectRole('recruiter')">
+        Recruiter
+      </button>
+
+      <button
+        type="button"
+        class="seg"
+        [class.active]="role === 'talent'"
+        (click)="selectRole('talent')">
+        Talent
+      </button>
+    </div>
+
+
+    <!-- ============================================================
+         MAIN PANEL (aparece após escolher o role)
+         ============================================================ -->
+    <div class="panel" *ngIf="role as r">
+
+      <div class="heroRow">
+
+        <!-- ============================================================
+             TAIL GIGANTE
+             ============================================================ -->
+        <div class="tailBox">
+          <img
+            class="tailImg"
+            [src]="r === 'recruiter'
+                    ? '/assets/tail-recruiter.png'
+                    : '/assets/tail-talent.png'"
+            [alt]="r === 'recruiter'
+                    ? 'Mascote Recruiter'
+                    : 'Mascote Talent'">
+        </div>
+
+
+        <!-- ============================================================
+             FORMULÁRIO AO LADO
+             ============================================================ -->
+        <div class="formBox">
+
+          <div class="roleLine">
+            <b class="roleTitle">
+              {{ r === 'recruiter' ? 'Recruiter' : 'Talent' }}
+            </b>
+
+            <span class="roleTag">
+              {{ r === 'recruiter' ? 'Company' : 'Pro' }}
+            </span>
+          </div>
+
+
+          <form class="form"
+                [formGroup]="form"
+                (ngSubmit)="continue()">
+
+            <!-- Empresa -->
+            <div class="row">
+              <label>Qual sua Empresa?</label>
+
+              <input
+                type="text"
+                formControlName="company"
+                placeholder="Ex: TailWorks Inc"
+                [class.invalid]="form.controls.company.touched && form.controls.company.invalid" />
+
+              <small class="err"
+                *ngIf="role === 'recruiter'
+                        && form.controls.company.touched
+                        && form.controls.company.invalid">
+                Informe a empresa.
+              </small>
+            </div>
+
+
+            <!-- Data + Idade -->
+            <div class="grid2">
+              <div class="row">
+                <label>Data Nascimento</label>
+                <input
+                  type="date"
+                  formControlName="birthDate"
+                  (change)="onBirthChange()" />
+              </div>
+
+              <div class="row">
+                <label>Sua idade</label>
+                <input
+                  type="number"
+                  formControlName="age"
+                  placeholder="Ex: 28" />
+              </div>
+            </div>
+
+
+            <!-- Email + Telefone -->
+            <div class="grid2">
+              <div class="row">
+                <label>Email</label>
+
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="seu@email.com"
+                  [class.invalid]="form.controls.email.touched && form.controls.email.invalid" />
+
+                <small class="err"
+                  *ngIf="form.controls.email.touched
+                          && form.controls.email.invalid">
+                  Informe um email válido.
+                </small>
+              </div>
+
+              <div class="row">
+                <label>Telefone</label>
+
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="(21) 9xxxx-xxxx"
+                  [class.invalid]="form.controls.phone.touched && form.controls.phone.invalid" />
+
+                <small class="err"
+                  *ngIf="form.controls.phone.touched
+                          && form.controls.phone.invalid">
+                  Informe o telefone.
+                </small>
+              </div>
+            </div>
+
+
+            <!-- Actions -->
+            <div class="actions">
+              <button type="button"
+                      class="ghost"
+                      (click)="close()">
+                Agora não
+              </button>
+
+              <button type="submit"
+                      class="primary">
+                Continuar →
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+         HINT (quando ainda não escolheu role)
+         ============================================================ -->
+    <div class="hint" *ngIf="!role">
+      Clique em <b>Recruiter</b> ou <b>Talent</b> para continuar.
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,357 @@
+/* ============================================================
+   BACKDROP
+   ============================================================ */
+
+.backdrop{
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(12px);
+}
+
+
+/* ============================================================
+   MODAL CONTAINER
+   ============================================================ */
+
+.modal{
+  width: min(980px, 100%);
+  border-radius: 24px;
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(255,255,255,.60);
+  box-shadow: 0 60px 180px rgba(0,0,0,.35);
+  overflow: hidden;
+  position: relative;
+}
+
+
+/* ============================================================
+   TOP HEADER
+   ============================================================ */
+
+.top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid rgba(11,11,13,.08);
+
+  background:
+    radial-gradient(900px 260px at 18% 0%, rgba(245,179,0,.16), transparent 60%),
+    radial-gradient(900px 260px at 86% 0%, rgba(255,90,0,.12), transparent 62%);
+}
+
+.title b{
+  display:block;
+  font-weight: 980;
+  font-size: 18px;
+}
+
+.muted{
+  color: rgba(11,11,13,.58);
+  font-weight: 850;
+  font-size: 12px;
+}
+
+.x{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(11,11,13,.10);
+  background: rgba(255,255,255,.80);
+  cursor:pointer;
+  font-weight: 950;
+  transition: transform .16s ease, background .16s ease;
+}
+
+.x:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.95);
+}
+
+
+/* ============================================================
+   ROLE SELECT BUTTONS (Recruiter | Talent)
+   ============================================================ */
+
+.segmented{
+  display:flex;
+  gap: 12px;
+  padding: 14px 18px 4px;
+}
+
+.seg{
+  flex: 1;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(11,11,13,.10);
+  background: rgba(255,255,255,.82);
+  font-weight: 980;
+  cursor:pointer;
+  transition: all .18s ease;
+}
+
+.seg:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 18px 60px rgba(0,0,0,.12);
+}
+
+.seg.active{
+  border-color: rgba(255,90,0,.30);
+  background:
+    radial-gradient(420px 160px at 18% 0%, rgba(245,179,0,.18), transparent 62%),
+    rgba(255,255,255,.95);
+}
+
+
+/* ============================================================
+   MAIN PANEL (CARD GRANDE)
+   ============================================================ */
+
+.panel{
+  margin: 12px 18px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(11,11,13,.10);
+  background: rgba(255,255,255,.94);
+  overflow:hidden;
+  box-shadow: 0 30px 90px rgba(0,0,0,.10);
+}
+
+
+/* ============================================================
+   HERO ROW (TAIL GIGANTE À ESQUERDA + FORM À DIREITA)
+   ============================================================ */
+
+.heroRow{
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 16px;
+  padding: 16px;
+  align-items: stretch;
+
+  background:
+    radial-gradient(900px 280px at 18% 0%, rgba(245,179,0,.14), transparent 60%),
+    radial-gradient(900px 280px at 86% 0%, rgba(255,90,0,.10), transparent 62%),
+    rgba(255,255,255,.86);
+
+  border-bottom: 1px solid rgba(11,11,13,.08);
+}
+
+@media(max-width: 980px){
+  .heroRow{
+    grid-template-columns: 360px 1fr;
+  }
+}
+
+@media(max-width: 860px){
+  .heroRow{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   TAIL BOX (ÁREA DO MASCOTE)
+   ============================================================ */
+
+.tailBox{
+  border-radius: 22px;
+  border: 1px solid rgba(11,11,13,.10);
+  background:
+    radial-gradient(700px 260px at 20% 10%, rgba(245,179,0,.18), transparent 62%),
+    radial-gradient(700px 260px at 86% 18%, rgba(255,90,0,.14), transparent 62%),
+    rgba(255,255,255,.94);
+
+  box-shadow: 0 30px 90px rgba(0,0,0,.10);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+  min-height: 420px;
+}
+
+.tailImg{
+  width: 360px;
+  height: 360px;
+  object-fit: contain;
+  transform: translateY(16px);
+  filter: drop-shadow(0 26px 70px rgba(0,0,0,.18));
+}
+
+@media(max-width: 980px){
+  .tailBox{ min-height: 380px; }
+  .tailImg{ width: 320px; height: 320px; }
+}
+
+@media(max-width: 860px){
+  .tailBox{ min-height: 320px; }
+  .tailImg{ width: 260px; height: 260px; transform: translateY(10px); }
+}
+
+
+/* ============================================================
+   FORM BOX (ÁREA DO FORMULÁRIO AO LADO)
+   ============================================================ */
+
+.formBox{
+  border-radius: 22px;
+  border: 1px solid rgba(11,11,13,.10);
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 30px 90px rgba(0,0,0,.08);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ============================================================
+   ROLE LINE (Recruiter/Talent + TAG)
+   ============================================================ */
+
+.roleLine{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(11,11,13,.08);
+}
+
+.roleTitle{
+  font-size: 20px;
+  font-weight: 980;
+  letter-spacing: -.2px;
+}
+
+.roleTag{
+  font-size: 12px;
+  font-weight: 950;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,13,.10);
+  background: rgba(255,255,255,.78);
+  color: rgba(11,11,13,.70);
+}
+
+
+/* ============================================================
+   FORM AREA
+   ============================================================ */
+
+.form{
+  padding: 0;
+  margin-top: 4px;
+}
+
+.row{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+label{
+  font-size: 12px;
+  font-weight: 950;
+  color: rgba(11,11,13,.80);
+}
+
+input{
+  height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(11,11,13,.12);
+  background: rgba(255,255,255,.95);
+  outline: none;
+  font-weight: 850;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+input:focus{
+  border-color: rgba(255,90,0,.35);
+  box-shadow: 0 0 0 6px rgba(255,90,0,.10);
+}
+
+.invalid{
+  border-color: rgba(220,38,38,.45) !important;
+  box-shadow: 0 0 0 6px rgba(220,38,38,.08) !important;
+}
+
+.err{
+  color: rgba(220,38,38,.85);
+  font-weight: 850;
+  font-size: 11px;
+}
+
+
+/* ============================================================
+   GRID 2 COLUNAS (DENTRO DO FORM)
+   ============================================================ */
+
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media(max-width: 760px){
+  .grid2{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   ACTION BUTTONS
+   ============================================================ */
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.ghost{
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(11,11,13,.12);
+  background: rgba(255,255,255,.80);
+  font-weight: 950;
+  cursor:pointer;
+}
+
+.primary{
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  color: #111;
+  font-weight: 980;
+  cursor:pointer;
+  box-shadow: 0 20px 70px rgba(255,90,0,.20);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.primary:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 28px 90px rgba(255,90,0,.28);
+}
+
+
+/* ============================================================
+   HINT TEXT
+   ============================================================ */
+
+.hint{
+  padding: 0 18px 18px;
+  text-align:center;
+  font-weight: 850;
+  color: rgba(11,11,13,.60);
+}

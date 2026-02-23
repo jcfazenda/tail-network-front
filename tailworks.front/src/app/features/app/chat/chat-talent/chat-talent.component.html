@@ -1,0 +1,83 @@
+<div class="chatOverlay" *ngIf="isOpen" (click)="onClose()">
+  <aside class="chatDrawer" (click)="$event.stopPropagation()">
+
+    <div class="chatHeader">
+      <div class="chatTitle">
+        <b>{{ job?.title }}</b>
+        <span class="muted">Chat com candidatos</span>
+      </div>
+
+      <button class="iconBtn" (click)="onClose()" aria-label="Fechar" title="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="chatContent">
+
+      <!-- LEFT: candidates list -->
+      <div class="chatList">
+        <div class="chatListHeader muted">Candidatos</div>
+
+        <button class="candidateRow"
+                *ngFor="let c of talents; trackBy: trackByTalentId"
+                [class.active]="activeCandidate?.id === c.id"
+                (click)="selectCandidate(c)">
+
+          <span class="candidateAvatar"></span>
+
+          <div class="candidateInfo">
+            <b class="candidateName">{{ c.name }}</b>
+            <span class="candidateLast muted">{{ c.lastMessage }}</span>
+          </div>
+
+          <span class="badge" *ngIf="c.unreadCount > 0">{{ c.unreadCount }}</span>
+        </button>
+      </div>
+
+      <!-- RIGHT: conversation -->
+      <div class="chatConversation">
+
+        <ng-container *ngIf="activeCandidate; else emptyChat">
+          <div class="convHeader">
+            <div class="convTitle">
+              <span class="candidateAvatar candidateAvatar--sm"></span>
+              <div>
+                <b>{{ activeCandidate.name }}</b>
+                <div class="muted small">Última atividade: {{ activeCandidate.lastSeen }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="convBody">
+            <div class="msg"
+                 *ngFor="let m of activeMessages; trackBy: trackByMsgId"
+                 [class.me]="m.from === 'me'">
+              <div class="bubble">
+                {{ m.text }}
+                <div class="time muted">{{ m.time }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="convFooter">
+            <input class="input"
+                   [(ngModel)]="chatInput"
+                   (keydown.enter)="sendMessage()"
+                   placeholder="Escreva uma mensagem..." />
+            <button class="btn btn-primary" (click)="sendMessage()">Enviar</button>
+          </div>
+        </ng-container>
+
+        <ng-template #emptyChat>
+          <div class="chatEmpty">
+            <b>Selecione um candidato</b>
+            <p class="muted">Clique em um candidato na lista para ver a conversa.</p>
+          </div>
+        </ng-template>
+
+      </div>
+
+    </div>
+
+  </aside>
+</div>

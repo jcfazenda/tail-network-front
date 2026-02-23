@@ -1,0 +1,78 @@
+<div class="public">
+
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+  <header class="top">
+    <div class="container topInner">
+
+      <!-- ---------- Brand / Logo ---------- -->
+ 
+
+      <!-- ---------- Navigation ---------- -->
+      <nav class="nav">
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Home
+        </a>
+
+        <a href="#como">Como funciona</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <!-- ---------- Header Actions ---------- -->
+      <div class="actions">
+        <a class="btnGhost" routerLink="/login">Entrar</a>
+
+        <button class="btnPrimary" type="button" (click)="openRoleModal()">
+          Começar
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- =========================================================
+       MAIN (router views)
+  ========================================================== -->
+  <main class="main">
+    <router-outlet />
+  </main>
+
+
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+<footer class="footer">
+  <div class="container footerInner">
+
+    <!-- LEFT -->
+    <div class="footerLeft">
+      <div class="footerLogo">
+        <span class="footerMark"></span>
+        <b>TailWorks</b>
+      </div>
+
+      <div class="footerTag">Evolve • Connect • Grow</div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="footerRight">
+      <span class="muted">© 2026 Tail network</span>
+    </div>
+
+  </div>
+</footer>
+
+
+  <!-- =========================================================
+       MODAL (global component)
+  ========================================================== -->
+  <tw-start-role-modal />
+
+</div>

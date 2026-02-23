@@ -1,0 +1,48 @@
+<section class="hero" (mouseenter)="onEnter()" (mouseleave)="onLeave()">
+  <div class="slides">
+
+    <article
+      class="slide"
+      *ngFor="let s of slides; let i = index"
+      [class.active]="i === current"
+      aria-hidden="{{ i !== current }}"
+    >
+      <img [src]="s.image" class="slideImg" alt="TailWorks hero" />
+      <div class="overlay"></div>
+
+      <div class="container heroContent">
+        <div class="left">
+          <h1>{{ s.title }}</h1>
+          <p>{{ s.subtitle }}</p>
+
+          <div class="heroActions">
+            <button class="btnPrimary" type="button" (click)="goRecruiter()">
+              Recrutador
+            </button>
+
+            <button class="btnGhost" type="button" (click)="goTalent()">
+              Talento
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="controls">
+    <button type="button" (click)="prev()" aria-label="Anterior">‹</button>
+    <button type="button" (click)="next()" aria-label="Próximo">›</button>
+  </div>
+
+  <div class="dots" role="tablist" aria-label="Slides">
+    <button
+      *ngFor="let s of slides; let i = index"
+      type="button"
+      class="dot"
+      [class.active]="i === current"
+      (click)="goTo(i)"
+      aria-label="Ir para slide {{ i + 1 }}"
+    ></button>
+  </div>
+</section>
