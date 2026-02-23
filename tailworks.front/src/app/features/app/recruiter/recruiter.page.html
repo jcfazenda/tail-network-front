@@ -1,151 +1,138 @@
 <section class="recruiter">
+  <div class="recruiterInner container">
 
-  <!-- ================= TOPBAR (CLEAN) ================= -->
-  <div class="recruiterTopbar container">
-    <div class="topbarLeft">
-      <div class="miniTitle muted">Recruiter</div>
-    </div>
-
-    <div class="topbarRight">
-      <!-- button class="btn btn-ghost" (click)="refresh()">Atualizar</button -->
-      <button class="btn btn-primary" (click)="openCreateModal()">+ Criar Vaga</button>
-    </div>
-  </div>
-
-  <!-- ================= STATS (COMPACT) ================= -->
-  <div class="statsCompact container">
-    <div class="statMini">
-      <span class="muted">Ativas</span>
-      <b>{{ activeJobs }}</b>
-    </div>
-
-    <div class="statMini">
-      <span class="muted">Candidatos</span>
-      <b>{{ totalApplicants }}</b>
-    </div>
-
-    <div class="statMini">
-      <span class="muted">Encerradas</span>
-      <b>{{ closedJobs }}</b>
-    </div>
-  </div>
-
-  <!-- ================= SPACER ================= -->
-  <div class="divider-line"></div>
-
-  <!-- ================= TOOLBAR (ONE LINE) ================= -->
-  <div class="adminToolbar container">
-
-    <div class="searchWrap">
-      <input class="input input--search"
-             [(ngModel)]="q"
-             placeholder="Buscar vaga..." />
-    </div>
-
-    <div class="filters">
-      <button class="pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
-      <button class="pill" [class.active]="statusFilter === 'aberta'" (click)="setStatusFilter('aberta')">Abertas</button>
-      <button class="pill" [class.active]="statusFilter === 'pausada'" (click)="setStatusFilter('pausada')">Pausadas</button>
-      <button class="pill" [class.active]="statusFilter === 'encerrada'" (click)="setStatusFilter('encerrada')">Encerradas</button>
-    </div>
-
-    <select class="input input--select" [(ngModel)]="sortBy">
-      <option value="newest">Recentes</option>
-      <option value="applicants">Candidatos</option>
-      <option value="title">A–Z</option>
-    </select>
-
-  </div>
-
-  <!-- ================= SPACER ================= -->
-  <div class="spacer-grid"></div>
-
-  <!-- ================= LIST ================= -->
-  <div class="jobsGrid container">
-
-    <div class="jobRow"
-         *ngFor="let job of filteredJobs; trackBy: trackByJobId"
-         [ngClass]="'accent-' + job.status"
-         tabindex="0"
-         role="button"
-         (click)="openEditModal(job)"
-         (keydown.enter)="openEditModal(job)"
-         (keydown.space)="$event.preventDefault(); openEditModal(job)">
-
-      <div class="jobMain">
-        <div class="titleLine">
-          <h3>{{ job.id }} - {{ job.title }}</h3>
-          <span class="dept muted">{{ job.department }}</span>
-        </div>
-
-        <div class="tags">
-          <span class="chip">{{ job.location }}</span>
-          <span class="chip">{{ job.type }}</span>
-        </div>
+    <!-- TOPBAR -->
+    <div class="recruiterTopbar">
+      <div class="topbarLeft">
+        <div class="miniTitle muted">Recruiter</div>
       </div>
 
-      <div class="jobRight" (click)="$event.stopPropagation()">
+      <div class="topbarRight">
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Criar Vaga</button>
+      </div>
+    </div>
 
-<button class="avatarsBtn"
-        (click)="viewApplicants(job)"
-        aria-label="Ver candidatos"
-        title="Ver candidatos">
+    <!-- STATS -->
+    <div class="statsCompact">
+      <div class="statMini">
+        <span class="muted">Ativas</span>
+        <b>{{ activeJobs }}</b>
+      </div>
 
-  <div class="avatars">
+      <div class="statMini">
+        <span class="muted">Candidatos</span>
+        <b>{{ totalApplicants }}</b>
+      </div>
 
-    <!-- primeiros 4 talentos -->
-    <ng-container *ngFor="let t of (job.talents || []) | slice:0:4; trackBy: trackByTalentId">
-      <span
-        class="avatar"
-        [title]="t.name"
-        [style.background-image]="'url(' + (t.avatarUrl || avatarFallbackUrl) + ')'"
-      ></span>
-    </ng-container>
+      <div class="statMini">
+        <span class="muted">Encerradas</span>
+        <b>{{ closedJobs }}</b>
+      </div>
+    </div>
 
-    <!-- +X se houver mais que 4 -->
-    <span class="avatar avatar--more"
-          *ngIf="(job.talents?.length || 0) > 4">
-      +{{ (job.talents?.length || 0) - 4 }}
-    </span>
+    <div class="divider-line"></div>
 
-  </div>
+    <!-- TOOLBAR -->
+    <div class="adminToolbar">
+      <div class="searchWrap">
+        <input class="input input--search"
+               [(ngModel)]="q"
+               placeholder="Buscar vaga..." />
+      </div>
 
-</button>
+      <div class="filters">
+        <button class="pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
+        <button class="pill" [class.active]="statusFilter === 'aberta'" (click)="setStatusFilter('aberta')">Abertas</button>
+        <button class="pill" [class.active]="statusFilter === 'pausada'" (click)="setStatusFilter('pausada')">Pausadas</button>
+        <button class="pill" [class.active]="statusFilter === 'encerrada'" (click)="setStatusFilter('encerrada')">Encerradas</button>
+      </div>
 
-        <span class="status" [ngClass]="job.status">{{ job.status }}</span>
+      <select class="input input--select" [(ngModel)]="sortBy">
+        <option value="newest">Recentes</option>
+        <option value="applicants">Candidatos</option>
+        <option value="title">A–Z</option>
+      </select>
+    </div>
 
-        <button class="iconBtn iconBtn--edit"
-                (click)="openEditModal(job)"
-                aria-label="Editar"
-                title="Editar">
-          ✎
-        </button>
+    <div class="spacer-grid"></div>
 
-        <button class="iconBtn iconBtn--chat"
-                (click)="toggleChat(job); $event.stopPropagation()"
-                aria-label="Chat"
-                title="Chat">
-          💬
-        </button>
+    <!-- LIST -->
+    <div class="jobsGrid">
+
+      <div class="jobRow"
+           *ngFor="let job of filteredJobs; trackBy: trackByJobId"
+           [ngClass]="'accent-' + job.status"
+           tabindex="0"
+           role="button"
+           (click)="openEditModal(job)"
+           (keydown.enter)="openEditModal(job)"
+           (keydown.space)="$event.preventDefault(); openEditModal(job)">
+
+        <div class="jobMain">
+          <div class="titleLine">
+            <h3>{{ job.id }} - {{ job.title }}</h3>
+            <span class="dept muted">{{ job.department }}</span>
+          </div>
+
+          <div class="tags">
+            <span class="chip">{{ job.location }}</span>
+            <span class="chip">{{ job.type }}</span>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="jobTools" (click)="$event.stopPropagation()">
+
+          <button class="avatarsBtn"
+                  (click)="viewApplicants(job)"
+                  aria-label="Ver candidatos"
+                  title="Ver candidatos">
+            <div class="avatars">
+              <ng-container *ngFor="let t of (job.talents || []) | slice:0:4; trackBy: trackByTalentId">
+                <span
+                  class="avatar"
+                  [title]="t.name"
+                  [style.background-image]="'url(' + (t.avatarUrl || avatarFallbackUrl) + ')'"
+                ></span>
+              </ng-container>
+
+              <span class="avatar avatar--more"
+                    *ngIf="(job.talents?.length || 0) > 4">
+                +{{ (job.talents?.length || 0) - 4 }}
+              </span>
+            </div>
+          </button>
+
+          <span class="status" [ngClass]="job.status">{{ job.status }}</span>
+
+          <button class="iconBtn iconBtn--edit"
+                  (click)="openEditModal(job)"
+                  aria-label="Editar"
+                  title="Editar">✎</button>
+
+          <button class="iconBtn iconBtn--chat"
+                  (click)="toggleChat(job); $event.stopPropagation()"
+                  aria-label="Chat"
+                  title="Chat">💬</button>
+
+        </div>
 
       </div>
 
-    </div>
+      <div class="emptyState card" *ngIf="filteredJobs.length === 0">
+        <b>Nenhuma vaga encontrada</b>
+        <p class="muted">Ajuste filtros ou crie uma nova vaga.</p>
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Criar Vaga</button>
+      </div>
 
-    <div class="emptyState card" *ngIf="filteredJobs.length === 0">
-      <b>Nenhuma vaga encontrada</b>
-      <p class="muted">Ajuste filtros ou crie uma nova vaga.</p>
-      <button class="btn btn-primary" (click)="openCreateModal()">+ Criar Vaga</button>
     </div>
-
   </div>
 
-  <!-- ================= CHAT DRAWER ================= -->
+  <!-- CHAT DRAWER (fica fora do container mesmo) -->
   <chat-talent
     [isOpen]="isChatOpen"
     [job]="chatJob"
     [talents]="chatTalents"
     (close)="closeChat()">
   </chat-talent>
-
 </section>

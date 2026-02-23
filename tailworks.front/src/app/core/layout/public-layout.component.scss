@@ -7,15 +7,7 @@
   flex-direction:column;
   max-width: 100%;
   width: 100%;
-
-  overflow-x: hidden; /* ✅ */
-  --header-h: 70px;
-  --footer-h: 86px;
-}
-
-
-.slideImg{
-  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* ========================================
@@ -25,7 +17,7 @@
   flex: 1;
   min-height: 0;
   width: 100%;
-  overflow-x: hidden; /* ✅ */
+  overflow-x: hidden;
   display:block;
 }
 
@@ -37,7 +29,8 @@
   top: 0;
   z-index: 50;
   backdrop-filter: blur(10px);
-  background: rgba(255,255,255,.84);
+
+  background: color-mix(in srgb, var(--bg-elev), transparent 14%);
   border-bottom: 1px solid var(--border);
 }
 
@@ -57,8 +50,8 @@
   gap: 10px;
   padding: 8px 10px;
   border-radius: 14px;
-  border: 1px solid rgba(11,11,13,.10);
-  background: rgba(255,255,255,.78);
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
 }
 
 .logoMark{
@@ -77,8 +70,6 @@
   margin-top:-2px;
 }
 
-
-
 .nav{
   display:flex;
   align-items:center;
@@ -90,19 +81,22 @@
 .nav a{
   padding: 8px 10px;
   border-radius: 12px;
-  color: rgba(11,11,13,.78);
+  color: color-mix(in srgb, var(--text), transparent 20%);
   border: 1px solid transparent;
 }
+
 .nav a:hover{
-  background: rgba(11,11,13,.04);
-  border-color: rgba(11,11,13,.08);
-  color: rgba(11,11,13,.92);
+  background: var(--bg-soft);
+  border-color: var(--border-soft);
+  color: var(--text);
 }
+
 .nav a.active{
   background: rgba(245,179,0,.12);
   border-color: rgba(245,179,0,.24);
-  color: rgba(11,11,13,.92);
+  color: var(--text);
 }
+
 @media (max-width: 860px){
   .nav{ display:none; }
 }
@@ -111,15 +105,19 @@
   display:flex;
   gap: 10px;
   margin-left:auto;
+  align-items:center;
 }
 
+/* ========================================
+   BUTTONS (PUBLIC)
+======================================== */
 .btnPrimary{
   padding: 10px 14px;
   border-radius: 14px;
   font-weight: 950;
   border: 1px solid transparent;
   background: linear-gradient(135deg, var(--gold), var(--orange));
-  color: var(--ink);
+  color: #111;
   cursor:pointer;
 }
 
@@ -128,18 +126,44 @@
   border-radius: 14px;
   font-weight: 900;
   border: 1px solid var(--border);
-  background: rgba(255,255,255,.66);
-  color: rgba(11,11,13,.86);
+  background: var(--bg-glass);
+  color: color-mix(in srgb, var(--text), transparent 10%);
 }
- 
+
+/* botão tema */
+.btnTheme{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-glass-2);
+  cursor: pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  color: var(--text);
+}
+
+.btnTheme:hover{
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--gold), transparent 60%);
+  box-shadow: var(--shadow-1);
+}
+
+.themeIcon{
+  font-size: 14px;
+  line-height: 1;
+  transform: translateY(1px);
+}
+
 /* ========================================
-   FOOTER (ALINHADO: ESQ em 2 LINHAS + DIR)
-======================================== */ 
+   FOOTER
+======================================== */
 .footer{
   border-top: 1px solid var(--border);
-  background: rgba(255,255,255,.62);
-
-  padding: 19px 0;   /* 🔥 descola do fundo sem gerar overflow */
+  background: color-mix(in srgb, var(--bg-elev), transparent 32%);
+  padding: 19px 0;
 }
 
 .footerInner{
@@ -151,8 +175,8 @@
 
 .footerLeft{
   display:flex;
-  flex-direction:column;           /* ✅ TailWorks em cima */
-  align-items:flex-start;          /* ✅ alinhado à esquerda */
+  flex-direction:column;
+  align-items:flex-start;
   gap: 2px;
   min-width: 0;
 }
@@ -162,18 +186,23 @@
   align-items:center;
   gap: 10px;
   font-weight: 980;
+  color: var(--text);
 }
 
 .footerTag{
   font-size: 13px;
   font-weight: 900;
-  color: rgba(11,11,13,.55);
+  color: var(--muted);
   letter-spacing: .45px;
   line-height: 1.1;
 }
 
 .footerRight{
-  white-space: nowrap;             /* ✅ nunca quebra */
+  white-space: nowrap;
   display:flex;
-  align-items:center;              /* ✅ alinha com o bloco da esquerda */
+  align-items:center;
+}
+
+.muted{
+  color: var(--muted);
 }

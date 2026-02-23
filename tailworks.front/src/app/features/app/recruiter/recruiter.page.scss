@@ -1,183 +1,51 @@
-/* =========================================================
-   recruiter.page.scss
-   TailWorks — Themeable (LIGHT default + DARK toggle)
-   Como usar:
-   - LIGHT = padrão (sem classe)
-   - DARK  = adiciona class "theme-dark" no body OU no wrapper
-     ex: <body class="theme-dark">...</body>
-   ========================================================= */
-
-/* ========================================
-   THEME TOKENS (LIGHT DEFAULT)
-======================================== */
-:root{
-  /* base */
-  --bg-main: #f4f6f9;
-
-  /* overlays de fundo (light) */
-  --bg-radial-1: rgba(255, 153, 0, .14);
-  --bg-radial-2: rgba(255, 200, 120, .10);
-  --bg-vignette: rgba(0,0,0,.06);
-
-  /* texto */
-  --text-main: rgba(17,17,17,.95);
-  --text-muted: rgba(17,17,17,.62);
-
-  /* glass / surfaces */
-  --glass: rgba(255,255,255,.72);
-  --glass-2: rgba(255,255,255,.58);
-  --surface: rgba(0,0,0,.02);
-
-  /* bordas / sombras */
-  --border-soft: rgba(0,0,0,.09);
-  --shadow-1: 0 10px 30px rgba(0,0,0,.10);
-  --shadow-2: 0 12px 30px rgba(0,0,0,.12);
-  --shadow-3: 0 16px 38px rgba(0,0,0,.14);
-
-  /* foco */
-  --focus-ring: rgba(255,153,0,.14);
-  --focus-border: rgba(255,153,0,.35);
-
-  /* acento */
-  --accent: rgba(255,153,0,.95);
-  --accent-soft: rgba(255,153,0,.12);
-  --accent-border: rgba(255,153,0,.30);
-
-  /* chips */
-  --chip-bg: rgba(0,0,0,.06);
-
-  /* status */
-  --ok-bg: rgba(0,180,100,.14);
-  --ok-border: rgba(0,180,100,.18);
-  --ok-text: rgba(0,120,70,.95);
-
-  --warn-bg: rgba(255,165,0,.14);
-  --warn-border: rgba(255,165,0,.18);
-  --warn-text: rgba(160,90,0,.95);
-
-  --bad-bg: rgba(255,0,0,.12);
-  --bad-border: rgba(255,0,0,.16);
-  --bad-text: rgba(150,0,0,.92);
-
-  /* watermark */
-  --wm-opacity: .16;
-  --wm-saturate: 1.05;
-  --wm-brightness: 1.05;
-  --wm-contrast: 1.02;
-  --wm-blend: multiply;
-}
-
-/* ========================================
-   THEME (TAIL DARK OVERRIDES)
-   Aplique .theme-dark no body ou no wrapper.
-======================================== */
-.theme-dark{
-  --bg-main: #070708;
-
-  --bg-radial-1: rgba(255, 153, 0, .20);
-  --bg-radial-2: rgba(255, 200, 120, .12);
-  --bg-vignette: rgba(0,0,0,.78);
-
-  --text-main: rgba(255,255,255,.92);
-  --text-muted: rgba(255,255,255,.65);
-
-  --glass: rgba(255,255,255,.04);
-  --glass-2: rgba(255,255,255,.03);
-  --surface: rgba(0,0,0,.20);
-
-  --border-soft: rgba(255,255,255,.10);
-  --shadow-1: 0 10px 30px rgba(0,0,0,.25);
-  --shadow-2: 0 12px 30px rgba(0,0,0,.28);
-  --shadow-3: 0 16px 38px rgba(0,0,0,.34);
-
-  --focus-ring: rgba(255,153,0,.12);
-  --focus-border: rgba(255,153,0,.35);
-
-  --accent: rgba(255,153,0,.95);
-  --accent-soft: rgba(255,153,0,.16);
-  --accent-border: rgba(255,153,0,.38);
-
-  --chip-bg: rgba(0,0,0,.20);
-
-  --ok-bg: rgba(0,180,100,.18);
-  --ok-border: rgba(0,180,100,.22);
-  --ok-text: rgba(160,255,210,.95);
-
-  --warn-bg: rgba(255,165,0,.18);
-  --warn-border: rgba(255,165,0,.22);
-  --warn-text: rgba(255,220,160,.95);
-
-  --bad-bg: rgba(255,0,0,.18);
-  --bad-border: rgba(255,0,0,.22);
-  --bad-text: rgba(255,190,190,.95);
-
-  --wm-opacity: .30;
-  --wm-saturate: 1.25;
-  --wm-brightness: 1.18;
-  --wm-contrast: 1.10;
-  --wm-blend: screen;
-}
-
-/* ========================================
-   THEME (TAIL LIGHT) - opcional
-   Se você quiser forçar LIGHT mesmo quando
-   tiver alguma cascata, use .theme-light.
-======================================== */
-.theme-light{
-  /* aqui é redundante, pois :root já é light */
-}
-
 /* ========================================
    PAGE (RECRUITER)
 ======================================== */
+
 .recruiter{
   position: relative;
   min-height: 100vh;
   padding: 28px 0 60px;
 
   background:
-    radial-gradient(900px 500px at 18% 18%, var(--bg-radial-1), transparent 55%),
-    radial-gradient(900px 500px at 78% 12%, var(--bg-radial-2), transparent 60%),
-    radial-gradient(1200px 700px at 50% 100%, var(--bg-vignette), transparent 65%),
-    var(--bg-main);
+    radial-gradient(900px 500px at 18% 18%, var(--recruiter-radial-1), transparent 55%),
+    radial-gradient(900px 500px at 78% 12%, var(--recruiter-radial-2), transparent 60%),
+    radial-gradient(1200px 700px at 50% 100%, var(--recruiter-vignette), transparent 65%),
+    var(--recruiter-bg-main);
 
-  color: var(--text-main);
+  color: var(--text);
   overflow: hidden;
 }
 
-/* watermark do Tail (CAMADA DA IMAGEM) */
+/* watermark */
 .recruiter::before{
   content:"";
   position: fixed;
   inset: 0;
   pointer-events: none;
-
   background: url('/assets/tail-hero3.png') center 58% / 900px no-repeat;
 
   opacity: var(--wm-opacity);
-
-  filter: saturate(var(--wm-saturate)) brightness(var(--wm-brightness)) contrast(var(--wm-contrast));
+  filter: saturate(var(--wm-saturate))
+          brightness(var(--wm-brightness))
+          contrast(var(--wm-contrast));
 
   mix-blend-mode: var(--wm-blend);
 }
 
-/* vinheta / escurecimento (CAMADA DO FUNDO) */
+/* vinheta */
 .recruiter::after{
   content:"";
   position: fixed;
   inset: 0;
   pointer-events: none;
-
-  /* no light é leve; no dark é forte via tokens */
   background:
     radial-gradient(900px 600px at 50% 40%, rgba(0,0,0,.04), rgba(0,0,0,.18) 78%),
     linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.18));
-
   opacity: .22;
 }
 
-/* garante que conteúdo fica acima */
-.recruiter > *{
+.recruiterInner{
   position: relative;
   z-index: 2;
 }
@@ -185,12 +53,12 @@
 /* ========================================
    TOPBAR
 ======================================== */
+
 .recruiterTopbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:18px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .miniTitle{
@@ -198,400 +66,271 @@
   font-weight: 950;
   letter-spacing: .6px;
   text-transform: uppercase;
-  opacity: .85;
 }
 
 .topbarRight{
   display:flex;
-  align-items:center;
-  gap:10px;
+  gap:12px;
 }
 
-.muted{
-  color: var(--text-muted);
-}
+.muted{ color: var(--muted); }
 
 /* ========================================
-   STATS (GLASS)
+   STATS
 ======================================== */
+
 .statsCompact{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom: 12px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+  gap:12px;
+  margin-bottom: 20px;
 }
 
 .statMini{
-  flex:1;
-  min-width: 0;
-
-  border: 1px solid var(--border-soft);
-  background: var(--glass);
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
   backdrop-filter: blur(10px);
   border-radius: 14px;
-  padding: 10px 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-1);
 
   display:flex;
-  align-items:baseline;
+  align-items:center;
   justify-content:space-between;
-
-  box-shadow: var(--shadow-1);
 }
 
 .statMini b{
-  font-size:16px;
+  font-size:18px;
   font-weight: 980;
-  color: var(--text-main);
+  color: var(--text);
 }
 
 .statMini span{
-  font-size:12px;
+  font-size:13px;
   font-weight: 850;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 /* ========================================
-   TOOLBAR (HOME STYLE)
+   TOOLBAR
 ======================================== */
+
 .adminToolbar{
   display:flex;
   align-items:center;
-  gap:10px;
-  margin-bottom: 12px;
+  gap:12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
 }
 
 .searchWrap{
-  flex: 1;
-  min-width: 220px;
+  flex: 1 1 280px;
 }
 
 .input{
-  height: 40px;
+  height: 42px;
   border-radius: 12px;
-  border: 1px solid var(--border-soft);
-  background: var(--glass);
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
   backdrop-filter: blur(10px);
-  padding: 0 12px;
-  outline: none;
-  color: var(--text-main);
+  padding: 0 14px;
+  color: var(--text);
+  outline:none;
 }
 
-.input::placeholder{
-  color: color-mix(in srgb, var(--text-muted), transparent 35%);
-}
-
-.input--search{
-  width:100%;
-}
+.input--search{ width:100%; }
 
 .input--select{
-  width: 140px;
+  width: 160px;
 }
 
 .input:focus{
-  border-color: var(--focus-border);
+  border-color: rgba(245,179,0,.35);
   box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
-/* pills estilo home */
+/* ========================================
+   FILTER PILLS
+======================================== */
+
 .filters{
   display:flex;
   gap:8px;
-  flex-wrap:nowrap;
   overflow:auto;
-  scrollbar-width: none;
+  scrollbar-width:none;
 }
+
 .filters::-webkit-scrollbar{ display:none; }
 
 .pill{
-  border:1px solid var(--border-soft);
-  background: var(--glass-2);
-  backdrop-filter: blur(10px);
-
-  padding:8px 12px;
+  border:1px solid var(--border);
+  background: var(--bg-glass-2);
+  padding:8px 14px;
   border-radius: 999px;
-
-  font-weight: 950;
   font-size: 12px;
+  font-weight: 950;
   cursor:pointer;
   white-space: nowrap;
-
-  color: color-mix(in srgb, var(--text-main), transparent 18%);
-  transition: .15s ease;
+  color: var(--text);
+  transition:.15s ease;
 }
 
 .pill:hover{
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--accent), transparent 70%);
 }
 
 .pill.active{
-  border-color: var(--accent-border);
-  background: var(--accent-soft);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent), transparent 86%);
-  color: var(--text-main);
+  border-color: rgba(245,179,0,.38);
+  background: rgba(245,179,0,.16);
 }
 
 /* ========================================
-   BUTTONS (HOME STYLE)
+   JOB LIST
 ======================================== */
-.btn{
-  border-radius: 12px;
-}
 
-.btn.btn-primary{
-  border: 1px solid color-mix(in srgb, var(--accent), transparent 70%);
-  background: linear-gradient(180deg, var(--accent), rgba(255,120,0,.90));
-  color: #111;
-  font-weight: 980;
-  box-shadow: 0 10px 26px rgba(255,120,0,.18);
-}
-
-.btn.btn-primary:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 14px 32px rgba(255,120,0,.22);
-}
-
-.btn.btn-ghost{
-  border: 1px solid var(--border-soft);
-  background: var(--glass-2);
-  color: var(--text-main);
-}
-
-/* ========================================
-   LIST (ROWS GLASS)
-======================================== */
 .jobsGrid{
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:14px;
 }
 
+/* 🔥 GRID resolve 100% do trepado */
 .jobRow{
   position: relative;
 
-  display:flex;
+  display:grid;
+  grid-template-columns: minmax(0,1fr) auto;
   align-items:center;
-  justify-content:space-between;
-  gap:14px;
+  gap:18px;
 
-  border: 1px solid var(--border-soft);
-  background: var(--glass);
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
   backdrop-filter: blur(10px);
 
   border-radius: 18px;
-  padding: 12px 14px;
+  padding: 16px 18px;
 
   box-shadow: var(--shadow-2);
   cursor:pointer;
-  outline:none;
-
-  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  transition: .18s ease;
 }
 
-/* barra lateral por status */
+.jobRow:hover{
+  transform: translateY(-2px);
+}
+
+/* barra lateral status */
 .jobRow::before{
   content:"";
   position:absolute;
   left:10px;
-  top:10px;
-  bottom:10px;
+  top:14px;
+  bottom:14px;
   width:4px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--text-muted), transparent 55%);
-  opacity:.85;
+  background: color-mix(in srgb, var(--muted), transparent 55%);
 }
 
 .accent-aberta::before{ background: rgba(0,180,100,.70); }
 .accent-pausada::before{ background: rgba(255,165,0,.75); }
 .accent-encerrada::before{ background: rgba(255,0,0,.70); }
 
-.jobRow:hover{
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-3);
-  border-color: color-mix(in srgb, var(--accent), transparent 86%);
-}
-
-.jobRow:focus-visible{
-  box-shadow: 0 0 0 4px var(--focus-ring), var(--shadow-3);
-  border-color: color-mix(in srgb, var(--accent), transparent 80%);
-}
+/* ========================================
+   JOB MAIN
+======================================== */
 
 .jobMain{
-  padding-left: 12px;
-  min-width: 0;
+  min-width:0;
+  padding-left:14px;
 }
 
 .titleLine{
   display:flex;
   align-items:baseline;
   gap:10px;
+  min-width:0;
 }
 
 .jobMain h3{
   margin:0;
-  font-size: 15px;
-  font-weight: 980;
-  letter-spacing: -.2px;
+  font-size:16px;
+  font-weight:980;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--text-main);
 }
 
 .dept{
-  font-size: 12px;
-  font-weight: 850;
-  opacity: .75;
-  color: var(--text-muted);
+  font-size:13px;
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .tags{
   display:flex;
-  flex-wrap:wrap;
   gap:8px;
-  margin-top: 6px;
+  margin-top:8px;
+  flex-wrap:wrap;
 }
 
 .chip{
-  border:1px solid var(--border-soft);
-  background: var(--chip-bg);
-  padding:6px 10px;
+  border:1px solid var(--border);
+  background: var(--bg-soft);
+  padding:6px 12px;
   border-radius:999px;
-  font-weight: 900;
-  color: color-mix(in srgb, var(--text-main), transparent 20%);
   font-size:12px;
-  line-height: 1;
-}
-
-/* right side */
-.jobRight{
-  display:flex;
-  align-items:center;
-  gap:10px;
+  font-weight:900;
 }
 
 /* ========================================
-   STATUS
+   JOB TOOLS (RIGHT SIDE)
 ======================================== */
+
+.jobTools{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+  max-width:360px;
+}
+
+/* STATUS */
 .status{
-  padding:4px 10px;
+  padding:5px 12px;
   border-radius: 999px;
   font-size:11px;
   font-weight:950;
-  text-transform: capitalize;
-  line-height: 1;
-  border: 1px solid var(--border-soft);
-  background: var(--surface);
-  color: color-mix(in srgb, var(--text-main), transparent 12%);
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
   white-space: nowrap;
 }
 
-.status.aberta{
-  background: var(--ok-bg);
-  border-color: var(--ok-border);
-  color: var(--ok-text);
-}
-
-.status.pausada{
-  background: var(--warn-bg);
-  border-color: var(--warn-border);
-  color: var(--warn-text);
-}
-
-.status.encerrada{
-  background: var(--bad-bg);
-  border-color: var(--bad-border);
-  color: var(--bad-text);
-}
-
-/* ========================================
-   ICON BUTTON
-======================================== */
+/* ICON BUTTONS */
 .iconBtn{
-  border:1px solid var(--border-soft);
-  background: var(--glass-2);
-  width: 32px;
-  height: 32px;
+  width:34px;
+  height:34px;
   border-radius: 12px;
-  cursor:pointer;
-  display:inline-flex;
+  border:1px solid var(--border);
+  background: var(--bg-glass-2);
+  display:flex;
   align-items:center;
   justify-content:center;
-  transition: .15s ease;
-  color: var(--text-main);
+  cursor:pointer;
+  transition:.15s ease;
 }
 
 .iconBtn:hover{
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--accent), transparent 78%);
-  box-shadow: var(--shadow-1);
-}
-
-.iconBtn--edit{
-  font-size: 13px;
-  font-weight: 950;
-  opacity:.95;
-}
-
-.iconBtn--chat{
-  font-size: 13px;
+  transform: translateY(-2px);
 }
 
 /* ========================================
-   RESPONSIVE
+   AVATARS
 ======================================== */
-@media (max-width: 980px){
-  .adminToolbar{
-    flex-direction:column;
-    align-items:stretch;
-  }
 
-  .statsCompact{
-    flex-direction:column;
-  }
-
-  .input--select{
-    width:100%;
-  }
-
-  .jobRow{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .jobRight{
-    width:100%;
-    justify-content:space-between;
-  }
-}
-
-/* ========================================
-   ESPAÇAMENTO
-======================================== */
-.section{
-  margin-bottom: 70px;
-}
-
-.divider{
-  height: 1px;
-  margin: 28px 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--accent), transparent 60%),
-    transparent
-  );
-  opacity:.6;
-}
-
-/* ========================================
-   AVATARS (TAIL FACE + INDIVIDUAL HOVER)
-======================================== */
 .avatarsBtn{
   border:0;
   background: transparent;
-  padding:0;
   cursor:pointer;
   display:flex;
   align-items:center;
@@ -602,84 +341,65 @@
   align-items:center;
 }
 
-/* ========================================
-   AVATAR - TAIL FACE
-======================================== */
 .avatar{
   width: 36px;
   height: 36px;
-  border-radius: 999px;
-  position: relative;
-
-  background: url('/assets/tail-avatar.png') center / cover no-repeat;
-  background-color: rgba(255,255,255,.05);
-
-  border: 1px solid var(--border-soft);
-
-  box-shadow:
-    0 6px 18px rgba(0,0,0,.22),
-    0 0 0 1px color-mix(in srgb, var(--accent), transparent 88%);
-
-  margin-left: -10px;
-
-  transition: transform .18s ease, box-shadow .18s ease;
-  z-index: 1;
+  border-radius:999px;
+  margin-left:-10px;
+  border:1px solid var(--border);
+  background-size:cover;
+  background-position:center;
+  transition:.18s ease;
 }
 
-.avatar:first-child{
-  margin-left: 0;
-}
+.avatar:first-child{ margin-left:0; }
 
 .avatar:hover{
-  transform: translateY(-4px) scale(1.35);
-  z-index: 5;
-  box-shadow:
-    0 14px 30px rgba(0,0,0,.35),
-    0 0 0 2px color-mix(in srgb, var(--accent), transparent 60%);
+  transform: translateY(-4px) scale(1.2);
 }
 
-/* ========================================
-   AVATAR +X
-======================================== */
 .avatar--more{
   display:flex;
   align-items:center;
   justify-content:center;
-
-  font-size: 11px;
-  font-weight: 950;
-  letter-spacing: .2px;
-
-  background: var(--accent-soft);
-  color: var(--text-main);
-
-  border: 1px solid var(--accent-border);
-
-  box-shadow:
-    0 8px 18px rgba(0,0,0,.20),
-    0 0 0 1px color-mix(in srgb, var(--accent), transparent 88%);
+  font-size:11px;
+  font-weight:950;
+  background: rgba(245,179,0,.16);
 }
 
-.avatar--more:hover{
-  transform: translateY(-4px) scale(1.12);
-  z-index: 6;
-  box-shadow:
-    0 14px 30px rgba(0,0,0,.35),
-    0 0 0 2px color-mix(in srgb, var(--accent), transparent 60%);
+/* ========================================
+   EMPTY STATE
+======================================== */
+
+.emptyState{
+  text-align:center;
+  padding:40px;
+  border:1px dashed var(--border);
+  border-radius:18px;
 }
 
-/* ======================================== ESPAÇOS PULA LINHA ======================================== */
-.divider-line{
-  height: 1px;
-  margin: 48px 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--accent), transparent 60%),
-    transparent
-  );
-  opacity:.6;
-}
-.spacer-grid{
-  margin-bottom: 50px;
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 980px){
+
+  .jobRow{
+    grid-template-columns: 1fr;
+  }
+
+  .jobTools{
+    width:100%;
+    justify-content:space-between;
+    max-width:none;
+  }
+
+  .adminToolbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .input--select{
+    width:100%;
+  }
 }

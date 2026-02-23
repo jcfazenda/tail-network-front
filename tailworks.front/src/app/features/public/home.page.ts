@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router'; 
-import { StartModalService } from '../../core/ui/start-modal.service';
+import { Router, RouterLink } from '@angular/router';  
+import { StartModalService } from '../../core/ui/start-role-modal/start-modal.service';
 
 type HomeSlide = {
   chip: string;

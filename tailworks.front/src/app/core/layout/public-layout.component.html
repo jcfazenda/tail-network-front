@@ -7,15 +7,11 @@
     <div class="container topInner">
 
       <!-- ---------- Brand / Logo ---------- -->
- 
+
 
       <!-- ---------- Navigation ---------- -->
       <nav class="nav">
-        <a
-          routerLink="/"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           Home
         </a>
 
@@ -31,6 +27,13 @@
         <button class="btnPrimary" type="button" (click)="openRoleModal()">
           Começar
         </button>
+
+        <button type="button" class="btnTheme" (click)="toggleTheme()"
+          [attr.aria-label]="theme.isDark ? 'Ativar modo claro' : 'Ativar modo escuro'"
+          [title]="theme.isDark ? 'Modo claro' : 'Modo escuro'">
+          <span class="themeIcon">{{ theme.isDark ? '☀️' : '🌙' }}</span>
+        </button>
+
       </div>
 
     </div>
@@ -48,26 +51,26 @@
   <!-- =========================================================
        FOOTER
   ========================================================== -->
-<footer class="footer">
-  <div class="container footerInner">
+  <footer class="footer">
+    <div class="container footerInner">
 
-    <!-- LEFT -->
-    <div class="footerLeft">
-      <div class="footerLogo">
-        <span class="footerMark"></span>
-        <b>TailWorks</b>
+      <!-- LEFT -->
+      <div class="footerLeft">
+        <div class="footerLogo">
+          <span class="footerMark"></span>
+          <b>TailWorks</b>
+        </div>
+
+        <div class="footerTag">Evolve • Connect • Grow</div>
       </div>
 
-      <div class="footerTag">Evolve • Connect • Grow</div>
-    </div>
+      <!-- RIGHT -->
+      <div class="footerRight">
+        <span class="muted">© 2026 Tail network</span>
+      </div>
 
-    <!-- RIGHT -->
-    <div class="footerRight">
-      <span class="muted">© 2026 Tail network</span>
     </div>
-
-  </div>
-</footer>
+  </footer>
 
 
   <!-- =========================================================

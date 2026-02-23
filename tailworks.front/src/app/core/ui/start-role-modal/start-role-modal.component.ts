@@ -1,8 +1,8 @@
 import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { StartModalService } from '../ui/start-modal.service';
+import { Router } from '@angular/router'; 
+import { StartModalService } from './start-modal.service';
 
 type Role = 'recruiter' | 'talent';
 
