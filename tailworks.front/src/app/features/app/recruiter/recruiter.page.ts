@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatTalentComponent } from '../chat/chat-talent/chat-talent.component';
+import { RecruiterChatDrawerComponent } from './components/recruiter-chat-drawer/recruiter-chat-drawer.component';
 
 import { RecruiterJob, RecruiterTalent, JobStatus } from './models/recruiter.models'; 
 import { RecruiterMockService } from '../services/recruiter-mock.service';
@@ -19,7 +19,7 @@ type JobForm = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatTalentComponent],
+  imports: [CommonModule, FormsModule, RecruiterChatDrawerComponent],
   templateUrl: './recruiter.page.html',
   styleUrls: ['./recruiter.page.scss'],
 })
@@ -114,6 +114,12 @@ export class RecruiterPage {
 
   setStatusFilter(v: JobStatus | 'all'): void {
     this.statusFilter = v;
+  }
+
+  formatJobDisplayId(jobId: string): string {
+    const digits = String(jobId ?? '').replace(/\D/g, '');
+    const normalized = digits.slice(-5);
+    return normalized.padStart(5, '0');
   }
 
   /* ========================================
@@ -228,4 +234,8 @@ export class RecruiterPage {
   trackByTalentId(_: number, t: RecruiterTalent): string {
     return t.id;
   }
+
+  refresh(): void {
+  console.log('Refresh acionado');
+}
 }

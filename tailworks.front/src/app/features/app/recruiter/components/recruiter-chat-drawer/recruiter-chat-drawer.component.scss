@@ -1,0 +1,557 @@
+.chatDrawerRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+}
+
+.chatOverlay {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--text), transparent 76%);
+  padding: 0;
+}
+
+.chatPanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(480px, calc(100vw - 24px));
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  border-left: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 18%);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-2);
+}
+
+.chatHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 20%);
+}
+
+.chatHeadMeta {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.chatEyebrow {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.chatTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.chatTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chatSubtitle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chatStatus {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 18%);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: capitalize;
+}
+
+.chatStatus.aberta {
+  border-color: color-mix(in srgb, var(--text), transparent 84%);
+}
+
+.chatStatus.pausada {
+  border-color: color-mix(in srgb, var(--text), transparent 82%);
+}
+
+.chatStatus.encerrada {
+  border-color: color-mix(in srgb, var(--text), transparent 80%);
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-glass-2);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.iconBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.iconBtn:focus-visible,
+.sendBtn:focus-visible,
+.chatFoot input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.chatBody {
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.talentRailWrap {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 22%);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: var(--shadow-1);
+}
+
+.talentRail {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.talentRail::-webkit-scrollbar {
+  display: none;
+}
+
+.talentAvatarCard {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  border-radius: 12px;
+  padding: 4px;
+  display: inline-grid;
+  place-items: center;
+  gap: 0;
+  position: relative;
+  text-align: center;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease, background .15s ease;
+}
+
+.talentAvatarCard:hover {
+  transform: translateY(-1px);
+}
+
+.talentAvatarCard.active {
+  background: color-mix(in srgb, var(--bg-glass-2), transparent 4%);
+  box-shadow: var(--shadow-1);
+}
+
+.talentAvatarCard.online.active {
+  animation: talentPulse 1.6s ease-in-out infinite;
+}
+
+.talentAvatarCard:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.talentAvatarThumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 900;
+  overflow: hidden;
+}
+
+.talentAvatarCard.active .talentAvatarThumb {
+  border-color: color-mix(in srgb, var(--text), transparent 65%);
+  box-shadow: 0 0 0 4px var(--focus-ring), var(--shadow-1);
+  transform: scale(1.08);
+}
+
+.talentOnlineDot {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--bg-glass), var(--bg-soft) 18%);
+  background: color-mix(in srgb, var(--text), transparent 18%);
+  box-shadow: var(--shadow-1);
+}
+
+.talentUnreadBadge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 8%);
+  color: var(--text);
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 14px;
+  text-align: center;
+  box-shadow: var(--shadow-1);
+}
+
+@keyframes talentPulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus-ring), transparent 35%), var(--shadow-1);
+  }
+}
+
+.talentPicker {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.talentPicker::-webkit-scrollbar {
+  display: none;
+}
+
+.talentChip {
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 18%);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 10px 6px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease, background .15s ease;
+}
+
+.talentChip:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.talentChip.active {
+  border-color: color-mix(in srgb, var(--text), transparent 80%);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 12%);
+  box-shadow: var(--shadow-1);
+}
+
+.talentChip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.talentChipAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 900;
+  overflow: hidden;
+}
+
+.talentChipName {
+  font-size: 12px;
+  font-weight: 800;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.talentList {
+  display: grid;
+  gap: 8px;
+}
+
+.talentItem {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 18%);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.talentItem:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.talentItem.active {
+  border-color: color-mix(in srgb, var(--text), transparent 80%);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 14%);
+  box-shadow: var(--shadow-1);
+}
+
+.talentItem:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.talentAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  background-size: cover;
+  background-position: center;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.talentInfo {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.talentName {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.talentMeta {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.talentUnread {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 10%);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+}
+
+.chatEmpty {
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 22%);
+  padding: 16px;
+  color: var(--muted);
+}
+
+.chatEmpty b {
+  display: block;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.chatEmpty p {
+  margin: 0;
+}
+
+.chatMessages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bubble {
+  align-self: flex-start;
+  max-width: 85%;
+  position: relative;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 16%);
+  border-radius: 14px 14px 14px 6px;
+  padding: 10px 12px 10px 44px;
+  box-shadow: var(--shadow-1);
+}
+
+.bubble.mine {
+  align-self: flex-end;
+  border-radius: 14px 14px 6px 14px;
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 12%);
+  padding-left: 12px;
+  padding-right: 44px;
+}
+
+.bubbleAvatar {
+  position: absolute;
+  left: 8px;
+  top: 7px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 900;
+  overflow: hidden;
+  margin: 0;
+  line-height: 1;
+  z-index: 1;
+  box-shadow: var(--shadow-1);
+}
+
+.bubbleAvatar--me {
+  left: auto;
+  right: 8px;
+  background-color: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 10%);
+  font-size: 9px;
+  letter-spacing: .2px;
+}
+
+.bubble p {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.bubbleTime {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: right;
+}
+
+.chatFoot {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 18%);
+}
+
+.chatFoot input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 14%);
+  color: var(--text);
+  padding: 0 12px;
+}
+
+.chatFoot input::placeholder {
+  color: var(--muted);
+}
+
+.sendBtn {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-glass-2);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.sendBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+@media (max-width: 720px) {
+  .chatPanel {
+    inset: 0;
+    width: 100vw;
+    border-left: 0;
+  }
+
+  .chatHead,
+  .chatBody {
+    padding: 12px;
+  }
+
+  .chatFoot {
+    padding: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .sendBtn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,81 @@
+<div class="chatDrawerRoot" [class.is-open]="isOpen" *ngIf="isOpen">
+  <button class="chatOverlay" type="button" (click)="handleClose()" aria-label="Fechar chat"></button>
+
+  <aside class="chatPanel" role="dialog" aria-modal="true" [attr.aria-label]="'Chat da vaga ' + headerTitle">
+    <header class="chatHead">
+      <div class="chatHeadMeta">
+        <div class="chatEyebrow">Conversa da vaga</div>
+        <div class="chatTitleRow">
+          <h3 class="chatTitle">{{ headerTitle }}</h3>
+          <span class="chatStatus" *ngIf="status" [ngClass]="status">{{ status }}</span>
+        </div>
+        <div class="chatSubtitle">
+          {{ job?.id }} • {{ job?.location }} • {{ job?.type }} • {{ applicantsCount }} candidato(s)
+        </div>
+        <div class="chatSubtitle">Falando com {{ conversationLabel }}</div>
+      </div>
+
+      <button type="button" class="iconBtn" (click)="handleClose()" aria-label="Fechar" title="Fechar">✕</button>
+    </header>
+
+    <div class="chatBody">
+      <div class="talentRailWrap" *ngIf="talents.length > 0">
+        <div class="talentRail" aria-label="Selecionar candidato">
+          <button
+            type="button"
+            class="talentAvatarCard"
+            *ngFor="let talent of talents; trackBy: trackByTalentId"
+            [class.active]="selectedTalent?.id === talent.id"
+            [class.online]="isTalentOnline(talent)"
+            (click)="selectTalent(talent)"
+            [attr.aria-label]="'Selecionar ' + talent.name + ' (' + talentRoleLabel + ')'"
+            [title]="talent.name + ' • ' + talentRoleLabel"
+          >
+            <span
+              class="talentAvatarThumb"
+              [style.background-image]="talent.avatarUrl ? 'url(' + talent.avatarUrl + ')' : null"
+            >{{ talent.name.charAt(0) }}</span>
+            <span class="talentOnlineDot" *ngIf="isTalentOnline(talent)" aria-hidden="true"></span>
+            <span class="talentUnreadBadge" *ngIf="talent.unreadCount > 0" aria-hidden="true">
+              {{ talent.unreadCount > 9 ? '9+' : talent.unreadCount }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="chatEmpty" *ngIf="conversationMessages.length === 0">
+        <b>Sem mensagens ainda</b>
+        <p>Use o campo abaixo para iniciar a conversa.</p>
+      </div>
+
+      <div class="chatMessages" *ngIf="conversationMessages.length > 0">
+        <div
+          class="bubble"
+          *ngFor="let msg of conversationMessages; trackBy: trackByMsgId"
+          [class.mine]="isMine(msg)"
+        >
+          <span
+            class="bubbleAvatar"
+            [class.bubbleAvatar--me]="isMine(msg)"
+            [style.background-image]="getMessageAvatarUrl(msg) ? 'url(' + getMessageAvatarUrl(msg) + ')' : null"
+            aria-hidden="true"
+            [title]="isMine(msg) ? 'Você' : conversationLabel"
+          >{{ getMessageAvatarFallback(msg) }}</span>
+          <p>{{ msg.text }}</p>
+          <span class="bubbleTime">{{ msg.time }}</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="chatFoot">
+      <input
+        type="text"
+        [(ngModel)]="draft"
+        placeholder="Escreva uma mensagem..."
+        (keydown.enter)="send()"
+        aria-label="Mensagem"
+      />
+      <button type="button" class="sendBtn" (click)="send()">Enviar</button>
+    </footer>
+  </aside>
+</div>

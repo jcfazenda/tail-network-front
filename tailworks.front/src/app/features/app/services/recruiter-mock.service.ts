@@ -17,6 +17,7 @@ export class RecruiterMockService {
       {
         id: 'job-001',
         title: 'Desenvolvedor .NET Sênior',
+        description: 'Atuação em APIs e microsserviços com foco em performance, arquitetura e evolução de produto.',
         department: 'Tecnologia',
         location: 'Rio de Janeiro',
         type: 'Remoto',
@@ -56,6 +57,7 @@ export class RecruiterMockService {
       {
         id: 'job-002',
         title: 'UX Designer',
+        description: 'Responsável por fluxos de produto, protótipos e melhorias de experiência em jornadas críticas.',
         department: 'Produto',
         location: 'São Paulo',
         type: 'Híbrido',
@@ -77,6 +79,7 @@ export class RecruiterMockService {
       {
         id: 'job-003',
         title: 'Dev Angular Pleno',
+        description: 'Manutenção e evolução de front-end web com componentes reutilizáveis e integração com APIs.',
         department: 'Tecnologia',
         location: 'Remoto',
         type: 'CLT',

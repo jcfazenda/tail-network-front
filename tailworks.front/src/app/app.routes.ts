@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { PublicLayoutComponent } from './core/layout/public-layout.component';
+import { RecruitLayoutComponent } from './core/layout/recruit-layout.component';
 import { ShellComponent } from './core/layout/shell.component';
 import { authGuard } from './core/auth/auth.guard';
 
@@ -15,18 +16,23 @@ export const routes: Routes = [
           import('./features/public/home.page').then(m => m.HomePage),
       },
 
-      // ✅ NOVAS ROTAS
       {
         path: 'recruiter',
-        loadComponent: () =>
-          import('./features/app/recruiter/recruiter.page').then(m => m.RecruiterPage),
+        component: RecruitLayoutComponent,
+        canActivate: [authGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/app/recruiter/recruiter.page').then(m => m.RecruiterPage),
+          },
+        ],
       },
       {
         path: 'talent',
         loadComponent: () =>
           import('./features/app/talent/talent.page').then(m => m.TalentPage),
       },
-
       {
         path: 'choose',
         loadComponent: () =>

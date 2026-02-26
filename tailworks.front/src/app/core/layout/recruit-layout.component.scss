@@ -1,0 +1,348 @@
+.recruitLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  color: var(--text);
+}
+
+.recruitTop {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 22%);
+  backdrop-filter: blur(12px);
+}
+
+.recruitTopInner {
+  width: min(1200px, calc(100% - 24px));
+  margin: 0 auto;
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: auto minmax(220px, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.topLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brandBlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brand {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.15px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.brandTag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-glass-2);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.topSearch {
+  min-width: 0;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 30%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  box-shadow: var(--shadow-1);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.searchIcon {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.topSearch input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+.topSearch input::placeholder {
+  color: var(--muted);
+}
+
+.topSearch:focus-within {
+  border-color: color-mix(in srgb, var(--focus-ring), var(--border));
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.iconBtn,
+.avatarBtn {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 26%);
+  color: var(--text);
+  border-radius: 12px;
+  height: 40px;
+  min-width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color .16s ease, transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.iconBtn:hover,
+.avatarBtn:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--text), transparent 80%);
+  box-shadow: var(--shadow-1);
+}
+
+.iconBtn:focus-visible,
+.avatarBtn:focus-visible,
+.navItem:focus-visible,
+.navItemBtn:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--text), transparent 72%);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.menuBtn {
+  display: none;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.recruitBody {
+  flex: 1;
+  width: min(1400px, calc(100% - 24px));
+  margin: 16px auto 0;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.sideOverlay {
+  display: none;
+}
+
+.recruitSide {
+  min-width: 0;
+}
+
+.sideCard {
+  position: sticky;
+  top: 82px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 20%);
+  border-radius: 16px;
+  box-shadow: var(--shadow-1);
+  padding: 12px;
+}
+
+.sideTitle {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 8px 8px 12px;
+}
+
+.sideNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navItem {
+  text-decoration: none;
+}
+
+.navItem,
+.navItemBtn {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+
+.navItem:hover,
+.navItemBtn:hover {
+  background: var(--bg-soft);
+  border-color: var(--border);
+  transform: translateY(-1px);
+}
+
+.navItem.active {
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 20%);
+  border-color: var(--border);
+  box-shadow: var(--shadow-1);
+  position: relative;
+}
+
+.navItem.active::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text), transparent 15%);
+}
+
+.navDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted), transparent 20%);
+  flex: 0 0 auto;
+}
+
+.navItem.active .navDot {
+  background: var(--text);
+}
+
+.recruitMain {
+  min-width: 0;
+}
+
+.recruitContentFrame {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 0 24px;
+}
+
+@media (max-width: 980px) {
+  .recruitTopInner {
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+  }
+
+  .menuBtn {
+    display: inline-flex;
+  }
+
+  .brandTag {
+    display: none;
+  }
+
+  .topSearch {
+    height: 40px;
+  }
+
+  .recruitBody {
+    width: calc(100% - 16px);
+    margin-top: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .recruitSide {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(86vw, 320px);
+    box-sizing: border-box;
+    z-index: 220;
+    transform: translateX(-104%);
+    transition: transform .16s ease;
+    padding: 12px;
+  }
+
+  .recruitSide.open {
+    transform: translateX(0);
+  }
+
+  .sideCard {
+    position: relative;
+    top: 0;
+    height: calc(100dvh - 24px);
+    overflow: auto;
+    box-shadow: var(--shadow-2);
+  }
+
+  .sideOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    border: 0;
+    background: color-mix(in srgb, var(--text), transparent 72%);
+    padding: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .recruitTopInner {
+    width: calc(100% - 12px);
+    min-height: 62px;
+    gap: 8px;
+  }
+
+  .topSearch input::placeholder {
+    font-size: 12px;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .iconBtn,
+  .avatarBtn {
+    height: 38px;
+    min-width: 38px;
+    border-radius: 11px;
+  }
+}

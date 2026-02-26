@@ -36,6 +36,7 @@ export type RecruiterTalent = {
 export type RecruiterJob = {
   id: string;
   title: string;
+  description?: string;
   department: string;
   location: string;
   type: string;

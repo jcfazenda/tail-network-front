@@ -65,6 +65,13 @@ body{
   --wm-brightness: 1.05;
   --wm-contrast: 1.02;
   --wm-blend: multiply;
+
+  /* recruiter watermark aliases (sem alterar visual) */
+  --recruiter-watermark-opacity: var(--wm-opacity);
+  --recruiter-watermark-saturate: var(--wm-saturate);
+  --recruiter-watermark-brightness: var(--wm-brightness);
+  --recruiter-watermark-contrast: var(--wm-contrast);
+  --recruiter-watermark-blend: var(--wm-blend);
 }
 
 /* -----------------------------------------
@@ -102,6 +109,13 @@ body.theme-dark{
   --wm-brightness: 1.18;
   --wm-contrast: 1.10;
   --wm-blend: screen;
+
+  /* recruiter watermark aliases (sem alterar visual) */
+  --recruiter-watermark-opacity: var(--wm-opacity);
+  --recruiter-watermark-saturate: var(--wm-saturate);
+  --recruiter-watermark-brightness: var(--wm-brightness);
+  --recruiter-watermark-contrast: var(--wm-contrast);
+  --recruiter-watermark-blend: var(--wm-blend);
 }
 
 /* -----------------------------------------

@@ -1,5 +1,5 @@
 <section class="recruiter">
-  <div class="recruiterInner container">
+  <div class="recruiterInner recruiterContainer">
 
     <!-- TOPBAR -->
     <div class="recruiterTopbar">
@@ -30,31 +30,26 @@
       </div>
     </div>
 
-    <div class="divider-line"></div>
-
-    <!-- TOOLBAR -->
-    <div class="adminToolbar">
-      <div class="searchWrap">
-        <input class="input input--search"
-               [(ngModel)]="q"
-               placeholder="Buscar vaga..." />
+    <!-- STATUS FILTER (único filtro visível da página) -->
+    <div class="statusSection">
+      <div class="statusSectionDesktop">
+        <div class="filters">
+          <button class="pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
+          <button class="pill" [class.active]="statusFilter === 'aberta'" (click)="setStatusFilter('aberta')">Abertas</button>
+          <button class="pill" [class.active]="statusFilter === 'pausada'" (click)="setStatusFilter('pausada')">Pausadas</button>
+          <button class="pill" [class.active]="statusFilter === 'encerrada'" (click)="setStatusFilter('encerrada')">Encerradas</button>
+        </div>
       </div>
 
-      <div class="filters">
-        <button class="pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
-        <button class="pill" [class.active]="statusFilter === 'aberta'" (click)="setStatusFilter('aberta')">Abertas</button>
-        <button class="pill" [class.active]="statusFilter === 'pausada'" (click)="setStatusFilter('pausada')">Pausadas</button>
-        <button class="pill" [class.active]="statusFilter === 'encerrada'" (click)="setStatusFilter('encerrada')">Encerradas</button>
+      <div class="statusSectionMobile">
+        <select class="input input--select" [(ngModel)]="statusFilter" aria-label="Status">
+          <option value="all">Status: Todas</option>
+          <option value="aberta">Status: Abertas</option>
+          <option value="pausada">Status: Pausadas</option>
+          <option value="encerrada">Status: Encerradas</option>
+        </select>
       </div>
-
-      <select class="input input--select" [(ngModel)]="sortBy">
-        <option value="newest">Recentes</option>
-        <option value="applicants">Candidatos</option>
-        <option value="title">A–Z</option>
-      </select>
     </div>
-
-    <div class="spacer-grid"></div>
 
     <!-- LIST -->
     <div class="jobsGrid">
@@ -69,52 +64,60 @@
            (keydown.space)="$event.preventDefault(); openEditModal(job)">
 
         <div class="jobMain">
-          <div class="titleLine">
-            <h3>{{ job.id }} - {{ job.title }}</h3>
-            <span class="dept muted">{{ job.department }}</span>
+          <div class="jobHeader">
+            <div class="jobMetaLine">
+              <span class="jobId muted">{{ formatJobDisplayId(job.id) }}</span>
+              <span class="metaSep" aria-hidden="true">-</span>
+              <span class="muted">{{ job.location }}</span>
+              <span class="muted">({{ job.department }})</span>
+            </div>
+
+            <div class="jobTitleWrap">
+              <h3 class="jobTitle">{{ job.title }}</h3>
+              <span class="status" [ngClass]="job.status">{{ job.status }}</span>
+            </div>
           </div>
 
-          <div class="tags">
-            <span class="chip">{{ job.location }}</span>
-            <span class="chip">{{ job.type }}</span>
+          <div class="jobSub"> 
+            <p class="jobDescription muted" *ngIf="job.description">{{ job.description }}</p>
           </div>
         </div>
 
-        <!-- RIGHT -->
+        <!-- FOOTER -->
         <div class="jobTools" (click)="$event.stopPropagation()">
+          <div class="jobToolsLeft">
+            <button class="avatarsBtn"
+                    (click)="viewApplicants(job)"
+                    aria-label="Ver candidatos"
+                    title="Ver candidatos">
+              <div class="avatars">
+                <ng-container *ngFor="let t of (job.talents || []) | slice:0:4; trackBy: trackByTalentId">
+                  <span
+                    class="avatar"
+                    [title]="t.name"
+                    [style.background-image]="'url(' + (t.avatarUrl || avatarFallbackUrl) + ')'"
+                  ></span>
+                </ng-container>
 
-          <button class="avatarsBtn"
-                  (click)="viewApplicants(job)"
-                  aria-label="Ver candidatos"
-                  title="Ver candidatos">
-            <div class="avatars">
-              <ng-container *ngFor="let t of (job.talents || []) | slice:0:4; trackBy: trackByTalentId">
-                <span
-                  class="avatar"
-                  [title]="t.name"
-                  [style.background-image]="'url(' + (t.avatarUrl || avatarFallbackUrl) + ')'"
-                ></span>
-              </ng-container>
+                <span class="avatar avatar--more"
+                      *ngIf="(job.talents?.length || 0) > 4">
+                  +{{ (job.talents?.length || 0) - 4 }}
+                </span>
+              </div>
+            </button>
+          </div>
 
-              <span class="avatar avatar--more"
-                    *ngIf="(job.talents?.length || 0) > 4">
-                +{{ (job.talents?.length || 0) - 4 }}
-              </span>
-            </div>
-          </button>
+          <div class="jobToolsRight">
+            <button class="iconBtn iconBtn--edit"
+                    (click)="openEditModal(job)"
+                    aria-label="Editar"
+                    title="Editar">✎</button>
 
-          <span class="status" [ngClass]="job.status">{{ job.status }}</span>
-
-          <button class="iconBtn iconBtn--edit"
-                  (click)="openEditModal(job)"
-                  aria-label="Editar"
-                  title="Editar">✎</button>
-
-          <button class="iconBtn iconBtn--chat"
-                  (click)="toggleChat(job); $event.stopPropagation()"
-                  aria-label="Chat"
-                  title="Chat">💬</button>
-
+            <button class="iconBtn iconBtn--chat"
+                    (click)="toggleChat(job); $event.stopPropagation()"
+                    aria-label="Chat"
+                    title="Chat">💬</button>
+          </div>
         </div>
 
       </div>
@@ -128,11 +131,11 @@
     </div>
   </div>
 
-  <!-- CHAT DRAWER (fica fora do container mesmo) -->
-  <chat-talent
+  <!-- CHAT DRAWER -->
+  <recruiter-chat-drawer
     [isOpen]="isChatOpen"
     [job]="chatJob"
     [talents]="chatTalents"
     (close)="closeChat()">
-  </chat-talent>
+  </recruiter-chat-drawer>
 </section>

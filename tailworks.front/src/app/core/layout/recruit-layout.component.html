@@ -1,0 +1,57 @@
+<div class="recruitLayout">
+  <div class="recruitBody">
+    <button
+      type="button"
+      class="sideOverlay"
+      *ngIf="isSidebarOpen"
+      (click)="closeSidebar()"
+      aria-label="Fechar menu"
+    ></button>
+
+    <aside class="recruitSide" [class.open]="isSidebarOpen">
+      <div class="sideCard">
+        <div class="sideTitle">Workspace</div>
+
+        <nav class="sideNav">
+          <a
+            routerLink="/recruiter"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            ariaCurrentWhenActive="page"
+            class="navItem"
+            (click)="closeSidebar()"
+          >
+            <span class="navDot"></span>
+            <span>Dashboard</span>
+          </a>
+
+          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
+            <span class="navDot"></span>
+            <span>Talents</span>
+          </button>
+
+          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
+            <span class="navDot"></span>
+            <span>Vagas</span>
+          </button>
+
+          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
+            <span class="navDot"></span>
+            <span>Mensagens</span>
+          </button>
+
+          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
+            <span class="navDot"></span>
+            <span>Config</span>
+          </button>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="recruitMain">
+      <div class="recruitContentFrame">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>
