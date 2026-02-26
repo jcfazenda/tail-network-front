@@ -21,6 +21,7 @@ export type ChatMsg = {
 export type RecruiterTalent = {
   id: string;
   name: string;
+  appliedAt?: string; // ISO - ordem de candidatura (mais antigo primeiro)
 
   avatarUrl?: string;  // opcional (fallback Tail)
   lastSeen: string;

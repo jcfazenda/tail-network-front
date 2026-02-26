@@ -28,7 +28,7 @@ export class RecruiterPage {
   /* ========================================
      UI / FALLBACKS
   ======================================== */
-  avatarFallbackUrl = 'assets/tail-avatar.png';
+  avatarFallbackUrl = 'assets/avatar-default.png';
 
   /* ========================================
      DATA (VEM DO SERVICE)
@@ -77,6 +77,23 @@ export class RecruiterPage {
 
   getApplicantsCount(job: RecruiterJob): number {
     return job.talents?.length ?? 0;
+  }
+
+  getOrderedTalents(job: RecruiterJob): RecruiterTalent[] {
+    const talents = [...(job.talents ?? [])];
+
+    // Regra de negócio: quem se candidatou primeiro aparece primeiro.
+    talents.sort((a, b) => {
+      const aApplied = a.appliedAt ?? '';
+      const bApplied = b.appliedAt ?? '';
+
+      if (aApplied && bApplied) return aApplied.localeCompare(bApplied);
+      if (aApplied) return -1;
+      if (bApplied) return 1;
+      return 0; // fallback: preserva ordem original para quem não tem appliedAt
+    });
+
+    return talents;
   }
 
   /* ========================================
@@ -198,13 +215,17 @@ export class RecruiterPage {
      CHAT ACTIONS
   ======================================== */
   toggleChat(job: RecruiterJob): void {
+    if (!job.talents || job.talents.length === 0) {
+      return;
+    }
+
     if (this.isChatOpen && this.chatJob?.id === job.id) {
       this.closeChat();
       return;
     }
 
     this.chatJob = job;
-    this.chatTalents = job.talents ?? [];
+    this.chatTalents = this.getOrderedTalents(job);
     this.isChatOpen = true;
   }
 

@@ -1,18 +1,20 @@
 <div class="chatDrawerRoot" [class.is-open]="isOpen" *ngIf="isOpen">
   <button class="chatOverlay" type="button" (click)="handleClose()" aria-label="Fechar chat"></button>
 
+
+  <div class="chatDivider"></div>
+  
   <aside class="chatPanel" role="dialog" aria-modal="true" [attr.aria-label]="'Chat da vaga ' + headerTitle">
     <header class="chatHead">
       <div class="chatHeadMeta">
         <div class="chatEyebrow">Conversa da vaga</div>
+        <div class="chatDivider"></div>
         <div class="chatTitleRow">
-          <h3 class="chatTitle">{{ headerTitle }}</h3>
-          <span class="chatStatus" *ngIf="status" [ngClass]="status">{{ status }}</span>
+          <h3 class="chatTitle">{{ headerTitle }}</h3> 
         </div>
         <div class="chatSubtitle">
-          {{ job?.id }} • {{ job?.location }} • {{ job?.type }} • {{ applicantsCount }} candidato(s)
+          {{ job?.id }} • {{ job?.location }} • {{ job?.type }} 
         </div>
-        <div class="chatSubtitle">Falando com {{ conversationLabel }}</div>
       </div>
 
       <button type="button" class="iconBtn" (click)="handleClose()" aria-label="Fechar" title="Fechar">✕</button>
@@ -20,32 +22,94 @@
 
     <div class="chatBody">
       <div class="talentRailWrap" *ngIf="talents.length > 0">
-        <div class="talentRail" aria-label="Selecionar candidato">
-          <button
-            type="button"
-            class="talentAvatarCard"
-            *ngFor="let talent of talents; trackBy: trackByTalentId"
-            [class.active]="selectedTalent?.id === talent.id"
-            [class.online]="isTalentOnline(talent)"
-            (click)="selectTalent(talent)"
-            [attr.aria-label]="'Selecionar ' + talent.name + ' (' + talentRoleLabel + ')'"
-            [title]="talent.name + ' • ' + talentRoleLabel"
-          >
-            <span
-              class="talentAvatarThumb"
-              [style.background-image]="talent.avatarUrl ? 'url(' + talent.avatarUrl + ')' : null"
-            >{{ talent.name.charAt(0) }}</span>
-            <span class="talentOnlineDot" *ngIf="isTalentOnline(talent)" aria-hidden="true"></span>
-            <span class="talentUnreadBadge" *ngIf="talent.unreadCount > 0" aria-hidden="true">
-              {{ talent.unreadCount > 9 ? '9+' : talent.unreadCount }}
-            </span>
-          </button>
-        </div>
-      </div>
+        <div class="talentRailBar">
+          <div class="talentRail" #talentRailScroller (scroll)="onTalentRailScroll()" aria-label="Selecionar candidato">
+            <button
+              type="button"
+              class="talentAvatarCard"
+              *ngFor="let talent of talents; trackBy: trackByTalentId"
+              [class.active]="selectedTalent?.id === talent.id"
+              [class.online]="isTalentOnline(talent)"
+              (click)="selectTalent(talent)"
+              [attr.aria-label]="'Selecionar ' + talent.name + ' (' + talentRoleLabel + ')'"
+              [title]="talent.name + ' • ' + talentRoleLabel"
+            >
+              <span
+                class="talentAvatarThumb"
+                [style.background-image]="talent.avatarUrl ? 'url(' + talent.avatarUrl + ')' : null"
+              >{{ talent.avatarUrl ? '' : talent.name.charAt(0) }}</span>
+              <span class="talentOnlineDot" *ngIf="isTalentOnline(talent)" aria-hidden="true"></span>
+              <span
+                class="talentUnreadBadge"
+                [class.talentUnreadBadge--dot]="talent.unreadCount < 10"
+                *ngIf="isUnreadVisible(talent)"
+                aria-hidden="true"
+              >
+                {{ talent.unreadCount > 9 ? '9+' : talent.unreadCount }}
+              </span>
+            </button>
 
-      <div class="chatEmpty" *ngIf="conversationMessages.length === 0">
-        <b>Sem mensagens ainda</b>
-        <p>Use o campo abaixo para iniciar a conversa.</p>
+            <span class="talentCount" *ngIf="talents.length <= 4">{{ applicantsCount }} candidato(s)</span>
+          </div>
+
+          <div class="talentRailControls" *ngIf="talents.length > 4">
+            <div class="talentRailControlsSide talentRailControlsSide--left">
+              <button
+                type="button"
+                class="talentRailNav"
+                [disabled]="!canScrollTalentsPrev()"
+                (click)="scrollTalentsFirst()"
+                aria-label="Ir para o primeiro candidato"
+                title="Primeiro"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M11.75 4.5 6.25 10l5.5 5.5" />
+                  <path d="M16 4.5 10.5 10 16 15.5" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="talentRailNav"
+                [disabled]="!canScrollTalentsPrev()"
+                (click)="scrollTalentsPrev()"
+                aria-label="Ver candidatos anteriores"
+                title="Anterior"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M12.75 4.5 7.25 10l5.5 5.5" />
+                </svg>
+              </button>
+            </div>
+            <span class="talentRailControlsCount">{{ applicantsCount }} candidato(s)</span>
+            <div class="talentRailControlsSide talentRailControlsSide--right">
+              <button
+                type="button"
+                class="talentRailNav"
+                [disabled]="!canScrollTalentsNext()"
+                (click)="scrollTalentsNext()"
+                aria-label="Ver próximos candidatos"
+                title="Próximo"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="m7.25 4.5 5.5 5.5-5.5 5.5" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="talentRailNav"
+                [disabled]="!canScrollTalentsNext()"
+                (click)="scrollTalentsLast()"
+                aria-label="Ir para o último candidato"
+                title="Último"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="m4 4.5 5.5 5.5L4 15.5" />
+                  <path d="m8.25 4.5 5.5 5.5-5.5 5.5" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="chatMessages" *ngIf="conversationMessages.length > 0">
@@ -60,11 +124,21 @@
             [style.background-image]="getMessageAvatarUrl(msg) ? 'url(' + getMessageAvatarUrl(msg) + ')' : null"
             aria-hidden="true"
             [title]="isMine(msg) ? 'Você' : conversationLabel"
-          >{{ getMessageAvatarFallback(msg) }}</span>
+          >{{ getMessageAvatarUrl(msg) ? '' : getMessageAvatarFallback(msg) }}</span>
           <p>{{ msg.text }}</p>
           <span class="bubbleTime">{{ msg.time }}</span>
         </div>
       </div>
+    </div>
+
+    <div class="chatEmpty" *ngIf="conversationMessages.length === 0">
+      <b>Sem mensagens ainda</b>
+      <p>Use o campo abaixo para iniciar a conversa.</p>
+    </div>
+
+    <div class="chatEmpty" *ngIf="conversationMessages.length > 0 && selectedTalent">
+      <b>{{ selectedTalent.name }}</b>
+      <p>{{ job?.location }} • {{ talentRoleLabel }} • {{ selectedTalent.lastSeen }}</p>
     </div>
 
     <footer class="chatFoot">

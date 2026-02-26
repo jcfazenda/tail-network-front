@@ -31,24 +31,24 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
+  gap: 14px;
+  padding: 16px 16px 14px;
   background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 20%);
 }
 
 .chatHeadMeta {
   min-width: 0;
   display: grid;
-  gap: 6px;
+  gap: 7px;
 }
 
 .chatEyebrow {
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 10px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: .4px;
+  letter-spacing: .7px;
+  opacity: .9;
 }
 
 .chatTitleRow {
@@ -61,7 +61,7 @@
 
 .chatTitle {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 900;
   color: var(--text);
   min-width: 0;
@@ -71,8 +71,9 @@
 }
 
 .chatSubtitle {
-  color: var(--muted);
+  color: color-mix(in srgb, var(--muted), var(--text) 8%);
   font-size: 12px;
+  line-height: 1.35;
 }
 
 .chatStatus {
@@ -133,23 +134,122 @@
 }
 
 .talentRailWrap {
+  position: relative;
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 22%);
   border-radius: 14px;
   padding: 8px;
   box-shadow: var(--shadow-1);
+  margin-bottom: 50px;
+}
+
+.talentRailBar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
 }
 
 .talentRail {
   display: flex;
   gap: 10px;
+  align-items: center;
   overflow-x: auto;
-  padding-bottom: 2px;
+  padding: 2px;
   scrollbar-width: none;
+  min-width: 0;
 }
 
 .talentRail::-webkit-scrollbar {
   display: none;
+}
+
+.talentCount {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+.talentRailControls {
+  position: absolute;
+  left: 50%;
+  bottom: -44px;
+  transform: translateX(-50%);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.talentRailControlsSide {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.talentRailNav {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-glass), var(--bg-glass-2) 35%);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-1);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease, opacity .15s ease;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+}
+
+.talentRailNav svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.talentRailNav:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 20%);
+  border-color: color-mix(in srgb, var(--text), transparent 84%);
+  color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.talentRailNav:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus-ring), var(--shadow-1);
+}
+
+.talentRailNav:disabled {
+  opacity: .42;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.talentRailControlsCount {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .talentAvatarCard {
@@ -224,18 +324,24 @@
   position: absolute;
   top: 1px;
   right: 1px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 999px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9999px;
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 8%);
-  color: var(--text);
+  background: #f59e0b;
+  color: #fff;
   font-size: 9px;
   font-weight: 900;
-  line-height: 14px;
+  line-height: 16px;
   text-align: center;
   box-shadow: var(--shadow-1);
+}
+
+.talentUnreadBadge--dot {
+  width: 18px;
+  min-width: 18px;
+  padding: 0;
 }
 
 @keyframes talentPulse {
@@ -405,6 +511,7 @@
 }
 
 .chatEmpty {
+  margin: 0 12px 10px;
   border: 1px dashed var(--border);
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 22%);
@@ -497,8 +604,10 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
+  margin: 0 12px 12px;
   padding: 12px 16px 16px;
-  border-top: 1px solid var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 18%);
 }
 
@@ -541,12 +650,17 @@
     border-left: 0;
   }
 
+  .chatEmpty {
+    margin: 0 10px 8px;
+  }
+
   .chatHead,
   .chatBody {
     padding: 12px;
   }
 
   .chatFoot {
+    margin: 0 10px 10px;
     padding: 12px;
     grid-template-columns: 1fr;
   }
@@ -554,4 +668,13 @@
   .sendBtn {
     width: 100%;
   }
+}
+
+
+.chatDivider {
+  height: 1px;
+  width: 100%;
+  margin: 12px 0 16px 0;
+  background: var(--bg-glass-2);
+  border-bottom: 1px solid var(--border);
 }

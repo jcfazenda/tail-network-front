@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
@@ -8,6 +9,7 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -22,16 +24,19 @@ import { ChatMsg, RecruiterJob, RecruiterTalent } from '../../models/recruiter.m
 })
 export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
   readonly recruiterAvatarUrl = 'assets/recuiter-job.png';
+  readonly talentAvatarFallbackUrl = 'assets/avatar-default.png';
 
   @Input() isOpen = false;
   @Input() job: RecruiterJob | null = null;
   @Input() talents: RecruiterTalent[] = [];
 
   @Output() close = new EventEmitter<void>();
+  @ViewChild('talentRailScroller') talentRailScroller?: ElementRef<HTMLDivElement>;
 
   draft = '';
   private localMessagesByTalent: Record<string, ChatMsg[]> = {};
   selectedTalentId: string | null = null;
+  private seenTalentIds = new Set<string>();
   private bodyOverflowBeforeOpen = '';
 
   @HostListener('document:keydown.escape')
@@ -58,7 +63,7 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
   }
 
   get selectedTalentAvatarUrl(): string | null {
-    return this.selectedTalent?.avatarUrl ?? null;
+    return this.selectedTalent?.avatarUrl ?? this.talentAvatarFallbackUrl;
   }
 
   get selectedTalent(): RecruiterTalent | null {
@@ -88,7 +93,11 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     if (changes['job'] || changes['talents']) {
       this.selectedTalentId = this.talents[0]?.id ?? null;
       this.localMessagesByTalent = {};
+      this.seenTalentIds = new Set();
       this.draft = '';
+      if (this.selectedTalentId) {
+        this.seenTalentIds.add(this.selectedTalentId);
+      }
     }
 
     if (changes['isOpen']) {
@@ -133,7 +142,52 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
   selectTalent(talent: RecruiterTalent): void {
     if (this.selectedTalentId === talent.id) return;
     this.selectedTalentId = talent.id;
+    this.seenTalentIds.add(talent.id);
     this.draft = '';
+  }
+
+  isUnreadVisible(talent: RecruiterTalent): boolean {
+    return (talent.unreadCount ?? 0) > 0 && !this.seenTalentIds.has(talent.id);
+  }
+
+  scrollTalentsNext(): void {
+    const el = this.talentRailScroller?.nativeElement;
+    if (!el) return;
+    el.scrollBy({ left: 140, behavior: 'smooth' });
+  }
+
+  scrollTalentsPrev(): void {
+    const el = this.talentRailScroller?.nativeElement;
+    if (!el) return;
+    el.scrollBy({ left: -140, behavior: 'smooth' });
+  }
+
+  scrollTalentsFirst(): void {
+    const el = this.talentRailScroller?.nativeElement;
+    if (!el) return;
+    el.scrollTo({ left: 0, behavior: 'smooth' });
+  }
+
+  scrollTalentsLast(): void {
+    const el = this.talentRailScroller?.nativeElement;
+    if (!el) return;
+    el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+  }
+
+  canScrollTalentsPrev(): boolean {
+    const el = this.talentRailScroller?.nativeElement;
+    if (!el) return false;
+    return el.scrollLeft > 2;
+  }
+
+  canScrollTalentsNext(): boolean {
+    const el = this.talentRailScroller?.nativeElement;
+    if (!el) return false;
+    return el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
+  }
+
+  onTalentRailScroll(): void {
+    // Intentionally empty: keeps Angular change detection in sync for nav disabled states.
   }
 
   trackByTalentId(_: number, talent: RecruiterTalent): string {

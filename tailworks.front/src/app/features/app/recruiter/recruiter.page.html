@@ -91,12 +91,21 @@
                     aria-label="Ver candidatos"
                     title="Ver candidatos">
               <div class="avatars">
-                <ng-container *ngFor="let t of (job.talents || []) | slice:0:4; trackBy: trackByTalentId">
+                <ng-container *ngFor="let t of getOrderedTalents(job) | slice:0:4; trackBy: trackByTalentId">
                   <span
                     class="avatar"
                     [title]="t.name"
                     [style.background-image]="'url(' + (t.avatarUrl || avatarFallbackUrl) + ')'"
-                  ></span>
+                  >
+                    <span
+                      class="avatarUnreadBadge"
+                      [class.avatarUnreadBadge--dot]="t.unreadCount < 10"
+                      *ngIf="(t.unreadCount || 0) > 0"
+                      aria-hidden="true"
+                    >
+                      {{ t.unreadCount > 9 ? '9+' : t.unreadCount }}
+                    </span>
+                  </span>
                 </ng-container>
 
                 <span class="avatar avatar--more"
