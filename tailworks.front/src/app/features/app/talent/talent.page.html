@@ -1,33 +1,464 @@
-<section class="wrap">
-  <div class="card">
-    <div class="head">
-      <div class="dot"></div>
-      <div>
-        <h1>Talento</h1>
-        <p>Trilhas, evidências e reputação mensurável.</p>
+<section class="candidateDashboard">
+  <div class="candidateContainer">
+    <header class="pageHead">
+      <div class="pageHeadMain">
+        <h1>Seu Radar</h1>
+        <p>Vagas recomendadas com base no seu perfil</p>
+      </div>
+    </header>
+
+    <section class="statusFilters" aria-label="Filtro por status">
+      <button type="button" class="statusFilterBtn" [class.active]="statusFilter === 'todos'" (click)="setStatusFilter('todos')">
+        Todos
+      </button>
+      <button type="button" class="statusFilterBtn" [class.active]="statusFilter === 'solicitacao'" (click)="setStatusFilter('solicitacao')">
+        Solicitação
+      </button>
+      <button type="button" class="statusFilterBtn" [class.active]="statusFilter === 'candidatado'" (click)="setStatusFilter('candidatado')">
+        Candidatado
+      </button>
+      <button type="button" class="statusFilterBtn statusFilterBtn--advanced" (click)="openFilterModal()">
+        Filtro avançado
+      </button>
+    </section>
+
+    <section class="statsCompact" aria-label="Métricas rápidas">
+      <article class="statMini">
+        <b>{{ averageMatch }}%</b>
+        <span>Aderência média</span>
+      </article>
+
+      <article class="statMini">
+        <b>{{ recommendedJobsCount }}</b>
+        <span>Vagas recomendadas</span>
+      </article>
+
+      <article class="statMini">
+        <b>{{ unreadRecruiterMessages }} não lidas</b>
+        <span>Mensagens do recrutador</span>
+      </article>
+    </section>
+
+    <div class="talentWorkspace" *ngIf="recommendedJobsCount > 0">
+      <div class="jobsGrid">
+        <div
+          class="jobRow"
+          *ngFor="let job of recommendedJobs; trackBy: trackJob"
+          [ngClass]="'accent-' + job.status"
+          tabindex="0"
+          role="button"
+        >
+          <span class="matchPill matchPill--corner">{{ job.matchScore }}%</span>
+
+          <div class="jobMain">
+            <div class="jobHeader">
+              <div class="jobMetaLine">
+                <span class="jobId muted">{{ job.id }}</span>
+                <span class="metaSep" aria-hidden="true">-</span>
+                <span class="muted">{{ job.company }}</span>
+                <span class="metaSep" aria-hidden="true">-</span>
+                <span class="muted">{{ job.location }}</span>
+                <span class="muted">({{ job.department }})</span>
+              </div>
+
+              <div class="jobTitleWrap">
+                <h3 class="jobTitle">{{ job.title }}</h3>
+
+                <span class="status status--nova" *ngIf="job.status === 'nova'" title="Nova" aria-label="Nova">
+                  <span class="statusDot" aria-hidden="true"></span>
+                </span>
+
+              </div>
+            </div>
+
+            <div class="jobSub">
+              <p class="jobDescription muted" *ngIf="job.description">{{ job.description }}</p>
+            </div>
+          </div>
+
+          <div class="jobTools" [class.jobTools--withFlag]="job.status === 'aplicada'">
+            <div class="jobToolsLeft" *ngIf="job.status === 'aplicada'">
+              <span
+                class="cardAppliedFlag"
+                [ngClass]="{ 'cardAppliedFlag--contract': job.workflowStatus === 'solicitacao_contratacao' }"
+              >
+                {{ cardWorkflowLabel(job) }}
+              </span>
+            </div>
+
+            <div class="jobToolsRight">
+              <button type="button" class="iconBtn" (click)="openChat(job)" aria-label="Abrir chat" title="Abrir chat">
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 16 14.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5Z"></path>
+                </svg>
+              </button>
+              <button type="button" class="iconBtn" (click)="view(job)" aria-label="Ver detalhes" title="Ver detalhes">
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <circle cx="9" cy="9" r="5.5"></circle>
+                  <path d="M13.4 13.4 17 17"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="grid">
-      <div class="box">
-        <b>Perfil Validável</b>
-        <span>Menos “bio”, mais provas.</span>
+  </div>
+
+  <div class="filterModalRoot" *ngIf="isFilterModalOpen">
+    <button class="filterModalOverlay" type="button" (click)="closeFilterModal()" aria-label="Fechar filtros"></button>
+    <aside class="filterModalPanel" role="dialog" aria-modal="true" aria-label="Filtro avançado de vagas">
+      <header class="filterModalHead">
+        <h3>Filtro avançado</h3>
+        <button type="button" class="chatIconBtn" (click)="closeFilterModal()" aria-label="Fechar">✕</button>
+      </header>
+
+      <div class="filterModalBody">
+        <label class="filterField">
+          <span>Cargo</span>
+          <input type="text" [(ngModel)]="filterTitleQuery" placeholder="Ex.: Backend, DevOps..." />
+        </label>
+        <label class="filterField">
+          <span>Local</span>
+          <input type="text" [(ngModel)]="filterLocationQuery" placeholder="Ex.: Remoto, São Paulo..." />
+        </label>
+        <label class="filterField filterField--full">
+          <span>Tipo de contratação</span>
+          <select [(ngModel)]="filterContractType">
+            <option value="todos">Todos</option>
+            <option value="CLT">CLT</option>
+            <option value="PJ">PJ</option>
+            <option value="Híbrido">Híbrido</option>
+            <option value="Remoto">Remoto</option>
+          </select>
+        </label>
+        <label class="filterField filterField--full">
+          <span>Aderência mínima</span>
+          <div class="filterRangeWrap">
+            <b class="filterRangeValue">{{ filterMinMatch }}%</b>
+            <input type="range" min="0" max="100" step="1" [(ngModel)]="filterMinMatch" />
+            <div class="filterRangeScale">
+              <small>0%</small>
+              <small>100%</small>
+            </div>
+          </div>
+        </label>
       </div>
 
-      <div class="box">
-        <b>Trilhas</b>
-        <span>Plano claro de evolução.</span>
+      <footer class="filterModalFoot">
+        <button type="button" class="btnPrimary" (click)="clearAdvancedFilters()">Limpar</button>
+        <button type="button" class="btnPrimary" (click)="closeFilterModal()">Aplicar</button>
+      </footer>
+    </aside>
+  </div>
+
+  <div class="jobSummaryRoot" *ngIf="isJobSummaryOpen && selectedJobForSummary as viewed">
+    <aside class="jobSummaryPanel" role="dialog" aria-modal="true" [attr.aria-label]="'Resumo da vaga ' + viewed.title">
+      <div class="wordSheet" [class.wordSheet--contract]="viewed.workflowStatus === 'solicitacao_contratacao'">
+        <header class="wordHead">
+          <p class="wordKicker">Resumo da vaga</p>
+          <h3>{{ viewed.title }}</h3>
+          <p>{{ viewed.id }} • {{ viewed.company }} • {{ viewed.location }} • {{ viewed.type }}</p>
+          <button type="button" class="wordCloseBtn" (click)="closeJobSummary()" aria-label="Fechar">✕</button>
+        </header>
+
+        <section class="wordSection" *ngIf="!isExtendedDetailsOpen">
+          <div class="wordSectionHeadRow">
+            <h4>Informações principais</h4>
+            <button type="button" class="moreDetailsToggle moreDetailsToggle--inline" (click)="openExtendedDetails()">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="9" cy="9" r="5.5"></circle>
+                <path d="M13.4 13.4 17 17"></path>
+              </svg>
+              ver mais
+            </button>
+          </div>
+          <div class="wordGrid">
+            <div><span>Departamento</span><b>{{ viewed.department }}</b></div>
+            <div><span>Status do processo</span><b>{{ workflowLabelForJob(viewed) }}</b></div>
+            <div><span>Aderência atual</span><b>{{ viewed.matchScore }}%</b></div>
+            <div><span>Meta mínima</span><b>{{ autoApplyThreshold }}%</b></div>
+          </div>
+          <p class="wordDesc" *ngIf="viewed.description && viewed.workflowStatus !== 'solicitacao_contratacao'">{{ viewed.description }}</p>
+        </section>
+
+        <section class="wordSection" *ngIf="!isExtendedDetailsOpen">
+          <h4>Stacks e conhecimento esperado</h4>
+          <div class="skillList" *ngIf="(viewed.requiredSkills?.length || 0) > 0">
+            <div class="skillRow" *ngFor="let skill of viewed.requiredSkills || []; trackBy: trackSkill">
+              <div class="skillTop">
+                <span>{{ skill.name }}</span>
+                <b>{{ skill.level }}%</b>
+              </div>
+              <div class="skillBar">
+                <span [style.width.%]="skill.level"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="wordSection wordSection--contract" *ngIf="!isExtendedDetailsOpen && viewed.workflowStatus === 'solicitacao_contratacao' && getHiringForm(viewed.id) as hiring">
+          <h4 class="contractLgpdTitle">Processo de contratação iniciado</h4>
+          <div class="contractStageFlow" aria-label="Etapas da contratação">
+            <div class="contractStage contractStage--done">
+              <span class="contractStageDot">✓</span>
+              <span class="contractStageLabel">Solicitação de contratação</span>
+            </div>
+            <div
+              class="contractStage"
+              [class.contractStage--done]="getHiringStage(viewed.id) !== 'solicitacao'"
+              [class.contractStage--current]="getHiringStage(viewed.id) === 'em_processo'"
+            >
+              <span class="contractStageDot">{{ getHiringStage(viewed.id) !== 'solicitacao' ? '✓' : '' }}</span>
+              <span class="contractStageLabel">Em processo de contratação</span>
+            </div>
+            <div
+              class="contractStage"
+              [class.contractStage--done]="getHiringStage(viewed.id) === 'contratado'"
+              [class.contractStage--current]="getHiringStage(viewed.id) === 'contratado'"
+            >
+              <span class="contractStageDot">{{ getHiringStage(viewed.id) === 'contratado' ? '✓' : '' }}</span>
+              <span class="contractStageLabel">Contratado</span>
+            </div>
+          </div>
+
+          <div class="contractMetaGrid">
+            <div>
+              <span>Valor do salário</span>
+              <b>{{ hiringSalaryLabel(viewed) }}</b>
+            </div>
+            <div>
+              <span>Dias de depósito</span>
+              <b>{{ viewed.paymentDays || 'A combinar' }}</b>
+            </div>
+          </div>
+
+          <div class="contractFormGrid">
+            <div class="contractField contractField--health">
+              <span>Plano de saúde</span>
+              <select [(ngModel)]="hiring.healthPlan" [disabled]="getHiringStage(viewed.id) !== 'solicitacao'">
+                <option value="nao">Não aceito</option>
+                <option value="basico">Plano Básico (coparticipação)</option>
+                <option value="premium">Plano Premium (enfermaria/apto)</option>
+              </select>
+            </div>
+
+            <div class="contractField contractField--ticket">
+              <span>Ticket Refeição/Alimentação: <b>R$ 38,00 por dia útil</b></span>
+              <select
+                [(ngModel)]="hiring.mealVoucherType"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              >
+                <option value="refeicao">Ticket Refeição</option>
+                <option value="alimentacao">Ticket Alimentação</option>
+                <option value="ambos">Divisão entre os dois</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="contractBenefits">
+            <span>Outros benefícios disponíveis:</span>
+            <label class="contractCheck">
+              <input
+                type="checkbox"
+                [(ngModel)]="hiring.additionalBenefits.gympass"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              />
+              <span>Gympass/Wellhub</span>
+            </label>
+            <label class="contractCheck">
+              <input
+                type="checkbox"
+                [(ngModel)]="hiring.additionalBenefits.dentalPlan"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              />
+              <span>Plano odontológico</span>
+            </label>
+            <label class="contractCheck">
+              <input
+                type="checkbox"
+                [(ngModel)]="hiring.additionalBenefits.lifeInsurance"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              />
+              <span>Seguro de vida</span>
+            </label>
+            <label class="contractCheck">
+              <input
+                type="checkbox"
+                [(ngModel)]="hiring.additionalBenefits.educationAid"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              />
+              <span>Auxílio educação/certificações</span>
+            </label>
+            <label class="contractCheck" *ngIf="shouldShowTransportVoucher(viewed)">
+              <input
+                type="checkbox"
+                [(ngModel)]="hiring.transportVoucher"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              />
+              <span>Desejo Vale-Transporte (vaga presencial/híbrida).</span>
+            </label>
+          </div>
+
+          <div class="contractFinalBlock">
+            <div class="contractTermsBox">
+              <b>Dados/documentos disponibilizados ao recrutador:</b>
+              <ul class="contractTermsList" [class.contractTermsList--accepted]="hiring.lgpdAccepted">
+                <li>Dados pessoais e curriculares para geração de PDF</li>
+                <li>Cópia da identidade</li>
+                <li>Certificado referente à vaga</li>
+                <li>Comprovante de residência</li>
+                <li>Demais documentos solicitados no processo</li>
+              </ul>
+            </div>
+
+            <b>Aceite para iniciar processos (LGPD)</b>
+            <p class="wordDesc">
+              Ao aceitar, você autoriza o uso e compartilhamento dos seus dados já cadastrados na plataforma
+              exclusivamente para avanço do processo seletivo e contratação, conforme LGPD.
+            </p>
+            <label class="contractCheck">
+              <input
+                type="checkbox"
+                [(ngModel)]="hiring.lgpdAccepted"
+                [disabled]="getHiringStage(viewed.id) !== 'solicitacao'"
+              />
+              <span>Concordo com o compartilhamento dos dados para contratação (LGPD).</span>
+            </label>
+
+            <button
+              type="button"
+              class="btnPrimary contractShareBtn"
+              [ngClass]="{
+                'contractShareBtn--inProgress': getHiringStage(viewed.id) === 'em_processo',
+                'contractShareBtn--hired': getHiringStage(viewed.id) === 'contratado'
+              }"
+              (click)="shareHiringData(viewed)"
+              [disabled]="isHiringShareButtonDisabled(viewed)"
+            >
+              {{ hiringShareButtonLabel(viewed.id) }}
+            </button>
+          </div>
+        </section>
+
+        <section class="wordSection detailsPage" *ngIf="isExtendedDetailsOpen">
+          <header class="detailsPageHead">
+            <h4>Detalhes completos da vaga</h4>
+            <button type="button" class="detailsBackBtn" (click)="closeExtendedDetails()">Voltar</button>
+          </header>
+
+          <div class="moreDetailsPanel moreDetailsPanel--page">
+            <div class="moreDetailsGrid">
+              <div><span>Empresa</span><b>{{ viewed.company }}</b></div>
+              <div><span>Código da vaga</span><b>{{ viewed.id }}</b></div>
+              <div><span>Modelo</span><b>{{ viewed.type }}</b></div>
+              <div><span>Localidade</span><b>{{ viewed.location }}</b></div>
+              <div><span>Departamento</span><b>{{ viewed.department }}</b></div>
+              <div><span>Status do processo</span><b>{{ workflowLabelForJob(viewed) }}</b></div>
+            </div>
+
+            <div class="longDescBlock longDescBlock--separated" *ngIf="getLongDescription(viewed) as details">
+              <h5>Sobre a vaga</h5>
+              <p>{{ details.about }}</p>
+
+              <h5 *ngIf="(details.daily?.length || 0) > 0">No seu dia a dia</h5>
+              <ul *ngIf="(details.daily?.length || 0) > 0">
+                <li *ngFor="let item of details.daily">{{ item }}</li>
+              </ul>
+
+              <h5 *ngIf="(details.expectations?.length || 0) > 0">Esperamos de você</h5>
+              <ul *ngIf="(details.expectations?.length || 0) > 0">
+                <li *ngFor="let item of details.expectations">{{ item }}</li>
+              </ul>
+
+              <h5 *ngIf="(details.benefits?.length || 0) > 0">Benefícios</h5>
+              <ul *ngIf="(details.benefits?.length || 0) > 0">
+                <li *ngFor="let item of details.benefits">{{ item }}</li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="box">
-        <b>Evidências</b>
-        <span>Projetos, badges e resultados.</span>
+      <footer class="jobSummaryFoot">
+        <button
+          type="button"
+          class="summaryChatBtn"
+          (click)="openChatFromSummary(viewed)"
+          [attr.aria-label]="'Falar com ' + displayRecruiterName(viewed.recruiterName)"
+          [attr.title]="'Falar com ' + displayRecruiterName(viewed.recruiterName)"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 16 14.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5Z"/>
+          </svg>
+          <span class="summaryChatLabel">Fale com {{ displayRecruiterName(viewed.recruiterName) }}</span>
+          <span class="summaryChatBadge" *ngIf="jobMessageCount(viewed.id) > 0">3</span>
+        </button>
+
+        <button
+          type="button"
+          class="btnPrimary summaryApplyBtn"
+          [ngClass]="viewed.status === 'aplicada' ? 'summaryApplyBtn--cancel' : 'summaryApplyBtn--apply'"
+          (click)="apply(viewed)"
+        >
+          {{ viewed.status === 'aplicada' ? 'Cancelar' : 'Candidatar-se' }}
+        </button>
+      </footer>
+    </aside>
+  </div>
+
+  <div class="candidateChatRoot" *ngIf="isChatOpen">
+    <button class="candidateChatOverlay" type="button" (click)="closeChat()" aria-label="Fechar chat"></button>
+
+    <aside class="candidateChatPanel" role="dialog" aria-modal="true" aria-label="Chat com recruiter">
+      <header class="candidateChatHead">
+        <div class="candidateChatHeadMeta">
+          <div class="candidateChatEyebrow">Conversa com recruiter</div>
+          <h3>{{ selectedChatJob?.title }}</h3>
+          <p>
+            {{ selectedChatJob?.id }} • {{ selectedChatJob?.company }} • {{ selectedChatJob?.location }} • {{ selectedChatJob?.type }}
+          </p>
+        </div>
+        <button type="button" class="chatIconBtn" (click)="closeChat()" aria-label="Fechar" title="Fechar">✕</button>
+      </header>
+
+      <div class="candidateChatBody">
+        <div class="candidateChatMessages" *ngIf="chatMessages.length > 0; else emptyChat">
+          <div class="candidateBubble" *ngFor="let msg of chatMessages; trackBy: trackChatMsg" [class.mine]="isMine(msg)">
+            <span
+              class="candidateBubbleAvatar"
+              [class.mine]="isMine(msg)"
+              [style.background-image]="
+                isMine(msg)
+                  ? 'url(' + candidateAvatarUrl + ')'
+                  : 'url(' + recruiterAvatarUrl + ')'
+              "
+              aria-hidden="true"
+            ></span>
+            <p>{{ msg.text }}</p>
+            <span class="candidateBubbleTime">{{ msg.time }}</span>
+          </div>
+        </div>
+
+        <ng-template #emptyChat>
+          <div class="candidateChatEmpty">
+            <b>{{ selectedChatJob?.recruiterName || 'Recruiter' }}</b>
+            <p>Inicie uma conversa sobre esta vaga.</p>
+          </div>
+        </ng-template>
       </div>
 
-      <div class="box">
-        <b>Radar</b>
-        <span>Aderência real a oportunidades.</span>
-      </div>
-    </div>
+      <footer class="candidateChatFoot">
+        <input
+          type="text"
+          [(ngModel)]="chatDraft"
+          placeholder="Escreva para o recruiter..."
+          (keydown.enter)="sendRecruiterMessage()"
+          aria-label="Mensagem para recruiter"
+        />
+        <button type="button" class="chatSendBtn" (click)="sendRecruiterMessage()">Enviar</button>
+      </footer>
+    </aside>
   </div>
 </section>

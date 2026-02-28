@@ -1,618 +1,106 @@
-/* ========================================
-   PAGE (RECRUITER)
-======================================== */
-
-.recruiter{
-  position: relative;
-  min-height: 100vh;
-  padding: 28px 0 60px;
-
-  background:
-    radial-gradient(900px 500px at 18% 18%, var(--recruiter-radial-1), transparent 55%),
-    radial-gradient(900px 500px at 78% 12%, var(--recruiter-radial-2), transparent 60%),
-    radial-gradient(1200px 700px at 50% 100%, var(--recruiter-vignette), transparent 65%),
-    var(--recruiter-bg-main);
-
-  color: var(--text);
-  overflow: hidden;
+.recruiterDashboard {
+  display: grid;
+  gap: 18px;
 }
 
-/* watermark */
-.recruiter::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: url('/assets/tail-hero3.png') center 58% / 900px no-repeat;
-
-  opacity: var(--recruiter-watermark-opacity);
-  filter: saturate(var(--recruiter-watermark-saturate))
-          brightness(var(--recruiter-watermark-brightness))
-          contrast(var(--recruiter-watermark-contrast));
-
-  mix-blend-mode: var(--recruiter-watermark-blend);
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* vinheta */
-.recruiter::after{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(900px 600px at 50% 40%, rgba(0,0,0,.04), rgba(0,0,0,.18) 78%),
-    linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.18));
-  opacity: .22;
-}
-
-.recruiterInner{
-  position: relative;
-  z-index: 2;
-}
-
-.recruiterContainer{
-  width: min(1120px, calc(100% - 40px));
-  margin: 0 auto;
-}
-
-/* ========================================
-   TOPBAR
-======================================== */
-
-.recruiterTopbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom: 20px;
-}
-
-.miniTitle{
-  font-size: 12px;
-  font-weight: 950;
-  letter-spacing: .6px;
-  text-transform: uppercase;
-}
-
-.topbarRight{
-  display:flex;
-  gap:12px;
-}
-
-.muted{ color: var(--muted); }
-
-/* ========================================
-   STATS
-======================================== */
-
-.statsCompact{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
-  gap:12px;
-  margin-bottom: 20px;
-}
-
-.statMini{
-  border: 1px solid var(--border);
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  border-radius: 14px;
-  padding: 12px 14px;
-  box-shadow: var(--shadow-1);
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.statMini b{
-  font-size:18px;
-  font-weight: 980;
-  color: var(--text);
-}
-
-.statMini span{
-  font-size:13px;
-  font-weight: 850;
-  color: var(--muted);
-}
-
-/* ========================================
-   STATUS FILTER (SIMPLE)
-======================================== */
-
-.statusSection{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  margin-bottom: 24px;
-}
-
-.statusSectionDesktop{
-  display:block;
-}
-
-.statusSectionMobile{
-  display:none;
-}
-
-.input{
-  height: 42px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  padding: 0 14px;
-  color: var(--text);
-  outline:none;
-}
-
-.input--select{
-  width: 160px;
-}
-
-.input:focus{
-  border-color: rgba(245,179,0,.35);
-  box-shadow: 0 0 0 4px var(--focus-ring);
-}
-
-/* ========================================
-   FILTER PILLS
-======================================== */
-
-.filters{
-  display:flex;
-  gap:8px;
-  overflow:auto;
-  scrollbar-width:none;
-}
-
-.filters::-webkit-scrollbar{ display:none; }
-
-.pill{
-  border:1px solid var(--border);
-  background: var(--bg-glass-2);
-  padding:8px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 950;
-  cursor:pointer;
-  white-space: nowrap;
-  color: var(--text);
-  transition:.15s ease;
-}
-
-.pill:hover{
-  transform: translateY(-1px);
-}
-
-.pill.active{
-  border-color: rgba(245,179,0,.38);
-  background: rgba(245,179,0,.16);
-}
-
-/* ========================================
-   JOB LIST
-======================================== */
-
-.jobsGrid{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-
-.jobRow{
-  position: relative;
-  display:grid;
-  grid-template-columns: minmax(0,1fr);
-  gap:12px;
-  border: 1px solid var(--border);
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  border-radius: 18px;
-  padding: 16px 18px;
-  box-shadow: var(--shadow-1);
-  cursor:pointer;
-  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
-}
-
-.jobRow:hover{
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--text), transparent 85%);
-  box-shadow: var(--shadow-2);
-  background: color-mix(in srgb, var(--bg-glass), var(--bg-glass-2) 32%);
-}
-
-.jobRow:focus-visible{
-  outline:none;
-  border-color: color-mix(in srgb, var(--text), transparent 80%);
-  box-shadow: var(--shadow-1), 0 0 0 4px var(--focus-ring);
-}
-
-/* barra lateral status */
-.jobRow::before{
-  content:"";
-  position:absolute;
-  left:10px;
-  top:14px;
-  bottom:14px;
-  width:4px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--muted), transparent 55%);
-}
-
-.accent-aberta::before{ background: rgba(0,180,100,.70); }
-.accent-pausada::before{ background: rgba(255,165,0,.75); }
-.accent-encerrada::before{ background: rgba(255,0,0,.70); }
-
-/* ========================================
-   JOB MAIN
-======================================== */
-
-.jobMain{
-  min-width:0;
-  padding-left:14px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.jobHeader{
-  min-width: 0;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-.jobTitleWrap{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  min-width:0;
-  flex-wrap: nowrap;
-}
-
-.jobTitle{
-  margin:0;
-  font-size:16px;
-  font-weight:980;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.jobMetaLine{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-}
-
-.jobId{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 0 1 auto;
-  max-width: 45%;
-}
-
-.metaSep{
-  color: var(--muted);
-  flex: 0 0 auto;
-}
-
-.dept{
-  font-size:13px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.jobSub{
-  min-width: 0;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.jobBadges{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.jobInlineTitle{
+.pageHeader h1 {
   margin: 0;
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 1.3;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1.45rem;
 }
 
-.jobDescription{
-  margin:0;
-  font-size:12px;
-  line-height:1.35;
-  display:-webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow:hidden;
-  text-overflow: ellipsis;
+.eyebrow {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  opacity: 0.7;
 }
 
-.chip{
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 20%);
-  padding:5px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:850;
-  color: var(--text);
-  line-height: 1.2;
-}
-
-/* ========================================
-   JOB TOOLS (RIGHT SIDE)
-======================================== */
-
-.jobTools{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  min-width: 0;
-  padding-left:14px;
-  border-top: 1px solid color-mix(in srgb, var(--border), transparent 35%);
-  padding-top: 12px;
-}
-
-.jobToolsLeft{
-  display:flex;
-  align-items:center;
-  min-width: 0;
-}
-
-.jobToolsRight{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:8px;
-  flex-wrap: nowrap;
-}
-
-.toolLocation{
-  font-size:12px;
-  font-weight:700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
-}
-
-/* STATUS */
-.status{
-  padding:6px 10px;
-  border-radius: 999px;
-  font-size:11px;
-  font-weight:950;
+.refreshBtn {
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 18%);
-  white-space: nowrap;
-  text-transform: capitalize;
-  letter-spacing: .2px;
-  flex: 0 0 auto;
-}
-
-.status.aberta{
-  border-color: rgba(0,180,100,.26);
-  background: rgba(0,180,100,.12);
-}
-
-.status.pausada{
-  border-color: rgba(255,165,0,.28);
-  background: rgba(255,165,0,.12);
-}
-
-.status.encerrada{
-  border-color: rgba(255,0,0,.22);
-  background: rgba(255,0,0,.10);
-}
-
-/* ICON BUTTONS */
-.iconBtn{
-  width:34px;
-  height:34px;
+  background: var(--bg-glass);
+  color: var(--text);
   border-radius: 10px;
-  border:1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 20%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  color: var(--text);
-  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease, background .15s ease;
+  padding: 8px 12px;
+  cursor: pointer;
 }
 
-.iconBtn:hover{
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--text), transparent 82%);
-  box-shadow: var(--shadow-1);
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
 }
 
-.iconBtn:focus-visible{
-  outline:none;
-  box-shadow: 0 0 0 4px var(--focus-ring);
-  border-color: color-mix(in srgb, var(--text), transparent 76%);
-}
-
-/* ========================================
-   AVATARS
-======================================== */
-
-.avatarsBtn{
-  border:0;
-  background: transparent;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  padding: 0;
-  border-radius: 12px;
-}
-
-.avatarsBtn:focus-visible{
-  outline:none;
-  box-shadow: 0 0 0 4px var(--focus-ring);
-}
-
-.avatars{
-  display:flex;
-  align-items:center;
-}
-
-.avatar{
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  flex: 0 0 40px;
-  box-sizing: border-box;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position: relative;
-  border-radius:999px;
-  margin-left:-5px;
-  border:1px solid var(--border);
-  background-color: var(--bg-glass);
-  background-size:cover;
-  background-position:center;
-  box-shadow: var(--shadow-1);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-
-.avatar:first-child{ margin-left:0; }
-
-.avatar:hover{
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: var(--shadow-2);
-}
-
-.avatar--more{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  font-weight:950;
-  background: color-mix(in srgb, var(--bg-glass-2), var(--bg-soft) 24%);
-  color: var(--text);
-}
-
-.avatarUnreadBadge{
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9999px;
+.metricCard {
   border: 1px solid var(--border);
-  background: #f59e0b;
-  color: #fff;
-  font-size: 9px;
-  font-weight: 900;
-  line-height: 16px;
-  text-align: center;
-  box-shadow: var(--shadow-1);
+  background: var(--bg-glass);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
 }
 
-.avatarUnreadBadge--dot{
-  width: 18px;
-  min-width: 18px;
-  padding: 0;
+.metricCard strong {
+  font-size: 1.4rem;
 }
 
-/* ========================================
-   EMPTY STATE
-======================================== */
-
-.emptyState{
-  text-align:center;
-  padding:40px;
-  border:1px dashed var(--border);
-  border-radius:18px;
+.metricCard small {
+  opacity: 0.72;
 }
 
-/* ========================================
-   RESPONSIVE
-======================================== */
-
-@media (max-width: 980px){
-  .jobTools{
-    width:100%;
-    justify-content:space-between;
-    flex-wrap: wrap;
-  }
-
-  .jobToolsRight{
-    width:100%;
-    justify-content:space-between;
-    flex-wrap: wrap;
-  }
-
-  .statusSection{
-    margin-bottom: 20px;
-  }
-
-  .statusSectionDesktop{
-    display:none;
-  }
-
-  .statusSectionMobile{
-    display:block;
-  }
-
-  .input--select{
-    width:100%;
-  }
-
-  .jobTitleWrap{
-    align-items:flex-start;
-    flex-wrap: wrap;
-  }
-
-  .jobTitle{
-    width: 100%;
-    flex-basis: 100%;
-  }
-
-  .jobMetaLine{
-    gap:6px;
-  }
-
-  .jobId{
-    max-width: 100%;
-  }
-
-  .toolLocation{
-    max-width: none;
-    order: -1;
-    width: 100%;
-  }
+.quickActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 640px){
-  .statsCompact{
-    margin-bottom: 12px;
-  }
-  .statusSection{
-    margin-bottom: 18px;
-  }
+.actionLink {
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: var(--text);
+}
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.panel h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.listItem {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+  display: grid;
+  gap: 3px;
+}
+
+.listItem span,
+.listItem small,
+.empty {
+  opacity: 0.8;
 }

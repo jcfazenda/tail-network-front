@@ -4,36 +4,58 @@
        HEADER
   ========================================================== -->
   <header class="top">
+    <div class="publicAvatarWrap" aria-label="Perfil">
+      <img src="assets/avatar-default.png" alt="Julio Fazenda" class="publicAvatar" />
+      <div class="publicAvatarMeta">
+        <strong>Julio Fazenda - Recruiter</strong>
+        <small>@julio@criatti.com</small>
+      </div>
+    </div>
+
     <div class="container topInner">
 
-      <!-- ---------- Brand / Logo ---------- -->
+      <div class="topCenter">
+        <!-- ---------- Navigation ---------- -->
+        <nav class="nav">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Home
+          </a>
 
+          <a href="#como">Como funciona</a>
+          <a href="#recursos">Recursos</a>
+          <a href="#faq">FAQ</a>
+        </nav>
 
-      <!-- ---------- Navigation ---------- -->
-      <nav class="nav">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          Home
-        </a>
+        <!-- ---------- Header Actions ---------- -->
+        <div class="actions">
+          <a class="btnGhost" routerLink="/login">Entrar</a>
 
-        <a href="#como">Como funciona</a>
-        <a href="#recursos">Recursos</a>
-        <a href="#faq">FAQ</a>
-      </nav>
+          <button class="btnPrimary" type="button" (click)="openRoleModal()">
+            Começar
+          </button>
 
-      <!-- ---------- Header Actions ---------- -->
-      <div class="actions">
-        <a class="btnGhost" routerLink="/login">Entrar</a>
+          <div class="themeMenuWrap">
+            <button type="button" class="btnTheme" (click)="toggleThemeMenu()"
+              aria-label="Abrir seletor de tema" title="Tema">
+              <span class="themeIcon">⚙</span>
+            </button>
 
-        <button class="btnPrimary" type="button" (click)="openRoleModal()">
-          Começar
-        </button>
-
-        <button type="button" class="btnTheme" (click)="toggleTheme()"
-          [attr.aria-label]="theme.isDark ? 'Ativar modo claro' : 'Ativar modo escuro'"
-          [title]="theme.isDark ? 'Modo claro' : 'Modo escuro'">
-          <span class="themeIcon">{{ theme.isDark ? '☀️' : '🌙' }}</span>
-        </button>
-
+            <div class="themeMenu" *ngIf="isThemeMenuOpen">
+              <button type="button" class="menuOptionBtn" [class.active]="isThemeOptionActive('light')" (click)="setThemeOption('light')">
+                <span class="swatch swatch-light"></span>
+                Light
+              </button>
+              <button type="button" class="menuOptionBtn" [class.active]="isThemeOptionActive('dark')" (click)="setThemeOption('dark')">
+                <span class="swatch swatch-dark"></span>
+                Dark
+              </button>
+              <button type="button" class="menuOptionBtn" [class.active]="isThemeOptionActive('graphite')" (click)="setThemeOption('graphite')">
+                <span class="swatch swatch-graphite"></span>
+                Grafitte
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -44,6 +66,13 @@
        MAIN (router views)
   ========================================================== -->
   <main class="main">
+    <button
+      *ngIf="isThemeMenuOpen"
+      class="themeMenuOverlay"
+      type="button"
+      (click)="closeThemeMenu()"
+      aria-label="Fechar seletor de tema"
+    ></button>
     <router-outlet />
   </main>
 

@@ -26,6 +26,16 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/app/recruiter/recruiter.page').then(m => m.RecruiterPage),
           },
+          {
+            path: 'vagas',
+            loadComponent: () =>
+              import('./features/app/recruiter/pages/recruiter-jobs/recruiter-jobs.page').then(m => m.RecruiterJobsPage),
+          },
+          {
+            path: 'talentos',
+            loadComponent: () =>
+              import('./features/app/recruiter/pages/recruiter-talents/recruiter-talents.page').then(m => m.RecruiterTalentsPage),
+          },
         ],
       },
       {

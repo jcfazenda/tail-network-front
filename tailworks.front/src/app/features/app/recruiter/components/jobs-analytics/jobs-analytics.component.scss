@@ -1,0 +1,441 @@
+.jobsAnalytics {
+  display: grid;
+  gap: 12px;
+  height: 100%;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.kpiCard {
+  border: 1px dashed color-mix(in srgb, var(--border), transparent 10%);
+  background: #fff;
+  color: #111827;
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+}
+
+.kpiCard p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.kpiMainTitle {
+  text-align: center;
+}
+
+.kpiCard strong {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.kpiCard small {
+  font-size: 0.7rem;
+  color: #16a34a;
+}
+
+.kpiCard small.down {
+  color: #dc2626;
+}
+
+.kpiMetaNote {
+  text-align: center;
+}
+
+.kpiPieBlock {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0;
+}
+
+.kpiPieBlock--adherence {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.kpiPieBlock--thermo {
+  grid-template-columns: minmax(0, 1fr) auto;
+  max-width: none;
+  gap: 12px;
+}
+
+.kpiPie {
+  --process-pct: 0;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #f5b300 0 calc((100 - var(--process-pct)) * 1%),
+    #1f1f1f calc((100 - var(--process-pct)) * 1%) 100%
+  );
+  position: relative;
+  flex: 0 0 auto;
+  margin-right: 14px;
+}
+
+.kpiPie::after {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.kpiPie--adherence {
+  background: conic-gradient(
+    #16a34a 0 calc((100 - var(--process-pct)) * 1%),
+    #e5e7eb calc((100 - var(--process-pct)) * 1%) 100%
+  );
+}
+
+.kpiPieLegend {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  justify-items: start;
+  text-align: left;
+  padding-left: 12px;
+}
+
+.kpiSideValue {
+  font-size: 1.02rem;
+  line-height: 1;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.kpiPieInnerValue {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.58rem !important;
+  font-weight: 700;
+  line-height: 1;
+  color: #111827;
+}
+
+.kpiPieLegend small {
+  color: #4b5563;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.kpiThermo {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  margin-right: 14px;
+}
+
+.kpiSpeedSvg {
+  width: 136px;
+  height: 78px;
+  overflow: visible;
+}
+
+.speedArc {
+  fill: none;
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+
+.speedArc--red {
+  stroke: #f87171;
+}
+
+.speedArc--yellow {
+  stroke: #facc15;
+}
+
+.speedArc--green {
+  stroke: #9ad165;
+}
+
+.speedNeedle {
+  stroke: #111827;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.speedPivot {
+  fill: #111827;
+}
+
+.kpiThermoPct {
+  color: #111827 !important;
+  font-size: 0.72rem !important;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot--candidates {
+  background: #f5b300;
+}
+
+.dot--process {
+  background: #1f1f1f;
+}
+
+.dot--approved {
+  background: #16a34a;
+}
+
+.dot--adherence {
+  background: #16a34a;
+}
+
+.dot--gap {
+  background: #9ca3af;
+}
+
+.mainBoard {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 10px;
+}
+
+.funnelOnly,
+.activityOnly {
+  display: block;
+}
+
+.activityPanel,
+.sidePanel {
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.activityPanel header,
+.sidePanel header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.activityPanel h3,
+.sidePanel h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.activityPanel small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.chartWrap {
+  width: 100%;
+  min-height: 246px;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.chartContent {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+}
+
+.chartCanvas {
+  display: grid;
+  grid-template-rows: 220px 26px;
+  position: relative;
+}
+
+.activitySvg {
+  width: 100%;
+  height: 220px;
+}
+
+.grid line {
+  stroke: color-mix(in srgb, var(--border), transparent 66%);
+  stroke-width: 1;
+}
+
+.line {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.95;
+}
+
+.lineHit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 14;
+  cursor: pointer;
+}
+
+.point {
+  r: 3.2;
+  stroke: #fff;
+  stroke-width: 1.2;
+}
+
+.point--interactive {
+  cursor: pointer;
+}
+
+.point--interactive:hover {
+  r: 4.6;
+  stroke-width: 1.6;
+}
+
+.chartTooltip {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  max-width: 220px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-elev), transparent 8%);
+  color: var(--text);
+  font-size: 0.66rem;
+  line-height: 1.2;
+  box-shadow: var(--shadow-1);
+}
+
+.xLabels {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding: 0 8px;
+}
+
+.seriesLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.68rem;
+  color: var(--muted);
+  padding: 0 8px 2px;
+}
+
+.seriesLegend--side {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 8px 0 0 8px;
+}
+
+.seriesLegend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.seriesLegend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.campaignList {
+  display: grid;
+  gap: 10px;
+}
+
+.campaignRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.campaignTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.campaignTop span {
+  font-size: 0.78rem;
+}
+
+.campaignTop b {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.barTrack {
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border), transparent 18%);
+  overflow: hidden;
+}
+
+.barTrack i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f5b300, #d98e00);
+}
+
+.campaignRow small {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.campaignRow small.risk {
+  color: #dc2626;
+}
+
+@media (max-width: 1200px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .mainBoard {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpiCard strong {
+    font-size: 1.15rem;
+  }
+}

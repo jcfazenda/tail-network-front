@@ -1,0 +1,541 @@
+<section class="jobsPage">
+  <header class="pageHeader">
+    <div>
+      <p class="eyebrow">Recruiter</p>
+    </div>
+    <button type="button" class="btn" (click)="openCreate()">+ Criar vaga</button>
+  </header>
+
+  <section class="kpiFunnelRow">
+    <div class="analyticsSlot analyticsSlot--funnel">
+      <recruiter-jobs-analytics
+        mode="activity"
+        [openJobs]="openJobsCount"
+        [totalCandidates]="totalCandidatesCount"
+        [inProcessCandidates]="hiringPipelineCount"
+        [hiredCount]="hiredCount"
+        [avgAdherenceActive]="avgAdherenceActivePercent"
+        [activeCandidates]="activeCandidatesCount"
+        [readyTalents]="readyTalentsCount"
+        [avgTriageHours]="avgTriageHours"
+        [riskCount]="riskCount"
+        [activityLabels]="activityLabels"
+        [activitySeries]="activitySeries"
+        [funnelStages]="funnelStages"
+      />
+    </div>
+
+    <div class="analyticsSlot analyticsSlot--kpi">
+      <recruiter-jobs-analytics
+        mode="kpi"
+        [openJobs]="openJobsCount"
+        [totalCandidates]="totalCandidatesCount"
+        [inProcessCandidates]="hiringPipelineCount"
+        [hiredCount]="hiredCount"
+        [avgAdherenceActive]="avgAdherenceActivePercent"
+        [activeCandidates]="activeCandidatesCount"
+        [readyTalents]="readyTalentsCount"
+        [avgTriageHours]="avgTriageHours"
+        [riskCount]="riskCount"
+        [activityLabels]="activityLabels"
+        [activitySeries]="activitySeries"
+        [funnelStages]="funnelStages"
+      />
+    </div>
+  </section>
+
+  <div class="statusFilterSpacer" aria-hidden="true"></div>
+
+  <section class="roleFilters">
+    <button type="button" class="roleChip" [class.active]="roleFilter === 'all'" (click)="setRoleFilter('all')">Todas</button>
+    <button type="button" class="roleChip" [class.active]="roleFilter === 'ux'" (click)="setRoleFilter('ux')">UX</button>
+    <button type="button" class="roleChip" [class.active]="roleFilter === 'backend'" (click)="setRoleFilter('backend')">Backend</button>
+    <button type="button" class="roleChip" [class.active]="roleFilter === 'frontend'" (click)="setRoleFilter('frontend')">Frontend</button>
+    <button type="button" class="roleChip" [class.active]="roleFilter === 'fullstack'" (click)="setRoleFilter('fullstack')">Full Stack</button>
+    <button type="button" class="roleChip" [class.active]="roleFilter === 'dados'" (click)="setRoleFilter('dados')">Dados</button>
+  </section>
+
+  <section class="datagridWrap">
+    <table class="jobsDatagrid">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Vaga</th>
+          <th>Tipo</th>
+          <th>Candidatos</th>
+          <th>Em Processo</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let job of filteredJobs; trackBy: trackByJobId">
+          <td>
+            <div class="clientCell">
+              <div class="clientQr">
+                <img class="clientQrImg" src="assets/qrcode-vaga-fake.svg" alt="QRCode da vaga" />
+                <small>{{ jobCode(job) }}</small>
+              </div>
+              <div class="clientInfo">
+                <div class="clientTopLine">
+                  <button
+                    type="button"
+                    class="clientStatusLink"
+                    (click)="openStatusModal(job)"
+                    [attr.aria-label]="'Alterar status da vaga ' + job.titulo"
+                    title="Alterar status"
+                  >
+                    {{ job.empresa }} -
+                    <span [class]="'statusText statusText--' + job.status">{{ statusLabel(job.status) }}</span>
+                  </button>
+                </div>
+                <small>{{ formatLocationBrazil(job.local) }}</small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="jobTitleCell">
+              <button type="button" class="rowLink" (click)="selectJob(job)">
+                {{ job.titulo }}
+              </button>
+              <small class="candidatesHint">{{ stackAdherenceLabel(job) }}</small>
+            </div>
+          </td>
+          <td>
+            <div class="typeCell">
+              <small>Modelo de Contratação : {{ job.modelo }}</small>
+              <small>Benefícios - {{ hiringBenefitsLabel(job) }}</small>
+            </div>
+          </td>
+          <td>
+            <button type="button" class="avatarGroupBtn" (click)="openCandidatesPanel(job)" aria-label="Abrir candidatos">
+              <div class="avatarGroup">
+                <span
+                  class="avatarDot"
+                  *ngFor="let candidate of topCandidates(job, 'all'); trackBy: trackByCandidateId"
+                  [title]="candidate.nome"
+                >
+                  <img src="assets/avatar-default.png" [alt]="candidate.nome" />
+                </span>
+                <span class="avatarDot avatarDot--more" *ngIf="extraCandidatesCount(job, 'all') > 0">
+                  +{{ extraCandidatesCount(job, 'all') }}
+                </span>
+              </div>
+            </button>
+          </td>
+          <td>
+            <ng-container *ngIf="approvedCandidate(job) as approved; else processAvatarGroup">
+              <button type="button" class="approvedCandidateBtn" (click)="openCandidatesPanel(job)" aria-label="Abrir candidato aprovado">
+                <span class="approvedAvatar">
+                  <img src="assets/avatar-default.png" [alt]="approved.nome" />
+                </span>
+                <span class="approvedInfo">
+                  <strong>{{ approved.nome }}</strong>
+                  <span class="approvedInfoRow">
+                    <small>{{ candidateEmail(approved.nome) }}</small>
+                    <span class="approvedSeal" aria-hidden="true">
+                      <span>APROVADO</span>
+                    </span>
+                  </span>
+                </span>
+              </button>
+            </ng-container>
+
+            <ng-template #processAvatarGroup>
+              <button type="button" class="avatarGroupBtn" (click)="openCandidatesPanel(job)" aria-label="Abrir candidatos em processo">
+                <div class="avatarGroup">
+                  <span
+                    class="avatarDot"
+                    *ngFor="let candidate of topCandidates(job, 'process'); trackBy: trackByCandidateId"
+                    [title]="candidate.nome"
+                  >
+                    <img src="assets/avatar-default.png" [alt]="candidate.nome" />
+                  </span>
+                  <span class="avatarDot avatarDot--more" *ngIf="extraCandidatesCount(job, 'process') > 0">
+                    +{{ extraCandidatesCount(job, 'process') }}
+                  </span>
+                </div>
+              </button>
+            </ng-template>
+          </td>
+          <td>
+            <div class="gridActions jobActionMenu">
+              <button type="button" class="iconAction" (click)="toggleJobMenu(job.id)" aria-label="Ações da vaga" title="Ações">
+                ⚙
+              </button>
+
+              <div class="actionMenu" *ngIf="actionMenuJobId === job.id">
+                <button type="button" class="actionMenuItem" (click)="openPrimaryAction(job)">
+                  <span class="material-symbols-rounded actionMenuIcon" aria-hidden="true">
+                    {{ canEditJob(job) ? 'edit' : 'visibility' }}
+                  </span>
+                  {{ actionPrimaryLabel(job) }}
+                </button>
+
+                <button
+                  *ngIf="canPauseJob(job)"
+                  type="button"
+                  class="actionMenuItem"
+                  (click)="setJobStatusFromMenu(job, 'pausada')"
+                >
+                  <span class="material-symbols-rounded actionMenuIcon" aria-hidden="true">pause_circle</span>
+                  Pausar vaga
+                </button>
+
+                <button
+                  *ngIf="canCloseJob(job)"
+                  type="button"
+                  class="actionMenuItem"
+                  (click)="setJobStatusFromMenu(job, 'fechada')"
+                >
+                  <span class="material-symbols-rounded actionMenuIcon" aria-hidden="true">lock</span>
+                  Fechar vaga
+                </button>
+
+                <button
+                  *ngIf="canOpenJob(job)"
+                  type="button"
+                  class="actionMenuItem"
+                  (click)="setJobStatusFromMenu(job, 'aberta')"
+                >
+                  <span class="material-symbols-rounded actionMenuIcon" aria-hidden="true">lock_open</span>
+                  Abrir vaga
+                </button>
+              </div>
+              <button
+                *ngIf="actionMenuJobId === job.id"
+                type="button"
+                class="actionMenuBackdrop"
+                (click)="closeJobMenu()"
+                aria-label="Fechar menu de ações"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="editorModalRoot" *ngIf="editorOpen">
+    <button type="button" class="editorModalOverlay" (click)="closeEditor()" aria-label="Fechar popup"></button>
+    <section class="editorModal" role="dialog" aria-modal="true">
+      <header>
+        <h2>{{ editorMode === 'create' ? 'Criar vaga' : (editorMode === 'view' ? 'Visualizar vaga' : 'Editar vaga') }}</h2>
+        <button type="button" (click)="closeEditor()">Fechar</button>
+      </header>
+
+      <div class="editorBody">
+        <section class="editorTabsBlock">
+          <div class="editorTabs">
+            <button
+              type="button"
+              class="editorTabBtn"
+              [class.editorTabBtn--active]="editorTab === 'dados'"
+              (click)="setEditorTab('dados')"
+            >
+              Dados da vaga
+            </button>
+            <button
+              type="button"
+              class="editorTabBtn"
+              [class.editorTabBtn--active]="editorTab === 'contratacao'"
+              (click)="setEditorTab('contratacao')"
+            >
+              Contratação
+            </button>
+            <button
+              type="button"
+              class="editorTabBtn"
+              [class.editorTabBtn--active]="editorTab === 'sobre'"
+              (click)="setEditorTab('sobre')"
+            >
+              Sobre a vaga
+            </button>
+          </div>
+
+          <div class="editorTabPanel" *ngIf="editorTab === 'dados'">
+            <div class="grid editorGrid">
+              <label class="full">Cliente
+                <select [(ngModel)]="form.empresa" [disabled]="isViewMode">
+                  <option value="" disabled>Selecione o cliente</option>
+                  <option *ngFor="let client of clientOptions" [value]="client">{{ client }}</option>
+                </select>
+              </label>
+              <label>Título <input [(ngModel)]="form.titulo" [disabled]="isViewMode" /></label>
+              <label>Tipo
+                <select [(ngModel)]="form.tipo" [disabled]="isViewMode">
+                  <option *ngFor="let tipo of tipoOptions" [value]="tipo">{{ tipo }}</option>
+                </select>
+              </label>
+              <label class="full">Departamento <input [(ngModel)]="form.departamento" [disabled]="isViewMode" /></label>
+            </div>
+
+            <div class="skillsEditor">
+              <h3>Adicionar stacks</h3>
+              <div class="skillDraft">
+                <select [(ngModel)]="stackSearch" [disabled]="isViewMode">
+                  <option value="">Selecione uma stack</option>
+                  <option *ngFor="let option of filteredStackOptions" [value]="option">{{ option }}</option>
+                </select>
+                <button type="button" (click)="addStackFromSearch()" [disabled]="isViewMode || !stackSearch">
+                  Adicionar
+                </button>
+              </div>
+
+              <div class="editorSkillList">
+                <div class="editorSkillRow" *ngFor="let skill of form.skills; let i = index">
+                  <div class="editorSkillTop">
+                    <span>{{ skill.nome }}</span>
+                    <span class="editorSkillTopRight">
+                      <b>{{ skill.minimoPercentual }}%</b>
+                      <button
+                        type="button"
+                        class="skillDeleteBtn"
+                        (click)="removeSkill(i)"
+                        *ngIf="!isViewMode"
+                        aria-label="Remover stack"
+                        title="Remover stack"
+                      >
+                        <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="editorSkillBar">
+                    <span [style.width.%]="skill.minimoPercentual"></span>
+                    <input
+                      type="range"
+                      class="editorSkillRange"
+                      min="0"
+                      max="100"
+                      [(ngModel)]="skill.minimoPercentual"
+                      [ngModelOptions]="{ standalone: true }"
+                      [disabled]="isViewMode"
+                      aria-label="Ajustar percentual da stack"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="editorSkillHintRow">
+                <p class="editorSkillHint">Use o mouse para mudar o percentual de cada stack.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="editorTabPanel" *ngIf="editorTab === 'contratacao'">
+            <div class="grid editorGrid">
+              <label>Valor salário <input [(ngModel)]="form.valorSalario" [disabled]="isViewMode" placeholder="Ex: R$ 12.500,00 CLT" /></label>
+              <label>Dias de depósito <input [(ngModel)]="form.diasDeposito" [disabled]="isViewMode" placeholder="Ex: 5º dia útil / 15 e 30" /></label>
+              <label>Plano de saúde
+                <select [(ngModel)]="form.planoSaude" [disabled]="isViewMode">
+                  <option *ngFor="let option of healthPlanOptions" [value]="option">{{ option }}</option>
+                </select>
+              </label>
+              <label>Plano odontológico
+                <select [(ngModel)]="selectedDentalPlan" [disabled]="isViewMode">
+                  <option *ngFor="let option of dentalPlanOptions" [value]="option">{{ option }}</option>
+                </select>
+              </label>
+              <label>Ticket refeição
+                <select [(ngModel)]="form.ticketRefeicao" [disabled]="isViewMode">
+                  <option *ngFor="let option of mealTicketOptions" [value]="option">{{ option }}</option>
+                </select>
+              </label>
+            </div>
+            <div class="contractBenefitsBlock">
+              <span class="contractBenefitsTitle">Outros benefícios disponíveis:</span>
+              <div class="benefitsList">
+                <label class="benefitItem" *ngFor="let item of benefitsCatalog">
+                  <input
+                    type="checkbox"
+                    [checked]="hasBenefit(item)"
+                    [disabled]="isViewMode"
+                    (change)="toggleBenefit(item, $any($event.target).checked)"
+                  />
+                  <span>{{ item }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="editorTabPanel" *ngIf="editorTab === 'sobre'">
+            <div class="aboutJobEditor">
+              <p class="aboutJobHint">Organize aqui o conteúdo do “Ver mais” do Talent.</p>
+
+              <section class="aboutSectionList">
+                <h4>Sobre a vaga</h4>
+                <textarea
+                  rows="5"
+                  [(ngModel)]="form.sobreVaga"
+                  [disabled]="isViewMode"
+                  placeholder="Você vai ter proximidade com o negócio e abertura para trazer novas ideias e soluções..."
+                ></textarea>
+              </section>
+
+              <section class="aboutSectionList">
+                <h4>No seu dia a dia</h4>
+                <div class="aboutAddRow">
+                  <input
+                    [(ngModel)]="aboutDrafts.dia"
+                    [disabled]="isViewMode"
+                    placeholder="Digite e adicione um item"
+                  />
+                  <button type="button" (click)="addAboutItem('dia')" [disabled]="isViewMode || !aboutDrafts.dia.trim()">
+                    Adicionar
+                  </button>
+                </div>
+                <ul class="aboutItemsList">
+                  <li *ngFor="let item of aboutItems('dia'); let i = index">
+                    <span class="aboutItemIcon" aria-hidden="true">●</span>
+                    <span>{{ item }}</span>
+                    <button
+                      *ngIf="!isViewMode"
+                      type="button"
+                      class="aboutRemoveBtn"
+                      (click)="removeAboutItem('dia', i)"
+                      aria-label="Remover item"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+                    </button>
+                  </li>
+                </ul>
+              </section>
+
+              <section class="aboutSectionList">
+                <h4>Esperamos de você</h4>
+                <div class="aboutAddRow">
+                  <input
+                    [(ngModel)]="aboutDrafts.esperamos"
+                    [disabled]="isViewMode"
+                    placeholder="Digite e adicione um item"
+                  />
+                  <button
+                    type="button"
+                    (click)="addAboutItem('esperamos')"
+                    [disabled]="isViewMode || !aboutDrafts.esperamos.trim()"
+                  >
+                    Adicionar
+                  </button>
+                </div>
+                <ul class="aboutItemsList">
+                  <li *ngFor="let item of aboutItems('esperamos'); let i = index">
+                    <span class="aboutItemIcon" aria-hidden="true">●</span>
+                    <span>{{ item }}</span>
+                    <button
+                      *ngIf="!isViewMode"
+                      type="button"
+                      class="aboutRemoveBtn"
+                      (click)="removeAboutItem('esperamos', i)"
+                      aria-label="Remover item"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+                    </button>
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <footer *ngIf="!isViewMode">
+        <span class="editorFooterMatch">Esta vaga ira chamar atenção de 23 talentos.</span>
+        <button type="button" class="btn" (click)="save()">SALVAR</button>
+      </footer>
+    </section>
+  </section>
+
+  <section class="editorModalRoot" *ngIf="statusModalOpen && statusTargetJob as statusJob">
+    <button type="button" class="editorModalOverlay" (click)="closeStatusModal()" aria-label="Fechar popup de status"></button>
+    <section class="editorModal statusModal" role="dialog" aria-modal="true">
+      <header>
+        <h2>Alterar status</h2>
+        <button type="button" (click)="closeStatusModal()">Fechar</button>
+      </header>
+
+      <p class="statusModalDesc">{{ statusJob.titulo }}</p>
+
+      <label>Status
+        <select [(ngModel)]="statusDraft">
+          <option value="aberta" [disabled]="statusJob.status === 'fechada' && hasApprovedCandidate(statusJob)">Aberta</option>
+          <option value="pausada">Pausada</option>
+          <option value="fechada">Fechada</option>
+        </select>
+      </label>
+
+      <footer class="statusModalActions">
+        <button type="button" (click)="closeStatusModal()">Cancelar</button>
+        <button type="button" class="btn" (click)="confirmStatusChange()">OK</button>
+      </footer>
+    </section>
+  </section>
+
+  <section class="jobDetail" *ngIf="selectedJob as job">
+    <header>
+      <h2>{{ job.titulo }}</h2>
+      <small>{{ job.empresa }} • {{ job.departamento }}</small>
+    </header>
+
+    <p>{{ job.descricao }}</p>
+
+    <h3>Pipeline Kanban</h3>
+    <div class="kanban">
+      <article class="kanbanCol" *ngFor="let stage of pipelineStages">
+        <header>
+          <strong>{{ stage.label }}</strong>
+          <span>{{ candidatesByStage(job, stage.value).length }}</span>
+        </header>
+
+        <div class="candidateCard" *ngFor="let c of candidatesByStage(job, stage.value); trackBy: trackByCandidateId">
+          <b>{{ c.nome }}</b>
+          <small>{{ c.aderenciaPercentual }}% • {{ trendLabel(c.tendencia) }}</small>
+          <small>{{ c.ultimaAtualizacao | date:'dd/MM/yyyy HH:mm' }}</small>
+          <select [ngModel]="c.statusPipeline" (ngModelChange)="moveCandidate(job, c.id, $event)">
+            <option *ngFor="let option of pipelineStages" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="candidatesPanelRoot" *ngIf="isCandidatesPanelOpen && candidatesPanelJob as panelJob">
+    <button
+      type="button"
+      class="candidatesPanelOverlay"
+      (click)="closeCandidatesPanel()"
+      aria-label="Fechar painel de candidatos"
+    ></button>
+
+    <aside class="candidatesPanel" role="dialog" aria-modal="true" [attr.aria-label]="'Candidatos da vaga ' + panelJob.titulo">
+      <header class="candidatesPanelHead">
+        <div>
+          <p class="eyebrow">Candidatos</p>
+          <h3>{{ panelJob.titulo }}</h3>
+          <small>{{ panelJob.empresa }} • {{ panelJob.local }}</small>
+        </div>
+        <button type="button" class="iconAction" (click)="closeCandidatesPanel()" aria-label="Fechar">✕</button>
+      </header>
+
+      <div class="candidatesPanelBody">
+        <section class="candidateGroup">
+          <h4>Candidatos ({{ panelJob.candidatos.length }})</h4>
+          <article class="candidateLine" *ngFor="let candidate of panelJob.candidatos; trackBy: trackByCandidateId">
+            <strong>{{ candidate.nome }}</strong>
+            <small>{{ candidate.aderenciaPercentual }}% • {{ trendLabel(candidate.tendencia) }}</small>
+            <small>{{ stageLabel(candidate.statusPipeline) }}</small>
+          </article>
+        </section>
+
+        <section class="candidateGroup">
+          <h4>Em Processo ({{ processCandidates(panelJob).length }})</h4>
+          <article class="candidateLine" *ngFor="let candidate of processCandidates(panelJob); trackBy: trackByCandidateId">
+            <strong>{{ candidate.nome }}</strong>
+            <small>{{ candidate.aderenciaPercentual }}% • {{ trendLabel(candidate.tendencia) }}</small>
+            <small>{{ stageLabel(candidate.statusPipeline) }}</small>
+          </article>
+        </section>
+      </div>
+    </aside>
+  </section>
+
+</section>

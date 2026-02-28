@@ -1,150 +1,76 @@
-<section class="recruiter">
-  <div class="recruiterInner recruiterContainer">
-
-    <!-- TOPBAR -->
-    <div class="recruiterTopbar">
-      <div class="topbarLeft">
-        <div class="miniTitle muted">Recruiter</div>
-      </div>
-
-      <div class="topbarRight">
-        <button class="btn btn-primary" (click)="openCreateModal()">+ Criar Vaga</button>
-      </div>
+<section class="recruiterDashboard" *ngIf="dashboard as data">
+  <header class="pageHeader">
+    <div>
+      <p class="eyebrow">Recruiter</p>
     </div>
+    <button type="button" class="refreshBtn" (click)="reload()">Atualizar</button>
+  </header>
 
-    <!-- STATS -->
-    <div class="statsCompact">
-      <div class="statMini">
-        <span class="muted">Ativas</span>
-        <b>{{ activeJobs }}</b>
-      </div>
+  <section class="metricsGrid">
+    <article class="metricCard">
+      <span>Talentos prontos</span>
+      <strong>{{ data.metrics.talentosProntos }}</strong>
+      <small>>= meta mínima</small>
+    </article>
 
-      <div class="statMini">
-        <span class="muted">Candidatos</span>
-        <b>{{ totalApplicants }}</b>
-      </div>
+    <article class="metricCard">
+      <span>Talentos em ascensão</span>
+      <strong>{{ data.metrics.talentosAscensao }}</strong>
+      <small>crescimento 30/60 dias</small>
+    </article>
 
-      <div class="statMini">
-        <span class="muted">Encerradas</span>
-        <b>{{ closedJobs }}</b>
-      </div>
-    </div>
+    <article class="metricCard">
+      <span>Vagas críticas</span>
+      <strong>{{ data.metrics.vagasCriticas }}</strong>
+      <small>poucos candidatos acima da meta</small>
+    </article>
 
-    <!-- STATUS FILTER (único filtro visível da página) -->
-    <div class="statusSection">
-      <div class="statusSectionDesktop">
-        <div class="filters">
-          <button class="pill" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todas</button>
-          <button class="pill" [class.active]="statusFilter === 'aberta'" (click)="setStatusFilter('aberta')">Abertas</button>
-          <button class="pill" [class.active]="statusFilter === 'pausada'" (click)="setStatusFilter('pausada')">Pausadas</button>
-          <button class="pill" [class.active]="statusFilter === 'encerrada'" (click)="setStatusFilter('encerrada')">Encerradas</button>
+    <article class="metricCard">
+      <span>Alertas</span>
+      <strong>{{ data.metrics.alertas }}</strong>
+      <small>monitoramento ativo</small>
+    </article>
+  </section>
+
+  <section class="quickActions">
+    <a routerLink="/recruiter/vagas" class="actionLink">Ir para Vagas (ATS)</a>
+    <a routerLink="/recruiter/talentos" class="actionLink">Ir para Talentos (Radar)</a>
+  </section>
+
+  <section class="panelGrid">
+    <article class="panel">
+      <header>
+        <h2>Vagas críticas</h2>
+      </header>
+
+      <div class="list" *ngIf="data.vagasCriticas.length; else emptyCritical">
+        <div class="listItem" *ngFor="let vaga of data.vagasCriticas; trackBy: trackByJobId">
+          <strong>{{ vaga.titulo }}</strong>
+          <span>{{ vaga.empresa }} • {{ vaga.local }}</span>
+          <small>Meta {{ vaga.metaMinimaPercentual }}% • {{ vaga.candidatos.length }} candidatos</small>
         </div>
       </div>
 
-      <div class="statusSectionMobile">
-        <select class="input input--select" [(ngModel)]="statusFilter" aria-label="Status">
-          <option value="all">Status: Todas</option>
-          <option value="aberta">Status: Abertas</option>
-          <option value="pausada">Status: Pausadas</option>
-          <option value="encerrada">Status: Encerradas</option>
-        </select>
-      </div>
-    </div>
+      <ng-template #emptyCritical>
+        <p class="empty">Nenhuma vaga crítica no momento.</p>
+      </ng-template>
+    </article>
 
-    <!-- LIST -->
-    <div class="jobsGrid">
+    <article class="panel">
+      <header>
+        <h2>Alertas</h2>
+      </header>
 
-      <div class="jobRow"
-           *ngFor="let job of filteredJobs; trackBy: trackByJobId"
-           [ngClass]="'accent-' + job.status"
-           tabindex="0"
-           role="button"
-           (click)="openEditModal(job)"
-           (keydown.enter)="openEditModal(job)"
-           (keydown.space)="$event.preventDefault(); openEditModal(job)">
-
-        <div class="jobMain">
-          <div class="jobHeader">
-            <div class="jobMetaLine">
-              <span class="jobId muted">{{ formatJobDisplayId(job.id) }}</span>
-              <span class="metaSep" aria-hidden="true">-</span>
-              <span class="muted">{{ job.location }}</span>
-              <span class="muted">({{ job.department }})</span>
-            </div>
-
-            <div class="jobTitleWrap">
-              <h3 class="jobTitle">{{ job.title }}</h3>
-              <span class="status" [ngClass]="job.status">{{ job.status }}</span>
-            </div>
-          </div>
-
-          <div class="jobSub"> 
-            <p class="jobDescription muted" *ngIf="job.description">{{ job.description }}</p>
-          </div>
+      <div class="list" *ngIf="data.alertas.length; else emptyAlerts">
+        <div class="listItem" *ngFor="let alert of data.alertas">
+          <strong>{{ alert.tipo }}</strong>
+          <span>{{ alert.mensagem }}</span>
         </div>
-
-        <!-- FOOTER -->
-        <div class="jobTools" (click)="$event.stopPropagation()">
-          <div class="jobToolsLeft">
-            <button class="avatarsBtn"
-                    (click)="viewApplicants(job)"
-                    aria-label="Ver candidatos"
-                    title="Ver candidatos">
-              <div class="avatars">
-                <ng-container *ngFor="let t of getOrderedTalents(job) | slice:0:4; trackBy: trackByTalentId">
-                  <span
-                    class="avatar"
-                    [title]="t.name"
-                    [style.background-image]="'url(' + (t.avatarUrl || avatarFallbackUrl) + ')'"
-                  >
-                    <span
-                      class="avatarUnreadBadge"
-                      [class.avatarUnreadBadge--dot]="t.unreadCount < 10"
-                      *ngIf="(t.unreadCount || 0) > 0"
-                      aria-hidden="true"
-                    >
-                      {{ t.unreadCount > 9 ? '9+' : t.unreadCount }}
-                    </span>
-                  </span>
-                </ng-container>
-
-                <span class="avatar avatar--more"
-                      *ngIf="(job.talents?.length || 0) > 4">
-                  +{{ (job.talents?.length || 0) - 4 }}
-                </span>
-              </div>
-            </button>
-          </div>
-
-          <div class="jobToolsRight">
-            <button class="iconBtn iconBtn--edit"
-                    (click)="openEditModal(job)"
-                    aria-label="Editar"
-                    title="Editar">✎</button>
-
-            <button class="iconBtn iconBtn--chat"
-                    (click)="toggleChat(job); $event.stopPropagation()"
-                    aria-label="Chat"
-                    title="Chat">💬</button>
-          </div>
-        </div>
-
       </div>
 
-      <div class="emptyState card" *ngIf="filteredJobs.length === 0">
-        <b>Nenhuma vaga encontrada</b>
-        <p class="muted">Ajuste filtros ou crie uma nova vaga.</p>
-        <button class="btn btn-primary" (click)="openCreateModal()">+ Criar Vaga</button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- CHAT DRAWER -->
-  <recruiter-chat-drawer
-    [isOpen]="isChatOpen"
-    [job]="chatJob"
-    [talents]="chatTalents"
-    (close)="closeChat()">
-  </recruiter-chat-drawer>
+      <ng-template #emptyAlerts>
+        <p class="empty">Sem alertas.</p>
+      </ng-template>
+    </article>
+  </section>
 </section>

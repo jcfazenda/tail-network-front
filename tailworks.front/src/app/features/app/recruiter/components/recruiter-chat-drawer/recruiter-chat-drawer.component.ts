@@ -34,13 +34,20 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
   @ViewChild('talentRailScroller') talentRailScroller?: ElementRef<HTMLDivElement>;
 
   draft = '';
+  profileTab: 'dados' | 'stacks' = 'dados';
   private localMessagesByTalent: Record<string, ChatMsg[]> = {};
+  private adherentStacksByTalent: Record<string, Set<string>> = {};
   selectedTalentId: string | null = null;
+  profileTalentId: string | null = null;
   private seenTalentIds = new Set<string>();
   private bodyOverflowBeforeOpen = '';
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.isTalentProfileOpen) {
+      this.closeTalentProfile();
+      return;
+    }
     if (this.isOpen) this.handleClose();
   }
 
@@ -72,6 +79,15 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     return this.talents.find(t => t.id === this.selectedTalentId) ?? this.talents[0];
   }
 
+  get profileTalent(): RecruiterTalent | null {
+    if (!this.profileTalentId) return null;
+    return this.talents.find(t => t.id === this.profileTalentId) ?? null;
+  }
+
+  get isTalentProfileOpen(): boolean {
+    return !!this.profileTalent;
+  }
+
   get applicantsCount(): number {
     return this.job?.talents?.length ?? 0;
   }
@@ -93,7 +109,10 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     if (changes['job'] || changes['talents']) {
       this.selectedTalentId = this.talents[0]?.id ?? null;
       this.localMessagesByTalent = {};
+      this.adherentStacksByTalent = {};
       this.seenTalentIds = new Set();
+      this.profileTalentId = null;
+      this.profileTab = 'dados';
       this.draft = '';
       if (this.selectedTalentId) {
         this.seenTalentIds.add(this.selectedTalentId);
@@ -117,25 +136,39 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const talentId = this.selectedTalent.id;
+    const talentName = this.selectedTalent.name;
     const prev = this.localMessagesByTalent[talentId] ?? [];
+    const nextMessages: ChatMsg[] = [
+      ...prev,
+      {
+        id: `local-${talentId}-${Date.now()}`,
+        from: 'me',
+        text,
+        time,
+        createdAt: now.toISOString(),
+      },
+    ];
+
+    const replyNow = new Date();
+    const replyTime = replyNow.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    nextMessages.push({
+      id: `auto-${talentId}-${Date.now()}-reply`,
+      from: 'candidate',
+      text: this.buildMockTalentReply(talentName, text),
+      time: replyTime,
+      createdAt: replyNow.toISOString(),
+    });
+
     this.localMessagesByTalent = {
       ...this.localMessagesByTalent,
-      [talentId]: [
-        ...prev,
-        {
-          id: `local-${talentId}-${Date.now()}`,
-          from: 'me',
-          text,
-          time,
-          createdAt: now.toISOString(),
-        },
-      ],
+      [talentId]: nextMessages,
     };
 
     this.draft = '';
   }
 
   handleClose(): void {
+    this.closeTalentProfile();
     this.close.emit();
   }
 
@@ -144,6 +177,39 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     this.selectedTalentId = talent.id;
     this.seenTalentIds.add(talent.id);
     this.draft = '';
+  }
+
+  openTalentProfile(talent: RecruiterTalent): void {
+    this.selectTalent(talent);
+    this.profileTalentId = talent.id;
+    this.profileTab = 'dados';
+  }
+
+  closeTalentProfile(): void {
+    this.profileTalentId = null;
+    this.profileTab = 'dados';
+  }
+
+  setProfileTab(tab: 'dados' | 'stacks'): void {
+    this.profileTab = tab;
+  }
+
+  isStackAdherent(talent: RecruiterTalent, stackName: string): boolean {
+    return this.adherentStacksByTalent[talent.id]?.has(stackName) ?? false;
+  }
+
+  toggleStackAdherent(talent: RecruiterTalent, stackName: string): void {
+    const current = this.adherentStacksByTalent[talent.id] ?? new Set<string>();
+    const next = new Set(current);
+    if (next.has(stackName)) {
+      next.delete(stackName);
+    } else {
+      next.add(stackName);
+    }
+    this.adherentStacksByTalent = {
+      ...this.adherentStacksByTalent,
+      [talent.id]: next,
+    };
   }
 
   isUnreadVisible(talent: RecruiterTalent): boolean {
@@ -190,6 +256,38 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     // Intentionally empty: keeps Angular change detection in sync for nav disabled states.
   }
 
+  downloadTalentProfilePdf(talent: RecruiterTalent): void {
+    if (typeof document === 'undefined' || typeof URL === 'undefined') return;
+
+    const lines = [
+      'TAILWORKS - PERFIL DE CANDIDATO (FICTICIO)',
+      '',
+      `Nome: ${talent.name}`,
+      `ID: ${talent.id}`,
+      `Vaga: ${this.job?.title ?? '-'}`,
+      `Local: ${this.job?.location ?? '-'}`,
+      `Tipo: ${this.job?.type ?? '-'}`,
+      `Nivel: ${this.talentRoleLabel}`,
+      `Ultimo acesso: ${talent.lastSeen}`,
+      `Mensagens nao lidas: ${talent.unreadCount ?? 0}`,
+      `Aplicado em: ${talent.appliedAt ?? '-'}`,
+      '',
+      'Observacao: PDF ficticio para demonstracao do fluxo.',
+      'No futuro, o curriculo sera gerado automaticamente pelo sistema.',
+    ].join('\n');
+
+    const blob = new Blob([lines], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const safeName = talent.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    a.href = url;
+    a.download = `${safeName || 'candidato'}-perfil.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
   trackByTalentId(_: number, talent: RecruiterTalent): string {
     return talent.id;
   }
@@ -224,4 +322,14 @@ export class RecruiterChatDrawerComponent implements OnChanges, OnDestroy {
     if (typeof document === 'undefined') return;
     document.body.style.overflow = this.bodyOverflowBeforeOpen;
   }
+
+  private buildMockTalentReply(talentName: string, recruiterText: string): string {
+    const txt = recruiterText.toLowerCase();
+    if (txt.includes('entrevista')) return 'Perfeito, consigo sim. Pode me enviar um horário?';
+    if (txt.includes('curr') || txt.includes('cv')) return 'Ótimo. Fico no aguardo do material gerado pelo sistema.';
+    if (txt.includes('remoto')) return 'Tenho disponibilidade para remoto/híbrido, sem problemas.';
+    if (txt.includes('sal') || txt.includes('pretensão')) return 'Podemos alinhar a pretensão conforme escopo e benefícios.';
+    return `Obrigado pelo retorno! (${talentName.split(' ')[0]})`;
+  }
+
 }

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Contratado">
+  <defs>
+    <linearGradient id="emeraldBand" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#39b86e"/>
+      <stop offset="55%" stop-color="#279a57"/>
+      <stop offset="100%" stop-color="#1d7b46"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="58" y="42" width="1084" height="236" rx="118" fill="#0f2417" stroke="#62d48f" stroke-width="10"/>
+  <rect x="78" y="62" width="1044" height="196" rx="98" fill="url(#emeraldBand)"/>
+  <rect x="92" y="76" width="1016" height="168" rx="84" fill="none" stroke="#b9f0cd" stroke-width="3" opacity=".65"/>
+
+  <circle cx="214" cy="160" r="72" fill="#12301f" stroke="#79dfa3" stroke-width="8"/>
+  <path d="M168 163 C182 146 198 146 212 162 L192 192 C177 186 171 177 168 163 Z" fill="#f6b62a"/>
+  <path d="M260 163 C246 146 230 146 216 162 L236 192 C251 186 257 177 260 163 Z" fill="#f6b62a"/>
+  <path d="M184 185 C196 171 214 170 224 183 C235 170 253 171 264 185 C262 202 240 218 224 223 C208 218 186 202 184 185 Z" fill="#f7d8a1" stroke="#c98e3c" stroke-width="3"/>
+
+  <text x="328" y="186" font-family="Segoe UI, Arial, sans-serif" font-size="86" font-weight="900" fill="#f6f8f3">Contratado</text>
+</svg>

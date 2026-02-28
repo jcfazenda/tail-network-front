@@ -118,6 +118,18 @@ body.theme-dark{
   --recruiter-watermark-blend: var(--wm-blend);
 }
 
+body.theme-dark.theme-graphite{
+  --bg-page: #2f3743;
+  --bg-elev: rgba(255,255,255,.10);
+  --bg-glass: rgba(255,255,255,.07);
+  --bg-glass-2: rgba(255,255,255,.05);
+  --bg-soft: rgba(0,0,0,.18);
+  --text: rgba(247,249,252,.93);
+  --muted: rgba(234,239,247,.70);
+  --border: rgba(255,255,255,.14);
+  --border-soft: rgba(255,255,255,.11);
+}
+
 /* -----------------------------------------
    Helpers globais (opcional)
 ------------------------------------------ */

@@ -30,7 +30,7 @@
               *ngFor="let talent of talents; trackBy: trackByTalentId"
               [class.active]="selectedTalent?.id === talent.id"
               [class.online]="isTalentOnline(talent)"
-              (click)="selectTalent(talent)"
+              (click)="openTalentProfile(talent)"
               [attr.aria-label]="'Selecionar ' + talent.name + ' (' + talentRoleLabel + ')'"
               [title]="talent.name + ' • ' + talentRoleLabel"
             >
@@ -152,4 +152,162 @@
       <button type="button" class="sendBtn" (click)="send()">Enviar</button>
     </footer>
   </aside>
+
+  <div class="talentProfileModalRoot" *ngIf="isTalentProfileOpen && profileTalent">
+    <button
+      type="button"
+      class="talentProfileOverlay"
+      (click)="closeTalentProfile()"
+      aria-label="Fechar perfil do candidato"
+    ></button>
+
+    <section class="talentProfileModal" role="dialog" aria-modal="true" [attr.aria-label]="'Perfil de ' + profileTalent.name">
+      <header class="talentProfileHead">
+        <div class="talentProfileHeadLeft">
+          <span
+            class="talentProfileAvatar"
+            [style.background-image]="(profileTalent.avatarUrl || talentAvatarFallbackUrl) ? 'url(' + (profileTalent.avatarUrl || talentAvatarFallbackUrl) + ')' : null"
+          >{{ (profileTalent.avatarUrl || talentAvatarFallbackUrl) ? '' : profileTalent.name.charAt(0) }}</span>
+          <div class="talentProfileTitleWrap">
+            <h4>{{ profileTalent.name }}</h4>
+            <p>{{ talentRoleLabel }} • {{ job?.location }} • {{ profileTalent.lastSeen }}</p>
+          </div>
+        </div>
+
+        <button type="button" class="iconBtn" (click)="closeTalentProfile()" aria-label="Fechar perfil" title="Fechar">✕</button>
+      </header>
+
+      <div class="talentProfileBody">
+        <div class="talentProfileTabs" role="tablist" aria-label="Seções do perfil">
+          <button
+            type="button"
+            class="talentProfileTab"
+            [class.active]="profileTab === 'dados'"
+            [attr.aria-selected]="profileTab === 'dados'"
+            role="tab"
+            (click)="setProfileTab('dados')"
+          >
+            Dados pessoais
+          </button>
+          <button
+            type="button"
+            class="talentProfileTab"
+            [class.active]="profileTab === 'stacks'"
+            [attr.aria-selected]="profileTab === 'stacks'"
+            role="tab"
+            (click)="setProfileTab('stacks')"
+          >
+            Stacks
+          </button>
+        </div>
+
+        <div class="talentProfileDataSection" *ngIf="profileTab === 'dados'">
+          <section class="profileSheetSection">
+            <header class="profileSheetHeader">Dados pessoais</header>
+            <div class="talentProfileGrid">
+              <label class="profileItem">
+                <span class="profileLabel">ID do candidato</span>
+                <input class="profileInput" [value]="profileTalent.id" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Idade</span>
+                <input class="profileInput" [value]="profileTalent.age || 'N/A'" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Telefone</span>
+                <input class="profileInput" [value]="profileTalent.phone || 'Não informado'" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Formação acadêmica</span>
+                <input class="profileInput" [value]="profileTalent.education || 'Não informada'" readonly />
+              </label>
+              <label class="profileItem profileItem--full">
+                <span class="profileLabel">Endereço residencial</span>
+                <textarea class="profileTextarea" [value]="profileTalent.address || 'Não informado'" rows="2" readonly></textarea>
+              </label>
+            </div>
+          </section>
+
+          <section class="profileSheetSection">
+            <header class="profileSheetHeader">Contexto da candidatura</header>
+            <div class="talentProfileGrid">
+              <label class="profileItem profileItem--full">
+                <span class="profileLabel">Vaga de interesse</span>
+                <input class="profileInput" [value]="job?.title || ''" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Modalidade</span>
+                <input class="profileInput" [value]="job?.type || ''" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Área / Departamento</span>
+                <input class="profileInput" [value]="job?.department || ''" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Pretensão salarial</span>
+                <input class="profileInput" [value]="profileTalent.salaryExpectation || 'Em aberto'" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Data da candidatura</span>
+                <input class="profileInput" [value]="profileTalent.appliedAt || 'N/A'" readonly />
+              </label>
+              <label class="profileItem">
+                <span class="profileLabel">Mensagens não lidas</span>
+                <input class="profileInput" [value]="profileTalent.unreadCount" readonly />
+              </label>
+            </div>
+          </section>
+
+          <section class="profileSheetSection">
+            <header class="profileSheetHeader">Observações do candidato</header>
+            <div class="profileNote">
+              <textarea
+                class="profileTextarea profileTextarea--note"
+                [value]="profileTalent.notes || 'Fluxo de demonstração: o currículo será gerado automaticamente pelo sistema em fases futuras.'"
+                rows="4"
+                readonly
+              ></textarea>
+            </div>
+          </section>
+        </div>
+
+        <div class="profileStacksSheet" *ngIf="profileTab === 'stacks'">
+          <div class="stackHeadRow" aria-hidden="true">
+            <div>Stack</div>
+            <div>Nível</div>
+            <div>%</div>
+            <div>Aderente</div>
+          </div>
+          <div class="stackRow" *ngFor="let stack of (profileTalent.stacks || [])">
+            <div class="stackLabel">{{ stack.name }}</div>
+            <div class="stackMeter" aria-hidden="true">
+              <span class="stackMeterFill" [style.width.%]="stack.level"></span>
+            </div>
+            <div class="stackValue">{{ stack.level }}%</div>
+            <button
+              type="button"
+              class="stackMatchBtn"
+              [class.active]="isStackAdherent(profileTalent, stack.name)"
+              (click)="toggleStackAdherent(profileTalent, stack.name)"
+              [attr.aria-pressed]="isStackAdherent(profileTalent, stack.name)"
+              [title]="isStackAdherent(profileTalent, stack.name) ? 'Remover aderência' : 'Marcar aderente'"
+            >
+              <span class="stackMatchCheck" aria-hidden="true">
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="m4.5 10.5 3.2 3.2 7.8-8.2" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="talentProfileFoot">
+        <button type="button" class="talentProfileBtn talentProfileBtn--ghost" (click)="closeTalentProfile()">Fechar</button>
+        <button type="button" class="talentProfileBtn" (click)="downloadTalentProfilePdf(profileTalent)">
+          Baixar PDF fictício
+        </button>
+      </footer>
+    </section>
+  </div>
 </div>

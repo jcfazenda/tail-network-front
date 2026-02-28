@@ -1,18 +1,35 @@
 <div class="recruitLayout">
   <div class="recruitBody">
-    <button
-      type="button"
-      class="sideOverlay"
-      *ngIf="isSidebarOpen"
-      (click)="closeSidebar()"
-      aria-label="Fechar menu"
-    ></button>
+    <main class="recruitMain">
+      <button
+        type="button"
+        class="recruitTopMenuMask"
+        *ngIf="isSidebarOpen"
+        (click)="closeSidebar()"
+        aria-label="Fechar menu de administração"
+      ></button>
 
-    <aside class="recruitSide" [class.open]="isSidebarOpen">
-      <div class="sideCard">
-        <div class="sideTitle">Workspace</div>
+      <nav class="recruitTopMenu" aria-label="Menu Recruiter">
+        <button type="button" class="recruitTopMenuToggle" (click)="toggleSidebar()" aria-label="Abrir menu de administração">
+          <span class="material-symbols-rounded recruitTopMenuAdminIcon" aria-hidden="true">admin_panel_settings</span>
+          <span class="recruitTopMenuLabel">Administração</span>
+          <span class="material-symbols-rounded recruitTopMenuChevron" aria-hidden="true">
+            {{ isSidebarOpen ? 'expand_less' : 'expand_more' }}
+          </span>
+        </button>
 
-        <nav class="sideNav">
+        <div class="recruitTopMenuPanel" *ngIf="isSidebarOpen">
+          <a
+            routerLink="/recruiter/vagas"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            class="navItem"
+            (click)="closeSidebar()"
+          >
+            <span class="navIcon material-symbols-rounded" aria-hidden="true">work</span>
+            <span>Vagas</span>
+          </a>
+
           <a
             routerLink="/recruiter"
             routerLinkActive="active"
@@ -21,34 +38,23 @@
             class="navItem"
             (click)="closeSidebar()"
           >
-            <span class="navDot"></span>
+            <span class="navIcon material-symbols-rounded" aria-hidden="true">dashboard</span>
             <span>Dashboard</span>
           </a>
 
-          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
-            <span class="navDot"></span>
-            <span>Talents</span>
-          </button>
+          <a
+            routerLink="/recruiter/talentos"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            class="navItem"
+            (click)="closeSidebar()"
+          >
+            <span class="navIcon material-symbols-rounded" aria-hidden="true">groups</span>
+            <span>Talentos</span>
+          </a>
+        </div>
+      </nav>
 
-          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
-            <span class="navDot"></span>
-            <span>Vagas</span>
-          </button>
-
-          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
-            <span class="navDot"></span>
-            <span>Mensagens</span>
-          </button>
-
-          <button type="button" class="navItem navItemBtn" (click)="closeSidebar()">
-            <span class="navDot"></span>
-            <span>Config</span>
-          </button>
-        </nav>
-      </div>
-    </aside>
-
-    <main class="recruitMain">
       <div class="recruitContentFrame">
         <router-outlet />
       </div>
