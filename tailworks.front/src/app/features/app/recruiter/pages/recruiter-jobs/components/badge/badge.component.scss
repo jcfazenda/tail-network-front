@@ -1,0 +1,65 @@
+:host{
+  display: inline-block;
+}
+
+.mat-mdc-chip-set{
+  max-width: 220px;
+  width: fit-content;
+}
+
+.statusChip{
+  width: fit-content;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 6px 12px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  box-sizing: border-box;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  /* acabamento premium */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 4px 10px rgba(15,23,42,.08);
+}
+
+.statusChipIcon{
+  font-size: 13px;
+}
+
+.statusChipText{
+  white-space: nowrap;
+}
+
+/* cores (contraste e “pílula” clean) */
+.statusChip--green{
+  background: color-mix(in srgb, var(--green), #ffffff 86%);
+  border: 1px solid color-mix(in srgb, var(--green), transparent 55%);
+  color: color-mix(in srgb, var(--green), #0b0b0d 28%);
+}
+
+.statusChip--amber{
+  background: color-mix(in srgb, var(--amber), #ffffff 86%);
+  border: 1px solid color-mix(in srgb, var(--amber), transparent 55%);
+  color: color-mix(in srgb, var(--amber), #0b0b0d 28%);
+}
+
+.statusChip--red{
+  background: color-mix(in srgb, var(--red), #ffffff 86%);
+  border: 1px solid color-mix(in srgb, var(--red), transparent 55%);
+  color: color-mix(in srgb, var(--red), #0b0b0d 28%);
+}
+
+.statusChip--blue{
+  background: color-mix(in srgb, var(--blue), #ffffff 86%);
+  border: 1px solid color-mix(in srgb, var(--blue), transparent 55%);
+  color: color-mix(in srgb, var(--blue), #0b0b0d 28%);
+}

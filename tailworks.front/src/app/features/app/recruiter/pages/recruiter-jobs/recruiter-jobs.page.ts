@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import {
   RecruiterCandidateCard,
@@ -11,21 +12,46 @@ import {
   RecruiterSkillRequirement,
 } from '../../models/recruiter.models';
 import { RecruiterMockService } from '../../../services/recruiter-mock.service';
-import { JobsAnalyticsComponent } from '../../components/jobs-analytics/jobs-analytics.component';
+import { AvatarItem } from './components/avatar-stack/avatar-stack.component';
+import { JobCardComponent } from './components/job-card/job-card.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { RadarFlowComponent, RadarStage } from './components/radar-flow/radar-flow.component';
+import { TopNavComponent } from './components/top-nav/top-nav.component';
+import { RadarAtivoCardComponent } from './radar/radar-ativo-card.component';
+import { TalentRadarCardsComponent, TrendCard } from './radar/talent-radar-cards.component';
 
 type StageOption = { value: RecruiterPipelineStage; label: string };
 type AboutSectionKey = 'sobre' | 'dia' | 'esperamos';
+type RoleFilter = 'all' | 'ux' | 'backend' | 'frontend' | 'fullstack' | 'dados';
+type FilterTag = { type: 'category' | 'location'; value: string; label: string };
+type WorkMode = 'remoto' | 'hibrido' | 'presencial';
+type ApprovedEntry = { job: RecruiterJob; candidate: RecruiterCandidateCard };
+type ProcessEntry = { job: RecruiterJob; candidate: RecruiterCandidateCard };
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, JobsAnalyticsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TopNavComponent,
+    PageHeaderComponent,
+    JobCardComponent,
+    TalentRadarCardsComponent,
+  ],
   templateUrl: './recruiter-jobs.page.html',
   styleUrls: ['./recruiter-jobs.page.scss'],
 })
 export class RecruiterJobsPage implements OnInit {
+  private readonly avatarPool = [12, 18, 22, 31, 37, 45, 49, 53, 57, 61, 65, 69];
   jobs: RecruiterJob[] = [];
   selectedJobId: string | null = null;
-  roleFilter: 'all' | 'ux' | 'backend' | 'frontend' | 'fullstack' | 'dados' = 'all';
+  roleFilter: RoleFilter = 'all';
+  jobQuery = '';
+  isFiltersPanelOpen = false;
+  selectedCategories: RoleFilter[] = ['backend'];
+  selectedStates: string[] = [];
+  selectedWorkModes: WorkMode[] = [];
+  selectedStatuses: RecruiterJobStatus[] = [];
 
   editorOpen = false;
   editorMode: 'create' | 'edit' | 'view' = 'create';
@@ -37,6 +63,12 @@ export class RecruiterJobsPage implements OnInit {
   statusDraft: RecruiterJobStatus = 'aberta';
   isCandidatesPanelOpen = false;
   candidatesPanelJob: RecruiterJob | null = null;
+  isApprovedPanelOpen = false;
+  isProcessPanelOpen = false;
+  isInterviewPanelOpen = false;
+  approvedQuery = '';
+  processQuery = '';
+  interviewQuery = '';
 
   skillNome = '';
   skillPeso = 25;
@@ -49,6 +81,7 @@ export class RecruiterJobsPage implements OnInit {
   };
 
   readonly tipoOptions = ['Sênior', 'Pleno', 'Júnior', 'Estagiário', 'Especialista', 'Líder Técnico'];
+  readonly trilhaOptions = ['Backend', 'Frontend', 'Full Stack', 'Dados', 'UX', 'Mobile', 'DevOps', 'QA'];
   readonly clientOptions = [
     'Banco Itaú',
     'Santander Brasil',
@@ -119,18 +152,67 @@ export class RecruiterJobsPage implements OnInit {
     { value: 'contratado', label: 'Contratado' },
     { value: 'reprovado', label: 'Reprovado' },
   ];
+  readonly filterCategories: Array<{ label: string; value: RoleFilter }> = [
+    { label: 'UX', value: 'ux' },
+    { label: 'Backend', value: 'backend' },
+    { label: 'Frontend', value: 'frontend' },
+    { label: 'Full Stack', value: 'fullstack' },
+    { label: 'Dados', value: 'dados' },
+  ];
+  readonly filterStatuses: Array<{ label: string; value: RecruiterJobStatus }> = [
+    { label: 'Aberta', value: 'aberta' },
+    { label: 'Pausada', value: 'pausada' },
+    { label: 'Fechada', value: 'fechada' },
+  ];
+  readonly filterStates: Array<{ label: string; uf: string; value: string }> = [
+    { label: 'São Paulo', uf: 'SP', value: 'sp' },
+    { label: 'Rio de Janeiro', uf: 'RJ', value: 'rj' },
+    { label: 'Minas Gerais', uf: 'MG', value: 'mg' },
+    { label: 'Pernambuco', uf: 'PE', value: 'pe' },
+    { label: 'Paraná', uf: 'PR', value: 'pr' },
+  ];
+  readonly filterWorkModes: Array<{ label: string; value: WorkMode; icon: string }> = [
+    { label: 'Remoto', value: 'remoto', icon: 'home_work' },
+    { label: 'Híbrido', value: 'hibrido', icon: 'sync_alt' },
+    { label: 'Presencial', value: 'presencial', icon: 'business_center' },
+  ];
+  readonly radarCards: TrendCard[] = [
+    {
+      title: 'Radar Ativo',
+      subtitle: '5 talentos',
+      percent: 85,
+      caption: 'Aderência mínima',
+      deltaLeft: { value: '+7% semana', tone: 'up' },
+      deltaRight: { value: '+2 +2%', tone: 'up' },
+      icon: 'cap',
+      tone: 'green',
+      series: [72, 73, 73, 74, 76, 79, 85],
+    },
+    {
+      title: 'Em Evolução',
+      subtitle: '8 talentos',
+      percent: 82,
+      caption: 'Aderência média',
+      deltaLeft: { value: '+5% semana', tone: 'up' },
+      deltaRight: { value: '+2 +2%', tone: 'up' },
+      icon: 'flame',
+      tone: 'orange',
+      series: [70, 70, 71, 72, 74, 76, 82],
+    },
+    {
+      title: 'Em Conversa',
+      subtitle: '5 talentos',
+      percent: 82,
+      caption: 'Aderência média',
+      deltaLeft: { value: '+82% semana', tone: 'neutral' },
+      deltaRight: { value: '+8 +8%', tone: 'up' },
+      icon: 'chat',
+      tone: 'blue',
+      series: [68, 69, 70, 71, 73, 76, 82],
+    },
+  ];
 
-  private readonly stackMonthlyMock: Record<string, number[]> = {
-    dotnet: [1, 2, 1, 3, 2, 4, 3, 2, 3, 4, 3, 5],
-    java: [0, 1, 2, 1, 2, 2, 3, 2, 1, 2, 2, 3],
-    angular: [1, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2],
-    react: [1, 1, 2, 1, 2, 3, 2, 2, 2, 3, 2, 3],
-    python: [0, 1, 1, 2, 2, 2, 3, 3, 2, 2, 3, 4],
-    node: [0, 1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 3],
-    sql: [1, 2, 2, 2, 3, 3, 2, 3, 3, 3, 3, 4],
-  };
-
-  constructor(private readonly recruiterMock: RecruiterMockService) {}
+  constructor(private readonly recruiterMock: RecruiterMockService, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.reload();
@@ -140,133 +222,179 @@ export class RecruiterJobsPage implements OnInit {
     return this.editorMode === 'view';
   }
 
-  get openJobsCount(): number {
-    return this.jobs.filter(j => j.status === 'aberta').length;
-  }
-
-  get totalCandidatesCount(): number {
-    return this.jobs.reduce((acc, job) => acc + (job.candidatos?.length ?? 0), 0);
-  }
-
-  get activeCandidatesCount(): number {
-    return this.jobs
-      .filter(job => job.status === 'aberta')
-      .reduce((acc, job) => acc + (job.candidatos?.length ?? 0), 0);
-  }
-
-  get avgAdherenceActivePercent(): number {
-    const activeJobs = this.jobs.filter(job => job.status === 'aberta');
-    const values = activeJobs.flatMap(job => (job.candidatos ?? []).map(c => c.aderenciaPercentual));
-    if (!values.length) return 0;
-    return Math.round(values.reduce((acc, v) => acc + v, 0) / values.length);
-  }
-
-  get hiringPipelineCount(): number {
-    return this.jobs.reduce((acc, job) => acc + this.processCandidates(job).length, 0);
-  }
-
-  get hiredCount(): number {
-    return this.jobs.reduce((acc, job) => acc + this.stageCount(job, ['contratado']), 0);
-  }
-
-  get pausedJobsCount(): number {
-    return this.jobs.filter(j => j.status === 'pausada').length;
-  }
-
-  get closedJobsCount(): number {
-    return this.jobs.filter(j => j.status === 'fechada').length;
-  }
-
-  get avgJobsValueNumber(): number {
-    if (!this.jobs.length) return 0;
-    return this.jobs.reduce((acc, job) => acc + this.estimatedJobValue(job), 0) / this.jobs.length;
-  }
-
-  get activityLabels(): string[] {
-    return ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-  }
-
-  get activitySeries(): Array<{ key: string; color: string; values: number[] }> {
-    return [
-      {
-        key: 'dotnet',
-        color: '#5b4acb',
-        values: [...this.stackMonthlyMock['dotnet']],
-      },
-      {
-        key: 'java',
-        color: '#34a7d6',
-        values: [...this.stackMonthlyMock['java']],
-      },
-      {
-        key: 'angular',
-        color: '#f5b300',
-        values: [...this.stackMonthlyMock['angular']],
-      },
-      {
-        key: 'react',
-        color: '#14b8a6',
-        values: [...this.stackMonthlyMock['react']],
-      },
-      {
-        key: 'python',
-        color: '#f97316',
-        values: [...this.stackMonthlyMock['python']],
-      },
-      {
-        key: 'node',
-        color: '#84cc16',
-        values: [...this.stackMonthlyMock['node']],
-      },
-      {
-        key: 'sql',
-        color: '#ef4444',
-        values: [...this.stackMonthlyMock['sql']],
-      },
-    ];
-  }
-
-  get readyTalentsCount(): number {
-    return this.jobs.reduce((acc, job) => acc + this.readyCandidatesCount(job), 0);
-  }
-
-  get avgTriageHours(): number {
-    const open = Math.max(1, this.openJobsCount);
-    return Math.round((this.hiringPipelineCount * 4 + this.totalCandidatesCount * 1.5) / open);
-  }
-
-  get riskCount(): number {
-    return this.jobs.filter(job => this.jobRiskLevel(job) !== 'ok').length;
-  }
-
-  get funnelStages(): Array<{ label: string; pct: number; count: number; avgTime: string; risk?: boolean }> {
-    const total = Math.max(1, this.totalCandidatesCount);
-    const withFit = this.readyTalentsCount;
-    const contacted = this.jobs.reduce((acc, job) => acc + this.stageCount(job, ['contato', 'entrevista', 'oferta', 'contratado']), 0);
-    const interviewed = this.jobs.reduce((acc, job) => acc + this.stageCount(job, ['entrevista', 'oferta', 'contratado']), 0);
-    const offers = this.jobs.reduce((acc, job) => acc + this.stageCount(job, ['oferta', 'contratado']), 0);
-    const hired = this.jobs.reduce((acc, job) => acc + this.stageCount(job, ['contratado']), 0);
-    return [
-      { label: 'Abertas', count: this.openJobsCount, pct: Math.round((this.openJobsCount / Math.max(1, this.jobs.length)) * 100), avgTime: '1.8d' },
-      { label: 'Com fit >= meta', count: withFit, pct: Math.round((withFit / total) * 100), avgTime: '2.3d' },
-      { label: 'Contatados', count: contacted, pct: Math.round((contacted / total) * 100), avgTime: '2.9d' },
-      { label: 'Entrevista', count: interviewed, pct: Math.round((interviewed / total) * 100), avgTime: '4.1d', risk: interviewed > offers * 2 },
-      { label: 'Oferta', count: offers, pct: Math.round((offers / total) * 100), avgTime: '2.0d' },
-      { label: 'Contratado', count: hired, pct: Math.round((hired / total) * 100), avgTime: '1.2d' },
-    ];
-  }
 
   get filteredJobs(): RecruiterJob[] {
     let list = [...this.jobs];
-    if (this.roleFilter !== 'all') {
-      list = list.filter(job => this.matchesRoleFilter(job, this.roleFilter));
+    const categoriesFilterOn =
+      this.selectedCategories.length > 0 &&
+      this.selectedCategories.length < this.filterCategories.length;
+    if (categoriesFilterOn) {
+      list = list.filter(job => this.selectedCategories.some(category => this.matchesRoleFilter(job, category)));
+    }
+    const statusFilterOn =
+      this.selectedStatuses.length > 0 &&
+      this.selectedStatuses.length < this.filterStatuses.length;
+    if (statusFilterOn) {
+      list = list.filter(job => this.selectedStatuses.includes(job.status));
+    }
+    const statesFilterOn =
+      this.selectedStates.length > 0 &&
+      this.selectedStates.length < this.filterStates.length;
+    if (statesFilterOn) {
+      list = list.filter(job => this.selectedStates.some(state => this.matchesStateFilter(job, state)));
+    }
+    const workModeFilterOn =
+      this.selectedWorkModes.length > 0 &&
+      this.selectedWorkModes.length < this.filterWorkModes.length;
+    if (workModeFilterOn) {
+      list = list.filter(job => this.selectedWorkModes.some(mode => this.matchesWorkModeFilter(job, mode)));
+    }
+    const query = this.jobQuery.trim().toLowerCase();
+    if (query) {
+      list = list.filter(job => {
+        const hay = `${job.titulo} ${job.empresa} ${job.local} ${job.departamento} ${job.trilha ?? ''}`.toLowerCase();
+        return hay.includes(query);
+      });
     }
     return list;
+  }
+
+  get activeFilterTags(): FilterTag[] {
+    const categoryTags = this.selectedCategories
+      .map(value => this.filterCategories.find(item => item.value === value))
+      .filter((item): item is { label: string; value: RoleFilter } => Boolean(item))
+      .map(item => ({ type: 'category' as const, value: item.value, label: item.label }));
+    return categoryTags;
+  }
+
+  get activeFilterCount(): number {
+    return this.activeFilterTags.length;
+  }
+
+  get roleFilterLabel(): string {
+    if (this.roleFilter === 'all') return 'Todas';
+    if (this.roleFilter === 'ux') return 'UX';
+    if (this.roleFilter === 'backend') return 'Backend';
+    if (this.roleFilter === 'frontend') return 'Frontend';
+    if (this.roleFilter === 'fullstack') return 'Full Stack';
+    return 'Dados';
+  }
+
+  get radarActiveTalents(): number {
+    return this.filteredJobs.reduce(
+      (total, job) => total + job.candidatos.filter(c => c.aderenciaPercentual >= job.metaMinimaPercentual).length,
+      0
+    );
+  }
+
+  get radarStages(): RadarStage[] {
+    return [
+      {
+        key: 'active',
+        title: 'Radar Ativo',
+        talents: this.radarActiveTalents,
+        percent: this.radarAverageFit('active'),
+        metricLabel: 'Aderência mínima',
+        growth: this.radarGrowth('active'),
+        icons: '🎓 🚀',
+        tone: 'green',
+      },
+      {
+        key: 'evolution',
+        title: 'Em Evolução',
+        talents: this.processEntries.length,
+        percent: this.radarAverageFit('process'),
+        metricLabel: 'Aderência média',
+        growth: this.radarGrowth('process'),
+        icons: '🔥 ⚠',
+        tone: 'amber',
+      },
+      {
+        key: 'conversation',
+        title: 'Em Conversa',
+        talents: this.interviewEntries.length,
+        percent: this.radarAverageFit('conversation'),
+        metricLabel: 'Aderência média',
+        growth: this.radarGrowth('conversation'),
+        icons: '⚠ ✨',
+        tone: 'blue',
+      },
+    ];
   }
 
   get selectedJob(): RecruiterJob | null {
     if (!this.selectedJobId) return null;
     return this.jobs.find(job => job.id === this.selectedJobId) ?? null;
+  }
+
+  get approvedEntries(): ApprovedEntry[] {
+    return this.jobs
+      .filter(job => job.status === 'fechada')
+      .flatMap(job =>
+        job.candidatos
+          .filter(candidate => candidate.statusPipeline === 'contratado')
+          .map(candidate => ({ job, candidate }))
+      )
+      .sort((a, b) => b.candidate.aderenciaPercentual - a.candidate.aderenciaPercentual);
+  }
+
+  get featuredApproved(): ApprovedEntry | null {
+    return this.approvedEntries[0] ?? null;
+  }
+
+  get extraApprovedCount(): number {
+    return Math.max(0, this.approvedEntries.length - 1);
+  }
+
+  get processEntries(): ProcessEntry[] {
+    return this.jobs
+      .flatMap(job =>
+        this.processCandidates(job).map(candidate => ({
+          job,
+          candidate,
+        }))
+      )
+      .sort((a, b) => b.candidate.aderenciaPercentual - a.candidate.aderenciaPercentual);
+  }
+
+  get filteredProcessEntries(): ProcessEntry[] {
+    const query = this.processQuery.trim().toLowerCase();
+    if (!query) return this.processEntries;
+    return this.processEntries.filter(item => {
+      const hay =
+        `${item.candidate.nome} ${item.job.titulo} ${item.job.empresa} ${item.job.local}`.toLowerCase();
+      return hay.includes(query);
+    });
+  }
+
+  get interviewEntries(): ProcessEntry[] {
+    return this.jobs
+      .flatMap(job =>
+        job.candidatos
+          .filter(candidate => candidate.statusPipeline === 'entrevista')
+          .map(candidate => ({ job, candidate }))
+      )
+      .sort((a, b) => b.candidate.aderenciaPercentual - a.candidate.aderenciaPercentual);
+  }
+
+  get filteredInterviewEntries(): ProcessEntry[] {
+    const query = this.interviewQuery.trim().toLowerCase();
+    if (!query) return this.interviewEntries;
+    return this.interviewEntries.filter(item => {
+      const hay =
+        `${item.candidate.nome} ${item.job.titulo} ${item.job.empresa} ${item.job.local}`.toLowerCase();
+      return hay.includes(query);
+    });
+  }
+
+  get filteredApprovedEntries(): ApprovedEntry[] {
+    const query = this.approvedQuery.trim().toLowerCase();
+    if (!query) return this.approvedEntries;
+    return this.approvedEntries.filter(item => {
+      const hay =
+        `${item.candidate.nome} ${item.job.titulo} ${item.job.empresa} ${item.job.local}`.toLowerCase();
+      return hay.includes(query);
+    });
   }
 
   reload(): void {
@@ -298,6 +426,7 @@ export class RecruiterJobsPage implements OnInit {
       id: job.id,
       titulo: job.titulo,
       empresa: job.empresa,
+      trilha: job.trilha ?? this.inferTrilhaFromJob(job),
       tipo: job.tipo ?? this.inferTipoFromTitle(job.titulo),
       local: job.local,
       modelo: job.modelo,
@@ -329,6 +458,7 @@ export class RecruiterJobsPage implements OnInit {
       id: job.id,
       titulo: job.titulo,
       empresa: job.empresa,
+      trilha: job.trilha ?? this.inferTrilhaFromJob(job),
       tipo: job.tipo ?? this.inferTipoFromTitle(job.titulo),
       local: job.local,
       modelo: job.modelo,
@@ -366,6 +496,7 @@ export class RecruiterJobsPage implements OnInit {
       ...this.form,
       titulo: this.form.titulo.trim(),
       empresa: this.form.empresa.trim(),
+      trilha: (this.form.trilha ?? '').trim(),
       tipo: (this.form.tipo ?? '').trim(),
       local: this.form.local.trim(),
       modelo: this.form.modelo.trim(),
@@ -512,6 +643,10 @@ export class RecruiterJobsPage implements OnInit {
     return this.processCandidates(job).length;
   }
 
+  showTalentsOption(job: RecruiterJob): boolean {
+    return (job.candidatos?.length ?? 0) > 0 || this.processCandidates(job).length > 0;
+  }
+
   stackAdherenceLabel(job: RecruiterJob): string {
     const highest = [...job.skills].sort((a, b) => b.minimoPercentual - a.minimoPercentual)[0];
     return `Aderência à stack principal: a partir de ${highest?.minimoPercentual ?? job.metaMinimaPercentual}%`;
@@ -525,6 +660,33 @@ export class RecruiterJobsPage implements OnInit {
   closeCandidatesPanel(): void {
     this.isCandidatesPanelOpen = false;
     this.candidatesPanelJob = null;
+  }
+
+  openApprovedPanel(): void {
+    this.isApprovedPanelOpen = true;
+  }
+
+  closeApprovedPanel(): void {
+    this.isApprovedPanelOpen = false;
+    this.approvedQuery = '';
+  }
+
+  openProcessPanel(): void {
+    this.isProcessPanelOpen = true;
+  }
+
+  closeProcessPanel(): void {
+    this.isProcessPanelOpen = false;
+    this.processQuery = '';
+  }
+
+  openInterviewPanel(): void {
+    this.isInterviewPanelOpen = true;
+  }
+
+  closeInterviewPanel(): void {
+    this.isInterviewPanelOpen = false;
+    this.interviewQuery = '';
   }
 
   processCandidates(job: RecruiterJob): RecruiterCandidateCard[] {
@@ -542,6 +704,11 @@ export class RecruiterJobsPage implements OnInit {
 
   approvedCandidate(job: RecruiterJob): RecruiterCandidateCard | null {
     return job.candidatos.find(c => c.statusPipeline === 'contratado') ?? null;
+  }
+
+  terminatedCandidate(job: RecruiterJob): RecruiterCandidateCard | null {
+    if (job.status !== 'fechada') return null;
+    return job.candidatos.find(c => c.statusPipeline === 'reprovado') ?? null;
   }
 
   hasApprovedCandidate(job: RecruiterJob): boolean {
@@ -565,6 +732,14 @@ export class RecruiterJobsPage implements OnInit {
     return list.slice(0, limit);
   }
 
+  topCandidateAvatars(job: RecruiterJob, mode: 'all' | 'process', limit = 4): AvatarItem[] {
+    return this.topCandidates(job, mode, limit).map((candidate, idx) => ({
+      name: candidate.nome,
+      avatarUrl: this.avatarForCandidate(candidate, idx),
+      initials: this.candidateInitials(candidate.nome),
+    }));
+  }
+
   extraCandidatesCount(job: RecruiterJob, mode: 'all' | 'process', limit = 3): number {
     const list = mode === 'process' ? this.processCandidates(job) : job.candidatos;
     return Math.max(0, list.length - limit);
@@ -577,6 +752,49 @@ export class RecruiterJobsPage implements OnInit {
     return `${parts[0].slice(0, 1)}${parts[1].slice(0, 1)}`.toUpperCase();
   }
 
+  radarAverageFit(mode: 'active' | 'process' | 'conversation'): number {
+    const list = this.radarCandidates(mode);
+    if (!list.length) return mode === 'active' ? 85 : 82;
+    return Math.round(list.reduce((sum, candidate) => sum + candidate.aderenciaPercentual, 0) / list.length);
+  }
+
+  radarGrowth(mode: 'active' | 'process' | 'conversation'): number {
+    const base =
+      mode === 'active'
+        ? this.radarActiveTalents
+        : mode === 'process'
+          ? this.processEntries.length
+          : this.interviewEntries.length;
+    return Math.max(2, Math.min(18, Math.round(base * 0.7)));
+  }
+
+  jobWeeklyTrend(job: RecruiterJob): number {
+    const factor = job.metaMinimaPercentual + job.candidatos.length * 2 + this.inProcessCount(job) * 3;
+    return Math.max(2, Math.min(12, Math.round(factor % 11)));
+  }
+
+  jobMicroSignal(job: RecruiterJob): string {
+    if (job.status === 'pausada') return '⚠ risco de perda';
+    if (job.status === 'fechada') return '🔥 atividade recente';
+    if (this.inProcessCount(job) >= 3) return '🔥 em alta';
+    return '🎓 nova certificação';
+  }
+
+  avatarForCandidate(candidate: RecruiterCandidateCard, salt = 0): string {
+    const hash = (candidate.id ?? candidate.nome ?? '')
+      .split('')
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = Math.abs(hash + salt) % this.avatarPool.length;
+    return `https://i.pravatar.cc/96?img=${this.avatarPool[index]}`;
+  }
+
+  onAvatarError(event: Event): void {
+    const target = event.target as HTMLImageElement | null;
+    if (!target) return;
+    if (target.src.includes('avatar-default.png')) return;
+    target.src = 'assets/avatar-default.png';
+  }
+
   private estimatedJobValue(job: RecruiterJob): number {
     const title = `${job.titulo} ${job.departamento}`.toLowerCase();
     if (title.includes('senior') || title.includes('sênior')) return 18000;
@@ -584,6 +802,40 @@ export class RecruiterJobsPage implements OnInit {
     if (title.includes('ux')) return 11500;
     if (title.includes('dados') || title.includes('data')) return 12000;
     return 10000;
+  }
+
+  private radarCandidates(mode: 'active' | 'process' | 'conversation'): RecruiterCandidateCard[] {
+    if (mode === 'process') {
+      return this.processEntries.map(item => item.candidate);
+    }
+    if (mode === 'conversation') {
+      return this.interviewEntries.map(item => item.candidate);
+    }
+    return this.filteredJobs.flatMap(job =>
+      job.candidatos.filter(candidate => candidate.aderenciaPercentual >= job.metaMinimaPercentual)
+    );
+  }
+
+  openRadarStage(stage: 'active' | 'evolution' | 'conversation'): void {
+    if (stage === 'active') {
+      this.openApprovedPanel();
+      return;
+    }
+    if (stage === 'evolution') {
+      this.openProcessPanel();
+      return;
+    }
+    this.openInterviewPanel();
+  }
+
+  openJobTalents(job: RecruiterJob): void {
+    void this.router.navigate(['/recruiter/talentos'], { queryParams: { jobId: job.id } });
+  }
+
+  badgeToneByStatus(status: RecruiterJobStatus): 'green' | 'amber' | 'red' {
+    if (status === 'aberta') return 'green';
+    if (status === 'pausada') return 'amber';
+    return 'red';
   }
 
   private readyCandidatesCount(job: RecruiterJob): number {
@@ -625,8 +877,85 @@ export class RecruiterJobsPage implements OnInit {
     return 'Híbrido';
   }
 
+  stateLabelFromLocal(raw: string): string {
+    const value = (raw ?? '').toLowerCase();
+    if (value.includes('são paulo') || value.includes('sao paulo')) return 'São Paulo - SP';
+    if (value.includes('rio de janeiro')) return 'Rio de Janeiro - RJ';
+    if (value.includes('belo horizonte') || value.includes('minas gerais')) return 'Minas Gerais - MG';
+    if (value.includes('recife') || value.includes('pernambuco')) return 'Pernambuco - PE';
+    if (value.includes('curitiba') || value.includes('paraná') || value.includes('parana')) return 'Paraná - PR';
+    return 'Brasil - BR';
+  }
+
   setRoleFilter(value: 'all' | 'ux' | 'backend' | 'frontend' | 'fullstack' | 'dados'): void {
     this.roleFilter = value;
+  }
+
+  clearAllFilters(): void {
+    this.roleFilter = 'all';
+    this.jobQuery = '';
+    this.selectedCategories = [];
+    this.selectedStates = [];
+    this.selectedWorkModes = [];
+    this.selectedStatuses = [];
+  }
+
+  openFiltersPanel(): void {
+    this.isFiltersPanelOpen = true;
+  }
+
+  closeFiltersPanel(): void {
+    this.isFiltersPanelOpen = false;
+  }
+
+  isCategorySelected(value: RoleFilter): boolean {
+    return this.selectedCategories.includes(value);
+  }
+
+  toggleCategory(value: RoleFilter): void {
+    if (this.isCategorySelected(value)) {
+      this.selectedCategories = this.selectedCategories.filter(item => item !== value);
+      return;
+    }
+    this.selectedCategories = [...this.selectedCategories, value];
+  }
+
+  isStatusSelected(value: RecruiterJobStatus): boolean {
+    return this.selectedStatuses.includes(value);
+  }
+
+  toggleStatus(value: RecruiterJobStatus): void {
+    if (this.isStatusSelected(value)) {
+      this.selectedStatuses = this.selectedStatuses.filter(item => item !== value);
+      return;
+    }
+    this.selectedStatuses = [...this.selectedStatuses, value];
+  }
+
+  isStateSelected(value: string): boolean {
+    return this.selectedStates.includes(value);
+  }
+
+  toggleState(value: string, checked: boolean): void {
+    if (checked) {
+      if (!this.selectedStates.includes(value)) {
+        this.selectedStates = [...this.selectedStates, value];
+      }
+      return;
+    }
+    this.selectedStates = this.selectedStates.filter(item => item !== value);
+  }
+
+  isWorkModeSelected(value: WorkMode): boolean {
+    return this.selectedWorkModes.includes(value);
+  }
+
+  toggleWorkMode(value: WorkMode): void {
+    if (this.isWorkModeSelected(value)) {
+      this.selectedWorkModes = this.selectedWorkModes.filter(item => item !== value);
+      return;
+    }
+    this.selectedWorkModes = [...this.selectedWorkModes, value];
   }
 
   addSkill(): void {
@@ -672,6 +1001,7 @@ export class RecruiterJobsPage implements OnInit {
   removeSkill(index: number): void {
     this.form.skills = this.form.skills.filter((_, i) => i !== index);
   }
+
 
   setEditorTab(tab: 'dados' | 'contratacao' | 'sobre'): void {
     this.editorTab = tab;
@@ -751,6 +1081,7 @@ export class RecruiterJobsPage implements OnInit {
     return {
       titulo: '',
       empresa: '',
+      trilha: 'Backend',
       tipo: 'Pleno',
       local: '',
       modelo: 'CLT',
@@ -784,6 +1115,18 @@ export class RecruiterJobsPage implements OnInit {
     return 'Pleno';
   }
 
+  private inferTrilhaFromJob(job: RecruiterJob): string {
+    const hay = `${job.titulo} ${job.departamento}`.toLowerCase();
+    if (hay.includes('front') || hay.includes('angular') || hay.includes('react') || hay.includes('vue')) return 'Frontend';
+    if (hay.includes('full') || hay.includes('fullstack') || hay.includes('full stack')) return 'Full Stack';
+    if (hay.includes('dados') || hay.includes('data') || hay.includes('bi')) return 'Dados';
+    if (hay.includes('ux') || hay.includes('design')) return 'UX';
+    if (hay.includes('mobile') || hay.includes('android') || hay.includes('ios')) return 'Mobile';
+    if (hay.includes('devops') || hay.includes('sre') || hay.includes('infra')) return 'DevOps';
+    if (hay.includes('qa') || hay.includes('teste')) return 'QA';
+    return 'Backend';
+  }
+
   private setAboutItems(section: AboutSectionKey, items: string[]): void {
     if (section === 'sobre') {
       this.form.sobreVagaItens = items;
@@ -808,15 +1151,33 @@ export class RecruiterJobsPage implements OnInit {
 
   private matchesRoleFilter(
     job: RecruiterJob,
-    role: 'all' | 'ux' | 'backend' | 'frontend' | 'fullstack' | 'dados'
+    role: RoleFilter
   ): boolean {
     if (role === 'all') return true;
-    const hay = `${job.titulo} ${job.departamento}`.toLowerCase();
+    const hay = `${job.trilha ?? ''} ${job.titulo} ${job.departamento}`.toLowerCase();
     if (role === 'ux') return hay.includes('ux') || hay.includes('designer') || hay.includes('produto');
     if (role === 'backend') return hay.includes('backend') || hay.includes('.net') || hay.includes('java');
     if (role === 'frontend') return hay.includes('frontend') || hay.includes('angular') || hay.includes('react');
     if (role === 'fullstack') return hay.includes('full stack') || hay.includes('fullstack');
     if (role === 'dados') return hay.includes('dados') || hay.includes('data') || hay.includes('analytics');
+    return true;
+  }
+
+  private matchesStateFilter(job: RecruiterJob, state: string): boolean {
+    const local = (job.local ?? '').toLowerCase();
+    if (state === 'sp') return local.includes('são paulo') || local.includes('sao paulo');
+    if (state === 'rj') return local.includes('rio de janeiro');
+    if (state === 'mg') return local.includes('belo horizonte') || local.includes('minas gerais');
+    if (state === 'pe') return local.includes('recife') || local.includes('pernambuco');
+    if (state === 'pr') return local.includes('curitiba') || local.includes('paraná') || local.includes('parana');
+    return true;
+  }
+
+  private matchesWorkModeFilter(job: RecruiterJob, mode: WorkMode): boolean {
+    const local = (job.local ?? '').toLowerCase();
+    if (mode === 'remoto') return local.includes('remoto');
+    if (mode === 'hibrido') return local.includes('híbrido') || local.includes('hibrido');
+    if (mode === 'presencial') return local.includes('presencial');
     return true;
   }
 
@@ -826,5 +1187,13 @@ export class RecruiterJobsPage implements OnInit {
 
   trackByCandidateId(_: number, candidate: RecruiterCandidateCard): string {
     return candidate.id;
+  }
+
+  trackByApprovedEntry(_: number, item: ApprovedEntry): string {
+    return `${item.job.id}-${item.candidate.id}`;
+  }
+
+  trackByProcessEntry(_: number, item: ProcessEntry): string {
+    return `${item.job.id}-${item.candidate.id}`;
   }
 }

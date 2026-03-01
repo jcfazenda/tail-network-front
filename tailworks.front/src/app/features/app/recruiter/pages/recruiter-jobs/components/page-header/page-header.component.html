@@ -1,0 +1,14 @@
+<header class="pageHeader">
+  <div class="pageHeaderMain">
+    <span class="material-symbols-rounded pageHeaderIcon" aria-hidden="true">{{ icon }}</span>
+    <div>
+      <h2>{{ title }}</h2>
+      <p>{{ subtitle }}</p>
+    </div>
+  </div>
+
+  <div class="pageHeaderActions">
+    <ng-content select="[header-actions]"></ng-content>
+  </div>
+</header>
+

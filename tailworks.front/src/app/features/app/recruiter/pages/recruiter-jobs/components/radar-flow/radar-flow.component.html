@@ -1,0 +1,38 @@
+<section class="radarFlow">
+  <div class="radarTrack" aria-hidden="true">
+    <span class="radarTrackNode radarTrackNode--green"></span>
+    <span class="radarTrackNode radarTrackNode--amber"></span>
+    <span class="radarTrackNode radarTrackNode--blue"></span>
+  </div>
+
+  <div class="radarStages">
+    <button
+      type="button"
+      class="radarStage"
+      *ngFor="let stage of stages; let i = index"
+      [class]="'radarStage radarStage--' + stage.tone"
+      (click)="stageClick.emit(stage.key)"
+    >
+      <header>
+        <h3>{{ stage.title }}</h3>
+      </header>
+
+      <div class="radarTalents">{{ stage.talents }} talentos</div>
+
+      <div class="radarPercent">{{ stage.percent }}%</div>
+      <div class="radarMetricRow">
+        <span class="radarMetric">{{ stage.metricLabel }}</span>
+        <span class="radarIcons">{{ stage.icons }}</span>
+      </div>
+
+      <svg class="radarSpark" viewBox="0 0 120 24" aria-hidden="true">
+        <polyline points="2,20 16,18 28,19 40,15 54,16 68,12 80,13 94,8 108,9 118,5"></polyline>
+      </svg>
+
+      <footer>
+        <span>↗ {{ stage.growth }}% semana</span>
+      </footer>
+    </button>
+  </div>
+</section>
+

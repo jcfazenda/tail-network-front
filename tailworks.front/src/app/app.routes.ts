@@ -13,6 +13,11 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
+          import('./features/public/entry.page').then(m => m.EntryPage),
+      },
+      {
+        path: 'home',
+        loadComponent: () =>
           import('./features/public/home.page').then(m => m.HomePage),
       },
 
@@ -23,8 +28,13 @@ export const routes: Routes = [
         children: [
           {
             path: '',
+            redirectTo: 'dashboard',
+            pathMatch: 'full',
+          },
+          {
+            path: 'dashboard',
             loadComponent: () =>
-              import('./features/app/recruiter/recruiter.page').then(m => m.RecruiterPage),
+              import('./features/app/recruiter/pages/recruiter-dashboard/recruiter-dashboard.page').then(m => m.RecruiterDashboardPage),
           },
           {
             path: 'vagas',

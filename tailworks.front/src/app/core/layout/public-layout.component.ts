@@ -2,8 +2,7 @@ import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { StartModalService } from '../ui/start-role-modal/start-modal.service';
-import { StartRoleModalComponent } from '../ui/start-role-modal/start-role-modal.component';
+import { AuthService } from '../../core/auth/auth.service';
 import { ThemeMode, ThemeService } from '../../core/ui/theme.service';
 
 @Component({
@@ -14,7 +13,6 @@ import { ThemeMode, ThemeService } from '../../core/ui/theme.service';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    StartRoleModalComponent,
   ],
   templateUrl: './public-layout.component.html',
   styleUrls: ['./public-layout.component.scss'],
@@ -24,9 +22,9 @@ export class PublicLayoutComponent implements OnInit {
   isThemeMenuOpen = false;
   darkTone: 'default' | 'graphite' = 'default';
 
-  private router = inject(Router);
-  public startModal = inject(StartModalService);
+  public auth = inject(AuthService);
   public theme = inject(ThemeService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.theme.init(); // 🔥 1 vez e acabou (aplica classe no body + localStorage)
@@ -77,24 +75,13 @@ export class PublicLayoutComponent implements OnInit {
     return this.theme.mode === 'dark' && this.darkTone === 'graphite';
   }
 
-  openRoleModal(): void {
-    console.log('ABRINDO MODAL', new Date());
-    this.startModal.open();
-  }
-
-  closeRoleModal(): void {
-    this.startModal.close();
-  }
-
-  goRole(role: 'recruiter' | 'talent'): void {
-    this.startModal.close();
-    this.router.navigate(['/choose'], { queryParams: { role } });
+  showFooter(): boolean {
+    return !this.router.url.startsWith('/recruiter');
   }
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(ev: KeyboardEvent): void {
     if (ev.key === 'Escape') {
-      this.startModal.close();
       this.closeThemeMenu();
     }
   }

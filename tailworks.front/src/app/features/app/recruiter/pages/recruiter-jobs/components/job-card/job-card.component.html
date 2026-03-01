@@ -1,0 +1,58 @@
+<article class="jobCard">
+  <div class="jobBadgeSlot">
+    <recruiter-badge [label]="statusLabel" [tone]="statusTone"></recruiter-badge>
+  </div>
+
+  <h3>{{ title }}</h3>
+  <p class="jobCompany">{{ company }}</p>
+  <p class="jobLocation">
+    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+    <span class="jobLocationText">{{ location }}</span>
+    <span class="jobModeInline">{{ jobModel || 'CLT · Remoto' }}</span>
+  </p>
+
+  <div class="jobDivider"></div>
+
+  <div class="infoBlock">
+    <div class="infoTitle">Informações principais</div>
+    <div class="infoGrid">
+      <div class="infoPair">
+        <div class="infoLabel">Código da vaga</div>
+        <div class="infoValue">{{ jobCode || 'V-1001' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jobDivider"></div>
+
+  <div class="fitBlock">
+    <div class="fitLabels">
+      <div class="fitLabelMain">Status do processo</div>
+      <div class="fitLabelSub">Solicitação de Contratação</div>
+    </div>
+    <div class="fitValue">{{ minFit }}%</div>
+  </div>
+  <recruiter-progress-bar [value]="minFit" tone="green"></recruiter-progress-bar>
+
+  <footer class="jobFooter">
+    <div class="jobFooterLeft">
+      <recruiter-avatar-stack
+        [items]="avatars"
+        [extraCount]="avatarExtraCount"
+        [size]="30"
+      ></recruiter-avatar-stack>
+
+      <div class="jobProcessInfo">
+        <span class="material-symbols-rounded" aria-hidden="true">hourglass_top</span>
+        <span class="jobProcessText"><span class="jobProcessNumber">{{ inProcessCount }}</span> em processo</span>
+        <span class="jobTrend">+3%</span>
+      </div>
+    </div>
+    <div class="jobFooterRight">
+      <button type="button" class="chatFooterBtn" (click)="showTalents.emit()">
+        <span class="material-symbols-rounded chatIcon" aria-hidden="true">forum</span>
+        <span class="chatBadge">2</span>
+      </button>
+    </div>
+  </footer>
+</article>

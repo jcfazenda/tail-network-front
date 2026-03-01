@@ -1,0 +1,327 @@
+/* ========================
+   CONTAINER (card externo)
+======================== */
+.radarCard{
+  position: relative;
+  border: 1px solid rgba(106, 114, 134, 0.08);
+  border-radius: 12px;
+
+  background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(246,248,255,0.86) 100%);
+  box-shadow:
+    0 24px 55px rgba(127, 143, 185, 0.14),
+    0 4px 14px rgba(15,23,42,0.08);
+
+  padding: 18px 18px 16px;
+  overflow: hidden;
+
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* FUNDO fluido: verde -> laranja -> azul */
+.radarCard::before{
+  content:"";
+  position:absolute;
+  inset: -90px -140px -90px -140px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(113,214,181,.20) 0%,
+    rgba(113,214,181,.12) 22%,
+    rgba(216,130,69,.18) 50%,
+    rgba(56,189,248,.18) 78%,
+    rgba(56,189,248,.10) 100%
+  );
+
+  filter: blur(60px);
+  opacity: .65;
+  pointer-events:none;
+  z-index: 0;
+}
+
+/* ========================
+   COLUNAS (3 cards)
+======================== */
+.columns{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  position: relative;
+  padding-top: 40px;
+  z-index: 2; /* cards acima da barra */
+}
+ 
+/* ========================
+   LINHA ATRAVESSADA (SUAVE PREMIUM)
+======================== */
+.progressTrack{
+  position: absolute;
+  left: 28px;
+  right: 20px;
+  top: 77px;
+  height: 6px;
+  border-radius: 999px;
+
+  z-index: 1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    rgba(208, 214, 212, 0.85) 0%,
+    rgba(130, 157, 148, 0.7) 22%,
+    rgba(185, 148, 122, 0.8) 50%,
+    rgba(157, 205, 238, 0.8) 78%,
+    rgba(56,189,248,.85) 100%
+  );
+
+  /* brilho branco muito suave ao redor */
+  box-shadow:
+    0 0 0 1px rgba(214, 203, 203, 0.35),   /* linha branca suave */
+    0 2px 8px rgba(0,0,0,.05);        /* leve profundidade */
+}
+
+/* aura suave atrás da linha */
+.progressTrack::after{
+  content:"";
+  position:absolute;
+  left: -28px;
+  right: -28px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(113,214,181,.18) 0%,
+    rgba(216,130,69,.16) 50%,
+    rgba(56,189,248,.18) 100%
+  );
+
+  filter: blur(18px);
+  opacity: .8;
+  pointer-events:none;
+  z-index: -1;
+}
+
+/* NÃO USAR bolinha inicial (você pediu tirar bolinhas na altura da barra) */
+.progressTrack::before{
+  content: none;
+}
+
+/* se existir no HTML, não atrapalha */
+.progressFill{
+  display:none;
+}
+
+/* ========================
+   ÍCONES NA BARRA (SEM BOLINHA)
+   mova individualmente por classe
+======================== */
+.trackNode{
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -55%); /* levemente acima pra alinhar com centro visual */
+
+  font-size: 22px;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,.12));
+}
+/* posições default (AJUSTE AQUI) */
+.node-cap{ left: 30%; }
+.node-flame{ left: 64%; }
+.node-chat{ left: 99%; }
+
+/* ícones */
+.trackNode::before{ display:block; }
+.trackNode[data-icon="talent"]::before{
+  content: "🚀";
+}
+.trackNode[data-icon="flame"]::before{ content:"🔥"; }
+.trackNode[data-icon="chat"]::before{ content:"💬"; }
+
+/* ========================
+   CARD INDIVIDUAL (TRANSPARENTE)
+======================== */
+.card{
+  position: relative;
+  padding: 8px 14px 10px;
+  min-height: 150px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  z-index: 1;
+}
+
+/* Divisória vertical entre cards */
+.card:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  top: 14px;
+  right: 0;
+  bottom: 14px;
+  width: 1px;
+  background: rgba(15,23,42,0.06);
+}
+
+/* REMOVE DEFINITIVO das 3 bolinhas por coluna */
+.radarCard .card::before{
+  content: none !important;
+  display: none !important;
+}
+
+/* ========================
+   TOPO
+======================== */
+.top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* TITULO */
+.radarCard .card .title{
+  position: relative;
+  top: -40px;
+  margin-bottom: 4px;
+
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+
+  color: rgba(91, 97, 109, 0.92);
+}
+
+/* SUBTITULO */
+.subtitle{
+  margin-top: 14px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(15,23,42,0.55);
+  display:flex;
+  gap: 6px;
+}
+
+.subtitle strong{
+  font-weight: 700;
+  color: rgba(37, 39, 42, 0.8);
+}
+
+/* ========================
+   KPI + GRÁFICO
+======================== */
+.kpiRow{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 12px;
+  min-height: 70px;
+}
+
+.kpi{
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: rgba(90, 94, 103, 0.92);
+}
+
+.spark{
+  width: 100%;
+  max-width: 260px;
+  height: 90px;
+  color: currentColor;
+}
+
+.spark svg{
+  width:100%;
+  height:100%;
+}
+
+.spark .line{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 14px rgba(72, 74, 82, 0.1));
+}
+
+.spark .area{
+  fill: url(#grad);
+}
+
+/* CAPTION */
+.caption{
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(15,23,42,0.50);
+}
+
+/* ========================
+   BOTTOM / DELTA
+======================== */
+.bottom{
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(15,23,42,0.06);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.divider{
+  width: 1px;
+  height: 16px;
+  background: rgba(15,23,42,0.10);
+}
+
+.delta{
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.70);
+}
+
+.delta-up{ color: rgba(22,163,74,0.95); }
+.delta-down{ color: rgba(220,38,38,0.95); }
+.delta-neutral{ color: rgba(15,23,42,0.55); }
+
+/* tons (cores do conteúdo) */
+.tone-green{ color: rgba(16,185,129,1); }
+.tone-orange{ color: rgba(249,115,22,1); }
+.tone-blue{ color: rgba(56,189,248,1); }
+
+/* ========================
+   RESPONSIVO
+======================== */
+@media (max-width: 900px){
+  .columns{
+    grid-template-columns: 1fr;
+  }
+
+  .progressTrack{
+    display:none;
+  }
+
+  .card:not(:last-child)::after{
+    display:none;
+  }
+}

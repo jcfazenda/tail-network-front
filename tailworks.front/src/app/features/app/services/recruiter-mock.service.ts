@@ -270,7 +270,20 @@ export class RecruiterMockService {
       const current = (job.empresa ?? '').trim();
       const mappedLegacy = legacyMap[current];
       const normalizedCompany = mappedLegacy || current || clientFallback[fallbackIndex++ % clientFallback.length];
-      const normalizedCandidates = this.ensureRichCandidates(job);
+      let normalizedCandidates = this.ensureRichCandidates(job);
+      if (job.status === 'fechada' && !normalizedCandidates.some(c => c.statusPipeline === 'contratado')) {
+        normalizedCandidates = [
+          {
+            id: `tal-approved-${job.id}`,
+            nome: 'Ana Martins',
+            aderenciaPercentual: Math.max(job.metaMinimaPercentual + 3, 86),
+            tendencia: 'up',
+            ultimaAtualizacao: new Date().toISOString(),
+            statusPipeline: 'contratado',
+          },
+          ...normalizedCandidates,
+        ];
+      }
       return {
         ...job,
         empresa: normalizedCompany,
@@ -353,6 +366,30 @@ export class RecruiterMockService {
         ],
         candidatos: [],
         createdAt: '2026-02-27T10:20:00.000Z',
+      });
+    }
+
+    if (!jobs.some(job => job.id === 'job-107')) {
+      jobs.push({
+        id: 'job-107',
+        titulo: 'QA Analyst Pleno',
+        empresa: 'Bradesco',
+        local: 'Curitiba (Híbrido)',
+        modelo: 'CLT',
+        departamento: 'Qualidade',
+        metaMinimaPercentual: 80,
+        descricao: 'Vaga fechada após desligamento no ciclo final do processo.',
+        status: 'fechada',
+        skills: [
+          { nome: 'QA', peso: 40, minimoPercentual: 78 },
+          { nome: 'API Test', peso: 35, minimoPercentual: 76 },
+          { nome: 'Playwright', peso: 25, minimoPercentual: 72 },
+        ],
+        candidatos: [
+          { id: 'tal-004', nome: 'Daniel Lima', aderenciaPercentual: 84, tendencia: 'up', ultimaAtualizacao: new Date().toISOString(), statusPipeline: 'contratado' },
+          { id: 'tal-006', nome: 'Fernanda Alves', aderenciaPercentual: 82, tendencia: 'flat', ultimaAtualizacao: new Date().toISOString(), statusPipeline: 'reprovado' },
+        ],
+        createdAt: '2026-02-11T09:10:00.000Z',
       });
     }
 
@@ -781,6 +818,33 @@ export class RecruiterMockService {
         ],
         candidatos: [],
         createdAt: '2026-02-27T10:20:00.000Z',
+      },
+      {
+        id: 'job-107',
+        titulo: 'QA Analyst Pleno',
+        empresa: 'Bradesco',
+        local: 'Curitiba (Híbrido)',
+        modelo: 'CLT',
+        departamento: 'Qualidade',
+        metaMinimaPercentual: 80,
+        descricao: 'Vaga fechada após desligamento no ciclo final do processo.',
+        status: 'fechada',
+        skills: [
+          { nome: 'QA', peso: 40, minimoPercentual: 78 },
+          { nome: 'API Test', peso: 35, minimoPercentual: 76 },
+          { nome: 'Playwright', peso: 25, minimoPercentual: 72 },
+        ],
+        candidatos: [
+          {
+            id: 'tal-006',
+            nome: 'Fernanda Alves',
+            aderenciaPercentual: 82,
+            tendencia: 'flat',
+            ultimaAtualizacao: now,
+            statusPipeline: 'reprovado',
+          },
+        ],
+        createdAt: '2026-02-11T09:10:00.000Z',
       },
     ];
 

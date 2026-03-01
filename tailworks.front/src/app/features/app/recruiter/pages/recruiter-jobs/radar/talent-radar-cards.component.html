@@ -1,0 +1,65 @@
+<div class="radarCard">
+  <div class="columns">
+    <div class="card" *ngFor="let c of cards" [ngClass]="toneClass(c.tone)">
+      <div class="top">
+        <div class="titleBlock">
+          <div class="title">{{ c.title }}</div>
+
+          <!-- subtitle com número em negrito -->
+          <div class="subtitle">
+            <strong>{{ subtitleCount(c.subtitle) }}</strong>
+            <span>{{ subtitleRest(c.subtitle) }}</span>
+          </div>
+        </div>
+
+        <div class="iconCircle">
+          <span class="pillIcon" [attr.data-icon]="c.icon" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="kpiRow">
+        <!-- % maior e sem negrito -->
+        <div class="kpi">{{ c.percent }}%</div>
+
+        <!-- spark maior e mais “presente” -->
+        <div class="spark">
+          <svg viewBox="0 0 260 90" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="currentColor" stop-opacity="0.22"></stop>
+                <stop offset="100%" stop-color="currentColor" stop-opacity="0.02"></stop>
+              </linearGradient>
+            </defs>
+
+            <path class="area" [attr.d]="areaPath(c.series, 260, 90, 10)"></path>
+            <path class="line" [attr.d]="sparkPath(c.series, 260, 90, 10)"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="caption">{{ c.caption }}</div>
+
+      <div class="bottom">
+        <div class="delta" [ngClass]="deltaClass(c.deltaLeft.tone)">
+          <span class="arrow" aria-hidden="true"></span>
+          <span class="txt">{{ c.deltaLeft.value }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="delta" [ngClass]="deltaClass(c.deltaRight.tone)">
+          <span class="arrow" aria-hidden="true"></span>
+          <span class="txt">{{ c.deltaRight.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- linha atravessada por cima -->
+  <div class="progressTrack" aria-hidden="true">
+    <span class="trackNode node-cap" data-icon="talent"></span>
+    <span class="trackNode node-flame" data-icon="flame"></span>
+    <span class="trackNode node-chat" data-icon="chat"></span>
+  </div>
+
+</div>

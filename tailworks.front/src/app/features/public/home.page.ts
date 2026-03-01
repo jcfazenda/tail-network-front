@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';  
+import { Router } from '@angular/router';  
 import { StartModalService } from '../../core/ui/start-role-modal/start-modal.service';
 
 type HomeSlide = {
@@ -12,7 +12,7 @@ type HomeSlide = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
@@ -96,8 +96,8 @@ openStart(): void {
   }
 
   goRecruiter(): void {
-  this.router.navigate(['/recruiter']);
-}
+    this.router.navigate(['/recruiter/vagas']);
+  }
 
 goTalent(): void {
   this.router.navigate(['/talent']);

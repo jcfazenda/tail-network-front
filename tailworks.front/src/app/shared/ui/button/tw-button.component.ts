@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 type ButtonVariant = 'primary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -7,6 +8,7 @@ type ButtonType = 'button' | 'submit' | 'reset';
 @Component({
   selector: 'tw-button',
   standalone: true,
+  imports: [CommonModule],
   template: `
     <button
       class="tw-btn"

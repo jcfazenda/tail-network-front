@@ -368,6 +368,13 @@
   background: transparent;
 }
 
+.recruitTopMenu .navItem {
+  width: auto;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
 .recruitTopMenuToggle {
   border: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg-glass), var(--bg-soft) 14%);

@@ -30,6 +30,7 @@ export type RecruiterJob = {
   id: string;
   titulo: string;
   empresa: string;
+  trilha?: string;
   tipo?: string;
   local: string;
   modelo: string;
@@ -131,6 +132,7 @@ export type RecruiterJobDraft = {
   id?: string;
   titulo: string;
   empresa: string;
+  trilha?: string;
   tipo?: string;
   local: string;
   modelo: string;

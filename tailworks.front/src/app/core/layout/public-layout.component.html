@@ -4,7 +4,7 @@
        HEADER
   ========================================================== -->
   <header class="top">
-    <div class="publicAvatarWrap" aria-label="Perfil">
+    <div class="publicAvatarWrap" aria-label="Perfil" *ngIf="auth.isLoggedIn()">
       <img src="assets/avatar-default.png" alt="Julio Fazenda" class="publicAvatar" />
       <div class="publicAvatarMeta">
         <strong>Julio Fazenda - Recruiter</strong>
@@ -28,12 +28,6 @@
 
         <!-- ---------- Header Actions ---------- -->
         <div class="actions">
-          <a class="btnGhost" routerLink="/login">Entrar</a>
-
-          <button class="btnPrimary" type="button" (click)="openRoleModal()">
-            Começar
-          </button>
-
           <div class="themeMenuWrap">
             <button type="button" class="btnTheme" (click)="toggleThemeMenu()"
               aria-label="Abrir seletor de tema" title="Tema">
@@ -80,7 +74,7 @@
   <!-- =========================================================
        FOOTER
   ========================================================== -->
-  <footer class="footer">
+  <footer class="footer" *ngIf="showFooter()">
     <div class="container footerInner">
 
       <!-- LEFT -->
@@ -101,10 +95,5 @@
     </div>
   </footer>
 
-
-  <!-- =========================================================
-       MODAL (global component)
-  ========================================================== -->
-  <tw-start-role-modal />
 
 </div>

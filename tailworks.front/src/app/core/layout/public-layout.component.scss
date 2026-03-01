@@ -126,6 +126,7 @@
   border-radius: 12px;
   color: color-mix(in srgb, var(--text), transparent 20%);
   border: 1px solid transparent;
+  text-decoration: none;
 }
 
 .nav a:hover{
@@ -163,6 +164,25 @@
   }
 }
 
+@media (max-width: 980px) {
+  .topInner {
+    min-height: 76px;
+    justify-content: center;
+  }
+
+  .publicAvatarWrap {
+    position: static;
+    transform: none;
+    margin: 6px auto;
+    left: auto;
+    top: auto;
+  }
+
+  .topCenter {
+    display: none;
+  }
+}
+
 .actions{
   display:flex;
   gap: 10px;
@@ -171,9 +191,13 @@
   z-index: 30;
 }
 
-@media (max-width: 1040px){
-  .publicAvatarMeta small{
-    display: none;
+.actions a{
+  text-decoration: none;
+}
+
+@media (max-width: 1400px){
+  .publicAvatarMeta{
+    display: none !important;
   }
 }
 
@@ -197,6 +221,18 @@
   border: 1px solid var(--border);
   background: var(--bg-glass);
   color: color-mix(in srgb, var(--text), transparent 10%);
+}
+
+.btnRecruiter{
+  border-color: transparent !important;
+  background: linear-gradient(135deg, #0f1117, #1a1d26 62%, #2a2418) !important;
+  color: #ffe7a3 !important;
+  box-shadow: none !important;
+}
+
+.btnRecruiter:hover{
+  background: linear-gradient(135deg, #141821, #222734 64%, #3a311d) !important;
+  color: #fff3c9 !important;
 }
 
 /* botão tema */

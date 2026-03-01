@@ -1,0 +1,214 @@
+/* =========================================================
+   TW STATUS CARD — versão única (premium / print-like)
+========================================================= */
+.tw-status-card{
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  box-sizing: border-box;
+  position: relative;
+
+  border-radius: 14px;
+  border: 1px solid rgba(86,105,148,0.10);
+
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(246,248,255,0.78) 100%);
+  box-shadow:
+    0 26px 70px rgba(9,16,33,0.12),
+    0 4px 14px rgba(15,23,42,0.08);
+
+  padding: 18px 18px 16px;
+  overflow: hidden;
+
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Aura suave (mais “atmosférica”) */
+.tw-status-card__aura{
+  position:absolute;
+  inset:-120px -160px auto -160px;
+  height: 260px;
+
+  background:
+    radial-gradient(circle at 28% 62%, rgba(34,197,94,.14), transparent 62%),
+    radial-gradient(circle at 58% 20%, rgba(245,158,11,.14), transparent 64%),
+    radial-gradient(circle at 86% 40%, rgba(59,130,246,.10), transparent 60%);
+
+  filter: blur(40px);
+  opacity: .75;
+  pointer-events:none;
+  z-index: 0;
+}
+
+/* Conteúdo acima do fundo */
+.tw-status-card > *{
+  position: relative;
+  z-index: 1;
+}
+
+/* TOP */
+.tw-status-card__top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tw-status-card__kicker{
+  font-size: 12px;
+  line-height: 1.2;
+  color: rgba(100,116,139,.90);
+}
+
+.tw-status-card__stage{
+  font-size: 14px;
+  font-weight: 700;            /* menos “pesado” que 800 */
+  letter-spacing: -0.2px;
+  color: rgba(91, 97, 109, .92);
+}
+
+/* GRID */
+.tw-status-card__grid{
+  display:grid;
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  min-height: 230px;           /* um pouco menos alto */
+}
+
+/* LEFT */
+.tw-status-card__left{
+  min-width: 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+.tw-status-card__percent{
+  font-size: 42px;
+  font-weight: 600;            /* tira o “estouro” do bold */
+  letter-spacing: -1.2px;
+  line-height: 1;
+  color: rgba(15,23,42,.92);
+}
+
+/* Barra de progresso */
+.tw-status-card__bar{
+  margin-top: 8px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(15,23,42,.06);
+  overflow:hidden;
+  border: 1px solid rgba(15,23,42,.05);
+}
+
+.tw-status-card__barFill{
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(34,197,94,.55) 0%,
+    rgba(245,158,11,.55) 55%,
+    rgba(59,130,246,.60) 100%
+  );
+}
+
+/* Delta */
+.tw-status-card__delta{
+  margin-top: auto;
+  padding-top: 8px;
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(34,197,94,.95);
+}
+
+.tw-status-card__deltaUp{
+  font-weight: 900;
+}
+
+/* SPARK AREA (sem borda grossa, mais “print”) */
+.tw-status-card__spark{
+  min-width: 0;
+  position:relative;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+  padding: 8px 10px 8px;
+  border-radius: 16px;
+
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+/* Bubble */
+.tw-status-card__bubble{
+  position:absolute;
+  top: 8px;
+  right: 10px;
+
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+
+  color: rgba(91, 97, 109, .92);
+
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(255,255,255,.35);
+  box-shadow: 0 14px 30px rgba(15,23,42,.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.tw-status-card__spark svg{
+  width: 100%;
+  height: 100%;
+  min-height: 170px;
+  display:block;
+}
+
+/* Meta abaixo do gráfico */
+.tw-status-card__sparkMeta{
+  margin-top: auto;
+  padding-top: 10px;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap: 6px;
+
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(91, 97, 109, .78);
+}
+
+.tw-status-card__sparkUp{
+  font-size: 13px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 820px){
+  .tw-status-card{
+    border-radius: 14px;
+  }
+
+  .tw-status-card__grid{
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .tw-status-card__spark svg{
+    min-height: 150px;
+  }
+}
