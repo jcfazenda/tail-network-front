@@ -1,0 +1,66 @@
+<article class="card">
+  <header class="cardTop">
+    <div class="titleBlock">
+      <h2>{{ vm.title }}</h2>
+      <div class="pills pills--top">
+        <span class="pill pill--ghost pill--opened">
+          <span class="dot"></span>
+          {{ vm.openedLabel }}
+        </span>
+      </div>
+    </div>
+
+  </header>
+
+  <section class="profileRow">
+    <div class="recruiter">
+      <div class="avatarBlock">
+        <span class="avatar" aria-hidden="true"></span>
+        <div class="jobCode jobCode--avatar">Cód. V-1001</div>
+      </div>
+      <div class="recruiterMeta">
+        <div class="recruiterHeader">
+          <span class="recruiterHeaderName"><b>{{ vm.recruiterName }}</b></span>
+        </div>
+        <span>{{ vm.recruiterRole }}<span class="material-symbols-rounded checkIcon">check_circle</span></span>
+      </div>
+    </div>
+
+    <div class="remoteChipWrap">
+      <div class="locationInline">São Paulo - SP</div>
+      <span class="pill pill--ghost pill--remote">
+        <span class="material-symbols-rounded">home_work</span>
+        {{ vm.workModeLabel }}
+      </span>
+    </div>
+  </section>
+
+  <!-- mini barras de requisitos (3 colunas) -->
+  <div class="skillsRow" *ngIf="vm.requirements?.length">
+    <div class="skill" *ngFor="let req of vm.requirements | slice:0:3; let i = index" [class.skill--blue]="req.name === 'Soft Skills'">
+      <div class="skillName">{{ req.name }}</div>
+      <div class="skillBar">
+        <div class="skillFill" [style.width.%]="clampPercent(req.yourPercent)"></div>
+      </div>
+      <div class="skillValue">{{ clampPercent(req.yourPercent) }}%</div>
+    </div>
+  </div>
+
+  <section class="adherenceBlock">
+    <div class="adherenceHead">
+      <div class="minLabel">
+        <span class="minLabel__text">Média de Aderência dos candidatos:</span> 
+        <span class="material-symbols-rounded infoIcon" aria-hidden="true">help</span>
+      </div>
+    </div>
+
+    <div class="barWrap">
+      <div class="barBg">
+        <div class="barFill" [style.width.%]="clampPercent(vm.yourAdherencePercent)"></div>
+        <div class="minMarker" [style.left.%]="clampPercent(vm.minimumPercent)"></div>
+        <span class="barIcon" aria-hidden="true">🔥</span>
+      </div>
+      <div class="barTailValue">{{ clampPercent(vm.minimumPercent) }}%</div>
+    </div>
+  </section>
+</article>

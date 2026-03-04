@@ -1,0 +1,24 @@
+<section class="hero" (mouseenter)="onEnter()" (mouseleave)="onLeave()"> 
+ 
+    <div class="heroActions">
+    <button class="btnPrimary" type="button" (click)="goRecruiter()">
+      Recrutador
+    </button>
+
+      <button class="btnGhost" type="button" (click)="goTalent()">
+        Talento
+      </button>
+    </div>
+
+
+    <div class="controls">
+      <button type="button" (click)="prev()" aria-label="Anterior">‹</button>
+      <button type="button" (click)="next()" aria-label="Próximo">›</button>
+    </div>
+
+    <div class="dots" role="tablist" aria-label="Slides">
+      <button *ngFor="let s of slides; let i = index" type="button" class="dot" [class.active]="i === current"
+        (click)="goTo(i)" [attr.aria-label]="'Ir para slide ' + (i + 1)"></button>
+    </div>
+
+</section>

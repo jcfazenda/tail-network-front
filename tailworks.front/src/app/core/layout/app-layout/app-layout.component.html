@@ -1,0 +1,11 @@
+<div class="appLayout" [class.appLayout--noSidebar]="!(sidebar.visible$ | async)">
+
+  <tw-sidebar *ngIf="sidebar.visible$ | async"></tw-sidebar>
+
+  <section class=""> 
+     <!-- <tw-header></tw-header> -->
+    <router-outlet />
+
+  </section>
+
+</div>

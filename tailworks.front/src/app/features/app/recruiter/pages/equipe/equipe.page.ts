@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  selector: 'app-recruiter-root',
+  selector: 'recruiter-equipe-page',
   imports: [CommonModule],
-  templateUrl: './recruiter.page.html',
-  styleUrls: ['./recruiter.page.scss'],
+  template: `<h1>Equipe</h1>`,
 })
-export class RecruiterPage {}
+export class EquipePage {}

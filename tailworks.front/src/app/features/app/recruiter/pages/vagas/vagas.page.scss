@@ -1,0 +1,126 @@
+.vagasPage{
+  padding: 20px;
+  min-height: 100vh;
+  background: radial-gradient(120% 120% at 20% 0%, rgba(217, 140, 79, 0.22), transparent 55%),
+              linear-gradient(180deg, rgba(233, 194, 150, 0.35), rgba(244, 229, 210, 0.6));
+}
+
+.vagasPage job-adherence-card{
+  display:block;
+  max-width: 1040px;
+}
+
+.vagasHeader{
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.86));
+  border: 1px solid rgba(15,23,42,0.06);
+  border-radius: 18px;
+  box-shadow: 0 16px 34px rgba(15,23,42,0.08);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.vagasHeader-left{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(15,23,42,0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.brandMark{
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  box-shadow: 0 0 0 4px rgba(245,158,11,0.15);
+}
+.brandText{
+  font-weight: 700;
+  color: rgba(15,23,42,0.9);
+  letter-spacing: -0.01em;
+}
+.titleBlock h1{
+  margin: 0 0 6px;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: rgba(15,23,42,0.92);
+}
+.filters{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.filters--below{
+  margin-top: 18px;
+  margin-bottom: 18px;
+  margin-left: 4px;
+}
+.pillFilter{
+  border: 1px solid rgba(15,23,42,0.08);
+  background: rgba(255,255,255,0.9);
+  border-radius: 14px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.78);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+}
+.pillFilter.active{
+  background: linear-gradient(180deg, rgba(245,158,11,0.18), rgba(245,158,11,0.08));
+  border-color: rgba(245,158,11,0.26);
+  color: rgba(120, 67, 20, 0.95);
+}
+.pillFilter .material-symbols-rounded{
+  font-size: 16px;
+}
+.pillFilter .dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(245,158,11,0.9);
+}
+.vagasHeader-right{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.stats{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(15,23,42,0.72);
+  font-size: 13px;
+}
+.stats b{
+  color: rgba(15,23,42,0.9);
+}
+.btnPrimary{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(245,158,11,0.5);
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(245,158,11,0.28);
+}
+.btnPrimary .material-symbols-rounded{
+  font-size: 18px;
+}

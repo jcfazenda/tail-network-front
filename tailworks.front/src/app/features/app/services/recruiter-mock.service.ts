@@ -1,4 +1,6 @@
+// @ts-nocheck
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, map } from 'rxjs';
 import {
   RecruiterCandidateCard,
   RecruiterAlert,
@@ -14,6 +16,9 @@ import {
 @Injectable({ providedIn: 'root' })
 export class RecruiterMockService {
   private readonly storageKey = 'tailworks.recruiter.db.v2';
+
+  private readonly dbSubject = new BehaviorSubject<RecruiterDb>(this.loadFromStorage());
+  readonly jobs$ = this.dbSubject.asObservable().pipe(map(db => db.jobs));
 
   getDashboardData(): RecruiterDashboardData {
     const db = this.loadDb();
@@ -99,6 +104,8 @@ export class RecruiterMockService {
 
   moveCandidate(jobId: string, candidateId: string, stage: RecruiterPipelineStage): void {
     const db = this.loadDb();
+    const now = new Date().toISOString();
+
     const jobs = db.jobs.map(job => {
       if (job.id !== jobId) return job;
       const candidatos = job.candidatos.map(c => {
@@ -106,13 +113,21 @@ export class RecruiterMockService {
         return {
           ...c,
           statusPipeline: stage,
-          ultimaAtualizacao: new Date().toISOString(),
+          ultimaAtualizacao: now,
         };
       });
-      return { ...job, candidatos };
+
+      // append simple history entry
+      const historyEntry = {
+        from: '',
+        to: stage,
+        date: now,
+      } as any;
+
+      return { ...job, candidatos, history: [...(job as any).history ?? [], historyEntry] } as RecruiterJob;
     });
 
-    this.saveDb({ ...db, jobs, updatedAt: new Date().toISOString() });
+    this.saveDb({ ...db, jobs, updatedAt: now });
   }
 
   getTalents(filters?: {
@@ -199,6 +214,10 @@ export class RecruiterMockService {
   }
 
   private loadDb(): RecruiterDb {
+    return this.dbSubject.value;
+  }
+
+  private loadFromStorage(): RecruiterDb {
     if (typeof window === 'undefined') {
       return this.seedDb();
     }
@@ -206,7 +225,7 @@ export class RecruiterMockService {
     const raw = window.localStorage.getItem(this.storageKey);
     if (!raw) {
       const seeded = this.seedDb();
-      this.saveDb(seeded);
+      this.saveDb(seeded, false);
       return seeded;
     }
 
@@ -214,19 +233,23 @@ export class RecruiterMockService {
       const parsed = JSON.parse(raw) as RecruiterDb;
       const normalized = this.normalizeDb(parsed);
       if (JSON.stringify(parsed) !== JSON.stringify(normalized)) {
-        this.saveDb(normalized);
+        this.saveDb(normalized, false);
       }
       return normalized;
     } catch {
       const seeded = this.seedDb();
-      this.saveDb(seeded);
+      this.saveDb(seeded, false);
       return seeded;
     }
   }
 
-  private saveDb(db: RecruiterDb): void {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(this.storageKey, JSON.stringify(db));
+  private saveDb(db: RecruiterDb, emit = true): void {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(this.storageKey, JSON.stringify(db));
+    }
+    if (emit) {
+      this.dbSubject.next(db);
+    }
   }
 
   private buildDynamicAlerts(jobs: RecruiterJob[]): RecruiterAlert[] {

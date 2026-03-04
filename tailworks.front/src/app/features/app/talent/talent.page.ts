@@ -1,6 +1,8 @@
 import { Component, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ChatTalentComponent } from '../chat/chat-talent/chat-talent.component';
+import { ChatMsg } from '../recruiter/models/recruiter.models';
 
 type CandidateJob = {
   id: string;
@@ -68,7 +70,7 @@ type CandidateLongDescription = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChatTalentComponent],
   templateUrl: './talent.page.html',
   styleUrls: ['./talent.page.scss'],
 })
@@ -541,6 +543,37 @@ export class TalentPage implements OnDestroy {
     const job = this.selectedChatJob;
     if (!job) return [];
     return this.chatMessagesByJob[job.id] ?? [];
+  }
+
+  // ==== Adapters para o componente chat-talent ====
+  get chatJobAdapter():
+    | { id: string; title: string; company: string; location: string; type: string; recruiterName?: string }
+    | null {
+    const job = this.selectedChatJob;
+    if (!job) return null;
+    return {
+      id: job.id,
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      type: job.type,
+      recruiterName: job.recruiterName,
+    };
+  }
+
+  get chatMessagesForComponent(): ChatMsg[] {
+    return this.chatMessages.map(m => ({
+      id: m.id,
+      from: m.from === 'me' ? 'me' : 'candidate',
+      text: m.text,
+      time: m.time,
+    }));
+  }
+
+  sendChatFromComponent(text: unknown): void {
+    const value = typeof text === 'string' ? text : (text as any)?.target?.value ?? this.chatDraft;
+    this.chatDraft = value || '';
+    this.sendRecruiterMessage();
   }
 
   isMine(msg: CandidateChatMsg): boolean {

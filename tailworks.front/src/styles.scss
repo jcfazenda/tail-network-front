@@ -3,18 +3,36 @@
    TailWorks — Light (default) + Dark (.theme-dark)
 ========================================================= */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=block');
+
 /* -----------------------------------------
-   Base / Resets leves
+   Base / Resets (ANTI-SCROLL LATERAL)
 ------------------------------------------ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-html, body{
-  height: 100%;
+/* 1) Box sizing global */
+*, *::before, *::after{
+  box-sizing: border-box;
 }
 
+/* 2) Evita 100vw “com scrollbar embutida” e overflow fantasma */
+html{
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip; /* preferível */
+}
+
+/* fallback */
+@supports not (overflow: clip){
+  html{ overflow-x: hidden; }
+}
+
+/* 3) O scroll quase sempre é do body */
 body{
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip; /* preferível */
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   background: var(--bg-page);
   color: var(--text);
@@ -22,56 +40,105 @@ body{
   -moz-osx-font-smoothing: grayscale;
 }
 
+@supports not (overflow: clip){
+  body{ overflow-x: hidden; }
+}
+
+/* 4) Elementos que frequentemente “vazam” largura */
+img, svg, video, canvas{
+  max-width: 100%;
+  height: auto;
+}
+
+/* 5) Links/inputs não empurrarem layout */
+a{ color: inherit; }
+input, button, textarea, select{ font: inherit; }
+
+/* 6) Se algum componente angular usar width:100vw, isso ajuda */
+:root{
+  scrollbar-gutter: stable;
+}
+
+/* Hosts principais nunca estouram largura */
+app-root, tw-public-layout, tw-recruit-layout, tw-shell, tw-app-layout{
+  display: block;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+/* -----------------------------------------
+   APP LAYOUT
+------------------------------------------ */
+.appLayout{
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  background: #f6f7fb;
+
+  /* nunca use 100vw aqui */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip; /* ok, mas o “dono” é html/body */
+}
+
+.appLayout--noSidebar{
+  grid-template-columns: 1fr;
+}
+
+.appMain{
+  padding: 20px;
+
+  /* evita que conteúdo com long strings quebre e cause overflow */
+  min-width: 0;
+  min-height: 100vh;
+}
+
+@media (max-width: 960px){
+  .appLayout{
+    grid-template-columns: 220px 1fr;
+  }
+}
+
 /* -----------------------------------------
    TOKENS — LIGHT DEFAULT
 ------------------------------------------ */
 :root{
-  /* brand */
   --gold: #f5b300;
   --orange: #ff5a00;
 
-  /* layout helpers */
   --header-h: 70px;
   --footer-h: 86px;
 
-  /* base colors (light) */
   --bg-page: #f4f6f9;
   --bg-elev: rgba(255,255,255,.78);
   --bg-glass: rgba(255,255,255,.72);
   --bg-glass-2: rgba(255,255,255,.58);
   --bg-soft: rgba(0,0,0,.03);
 
-  /* text */
   --text: rgba(11,11,13,.92);
   --muted: rgba(11,11,13,.60);
 
-  /* borders / focus */
   --border: rgba(11,11,13,.10);
   --border-soft: rgba(11,11,13,.08);
   --focus-ring: rgba(245,179,0,.14);
 
-  /* shadows */
   --shadow-1: 0 10px 30px rgba(0,0,0,.10);
   --shadow-2: 0 12px 30px rgba(0,0,0,.12);
 
-  /* hero (light variant) */
-  --hero-bg: #0b0b0d; /* você pode manter dark no hero mesmo em light (fica premium) */
+  --hero-bg: #0b0b0d;
   --hero-text: #fff;
 
-  /* recruiter background tokens */
   --recruiter-bg-main: #f4f6f9;
   --recruiter-radial-1: rgba(255, 153, 0, .14);
   --recruiter-radial-2: rgba(255, 200, 120, .10);
   --recruiter-vignette: rgba(0,0,0,.06);
 
-  /* watermark */
   --wm-opacity: .16;
   --wm-saturate: 1.05;
   --wm-brightness: 1.05;
   --wm-contrast: 1.02;
   --wm-blend: multiply;
 
-  /* recruiter watermark aliases (sem alterar visual) */
   --recruiter-watermark-opacity: var(--wm-opacity);
   --recruiter-watermark-saturate: var(--wm-saturate);
   --recruiter-watermark-brightness: var(--wm-brightness);
@@ -99,11 +166,9 @@ body.theme-dark{
   --shadow-1: 0 10px 30px rgba(0,0,0,.25);
   --shadow-2: 0 12px 30px rgba(0,0,0,.28);
 
-  /* hero permanece dark */
   --hero-bg: #0b0b0d;
   --hero-text: #fff;
 
-  /* recruiter dark */
   --recruiter-bg-main: #070708;
   --recruiter-radial-1: rgba(255, 153, 0, .20);
   --recruiter-radial-2: rgba(255, 200, 120, .12);
@@ -115,7 +180,6 @@ body.theme-dark{
   --wm-contrast: 1.10;
   --wm-blend: screen;
 
-  /* recruiter watermark aliases (sem alterar visual) */
   --recruiter-watermark-opacity: var(--wm-opacity);
   --recruiter-watermark-saturate: var(--wm-saturate);
   --recruiter-watermark-brightness: var(--wm-brightness);
@@ -136,9 +200,12 @@ body.theme-dark.theme-graphite{
 }
 
 /* -----------------------------------------
-   Helpers globais (opcional)
+   Helpers globais
 ------------------------------------------ */
 .container{
   width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
+
+  /* ✅ importantíssimo em grids/flex: evita overflow por conteúdo */
+  min-width: 0;
 }

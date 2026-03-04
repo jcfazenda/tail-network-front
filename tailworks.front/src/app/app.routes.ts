@@ -1,84 +1,52 @@
 import { Routes } from '@angular/router';
 
-import { PublicLayoutComponent } from './core/layout/public-layout.component';
-import { RecruitLayoutComponent } from './core/layout/recruit-layout.component';
+import { PublicLayoutComponent } from './core/layout/public-layout/public-layout.component'; 
 import { ShellComponent } from './core/layout/shell.component';
 import { authGuard } from './core/auth/auth.guard';
+import { AppLayoutComponent } from './core/layout/app-layout/app-layout.component';
+import { DashboardPage } from './features/app/recruiter/pages/dashboard/dashboard.page';
+import { VagasPage } from './features/app/recruiter/pages/vagas/vagas.page';
+import { RadarPage } from './features/app/recruiter/pages/radar/radar.page';
+import { MensagensPage } from './features/app/recruiter/pages/mensagens/mensagens.page';
+import { EquipePage } from './features/app/recruiter/pages/equipe/equipe.page';
 
 export const routes: Routes = [
   {
     path: '',
     component: PublicLayoutComponent,
     children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./features/public/entry.page').then(m => m.EntryPage),
-      },
-      {
-        path: 'home',
-        loadComponent: () =>
-          import('./features/public/home.page').then(m => m.HomePage),
-      },
-
-      {
-        path: 'recruiter',
-        component: RecruitLayoutComponent,
-        canActivate: [authGuard],
-        children: [
-          {
-            path: '',
-            redirectTo: 'dashboard',
-            pathMatch: 'full',
-          },
-          {
-            path: 'dashboard',
-            loadComponent: () =>
-              import('./features/app/recruiter/pages/recruiter-dashboard/recruiter-dashboard.page').then(m => m.RecruiterDashboardPage),
-          },
-          {
-            path: 'vagas',
-            loadComponent: () =>
-              import('./features/app/recruiter/pages/recruiter-jobs/recruiter-jobs.page').then(m => m.RecruiterJobsPage),
-          },
-          {
-            path: 'talentos',
-            loadComponent: () =>
-              import('./features/app/recruiter/pages/recruiter-talents/recruiter-talents.page').then(m => m.RecruiterTalentsPage),
-          },
-        ],
-      },
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'home', redirectTo: 'login', pathMatch: 'full' },
+ 
       {
         path: 'talent',
         loadComponent: () =>
           import('./features/app/talent/talent.page').then(m => m.TalentPage),
       },
-      {
-        path: 'choose',
-        loadComponent: () =>
-          import('./features/public/choose-role.page').then(m => m.ChooseRolePage),
-      },
+ 
       {
         path: 'login',
         loadComponent: () =>
-          import('./features/public/login.page').then(m => m.LoginPage),
+          import('./features/public/login/login.page').then(m => m.LoginPage),
       },
-    ],
-  },
 
-  {
-    path: 'app',
-    component: ShellComponent,
-    canActivate: [authGuard],
-    children: [
+      /* Recruiter (envólucro: PublicLayout -> AppLayout -> páginas) */
       {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./features/app/dashboard.page').then(m => m.DashboardPage),
+        path: 'recruiter',
+        component: AppLayoutComponent,
+        canActivate: [authGuard],
+        children: [
+          { path: '', component: DashboardPage },
+          { path: 'dashboard', component: DashboardPage },
+          { path: 'vagas', component: VagasPage },
+          { path: 'radar', component: RadarPage },
+          { path: 'mensagens', component: MensagensPage },
+          { path: 'equipe', component: EquipePage },
+          { path: 'talentos', component: EquipePage },
+        ],
       },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
-  },
+  }, 
 
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: '/login' },
 ];

@@ -1,0 +1,29 @@
+<aside class="sidebar">
+  <div class="sidebarTop">
+ 
+    <nav class="menu">
+      <a
+        *ngFor="let item of items"
+        class="menuItem"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/recruiter/dashboard' }"
+      >
+        <span class="activeBar" aria-hidden="true"></span>
+        <span class="material-symbols-rounded icon" aria-hidden="true">{{ item.icon }}</span>
+        <span class="label">{{ item.label }}</span>
+        <span *ngIf="item.badge" class="badge">{{ item.badge }}</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebarBottom">
+    <div class="profile">
+      <div class="avatar" aria-hidden="true"></div>
+      <div class="profileMeta">
+        <b>Jorge Mendes</b>
+        <span>Tech Recruiter</span>
+      </div>
+    </div>
+  </div>
+</aside>

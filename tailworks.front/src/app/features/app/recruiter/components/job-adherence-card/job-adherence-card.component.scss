@@ -1,0 +1,417 @@
+.card{
+  background:
+    radial-gradient(120% 120% at 20% 10%, rgba(223, 215, 208, 0.22), transparent 55%),
+    radial-gradient(140% 140% at 80% 0%, rgba(208, 173, 113, 0.26), transparent 60%),
+    #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(15,23,42,0.04);
+  box-shadow:
+    0 24px 55px rgba(127, 143, 185, 0.14),
+    0 6px 16px rgba(15,23,42,0.08);
+  padding: 20px 18px 18px;
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  max-width: 560px;
+  min-height: 490px;
+}
+
+.cardTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 12px;
+}
+
+// Titulo Vaga
+.titleBlock h2{
+  margin: 0 0 14px;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: rgba(15,23,42,0.92);
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+}
+.jobCode{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.65);
+  margin: -8px 0 10px;
+}
+
+// chips
+.pills{
+  display:flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pills--top{
+  margin-top: -6px;
+}
+.pills--inline{
+  margin-top: 6px;
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(15,23,42,0.75); 
+  background: rgba(15,23,42,0.04);
+}
+.pill .material-symbols-rounded{ font-size: 14px; }
+.pill--dot .dot{ width:8px; height:8px; border-radius:999px; background:#af8f57; }
+.pill--remote{
+  background: linear-gradient(135deg, rgba(238, 214, 177, 0.92), rgba(235, 229, 220, 0.92)); 
+  color: rgba(93, 90, 85, 0.9);
+}
+.pill--opened{
+  background: rgba(245,158,11,0.10); 
+  color: rgba(62, 59, 54, 0.95);
+}
+.pill--opened .dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #f59e0b;
+  display: inline-block;
+}
+.remoteChipWrap{
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 18px;
+}
+
+// CHAT COM RECUTADOR
+.chatBtn{
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: rgba(15,23,42,0.75);
+  cursor: pointer;
+}
+
+.profileRow{
+  display:flex;
+  justify-content:space-between;
+  gap: 12px;
+  align-items:center;
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+  padding-bottom: 10px;
+}
+
+.recruiter{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+.avatarBlock{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.avatar{
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  background: center/cover no-repeat url('/assets/avatar-default.png'), linear-gradient(135deg, #f1c27d, #d8a35d);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.14);
+}
+.jobCode--avatar{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.7);
+}
+
+.recruiterMeta b{
+  display:block;
+  font-size: 15px;
+  color: rgba(15,23,42,0.9);
+}
+.recruiterHeader{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width: 0;
+}
+.recruiterHeaderName{
+  flex: 0 0 auto;
+}
+.locationInline{
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(15,23,42,0.62);
+  white-space: nowrap;
+  margin-bottom: 2px;
+}
+.recruiterMeta span{
+  display:block;
+  font-size: 12px;
+  color: rgba(15,23,42,0.62);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.checkIcon{ 
+  display: inline-flex;
+  font-size: 52px;
+  line-height: 1;
+  margin-left: 8px;
+  color: rgba(37, 99, 235, 0.9); /* azul */
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 48;
+  vertical-align: middle;
+}
+.youLine{
+  display:flex;
+  align-items:center;
+  gap: 4px;
+  font-size: 12px;
+  color: rgba(15,23,42,0.7);
+  margin-top: 4px;
+}
+.youLine .material-symbols-rounded{ font-size: 14px; }
+
+.locationText{
+  margin-left: auto;
+}
+.expectedValue b{
+  display:block;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: rgba(15,23,42,0.9);
+  margin-bottom: 2px;
+}
+.expectedValue small{
+  font-size: 12px;
+  color: rgba(15,23,42,0.62);
+  margin-bottom: 4px;
+}
+
+/* Skills mini barras */
+.skillsRow{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: -2px;
+  margin-bottom: 4px;
+}
+.skill{
+  min-width: 0;
+  max-width: 30%;
+}
+.skillName{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.75);
+  margin-bottom: 4px;
+}
+.skillBar{
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(247, 181, 94, 0.6), rgba(252, 227, 197, 0.3), rgba(255,255,255,0.2));
+  overflow: visible;
+}
+.skillFill{
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f6ad55, #fbd38d, #fff7ed);
+}
+.skill.skill--blue .skillBar{
+  background: linear-gradient(90deg, rgba(77, 129, 188, 0.6), rgba(181, 193, 209, 0.35), rgba(126, 151, 184, 0.2));
+  min-width: 0px;
+}
+.skill.skill--blue .skillFill{
+  background: linear-gradient(90deg, #3870b3, #93c5fd, #e0f2fe);
+}
+.skillValue{
+  display: block;
+  position: relative;
+  margin-top: -18px;
+  text-align: left;
+  padding-left: 110px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(15,23,42,0.78);
+  z-index: 2; // por cima da skillBar
+}
+
+// Label aderencia
+.adherenceBlock{
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid rgba(15,23,42,0.06);
+  padding-top: 12px;
+}
+.adherenceHead{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start; // alinhado a esquerda
+  color: rgba(15,23,42,0.78);
+  margin-bottom: px;
+  padding-left: 12px;
+}
+.adherenceHead .label{ font-size: 13px; font-weight: 700; }
+.adherenceHead .sub{ font-size: 12px; font-weight: 600; color: rgba(15,23,42,0.65); }
+.minLabel{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.65);
+}
+.minLabel__text{
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(15,23,42,0.6);
+}
+.minLabel__value{
+  font-size: 32px;
+  font-weight: 00; 
+  color: rgba(15,23,42,0.82);
+}
+.infoIcon{
+  font-size: 30px;
+  color: rgba(51, 93, 233, 0.65);
+}
+
+.barWrap{ width: 100%; position: relative; }
+.barBg{
+  position: relative;
+  height: 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(247, 181, 94, 0.65), rgba(252, 227, 197, 0.28), rgba(255,255,255,0.22));
+  overflow: visible;
+  border: none;
+}
+.barFill{
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f6ad55, #fbd38d, #fff7ed);
+}
+
+.barIcon{
+  position: absolute;
+  right: 90px;
+  top: -10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  z-index: 2;
+}
+.barTailValue{
+  margin-top: -38px;
+  text-align: right;
+  font-size: 35px;
+  font-weight: 500;
+  color: rgba(15,23,42,0.78);
+}
+.minMarker{
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 0;
+  border-left: 2px dashed rgba(240,148,34,0.7);
+}
+
+.requirements{
+  display: grid;
+  gap: 12px;
+}
+
+.reqItem{
+  display: grid;
+  gap: 6px;
+}
+
+.reqHeader{
+  display:flex;
+  align-items:baseline;
+  gap: 8px;
+}
+.reqTitle{
+  font-weight: 700;
+  color: rgba(15,23,42,0.88);
+}
+.reqSub{
+  font-size: 12px;
+  color: rgba(15,23,42,0.60);
+}
+
+.reqBar{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.reqBarBg{
+  position: relative;
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.06);
+  overflow:hidden;
+}
+.reqBarFill{
+  position:absolute;
+  left:0; top:0; bottom:0;
+  background: linear-gradient(90deg, #fbbf24, #22c55e);
+  border-radius: 999px;
+}
+.reqMinMarker{
+  position:absolute;
+  top:-4px;
+  bottom:-4px;
+  width:0;
+  border-left: 1px dashed rgba(15,23,42,0.5);
+}
+
+.reqPill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width: 46px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+.reqPill.pill--ok{
+  background: rgba(34,197,94,0.12);
+  color: rgba(22,163,74,0.9);
+  border-color: rgba(34,197,94,0.2);
+}
+.reqPill.pill--warn{
+  background: rgba(249,115,22,0.12);
+  color: rgba(234,88,12,0.9);
+  border-color: rgba(249,115,22,0.22);
+}
+
+@media (max-width: 720px){
+  .cardTop{ flex-direction: column; align-items: flex-start; }
+  .profileRow{ flex-direction: column; align-items: flex-start; }
+  .expectedBadge{ width: 100%; justify-content: space-between; }
+  .reqBar{ flex-direction: column; align-items: flex-start; gap: 6px; }
+}
