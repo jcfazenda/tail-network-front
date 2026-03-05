@@ -1,0 +1,19 @@
+.shell{
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  background: linear-gradient(120deg, #fdf9f2 0%, #f8f2e9 32%, #f5f3ee 58%, #f3f5fb 100%);
+}
+
+.shell__main{
+  min-width: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 120px 1fr;
+  background: linear-gradient(115deg, #eeebe5 0%, #f7f1e9 30%, #f4f2ee 56%, #f6f6f6 100%);
+}
+
+.shell__content{
+  padding: 50px 44px 40px;
+  min-height: calc(100vh - 90px);
+}

@@ -1,211 +1,47 @@
-/* =========================================================
-   styles.scss (GLOBAL TOKENS)
-   TailWorks — Light (default) + Dark (.theme-dark)
-========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;700&display=block');
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=block');
+:root{
+  --bg: #f5f6fa;
+  --bg-sidebar: #f7f0e5;
+  --text: #0f172a;
+  --muted: #5b6475;
+  --primary: #f5b300;
+  --primary-2: #f59e0b;
+  --card: rgba(255,255,255,0.9);
+  --border: rgba(15,23,42,0.08);
+}
 
-/* -----------------------------------------
-   Base / Resets (ANTI-SCROLL LATERAL)
------------------------------------------- */
-
-/* 1) Box sizing global */
-*, *::before, *::after{
+*,
+*::before,
+*::after{
   box-sizing: border-box;
 }
 
-/* 2) Evita 100vw “com scrollbar embutida” e overflow fantasma */
-html{
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip; /* preferível */
-}
-
-/* fallback */
-@supports not (overflow: clip){
-  html{ overflow-x: hidden; }
-}
-
-/* 3) O scroll quase sempre é do body */
 body{
   margin: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip; /* preferível */
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  background: var(--bg-page);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--bg);
   color: var(--text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@supports not (overflow: clip){
-  body{ overflow-x: hidden; }
-}
-
-/* 4) Elementos que frequentemente “vazam” largura */
-img, svg, video, canvas{
-  max-width: 100%;
-  height: auto;
-}
-
-/* 5) Links/inputs não empurrarem layout */
-a{ color: inherit; }
-input, button, textarea, select{ font: inherit; }
-
-/* 6) Se algum componente angular usar width:100vw, isso ajuda */
-:root{
-  scrollbar-gutter: stable;
-}
-
-/* Hosts principais nunca estouram largura */
-app-root, tw-public-layout, tw-recruit-layout, tw-shell, tw-app-layout{
-  display: block;
-  max-width: 100%;
-  overflow-x: clip;
-}
-
-/* -----------------------------------------
-   APP LAYOUT
------------------------------------------- */
-.appLayout{
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  background: #f6f7fb;
-
-  /* nunca use 100vw aqui */
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip; /* ok, mas o “dono” é html/body */
-}
-
-.appLayout--noSidebar{
-  grid-template-columns: 1fr;
-}
-
-.appMain{
-  padding: 20px;
-
-  /* evita que conteúdo com long strings quebre e cause overflow */
-  min-width: 0;
   min-height: 100vh;
 }
 
-@media (max-width: 960px){
-  .appLayout{
-    grid-template-columns: 220px 1fr;
-  }
+body::before{
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(140% 160% at 0% 0%, rgba(245, 179, 0, 0.14), transparent 48%),
+    radial-gradient(120% 140% at 90% 8%, rgba(216, 186, 150, 0.18), transparent 55%);
+  pointer-events: none;
+  z-index: -1;
 }
 
-/* -----------------------------------------
-   TOKENS — LIGHT DEFAULT
------------------------------------------- */
-:root{
-  --gold: #f5b300;
-  --orange: #ff5a00;
-
-  --header-h: 70px;
-  --footer-h: 86px;
-
-  --bg-page: #f4f6f9;
-  --bg-elev: rgba(255,255,255,.78);
-  --bg-glass: rgba(255,255,255,.72);
-  --bg-glass-2: rgba(255,255,255,.58);
-  --bg-soft: rgba(0,0,0,.03);
-
-  --text: rgba(11,11,13,.92);
-  --muted: rgba(11,11,13,.60);
-
-  --border: rgba(11,11,13,.10);
-  --border-soft: rgba(11,11,13,.08);
-  --focus-ring: rgba(245,179,0,.14);
-
-  --shadow-1: 0 10px 30px rgba(0,0,0,.10);
-  --shadow-2: 0 12px 30px rgba(0,0,0,.12);
-
-  --hero-bg: #0b0b0d;
-  --hero-text: #fff;
-
-  --recruiter-bg-main: #f4f6f9;
-  --recruiter-radial-1: rgba(255, 153, 0, .14);
-  --recruiter-radial-2: rgba(255, 200, 120, .10);
-  --recruiter-vignette: rgba(0,0,0,.06);
-
-  --wm-opacity: .16;
-  --wm-saturate: 1.05;
-  --wm-brightness: 1.05;
-  --wm-contrast: 1.02;
-  --wm-blend: multiply;
-
-  --recruiter-watermark-opacity: var(--wm-opacity);
-  --recruiter-watermark-saturate: var(--wm-saturate);
-  --recruiter-watermark-brightness: var(--wm-brightness);
-  --recruiter-watermark-contrast: var(--wm-contrast);
-  --recruiter-watermark-blend: var(--wm-blend);
+a{
+  color: inherit;
+  text-decoration: none;
 }
 
-/* -----------------------------------------
-   TOKENS — DARK OVERRIDES
------------------------------------------- */
-body.theme-dark{
-  --bg-page: #070708;
-  --bg-elev: rgba(255,255,255,.08);
-  --bg-glass: rgba(255,255,255,.04);
-  --bg-glass-2: rgba(255,255,255,.03);
-  --bg-soft: rgba(0,0,0,.20);
-
-  --text: rgba(255,255,255,.92);
-  --muted: rgba(255,255,255,.65);
-
-  --border: rgba(255,255,255,.10);
-  --border-soft: rgba(255,255,255,.08);
-  --focus-ring: rgba(255,153,0,.12);
-
-  --shadow-1: 0 10px 30px rgba(0,0,0,.25);
-  --shadow-2: 0 12px 30px rgba(0,0,0,.28);
-
-  --hero-bg: #0b0b0d;
-  --hero-text: #fff;
-
-  --recruiter-bg-main: #070708;
-  --recruiter-radial-1: rgba(255, 153, 0, .20);
-  --recruiter-radial-2: rgba(255, 200, 120, .12);
-  --recruiter-vignette: rgba(0,0,0,.78);
-
-  --wm-opacity: .30;
-  --wm-saturate: 1.25;
-  --wm-brightness: 1.18;
-  --wm-contrast: 1.10;
-  --wm-blend: screen;
-
-  --recruiter-watermark-opacity: var(--wm-opacity);
-  --recruiter-watermark-saturate: var(--wm-saturate);
-  --recruiter-watermark-brightness: var(--wm-brightness);
-  --recruiter-watermark-contrast: var(--wm-contrast);
-  --recruiter-watermark-blend: var(--wm-blend);
-}
-
-body.theme-dark.theme-graphite{
-  --bg-page: #2f3743;
-  --bg-elev: rgba(255,255,255,.10);
-  --bg-glass: rgba(255,255,255,.07);
-  --bg-glass-2: rgba(255,255,255,.05);
-  --bg-soft: rgba(0,0,0,.18);
-  --text: rgba(247,249,252,.93);
-  --muted: rgba(234,239,247,.70);
-  --border: rgba(255,255,255,.14);
-  --border-soft: rgba(255,255,255,.11);
-}
-
-/* -----------------------------------------
-   Helpers globais
------------------------------------------- */
-.container{
-  width: min(1120px, calc(100% - 40px));
-  margin: 0 auto;
-
-  /* ✅ importantíssimo em grids/flex: evita overflow por conteúdo */
-  min-width: 0;
+button, input{
+  font: inherit;
 }

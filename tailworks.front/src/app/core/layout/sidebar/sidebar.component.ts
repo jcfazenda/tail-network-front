@@ -1,27 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-type NavItem = {
-  label: string;
-  icon: string;
-  route: string;
-  badge?: string;
-};
+type NavItem = { label: string; route: string; icon: string };
 
 @Component({
-  selector: 'tw-sidebar',
   standalone: true,
+  selector: 'app-sidebar',
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
   readonly items: NavItem[] = [
-    { label: 'Dashboard', icon: 'space_dashboard', route: '/recruiter/dashboard' },
-    { label: 'Vagas', icon: 'work', route: '/recruiter/vagas' },
-    { label: 'Radar', icon: 'radar', route: '/recruiter/radar' },
-    { label: 'Mensagens', icon: 'chat', route: '/recruiter/mensagens', badge: '2' },
-    { label: 'Equipe', icon: 'group', route: '/recruiter/equipe' },
+    { label: 'Radar', route: '/radar', icon: 'radar' },
+    { label: 'Minhas Vagas', route: '/vagas', icon: 'work' },
+    { label: 'Talentos', route: '/talentos', icon: 'group' },
+    { label: 'Propostas', route: '/propostas', icon: 'assignment' },
   ];
 }
