@@ -112,61 +112,78 @@
 
             <!-- TOPO DA VAGA -->
             <div class="job-sheet">
-              <div class="job-sheet__title">{{ selectedJobPanel.title }}</div>
+              <div class="job-sheet__title-row">
+                <div class="job-sheet__title">{{ selectedJobPanel.title }}</div>
+                <div class="job-sheet__icon">⚙️</div>
+              </div>
 
               <div class="job-sheet__meta">
-                <span class="job-sheet__item">📍 {{ selectedJobPanel.location }}</span>
-                <span class="job-sheet__sep">•</span>
-                <span class="job-sheet__item">{{ selectedJobPanel.company }}</span>
+                <div class="job-sheet__meta-left">
+                  <span class="job-sheet__item">📍 {{ selectedJobPanel.location }}</span>
+                </div>
+                <div class="job-sheet__meta-right">
+                  <span class="job-sheet__item">{{ selectedJobPanel.workModel | uppercase }}</span>
+                </div>
+                <div class="job-sheet__meta-bottom">
+                  <span class="job-sheet__item">{{ selectedJobPanel.company }}</span>
+                </div>
               </div>
-            </div>
-
-            <div class="candidate-divider">
-              <span>Candidatos no radar</span>
             </div>
 
             <!-- LISTA DE CANDIDATOS -->
             <div class="cand-list">
-              <button
-                type="button"
-                class="candidate-card"
-                *ngFor="let c of selectedJobPanel.candidates; let i = index"
-                (click)="openCandidate(findJobByTitle(selectedJobPanel!.title), i)"
-              >
-                <div class="cand-body">
-                  <div class="cand-main">
-                    <span class="cand-avatar" [style.backgroundImage]="'url(' + c.avatar + ')'"></span>
-                    <div class="cand-text">
-                      <div class="cand-name">{{ c.name }}</div>
-                      <div class="cand-role">{{ c.role }}</div>
-                    </div>
-                  </div>
+              <div class="candidate-divider">
+                <span>Candidatos no radar</span>
+              </div>
+              <ng-container *ngIf="sortedCandidatesFor(selectedJobPanel) as list">
+                <ng-container *ngFor="let c of list; let i = index">
 
-                  <div class="cand-progress">
-                    <div class="cand-status-chip">
-                      <ng-container [ngSwitch]="i">
-                        <span *ngSwitchCase="0">Em Candidatura</span>
-                        <span *ngSwitchCase="1">Em Entrevista</span>
-                        <span *ngSwitchCase="2">Em Entrevista Técnica</span>
-                        <span *ngSwitchCase="3">Documentação recebida</span>
-                        <span *ngSwitchDefault>Aguardando aceite</span>
-                      </ng-container>
-                    </div>
-                    <div class="cand-bar-wrap">
-                      <div class="cand-bar">
-                        <div class="cand-bar-fill" [style.width.%]="c.match"></div>
+                  <button
+                    type="button"
+                    class="candidate-card"
+                    (click)="openCandidate(findJobByTitle(selectedJobPanel!.title), i)"
+                  >
+                    <span class="cand-chat" title="Abrir chat">chat_bubble</span>
+                    <div class="cand-body">
+                      <div class="cand-main">
+                        <span class="cand-avatar" [style.backgroundImage]="'url(' + c.avatar + ')'"></span>
+                        <div class="cand-text">
+                          <div class="cand-name" style="font-size:13px;">{{ c.name }}</div>
+                          <div class="cand-role">{{ c.role }}</div>
+                        </div>
                       </div>
-                      <span class="cand-bar-val">{{ c.match }}%</span>
+
+                      <div class="cand-progress">
+                        <div class="cand-status-chip">
+                          <span>{{ stageLabel(c.stage) }}</span>
+                        </div>
+                        <div class="cand-bar-wrap">
+                          <div class="cand-bar">
+                            <div class="cand-bar-fill" [style.width.%]="c.match"></div>
+                          </div>
+                          <span class="cand-bar-val">{{ c.match }}%</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </button>
+                  </button>
+                </ng-container>
+              </ng-container>
             </div>
+
           </ng-container>
 
           <ng-template #funnelEmpty>
             <div class="empty">Clique em uma vaga para ver candidatos.</div>
           </ng-template>
+        </div>
+        <div class="panel-footer">
+          <div class="recruiter-card">
+            <div class="rec-avatar"></div>
+            <div class="rec-text">
+              <div class="rec-name">Rafael Souza</div>
+              <div class="rec-role">Talent Acquisition</div>
+            </div>
+          </div>
         </div>
       </section>
     </aside>

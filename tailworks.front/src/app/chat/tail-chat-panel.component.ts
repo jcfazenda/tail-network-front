@@ -12,6 +12,7 @@ export interface ChatCandidate {
   stack?: string;
   lastMessage?: string;
   time?: string;
+  stage?: string;
 }
 
 export interface ChatJob {
@@ -62,7 +63,7 @@ export class TailChatPanelComponent implements OnChanges {
   selectedConversationIndex = 0;
   stages: Stage[] = [
     { label: 'Candidatado', status: 'done', meta: 'Qui 12:21' },
-    { label: 'Em Entrevista', status: 'pending' },
+    { label: 'Em Processo', status: 'pending' },
     { label: 'Em Entrevista Técnica', status: 'pending' },
     { label: 'Documentação recebida', status: 'pending' },
     { label: 'Aguardando aceite de Aprovação', status: 'pending' },
@@ -172,7 +173,7 @@ export class TailChatPanelComponent implements OnChanges {
   private resetStages() {
     this.stages = [
       { label: 'Candidatado', status: 'done', meta: 'Qui 12:21' },
-      { label: 'Em Entrevista', status: 'pending' },
+      { label: 'Em Processo', status: 'pending' },
       { label: 'Em Entrevista Técnica', status: 'pending' },
       { label: 'Documentação recebida', status: 'pending' },
       { label: 'Aguardando aceite de Aprovação', status: 'pending' },

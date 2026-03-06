@@ -34,6 +34,7 @@ interface Candidate {
   minutesAgo: number;
   status: 'online' | 'offline';
   avatar: string;
+  stage?: 'aguardando' | 'processo' | 'tecnica' | 'cancelado';
 }
 
 @Component({
@@ -83,9 +84,19 @@ export class StubPage {
       extraCount: 18,
       status: 'ativas',
       candidates: [
-        { name: 'Alex Chen', role: 'Backend .NET', match: 92, minutesAgo: 8, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Bianca Lima', role: 'Eng. Software', match: 88, minutesAgo: 16, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Carlos Souza', role: 'Tech Lead .NET', match: 81, minutesAgo: 28, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
+        { name: 'Alex Chen', role: 'Backend .NET', match: 92, minutesAgo: 8, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'aguardando' },
+        { name: 'Bianca Lima', role: 'Eng. Software', match: 88, minutesAgo: 16, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Carlos Souza', role: 'Tech Lead .NET', match: 81, minutesAgo: 28, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Mariana Alves', role: 'Full Stack .NET', match: 86, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Diego Farias', role: 'Backend .NET', match: 77, minutesAgo: 44, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
+        { name: 'Fernanda Lopes', role: 'Backend .NET', match: 79, minutesAgo: 52, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
+        { name: 'Gustavo Prado', role: 'Backend .NET', match: 82, minutesAgo: 63, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
+        { name: 'Helena Duarte', role: 'Backend .NET', match: 84, minutesAgo: 71, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
+        { name: 'Ícaro Mendes', role: 'Backend .NET', match: 64, minutesAgo: 88, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
+        { name: 'Joana Ribeiro', role: 'Backend .NET', match: 61, minutesAgo: 94, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
+        { name: 'Kamila Torres', role: 'Backend .NET', match: 59, minutesAgo: 103, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
+        { name: 'Leonardo Braga', role: 'Backend .NET', match: 56, minutesAgo: 117, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
+        { name: 'Marta Silveira', role: 'Backend .NET', match: 53, minutesAgo: 126, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
       ],
     },
     {
@@ -204,11 +215,12 @@ export class StubPage {
   ];
 
   readonly stageLabels = [
-    'Em Candidatura',
-    'Em Entrevista',
+    'Contratação Solicitada',
+    'Em Processo',
     'Em Entrevista Técnica',
     'Documentação recebida',
-    'Aguardando aceite de Aprovação',
+    'Candidatura',
+    'Cancelado',
   ];
 
   setTab(tab: JobCard['status']) {
@@ -243,7 +255,7 @@ export class StubPage {
       company: job.company,
       location: job.location,
       workModel: job.workModel,
-      candidates: job.candidates,
+      candidates: this.sortedCandidatesFor(job),
     };
 
     this.selectedJobPanel = asChatJob;
@@ -256,7 +268,31 @@ export class StubPage {
     return this.stageLabels[this.stageLabels.length - 1];
   }
 
+  stageLabel(stage?: Candidate['stage']): string {
+    switch (stage) {
+      case 'aguardando':
+        return 'Contratação Solicitada';
+      case 'processo':
+        return 'Em Processo';
+      case 'tecnica':
+        return 'Em Entrevista Técnica';
+      case 'cancelado':
+        return 'Cancelado';
+      default:
+        return 'Em Processo';
+    }
+  }
+
   closeChat() {
     this.selectedChatJob = null;
+  }
+
+  sortedCandidatesFor(job: JobCard | ChatJob): Candidate[] {
+    const order = ['aguardando', 'processo', 'tecnica', 'documentacao', 'candidatura', 'cancelado'];
+    return [...job.candidates as Candidate[]].sort((a, b) => {
+      const ia = order.indexOf(a.stage ?? 'processo');
+      const ib = order.indexOf(b.stage ?? 'processo');
+      return ia - ib;
+    });
   }
 }

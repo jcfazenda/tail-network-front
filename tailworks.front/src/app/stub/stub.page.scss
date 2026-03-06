@@ -32,7 +32,7 @@
   background: linear-gradient(180deg, #f2f0e8 0%, #f8f5ef 100%);
   border-radius: 8px;
   border: 1px solid rgba(15, 23, 42, 0.04);
-  box-shadow: 0 22px 42px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
   padding: 0;
   overflow: hidden;
 }
@@ -41,6 +41,7 @@
   height: calc(100vh - 220px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .panel-stack .panel-block {
@@ -49,23 +50,41 @@
 
 .panel-stack .panel-block:first-child {
   flex: 1;
+  overflow: hidden;
 }
 
 .panel-conv {
   background: #f7f4ee;
   border-radius: 14px;
-  padding: 12px 14px;
+  padding: 3px 3px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.75),
     0 12px 26px rgba(15, 23, 42, 0.07);
   border: 1px solid rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 /* TOPO DA VAGA NO PAINEL */
 .job-sheet {
-  padding: 6px 2px 14px;
+  padding: 6px 2px 18px;
   display: grid;
-  gap: 8px;
+  gap: 19px;
+  text-align: right;
+
+  &__title-row{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    justify-items: start;
+  }
+  &__icon{
+    font-size: 18px;
+    opacity: 0.75;
+    justify-self: end;
+    margin-left: 0;
+  }
 
   &__title {
     font-size: 22px;
@@ -75,40 +94,44 @@
   }
 
   &__meta {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
     color: rgba(38, 44, 58, 0.68);
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 600;
   }
-
-  &__sep {
-    color: rgba(15, 23, 42, 0.28);
-    font-weight: 800;
+  &__meta-left{
+    text-align: left;
+    white-space: nowrap;
+    grid-column: 1 / 2;
+  }
+  &__meta-right{
+    text-align: right;
+    white-space: nowrap;
+    grid-column: 2 / 3;
+  }
+  &__meta-bottom{
+    grid-column: 1 / 2;
+    text-align: left;
+    color: rgba(38,44,58,0.65);
+    font-size: 11.5px;
+    font-weight: 600;
+    margin-top: 2px;
+    white-space: nowrap;
   }
 }
 
 /* DIVISÃO ENTRE VAGA E CANDIDATOS */
 .candidate-divider {
-  position: relative;
-  margin: 6px 0 14px;
+  position: sticky;
+  top: 0;
+  z-index: 3;
   text-align: center;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 50% 0 auto 0;
-    transform: translateY(-50%);
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      rgba(15, 23, 42, 0.04) 0%,
-      rgba(245, 179, 0, 0.35) 50%,
-      rgba(15, 23, 42, 0.04) 100%
-    );
-  }
+  padding: 8px 0 2px;
+  margin: 0 0 12px;
+  background: #f7f4ee;
 
   span {
     position: relative;
@@ -122,11 +145,83 @@
     letter-spacing: 0.4px;
     text-transform: uppercase;
   }
+
+  &::after{
+    content:'';
+    display:block;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dashed rgba(15,23,42,0.22);
+    margin-top: 6px;
+  }
 }
 
 .cand-list {
   display: grid;
-  gap: 12px;
+  gap: 6px;
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
+  overflow-y: auto;
+  padding-right: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  flex: 1;
+  min-height: 0;
+}
+.cand-list::-webkit-scrollbar{
+  display: none;
+}
+
+.stage-separator{
+  position: relative;
+  margin: 18px 2px 8px;
+  padding-top: 12px;
+  text-align: left;
+  border-top: 1px dashed rgba(15,23,42,0.25);
+}
+
+.recruiter-card{
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fdfbf7 0%, #f8f4ec 100%);
+  border: 1px solid rgba(15,23,42,0.05);
+  box-shadow: 0 6px 14px rgba(15,23,42,0.08);
+}
+.rec-avatar{
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png'), linear-gradient(135deg, #f5b300, #f59e0b);
+  border: 2px solid #fff;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+.rec-text{
+  display: grid;
+  gap: 2px;
+}
+.rec-name{
+  font-weight: 800;
+  color: #1f1f1f;
+  font-size: 14px;
+}
+.rec-role{
+  font-size: 12px;
+  color: rgba(15,23,42,0.68);
+  font-weight: 600;
+}
+.rec-msg{
+  font-size: 12px;
+  color: rgba(15,23,42,0.6);
+}
+
+.panel-footer{
+  padding: 10px 8px 12px;
 }
 
 .candidate-card {
@@ -136,12 +231,13 @@
   cursor: pointer;
   display: flex;
   gap: 12px;
-  padding: 14px 12px;
-  border-radius: 18px;
+  padding: 10px 8px;
+  border-radius: 10px;
   background: linear-gradient(180deg, #ffffff 0%, #fbf8f2 100%);
   border: 1px solid rgba(15, 23, 42, 0.05);
   box-shadow: 0 12px 22px rgba(15, 23, 42, 0.06);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  position: relative;
 
   &:hover {
     transform: translateY(-1px);
@@ -150,13 +246,30 @@
   }
 }
 
+.cand-chat{
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: 'Material Symbols Rounded';
+  font-size: 18px;
+  line-height: 1;
+  color: rgba(15,23,42,0.68);
+  opacity: 0.8;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  pointer-events: none;
+  &:hover{
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
 .cand-avatar {
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
-  border: 2px solid #fff;
+  border: 1px solid #fff;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
   flex: 0 0 auto;
 }
@@ -178,7 +291,7 @@
 .cand-name {
   font-weight: 800;
   color: #1f1f1f;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.15;
 }
 
