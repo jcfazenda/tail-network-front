@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ChatJob, ChatPanelComponent } from '../chat/chat-panel.component';
+import { ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 
 interface RadarCategory {
   label: string;
@@ -39,7 +39,7 @@ interface Candidate {
 @Component({
   standalone: true,
   selector: 'app-stub-page',
-  imports: [CommonModule, ChatPanelComponent],
+  imports: [CommonModule, TailChatPanelComponent],
   templateUrl: './stub.page.html',
   styleUrls: ['./stub.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -210,6 +210,7 @@ export class StubPage {
       title: job.title,
       company: job.company,
       location: job.location,
+      workModel: job.workModel,
       candidates: job.candidates,
     };
   }

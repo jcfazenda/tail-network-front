@@ -1,0 +1,86 @@
+<div class="chat-panel-backdrop" (click)="closePanel()"></div>
+<div class="chat-panel">
+  <div class="chat-panel__header">
+    <div class="chat-panel__title-wrap">
+      <div class="chat-panel__icon">💬</div>
+      <h2 class="chat-panel__title">Conversas</h2>
+    </div>
+
+    <button class="chat-panel__close" type="button" (click)="closePanel()">
+      ✕
+    </button>
+  </div>
+
+  <div class="chat-panel__job">
+    <div class="chat-panel__job-title">{{ job.title }}</div>
+    <div class="chat-panel__job-meta">
+      <span class="chat-panel__job-location">📍 {{ job.location }}</span>
+      <span class="chat-panel__job-dot">·</span>
+      <span class="chat-panel__job-company">{{ job.company }}</span>
+      <span class="chat-panel__job-chip" *ngIf="job.workModel">
+        {{ job.workModel | uppercase }}
+      </span>
+    </div>
+  </div>
+
+  <div class="chat-panel__search">
+    <input
+      type="text"
+      placeholder="Buscar conversa..."
+      [(ngModel)]="searchText"
+    />
+  </div>
+
+  <div class="chat-panel__body">
+    <div class="chat-panel__conversation" *ngIf="selectedConversation as selected">
+      <div class="chat-active__header">
+        <div class="chat-active__profile">
+          <img [src]="selected.avatar" [alt]="selected.name" class="chat-active__avatar" />
+          <div class="chat-active__info">
+            <div class="chat-active__name">{{ selected.name }}</div>
+            <div class="chat-active__availability-label">Disponibilidade imediata</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-active__status-row" *ngIf="selected.match">
+        <span class="chat-active__status">
+          {{ selected.stack || selected.role }}
+        </span>
+        <div class="chat-active__progress">
+          <div class="chat-active__track">
+            <div class="chat-active__fill" [style.width.%]="selected.match"></div>
+          </div>
+          <span class="chat-active__percent">{{ selected.match }}%</span>
+        </div>
+      </div>
+
+      <div class="chat-active__messages">
+        <div
+          class="message-row"
+          *ngFor="let message of messages; trackBy: trackByMessage"
+          [class.message-row--recruiter]="message.sender === 'recruiter'"
+          [class.message-row--candidate]="message.sender === 'candidate'"
+        >
+          <div class="message-bubble">
+            <span>{{ message.text }}</span>
+            <small>{{ message.time }}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-active__input">
+        <input
+          type="text"
+          placeholder="Digite uma mensagem..."
+          [(ngModel)]="messageText"
+          (keyup.enter)="sendMessage()"
+        />
+
+        <button type="button" (click)="sendMessage()">
+          Enviar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
