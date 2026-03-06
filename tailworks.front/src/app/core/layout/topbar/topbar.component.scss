@@ -1,10 +1,10 @@
 .topbar{
   height: 120px;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 420px 1fr auto;
   align-items: center;
-  gap: 16px;
-  padding: 0 22px;
+  gap: 14px;
+  padding: 0 20px;
   background: linear-gradient(120deg, #fdf9f2 0%, #f8f2e9 36%, #f6f3ee 64%, #f3f5fb 100%);
   border-bottom: none;
   box-shadow: none;
@@ -44,6 +44,40 @@
   align-items: center;
   gap: 12px;
   justify-content: flex-end;
+}
+
+.topbar-metrics{
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  gap: 26px;
+  justify-content: center;
+}
+
+.metric{
+  display: grid;
+  gap: 4px;
+  min-width: 120px;
+  justify-items: start;
+}
+.metric__pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.06);
+  color: rgba(15,23,42,0.62);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+.metric__value{
+  font-size: 20px;
+  font-weight: 800;
+  color: rgba(15,23,42,0.9);
 }
 
 .iconBtn{
