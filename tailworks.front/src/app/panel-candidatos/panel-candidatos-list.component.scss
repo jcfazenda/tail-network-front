@@ -1,5 +1,5 @@
 .job-sheet {
-  padding: 6px 2px 18px;
+  padding: 10px 14px 18px;
   display: grid;
   gap: 12px;
   text-align: right;
@@ -151,7 +151,7 @@
   margin: 0 0 12px;
   background: transparent;
 
-  span {
+  > span {
     position: relative;
     z-index: 1;
     display: inline-block;
@@ -169,27 +169,127 @@
   }
 }
 
+.candidate-divider__legend {
+  margin: 8px auto 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: left;
+}
+
+.candidate-divider__legend-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  background:
+    url('/assets/images/bola-basebal.png')
+    center / contain
+    no-repeat;
+}
+
+.candidate-divider__legend-text {
+  color: rgba(15, 23, 42, 0.6);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .cand-list {
-  display: grid;
-  gap: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   margin-top: 8px;
-  padding-top: 0;
+  padding: 0 14px 16px;
   border-top: none;
   overflow-y: auto;
-  padding-right: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   flex: 1;
   min-height: 0;
   align-content: start;
+  box-sizing: border-box;
 }
 
 .cand-list::-webkit-scrollbar {
   display: none;
 }
 
-.stage-gap {
-  height: 10px;
+.cand-group {
+  display: grid;
+  gap: 10px;
+}
+
+.cand-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stage-separator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 2px;
+
+  &::after {
+    content: '';
+    flex: 1;
+    border-top: 1px dashed rgba(15, 23, 42, 0.18);
+  }
+}
+
+.stage-separator__label {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f9f2df 0%, #f3e6c8 100%);
+  color: #6b5110;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12px;
+}
+
+.stage-separator__label.stage-radar {
+  background: linear-gradient(180deg, rgba(233, 243, 255, 0.95) 0%, rgba(210, 229, 255, 0.9) 100%);
+  color: #295b9a;
+}
+
+.stage-separator__label.stage-aguardando {
+  background: linear-gradient(180deg, rgba(230, 240, 255, 0.82) 0%, rgba(213, 229, 255, 0.78) 100%);
+  color: #245d9b;
+}
+
+.stage-separator__label.stage-processo {
+  background: linear-gradient(180deg, rgba(230, 248, 245, 0.82) 0%, rgba(209, 241, 234, 0.78) 100%);
+  color: #0c7f73;
+}
+
+.stage-separator__label.stage-tecnica {
+  background: linear-gradient(180deg, rgba(255, 243, 204, 0.82) 0%, rgba(255, 233, 163, 0.78) 100%);
+  color: #a06700;
+}
+
+.stage-separator__label.stage-documentacao {
+  background: linear-gradient(180deg, rgba(243, 236, 255, 0.82) 0%, rgba(228, 217, 255, 0.78) 100%);
+  color: #5c2faf;
+}
+
+.stage-separator__label.stage-candidatura {
+  background: linear-gradient(180deg, rgba(255, 245, 227, 0.82) 0%, rgba(255, 233, 199, 0.78) 100%);
+  color: #b86a00;
+}
+
+.stage-separator__label.stage-cancelado {
+  background: linear-gradient(180deg, #f1f1f1 0%, #e1e1e1 100%);
+  color: #666;
 }
 
 .candidate-card {
@@ -265,14 +365,35 @@
 }
 
 .cand-avatar {
-  width: 54px;
-  height: 54px;
+  display: block;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
   border: 1px solid #fff;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.cand-avatar-wrap {
+  position: relative;
+  display: block;
+  width: 54px;
+  height: 54px;
   flex: 0 0 auto;
+}
+
+.cand-avatar-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -12px;
+  width: 28px;
+  height: 28px;
+  display: block;
+  background:
+    url('/assets/images/bola-basebal.png')
+    center / contain
+    no-repeat;
 }
 
 .cand-body {
@@ -356,6 +477,34 @@
   width: 100%;
   display: grid;
   gap: 6px;
+}
+
+.cand-progress__label-row {
+  display: flex;
+  align-items: center;
+  min-height: 26px;
+}
+
+.cand-availability-chip {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(230, 248, 245, 0.92) 0%, rgba(209, 241, 234, 0.86) 100%);
+  color: #0c7f73;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1px;
+}
+
+.cand-compat-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.52);
 }
 
 .cand-bar-wrap {
@@ -451,4 +600,10 @@
   border: 1px dashed rgba(15, 23, 42, 0.12);
   color: rgba(15, 23, 42, 0.55);
   background: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 700px) {
+  .cand-grid {
+    grid-template-columns: 1fr;
+  }
 }

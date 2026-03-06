@@ -35,7 +35,9 @@ interface Candidate {
   minutesAgo: number;
   status: 'online' | 'offline';
   avatar: string;
-  stage?: 'aguardando' | 'processo' | 'tecnica' | 'cancelado';
+  stage?: 'radar' | 'aguardando' | 'processo' | 'tecnica' | 'cancelado';
+  availabilityLabel?: string;
+  radarOnly?: boolean;
 }
 
 @Component({
@@ -85,11 +87,11 @@ export class StubPage {
       extraCount: 18,
       status: 'ativas',
       candidates: [
-        { name: 'Alex Chen', role: 'Backend .NET', match: 92, minutesAgo: 8, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'aguardando' },
+        { name: 'Alex Chen', role: 'Backend .NET', match: 92, minutesAgo: 8, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'aguardando', availabilityLabel: 'Disponibilidade imediata' },
         { name: 'Bianca Lima', role: 'Eng. Software', match: 88, minutesAgo: 16, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Carlos Souza', role: 'Tech Lead .NET', match: 81, minutesAgo: 28, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Mariana Alves', role: 'Full Stack .NET', match: 86, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Diego Farias', role: 'Backend .NET', match: 77, minutesAgo: 44, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
+        { name: 'Carlos Souza', role: 'Tech Lead .NET', match: 81, minutesAgo: 28, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
+        { name: 'Mariana Alves', role: 'Full Stack .NET', match: 86, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
+        { name: 'Diego Farias', role: 'Backend .NET', match: 77, minutesAgo: 44, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica', radarOnly: true },
         { name: 'Fernanda Lopes', role: 'Backend .NET', match: 79, minutesAgo: 52, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
         { name: 'Gustavo Prado', role: 'Backend .NET', match: 82, minutesAgo: 63, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
         { name: 'Helena Duarte', role: 'Backend .NET', match: 84, minutesAgo: 71, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
@@ -119,9 +121,9 @@ export class StubPage {
       extraCount: 18,
       status: 'ativas',
       candidates: [
-        { name: 'Marina Dias', role: 'Product Designer', match: 95, minutesAgo: 5, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Marina Dias', role: 'Product Designer', match: 95, minutesAgo: 5, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
         { name: 'Ivan Costa', role: 'UX Researcher', match: 87, minutesAgo: 21, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Letícia Prado', role: 'Design Ops', match: 82, minutesAgo: 37, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Letícia Prado', role: 'Design Ops', match: 82, minutesAgo: 37, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
       ],
     },
     {
@@ -142,8 +144,8 @@ export class StubPage {
       extraCount: 6,
       status: 'rascunhos',
       candidates: [
-        { name: 'Paula Neri', role: 'Data Analyst', match: 79, minutesAgo: 42, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Rafael Nunes', role: 'BI Analyst', match: 74, minutesAgo: 58, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Paula Neri', role: 'Data Analyst', match: 79, minutesAgo: 42, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
+        { name: 'Rafael Nunes', role: 'BI Analyst', match: 74, minutesAgo: 58, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
       ],
     },
     {
@@ -165,7 +167,7 @@ export class StubPage {
       extraCount: 10,
       status: 'ativas',
       candidates: [
-        { name: 'Camila Rocha', role: 'DevOps', match: 86, minutesAgo: 11, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Camila Rocha', role: 'DevOps', match: 86, minutesAgo: 11, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
         { name: 'Diego Martins', role: 'SRE', match: 80, minutesAgo: 29, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
       ],
     },
@@ -187,8 +189,8 @@ export class StubPage {
       extraCount: 5,
       status: 'ativas',
       candidates: [
-        { name: 'Juliana Prado', role: 'QA Engineer', match: 77, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Felipe Ramos', role: 'Automation Eng.', match: 71, minutesAgo: 62, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Juliana Prado', role: 'QA Engineer', match: 77, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
+        { name: 'Felipe Ramos', role: 'Automation Eng.', match: 71, minutesAgo: 62, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
       ],
     },
     {
@@ -271,6 +273,8 @@ export class StubPage {
 
   stageLabel(stage?: Candidate['stage']): string {
     switch (stage) {
+      case 'radar':
+        return 'No Radar';
       case 'aguardando':
         return 'Contratação Solicitada';
       case 'processo':
@@ -294,10 +298,12 @@ export class StubPage {
   }
 
   sortedCandidatesFor(job: JobCard | ChatJob): Candidate[] {
-    const order = ['aguardando', 'tecnica', 'processo', 'documentacao', 'candidatura', 'cancelado'];
+    const order = ['radar', 'aguardando', 'tecnica', 'processo', 'documentacao', 'candidatura', 'cancelado'];
     return [...job.candidates as Candidate[]].sort((a, b) => {
-      const ia = order.indexOf(a.stage ?? 'processo');
-      const ib = order.indexOf(b.stage ?? 'processo');
+      const stageA = a.radarOnly ? 'radar' : (a.stage ?? 'processo');
+      const stageB = b.radarOnly ? 'radar' : (b.stage ?? 'processo');
+      const ia = order.indexOf(stageA);
+      const ib = order.indexOf(stageB);
       return ia - ib;
     });
   }

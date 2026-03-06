@@ -29,47 +29,79 @@
   </div>
   <div class="cand-list">
     <div class="candidate-divider">
-      <span>Candidatos no radar</span>
+      <span>Lista de possiveis contratados</span>
+      <div class="candidate-divider__legend" *ngIf="hasRadarProfiles">
+        <span class="candidate-divider__legend-icon" aria-hidden="true"></span>
+        <span class="candidate-divider__legend-text">Talentos que se dispuseram a ser vistos.</span>
+      </div>
     </div>
-    <ng-container *ngIf="sortedCandidatesFor(selectedJobPanel) as list">
-      <ng-container *ngFor="let c of list; let i = index">
-        <div class="stage-gap" *ngIf="i > 0 && c.stage !== list[i-1].stage"></div>
-        <button
-          type="button"
-          class="candidate-card"
-          (click)="handleOpenChat(i)"
-        >
-          <span class="cand-chat" title="Abrir chat" aria-hidden="true">
-            <span class="cand-chat__badge" *ngIf="i % 2 === 0">{{ (i % 3 === 0) ? 3 : (i % 3 === 1 ? 1 : 2) }}</span>
-            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-              <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path>
-            </svg>
+    <ng-container *ngIf="groupedCandidates.length; else emptyCandidates">
+      <section class="cand-group" *ngFor="let group of groupedCandidates">
+        <div class="stage-separator">
+          <span class="stage-separator__label" [ngClass]="'stage-' + (group.stage || 'processo')">
+            {{ stageLabel(group.stage) }}
           </span>
-          <div class="cand-body">
-            <div class="cand-main">
-              <span class="cand-avatar" [style.backgroundImage]="'url(' + c.avatar + ')'" ></span>
-              <div class="cand-text">
-                <div class="cand-name" style="font-size:13px;">{{ c.name }}</div>
-                <div class="cand-role">{{ c.role }}</div>
-              </div>
-            </div>
-            <div class="cand-progress">
-              <div class="cand-status-chip" [ngClass]="'stage-' + (c.stage || 'processo')">
-                <span>{{ stageLabel(c.stage) }}</span>
-              </div>
-              <div class="cand-bar-wrap">
-                <div class="cand-bar" [ngClass]="'stage-' + (c.stage || 'processo')">
-                  <div class="cand-bar-fill" [style.width.%]="c.match" [ngClass]="'stage-' + (c.stage || 'processo')"></div>
+        </div>
+
+        <div class="cand-grid">
+          <button
+            *ngFor="let item of group.candidates"
+            type="button"
+            class="candidate-card"
+            (click)="handleOpenChat(item.index)"
+          >
+            <span class="cand-chat" title="Abrir chat" aria-hidden="true">
+              <span class="cand-chat__badge" *ngIf="item.index % 2 === 0">{{ item.badgeCount }}</span>
+              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path>
+              </svg>
+            </span>
+            <div class="cand-body">
+              <div class="cand-main">
+                <span class="cand-avatar-wrap">
+                  <span class="cand-avatar" [style.backgroundImage]="'url(' + item.candidate.avatar + ')'"></span>
+                  <span
+                    *ngIf="item.candidate.radarOnly"
+                    class="cand-avatar-badge"
+                    title="Perfil no radar"
+                    aria-label="Perfil no radar"
+                  ></span>
+                </span>
+                <div class="cand-text">
+                  <div class="cand-name">{{ item.candidate.name }}</div>
+                  <div class="cand-role">{{ item.candidate.role }}</div>
                 </div>
-                <span class="cand-bar-val">{{ c.match }}%</span>
+              </div>
+              <div class="cand-progress">
+                <div class="cand-progress__label-row">
+                  <span class="cand-availability-chip" *ngIf="item.candidate.availabilityLabel; else compatibilityLabel">
+                    {{ item.candidate.availabilityLabel }}
+                  </span>
+                  <ng-template #compatibilityLabel>
+                    <span class="cand-compat-label">Compatibilidade</span>
+                  </ng-template>
+                </div>
+                <div class="cand-bar-wrap">
+                  <div class="cand-bar" [ngClass]="'stage-' + (item.candidate.stage || 'processo')">
+                    <div
+                      class="cand-bar-fill"
+                      [style.width.%]="item.candidate.match"
+                      [ngClass]="'stage-' + (item.candidate.stage || 'processo')"
+                    ></div>
+                  </div>
+                  <span class="cand-bar-val">{{ item.candidate.match }}%</span>
+                </div>
               </div>
             </div>
-          </div>
-        </button>
-      </ng-container>
+          </button>
+        </div>
+      </section>
     </ng-container>
   </div>
 </ng-container>
+<ng-template #emptyCandidates>
+  <div class="empty">Nenhum candidato nesta vaga.</div>
+</ng-template>
 <ng-template #funnelEmpty>
   <div class="empty">Clique em uma vaga para ver candidatos.</div>
 </ng-template>
