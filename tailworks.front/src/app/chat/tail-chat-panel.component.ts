@@ -22,6 +22,24 @@ export interface ChatJob {
   candidates: ChatCandidate[];
 }
 
+type StageStatus = 'done' | 'pending';
+
+interface ConfettiPiece {
+  left: number;
+  top: number;
+  offsetX: number;
+  offsetY: number;
+  color: string;
+  delay: number;
+  duration: number;
+}
+
+interface Stage {
+  label: string;
+  status: StageStatus;
+  meta?: string;
+}
+
 @Component({
   standalone: true,
   selector: 'app-tail-chat-panel',
@@ -41,13 +59,15 @@ export class TailChatPanelComponent implements OnChanges {
 
   conversations: ChatCandidate[] = [];
   selectedConversationIndex = 0;
-  readonly stages = [
-    { label: 'Candidatado', status: 'done' as const, meta: 'Qui 12:21' },
-    { label: 'Em Entrevista', status: 'pending' as const },
-    { label: 'Em Entrevista Técnica', status: 'pending' as const },
-    { label: 'Documentação recebida', status: 'pending' as const },
-    { label: 'Aguardando aceite de Aprovação', status: 'pending' as const },
+  stages: Stage[] = [
+    { label: 'Candidatado', status: 'done', meta: 'Qui 12:21' },
+    { label: 'Em Entrevista', status: 'pending' },
+    { label: 'Em Entrevista Técnica', status: 'pending' },
+    { label: 'Documentação recebida', status: 'pending' },
+    { label: 'Aguardando aceite de Aprovação', status: 'pending' },
   ];
+  confettiPieces: ConfettiPiece[] = [];
+  confettiActive = false;
 
   messages = [
     { sender: 'candidate', text: 'Olá, tenho interesse na vaga!', time: '16:04' },
@@ -57,6 +77,8 @@ export class TailChatPanelComponent implements OnChanges {
   ngOnChanges() {
     this.conversations = this.job?.candidates ?? [];
     this.selectedConversationIndex = 0;
+    this.resetStages();
+    this.buildConfetti();
   }
 
   get filteredConversations(): ChatCandidate[] {
@@ -96,6 +118,63 @@ export class TailChatPanelComponent implements OnChanges {
       ];
       this.cdr.markForCheck();
     }, 450);
+  }
+
+  advanceStage() {
+    const nextIndex = this.stages.findIndex(s => s.status === 'pending');
+    if (nextIndex === -1) return;
+
+    const now = new Date();
+    const timeLabel = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const weekDay = now.toLocaleDateString([], { weekday: 'short' });
+    this.stages = this.stages.map((s, idx) =>
+      idx === nextIndex ? { ...s, status: 'done', meta: `${weekDay} ${timeLabel}` } : s
+    );
+    this.triggerConfetti();
+    this.cdr.markForCheck();
+  }
+
+  private buildConfetti() {
+    const colors = ['#22c55e', '#16a34a', '#4ade80', '#86efac', '#a5f3fc', '#d946ef'];
+    this.confettiPieces = Array.from({ length: 90 }, (): ConfettiPiece => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 30 + Math.random() * 40; // vh distance
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist;
+      return {
+        left: 50,
+        top: 50,
+        offsetX: dx,
+        offsetY: dy,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        delay: Math.random() * 700,
+        duration: 3600 + Math.random() * 2600,
+      };
+    });
+  }
+
+  private triggerConfetti() {
+    this.buildConfetti();
+    this.confettiActive = false;
+    this.cdr.markForCheck();
+    requestAnimationFrame(() => {
+      this.confettiActive = true;
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.confettiActive = false;
+        this.cdr.markForCheck();
+      }, 1400);
+    });
+  }
+
+  private resetStages() {
+    this.stages = [
+      { label: 'Candidatado', status: 'done', meta: 'Qui 12:21' },
+      { label: 'Em Entrevista', status: 'pending' },
+      { label: 'Em Entrevista Técnica', status: 'pending' },
+      { label: 'Documentação recebida', status: 'pending' },
+      { label: 'Aguardando aceite de Aprovação', status: 'pending' },
+    ];
   }
 
   closePanel() {

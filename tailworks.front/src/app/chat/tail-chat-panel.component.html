@@ -62,7 +62,7 @@
       </div>
 
       <div class="chat-panel__cta chat-panel__cta--spaced">
-        <button type="button" class="btn-advance">Marcar entrevista</button>
+        <button type="button" class="btn-advance" (click)="advanceStage()">Avançar etapa do candidato</button>
       </div>
 
       <div class="chat-active__messages">
@@ -92,5 +92,21 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <div class="confetti confetti--panel" *ngIf="confettiActive">
+    <span
+      class="confetti-piece"
+      *ngFor="let piece of confettiPieces"
+      [ngStyle]="{
+        left: piece.left + '%',
+        top: piece.top + '%',
+        '--dx': piece.offsetX + 'vh',
+        '--dy': piece.offsetY + 'vh',
+        background: piece.color,
+        animationDuration: piece.duration + 'ms',
+        animationDelay: piece.delay + 'ms'
+      }"
+    ></span>
   </div>
 </div>

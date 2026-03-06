@@ -108,8 +108,8 @@
 .chat-panel-backdrop{
   position: fixed;
   inset: 0;
-  background: rgba(15,23,42,0.25);
-  backdrop-filter: blur(2px);
+  background: rgba(15,23,42,0.12);
+  backdrop-filter: blur(1px);
   z-index: 29;
 }
 
@@ -224,6 +224,8 @@
     background: #f7f4ee;
     display: flex;
     justify-content: center;
+    position: relative;
+    overflow: visible;
   }
   &__cta--spaced{
     border-top: 1px solid #ece6db;
@@ -236,19 +238,20 @@
     padding: 0 18px;
     border: 0;
     border-radius: 12px;
-    background: #dcd7cc;
-    color: #3a3328;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
     font-weight: 700;
     font-size: 0.95rem;
     cursor: pointer;
     transition: 0.2s ease;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+    box-shadow: 0 10px 20px rgba(37,99,235,0.25);
 
     &:hover{
-      background: #d1c9bc;
+      background: linear-gradient(135deg, #4b8ff8, #2a6ff0);
     }
     &:active{
       transform: translateY(1px);
+      box-shadow: 0 6px 12px rgba(37,99,235,0.28);
     }
   }
 
@@ -266,6 +269,40 @@
     min-height: 0;
     background: #fbf8f2;
   }
+
+}
+
+/* Global confetti overlay */
+.confetti{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 200;
+}
+
+.confetti--panel{
+  position: absolute;
+  inset: 0;
+}
+
+.confetti-piece{
+  position: absolute;
+  width: 8px;
+  height: 16px;
+  border-radius: 2px;
+  opacity: 0;
+  animation-name: confetti-burst;
+  animation-timing-function: cubic-bezier(.04,.4,.08,1);
+  animation-fill-mode: forwards;
+  transform-origin: center;
+  top: -30px;
+}
+
+@keyframes confetti-burst{
+  0%{ transform: translate(0,0) rotate(0deg) scale(1); opacity: 1;}
+  50%{ opacity: 1; }
+  100%{ transform: translate(var(--dx, 0), var(--dy, -60vh)) rotate(640deg) scale(0.92); opacity: 0;}
 }
 
 .conversation-item {
