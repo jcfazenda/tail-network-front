@@ -216,8 +216,8 @@ export class StubPage {
 
   readonly stageLabels = [
     'Contratação Solicitada',
-    'Em Processo',
     'Em Entrevista Técnica',
+    'Em Processo',
     'Documentação recebida',
     'Candidatura',
     'Cancelado',
@@ -288,7 +288,7 @@ export class StubPage {
   }
 
   sortedCandidatesFor(job: JobCard | ChatJob): Candidate[] {
-    const order = ['aguardando', 'processo', 'tecnica', 'documentacao', 'candidatura', 'cancelado'];
+    const order = ['aguardando', 'tecnica', 'processo', 'documentacao', 'candidatura', 'cancelado'];
     return [...job.candidates as Candidate[]].sort((a, b) => {
       const ia = order.indexOf(a.stage ?? 'processo');
       const ib = order.indexOf(b.stage ?? 'processo');

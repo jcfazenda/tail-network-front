@@ -52,6 +52,7 @@
           class="stage"
           *ngFor="let stage of stages"
           [class.stage--done]="stage.status === 'done'"
+          [class.stage--active]="stage.active"
         >
           <span class="stage__icon"></span>
           <div class="stage__text">

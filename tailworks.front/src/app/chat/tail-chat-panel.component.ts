@@ -39,6 +39,7 @@ interface Stage {
   label: string;
   status: StageStatus;
   meta?: string;
+  active?: boolean;
 }
 
 @Component({
@@ -61,13 +62,8 @@ export class TailChatPanelComponent implements OnChanges {
 
   conversations: ChatCandidate[] = [];
   selectedConversationIndex = 0;
-  stages: Stage[] = [
-    { label: 'Candidatado', status: 'done', meta: 'Qui 12:21' },
-    { label: 'Em Processo', status: 'pending' },
-    { label: 'Em Entrevista Técnica', status: 'pending' },
-    { label: 'Documentação recebida', status: 'pending' },
-    { label: 'Aguardando aceite de Aprovação', status: 'pending' },
-  ];
+  stages: Stage[] = [];
+  private readonly stageOrder = ['candidatura', 'processo', 'tecnica', 'documentacao', 'aguardando'];
   confettiPieces: ConfettiPiece[] = [];
   confettiActive = false;
 
@@ -80,7 +76,7 @@ export class TailChatPanelComponent implements OnChanges {
     this.conversations = this.job?.candidates ?? [];
     const maxIndex = Math.max(0, this.conversations.length - 1);
     this.selectedConversationIndex = Math.min(this.startIndex || 0, maxIndex);
-    this.resetStages();
+    this.updateStagesForSelected();
     this.buildConfetti();
   }
 
@@ -99,6 +95,7 @@ export class TailChatPanelComponent implements OnChanges {
 
   selectConversation(index: number) {
     this.selectedConversationIndex = index;
+    this.updateStagesForSelected();
   }
 
   sendMessage() {
@@ -171,13 +168,48 @@ export class TailChatPanelComponent implements OnChanges {
   }
 
   private resetStages() {
-    this.stages = [
-      { label: 'Candidatado', status: 'done', meta: 'Qui 12:21' },
-      { label: 'Em Processo', status: 'pending' },
-      { label: 'Em Entrevista Técnica', status: 'pending' },
-      { label: 'Documentação recebida', status: 'pending' },
-      { label: 'Aguardando aceite de Aprovação', status: 'pending' },
-    ];
+    this.stages = this.stageOrder.map((key, idx) => ({
+      label: this.stageLabelFromKey(key),
+      status: idx === 0 ? 'done' : 'pending',
+      meta: idx === 0 ? 'Qui 12:21' : undefined,
+      active: idx === 0,
+    }));
+  }
+
+  private updateStagesForSelected() {
+    const selected = this.selectedConversation;
+    const fallbackIndex = this.stageOrder.indexOf('processo');
+    const currentIndexRaw = selected?.stage ? this.stageOrder.indexOf(selected.stage) : fallbackIndex;
+    const currentIndex = currentIndexRaw === -1 ? fallbackIndex : currentIndexRaw;
+
+    this.stages = this.stageOrder.map((key, idx) => {
+      const status: StageStatus = idx < currentIndex ? 'done' : 'pending';
+      const active = idx === currentIndex;
+      return {
+        label: this.stageLabelFromKey(key),
+        status,
+        active,
+        meta: idx === 0 ? 'Qui 12:21' : undefined,
+      };
+    });
+    this.cdr.markForCheck();
+  }
+
+  private stageLabelFromKey(key: string): string {
+    switch (key) {
+      case 'candidatura':
+        return 'Candidatado';
+      case 'processo':
+        return 'Em Processo';
+      case 'tecnica':
+        return 'Em Entrevista Técnica';
+      case 'documentacao':
+        return 'Documentação recebida';
+      case 'aguardando':
+        return 'Aguardando aceite de Aprovação';
+      default:
+        return 'Em Processo';
+    }
   }
 
   closePanel() {

@@ -138,6 +138,8 @@
               <ng-container *ngIf="sortedCandidatesFor(selectedJobPanel) as list">
                 <ng-container *ngFor="let c of list; let i = index">
 
+                  <div class="stage-separator" *ngIf="i > 0 && c.stage !== list[i-1].stage"></div>
+
                   <button
                     type="button"
                     class="candidate-card"
@@ -154,7 +156,7 @@
                       </div>
 
                       <div class="cand-progress">
-                        <div class="cand-status-chip">
+                        <div class="cand-status-chip" [ngClass]="'stage-' + (c.stage || 'processo')">
                           <span>{{ stageLabel(c.stage) }}</span>
                         </div>
                         <div class="cand-bar-wrap">
