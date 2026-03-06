@@ -119,18 +119,19 @@
                             class="avatar"
                             [style.zIndex]="i + 1"
                             [style.marginLeft.px]="i === 0 ? 0 : -12"
-                            [style.backgroundImage]="'url(' + avatar + ')'"></div>
+                            [style.backgroundImage]="'url(' + avatar + ')'"
+                          ></div>
                         </ng-container>
                         <div class="avatar extra">+{{ job.extraCount }}</div>
                       </div>
                     </div>
                   </div>
-                    <div class="progress-bar-split">
-                      <div class="bar filled" [style.flex]="job.match"></div>
-                      <span class="progress-value">{{ job.match }}%</span>
-                      <div class="bar rest" [style.flex]="100 - job.match"></div>
-                    </div>
+                  <div class="progress-bar-split">
+                    <div class="bar filled" [style.flex]="job.match"></div>
+                    <span class="progress-value">{{ job.match }}%</span>
+                    <div class="bar rest" [style.flex]="100 - job.match"></div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
