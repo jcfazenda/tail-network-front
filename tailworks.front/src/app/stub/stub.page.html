@@ -16,13 +16,13 @@
         </header>
 
         <div class="bars">
-          <div class="bar" *ngFor="let cat of radarCategories">
+          <div class="bar" *ngFor="let cat of radarCategories; let i = index">
             <div class="label">
               <span class="dot" [style.background]="cat.color"></span>
               {{ cat.label }}
             </div>
-            <div class="track" [style.--val]="cat.value">
-              <div class="fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+            <div class="track" [style.--val]="cat.value" [style.--val-pct]="cat.value + '%'" [style.--delay]="(i * 120) + 'ms'">
+              <div class="fill" [style.background]="cat.color"></div>
               <div class="value">{{ cat.value }}%</div>
             </div>
           </div>
@@ -64,39 +64,35 @@
 
                 <div class="job-brief">
                   <div class="job-meta-line">
-                    <span class="job-location-icon">📍</span>
-                    <span class="job-location">{{ job.location }}</span>
-                    <span class="job-dot">•</span>
                     <span class="job-company">{{ job.company }}</span>
                   </div>
-
-                  <div class="job-model" *ngIf="job.workModel">
-                    {{ job.workModel | uppercase }}
+                  <div class="job-meta-line">
+                    <span class="job-location">{{ job.location }} 📍</span>
                   </div>
                 </div>
-
-                <div class="progress-label">Nível de aderência à vaga</div>
 
                 <div class="progress-row">
-                  <div class="progress-bar-split">
-                    <div class="bar filled" [style.flex]="job.match"></div>
-                    <span class="progress-value">{{ job.match }}%</span>
-                    <div class="bar rest" [style.flex]="100 - job.match"></div>
-                  </div>
-
-                  <div class="progress-avatars">
-                    <div class="avatars tiny">
-                      <ng-container *ngFor="let avatar of job.avatars; let i = index">
-                        <div
-                          class="avatar"
-                          [style.zIndex]="i + 1"
-                          [style.marginLeft.px]="i === 0 ? 0 : -12"
-                          [style.backgroundImage]="'url(' + avatar + ')'"></div>
-                      </ng-container>
-                      <div class="avatar extra">+{{ job.extraCount }}</div>
+                  <div class="progress-header">
+                    <div class="progress-label">Média dos candidatos</div>
+                    <div class="progress-avatars progress-avatars--inline">
+                      <div class="avatars tiny">
+                        <ng-container *ngFor="let avatar of job.avatars; let i = index">
+                          <div
+                            class="avatar"
+                            [style.zIndex]="i + 1"
+                            [style.marginLeft.px]="i === 0 ? 0 : -12"
+                            [style.backgroundImage]="'url(' + avatar + ')'"></div>
+                        </ng-container>
+                        <div class="avatar extra">+{{ job.extraCount }}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                    <div class="progress-bar-split">
+                      <div class="bar filled" [style.flex]="job.match"></div>
+                      <span class="progress-value">{{ job.match }}%</span>
+                      <div class="bar rest" [style.flex]="100 - job.match"></div>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -110,7 +106,7 @@
       </section>
     </div>
 
-    <aside class="aside">
+    <aside class="aside" [class.aside--open]="selectedJobPanel">
       <section class="panel panel-stack">
         <div class="panel-block panel-conv">
           <ng-container *ngIf="selectedJobPanel; else funnelEmpty">
@@ -118,6 +114,7 @@
             <!-- TOPO DA VAGA -->
             <div class="job-sheet">
               <div class="job-sheet__topcard">
+                <button class="panel-close-btn" type="button" (click)="closePanel()">close</button>
                 <div class="job-sheet__profile">
                   <div class="job-sheet__avatar"></div>
                   <div class="job-sheet__profile-text">
@@ -160,7 +157,12 @@
                     class="candidate-card"
                     (click)="openCandidate(findJobByTitle(selectedJobPanel!.title), i)"
                   >
-                    <span class="cand-chat" title="Abrir chat">chat_bubble</span>
+                    <span class="cand-chat" title="Abrir chat" aria-hidden="true">
+                      <span class="cand-chat__badge" *ngIf="i % 2 === 0">{{ (i % 3 === 0) ? 3 : (i % 3 === 1 ? 1 : 2) }}</span>
+                      <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path>
+                      </svg>
+                    </span>
                     <div class="cand-body">
                       <div class="cand-main">
                         <span class="cand-avatar" [style.backgroundImage]="'url(' + c.avatar + ')'"></span>
@@ -195,6 +197,8 @@
         </div>
       </section>
     </aside>
+
+    <div class="panel-backdrop" *ngIf="selectedJobPanel" (click)="closePanel()"></div>
   </div>
 
   <app-tail-chat-panel

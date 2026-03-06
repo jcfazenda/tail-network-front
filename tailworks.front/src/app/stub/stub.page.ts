@@ -287,6 +287,11 @@ export class StubPage {
     this.selectedChatJob = null;
   }
 
+  closePanel() {
+    this.selectedChatJob = null;
+    this.selectedJobPanel = null;
+  }
+
   sortedCandidatesFor(job: JobCard | ChatJob): Candidate[] {
     const order = ['aguardando', 'tecnica', 'processo', 'documentacao', 'candidatura', 'cancelado'];
     return [...job.candidates as Candidate[]].sort((a, b) => {
