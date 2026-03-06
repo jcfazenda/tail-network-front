@@ -1,7 +1,7 @@
 .topbar{
   min-height: 110px;
   display: grid;
-  grid-template-columns: minmax(160px, 240px) minmax(520px, 760px) auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 8px;
   padding: 0 16px;
@@ -17,11 +17,10 @@
   background: #ffffff;
   border: 1px solid rgba(15,23,42,0.05);
   border-radius: 999px;
-  padding: 10px 14px;
+  padding: 13px 18px;
   box-shadow: none;
   min-height: 48px;
   width: 100%;
-  max-width: 320px;
 }
 
 .search input{
@@ -46,45 +45,6 @@
   align-items: center;
   gap: 12px;
   justify-content: flex-end;
-}
-
-.topbar .metric-bar{
-  margin: 0;
-  width: 100%;
-  max-width: 900px;
-  min-width: 520px;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  box-shadow: 0 8px 14px rgba(15,23,42,0.05);
-  flex: 1;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: nowrap;
-  overflow: hidden;
-}
-.metric-bar .metric-item{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  background: rgba(245,179,0,0.08);
-  border: 1px solid rgba(245,179,0,0.12);
-}
-.metric-item__icon{
-  width: 22px;
-  height: 22px;
-}
-.metric-item__label{
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(15,23,42,0.66);
-}
-.metric-item__value{
-  font-size: 14px;
-  font-weight: 800;
-  color: rgba(15,23,42,0.85);
 }
 
 .iconBtn{

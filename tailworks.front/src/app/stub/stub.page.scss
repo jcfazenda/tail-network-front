@@ -30,7 +30,11 @@
   min-width: 0;
   width: 100%;
   max-width: 1080px;
-  margin: 0 auto;
+  margin: 1px auto 0;
+}
+
+.hello-block{
+  margin-top: 68px;
 }
 
 .aside {
@@ -576,185 +580,85 @@ p {
 
 /* METRIC BAR (acima do Olá, Rafael) */
 .metric-bar{
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 14px;
-  padding: 12px 16px;
+  gap: 18px;
+  padding: 20px 24px;
   background: rgba(255,255,255,0.82);
   border: 1px solid rgba(15,23,42,0.05);
-  border-radius: 20px;
-  box-shadow: 0 14px 28px rgba(15,23,42,0.08);
+  border-radius: 24px;
+  box-shadow: 0 22px 40px rgba(15,23,42,0.09);
   backdrop-filter: blur(3px);
-  margin-bottom: 28px;
-  flex-wrap: wrap;
+  margin-bottom: 32px;
 }
+
 .metric-chip{
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 10px;
-  padding-right: 14px;
+  gap: 16px;
+  padding-right: 20px;
   border-right: 1px solid rgba(15,23,42,0.08);
+  justify-self: start;
 }
 .metric-chip__icon{
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   background: #f5b300;
-  padding: 6px;
+  padding: 10px;
 }
 .metric-chip__text{
   display: grid;
-  gap: 2px;
+  gap: 3px;
 }
 .metric-chip__title{
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 800;
   color: rgba(15,23,42,0.82);
 }
 .metric-chip__subtitle{
-  font-size: 11px;
+  font-size: 13px;
   color: rgba(15,23,42,0.55);
+}
+.metric-right{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 98px;
+  flex-wrap: wrap;
 }
 .metric-pill{
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(245,179,0,0.1);
-  border-radius: 14px;
-  border: 1px solid rgba(245,179,0,0.14);
-  box-shadow: 0 8px 16px rgba(15,23,42,0.06);
+  gap: 10px;
+  padding: 8px 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
 }
 .metric-pill__icon{
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
 }
 .metric-pill__value{
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 800;
-  color: rgba(15,23,42,0.8);
+  color: rgba(15,23,42,0.9);
+}
+.metric-pill__text{
+  display: grid;
+  gap: 2px;
+}
+.metric-pill__sub{
+  font-size: 12px;
+  color: rgba(15,23,42,0.6);
+  font-weight: 700;
 }
 
 /* METRIC CARDS (acima do Olá, Rafael) */
-.metric-cards{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 48px;
-  align-items: stretch;
-  justify-content: flex-start;
-}
-/**/
-.metric-card{
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 6px;
-  padding: 16px 16px;
-  border-radius: 16px;
-  background: #fff;
-  border: 1px solid rgba(15,23,42,0.04);
-  box-shadow: 0 12px 22px rgba(15,23,42,0.06);
-  min-height: 170px;
-  width: 220px;
-  position: relative;
-  overflow: hidden;
-}
-
-.metric-card::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(140% 140% at 90% 90%, rgba(255,255,255,0) 0%, rgba(255,255,255,0.96) 58%, #fff 96%),
-    url('/assets/images/fundo-tela.png') no-repeat right bottom;
-  background-size: 180%;
-  opacity: 0.03;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.metric-card__icon-wrapper{
-  width: 76px;
-  height: 76px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(245,179,0,0.18), rgba(245,158,11,0.22));
-  display: grid;
-  place-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.metric-card__icon{
-  width: 66px;
-  height: 66px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  background: rgba(245,179,0,0.12);
-  color: #b66f00;
-  position: relative;
-  z-index: 1;
-}
-.metric-card__icon--img{
-  background: center/contain no-repeat;
-}
-
-.metric-card__text{
-  display: grid;
-  gap: 4px;
-  align-content: center;
-  position: relative;
-  z-index: 1;
-}
-
-.metric-card__label{
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(15,23,42,0.58);
-  text-transform: uppercase;
-  letter-spacing: 0.25px;
-  margin-top: 0;
-}
-
-.metric-card__value{
-  font-size: 30px;
-  font-weight: 800;
-  color: rgba(15,23,42,0.92);
-}
-.metric-card__delta{
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(15,23,42,0.58);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-}
-.metric-card__delta.delta-pos{
-  color: #0f8a4b;
-}
-.metric-card__delta--neutral{
-  color: rgba(15,23,42,0.62);
-}
-.metric-card__delta-icon{
-  font-family: 'Material Symbols Rounded';
-  font-size: 14px;
-  line-height: 1;
-}
-
-.metric-card--primary{
-  background: linear-gradient(180deg, #fff9ec 0%, #fff5df 100%);
-}
-.metric-card--neutral{
-  background: linear-gradient(180deg, #f7f9ff 0%, #f2f4fb 100%);
-}
-.metric-card--accent{
-  background: linear-gradient(180deg, #f1fff4 0%, #e7f8ec 100%);
-}
 
 .bar {
   display: grid;
