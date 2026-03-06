@@ -3,26 +3,26 @@
 }
 .layout{
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 360px;
   gap: 16px;
   align-items: start;
   overflow-x: hidden;
-  padding-right: 460px;
+  padding: 0 24px;
 }
 .main{
   min-width: 0;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
 }
 .aside{
-  position: fixed;
-  top: 120px;
-  right: 44px;
-  width: 520px;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  margin-left: 0;
   display: grid;
   gap: 12px;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-  z-index: 10;
-  filter: drop-shadow(0 18px 32px rgba(15,23,42,0.16));
+  filter: drop-shadow(0 4px 6px rgba(15,23,42,0.03));
 }
 .panel{
   background: linear-gradient(180deg, #f2f0e8 0%, #f8f5ef 100%);
@@ -33,7 +33,7 @@
   overflow: hidden;
 }
 .panel-stack{
-  height: calc(100vh - 140px);
+  height: calc(100vh - 220px);
   display: flex;
   flex-direction: column;
 }
@@ -563,42 +563,53 @@ p{ margin: 0; color: rgba(15,23,42,0.65); font-size: 15px; }
   background: rgba(255,255,255,0.65);
 }
 
-.summary-row{
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin: 18px 0 10px;
-  padding-left: 2px;
-  font-size: 14px;
-  font-weight: 600;
+.summary-row{ display:none; }
+
+.job-brief{
+  padding-left: 4px;
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
   color: rgba(15,23,42,0.72);
+  font-size: 13px;
 }
-.pill{
+.job-meta-line{
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: rgba(15,23,42,0.62);
+  color: rgba(15,23,42,0.7);
 }
-.match-pill{
-  color: rgba(15,23,42,0.85);
-  font-weight: 800;
-}
-.pill-muted{
-  font-weight: 600;
+.job-location-icon{ font-size: 14px; }
+.job-location{ font-weight: 700; }
+.job-dot{ color: rgba(15,23,42,0.35); font-weight: 800; }
+.job-company{ font-weight: 700; color: rgba(15,23,42,0.8); }
+.job-model{
+  width: fit-content;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: rgba(15,23,42,0.6);
 }
 
 .progress-track{
-  display: flex;
+  display: grid;
   align-items: center;
-  gap: 12px;
-  height: 18px;
-  padding: 0 6px;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 10px;
+  padding: 6px 6px;
+  margin-top: 8px;
+}
+.progress-label{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.65);
 }
 .segment{
-  height: 14px;
+  height: 12px;
   border-radius: 999px;
   flex-shrink: 1;
-  min-width: 14px;
+  min-width: 60px;
 }
 .segment-fill{
   background: linear-gradient(180deg, #f5b300, #f59e0b);
@@ -611,16 +622,31 @@ p{ margin: 0; color: rgba(15,23,42,0.65); font-size: 15px; }
 .progress-value{
   font-weight: 800;
   color: rgba(15,23,42,0.82);
-  font-size: 16px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .progress-avatars{
   display: flex;
   align-items: center;
   padding-left: 8px;
-  gap: 6px;
+  gap: 8px;
 }
 .avatars.tiny .avatar{
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
+}
+
+@media (max-width: 1280px) {
+  .layout{
+    grid-template-columns: 1fr;
+    padding-right: 0;
+  }
+  .main{
+    max-width: 100%;
+  }
+  .aside{
+    position: static;
+    width: 100%;
+    filter: none;
+  }
 }

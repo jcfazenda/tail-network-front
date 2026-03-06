@@ -40,28 +40,32 @@
         </div>
 
         <ng-container *ngIf="filteredJobs.length; else emptyState">
-          <div class="job-card" *ngFor="let job of filteredJobs">
+          <div class="job-card" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
             <div class="card-stripe"></div>
             <div class="card-body">
               <div class="header-row">
                 <div class="badges">
                   <span class="badge badge-priority" *ngIf="job.priority">{{ job.priority }}</span>
-                  <span class="badge badge-ghost" *ngIf="job.workModel">{{ job.workModel }}</span>
                 </div>
-                <div class="header-actions">
-                  <div></div>
-                  <button class="cta light">Visualizar</button>
-                </div>
+                  <div class="header-actions">
+                    <div></div>
+                    <button class="cta light" (click)="$event.stopPropagation(); openPanel(job)">Visualizar</button>
+                  </div>
               </div>
 
               <h3>{{ job.title }}</h3>
 
-              <div class="summary-row">
-                <span class="pill match-pill">✅ {{ job.match }}% Match</span>
-                <span class="pill pill-muted">📡 {{ job.talents }} Candidator no radar</span>
-                <span class="pill pill-muted">🤝 5 Negociando</span>
+              <div class="job-brief">
+                <div class="job-meta-line">
+                  <span class="job-location-icon">📍</span>
+                  <span class="job-location">{{ job.location }}</span>
+                  <span class="job-dot">•</span>
+                  <span class="job-company">{{ job.company }}</span>
+                </div>
+                <div class="job-model" *ngIf="job.workModel">{{ job.workModel | uppercase }}</div>
               </div>
 
+              <div class="progress-label">Nível de aderência à vaga</div>
               <div class="progress-track">
                 <div class="segment segment-fill" [style.flex]="job.match"></div>
                 <span class="progress-value">{{ job.match }}%</span>
@@ -143,4 +147,6 @@
       </section>
     </aside>
   </div>
+
+  <app-chat-panel *ngIf="selectedJob" [job]="selectedJob" (close)="closePanel()"></app-chat-panel>
 </div>
