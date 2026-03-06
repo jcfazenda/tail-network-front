@@ -42,15 +42,18 @@
         <ng-container *ngIf="filteredJobs.length; else emptyState">
           <div class="job-card" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
             <div class="card-stripe"></div>
+
             <div class="card-body">
               <div class="header-row">
                 <div class="badges">
                   <span class="badge badge-priority" *ngIf="job.priority">{{ job.priority }}</span>
                 </div>
-                  <div class="header-actions">
-                    <div></div>
-                    <button class="cta light" (click)="$event.stopPropagation(); openPanel(job)">Visualizar</button>
-                  </div>
+
+                <div class="header-actions">
+                  <button class="cta light" (click)="$event.stopPropagation(); openPanel(job)">
+                    Visualizar
+                  </button>
+                </div>
               </div>
 
               <h3>{{ job.title }}</h3>
@@ -62,14 +65,21 @@
                   <span class="job-dot">•</span>
                   <span class="job-company">{{ job.company }}</span>
                 </div>
-                <div class="job-model" *ngIf="job.workModel">{{ job.workModel | uppercase }}</div>
+
+                <div class="job-model" *ngIf="job.workModel">
+                  {{ job.workModel | uppercase }}
+                </div>
               </div>
 
               <div class="progress-label">Nível de aderência à vaga</div>
-              <div class="progress-track">
-                <div class="segment segment-fill" [style.flex]="job.match"></div>
-                <span class="progress-value">{{ job.match }}%</span>
-                <div class="segment segment-rest" [style.flex]="100 - job.match"></div>
+
+              <div class="progress-row">
+                <div class="progress-bar-split">
+                  <div class="bar filled" [style.flex]="job.match"></div>
+                  <span class="progress-value">{{ job.match }}%</span>
+                  <div class="bar rest" [style.flex]="100 - job.match"></div>
+                </div>
+
                 <div class="progress-avatars">
                   <div class="avatars tiny">
                     <ng-container *ngFor="let avatar of job.avatars; let i = index">
@@ -86,6 +96,7 @@
             </div>
           </div>
         </ng-container>
+
         <ng-template #emptyState>
           <div class="empty">
             Nenhuma vaga em {{ activeTab }}.
@@ -96,57 +107,75 @@
 
     <aside class="aside">
       <section class="panel panel-stack">
-        <div class="panel-block">
-          <h3>Funil de Recrutamento</h3>
-          <div class="funnel" *ngFor="let f of funnel">
-            <div class="funnel__row">
-              <span>{{ f.label }}</span>
-              <span class="count">{{ f.count }}</span>
-            </div>
-            <div class="funnel__track">
-              <div class="funnel__fill" [style.width.%]="f.percent"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel-divider"></div>
-
         <div class="panel-block panel-conv">
-          <div class="panel__header">
-            <h3>Conversas Recentes</h3>
-            <button class="link">View all</button>
-          </div>
-          <div class="conv" *ngFor="let c of conversations">
-            <div class="conv__avatar" [style.backgroundImage]="'url(' + c.avatarUrl + ')'"></div>
-            <div class="conv__body">
-              <div class="conv__top">
-                <span class="name">{{ c.name }}</span>
-                <span class="time">{{ c.minutesAgo }}m</span>
+          <ng-container *ngIf="selectedJobPanel; else funnelEmpty">
+
+            <!-- TOPO DA VAGA -->
+            <div class="job-sheet">
+              <div class="job-sheet__title">{{ selectedJobPanel.title }}</div>
+
+              <div class="job-sheet__meta">
+                <span class="job-sheet__item">📍 {{ selectedJobPanel.location }}</span>
+                <span class="job-sheet__sep">•</span>
+                <span class="job-sheet__item">{{ selectedJobPanel.company }}</span>
               </div>
-              <div class="conv__text">{{ c.snippet }}</div>
-              <span class="status-dot" [class.online]="c.statusDot==='online'"></span>
             </div>
-          </div>
-        </div>
 
-        <div class="panel-divider"></div>
-
-        <div class="panel-block panel-ai">
-          <div class="panel__header">
-            <div class="label">
-              <span class="icon">📄</span> IA TailWorks
+            <div class="candidate-divider">
+              <span>Candidatos no radar</span>
             </div>
-            <button class="icon-btn">⋯</button>
-          </div>
-          <h4>Resumo por I.A.</h4>
-          <ul class="ai-list">
-            <li *ngFor="let item of aiSummary">{{ item }}</li>
-          </ul>
-          <button class="cta ai-cta">Gerar relatório semanal →</button>
+
+            <!-- LISTA DE CANDIDATOS -->
+            <div class="cand-list">
+              <button
+                type="button"
+                class="candidate-card"
+                *ngFor="let c of selectedJobPanel.candidates; let i = index"
+                (click)="openCandidate(findJobByTitle(selectedJobPanel!.title), i)"
+              >
+                <div class="cand-body">
+                  <div class="cand-main">
+                    <span class="cand-avatar" [style.backgroundImage]="'url(' + c.avatar + ')'"></span>
+                    <div class="cand-text">
+                      <div class="cand-name">{{ c.name }}</div>
+                      <div class="cand-role">{{ c.role }}</div>
+                    </div>
+                  </div>
+
+                  <div class="cand-progress">
+                    <div class="cand-status-chip">
+                      <ng-container [ngSwitch]="i">
+                        <span *ngSwitchCase="0">Em Candidatura</span>
+                        <span *ngSwitchCase="1">Em Entrevista</span>
+                        <span *ngSwitchCase="2">Em Entrevista Técnica</span>
+                        <span *ngSwitchCase="3">Documentação recebida</span>
+                        <span *ngSwitchDefault>Aguardando aceite</span>
+                      </ng-container>
+                    </div>
+                    <div class="cand-bar-wrap">
+                      <div class="cand-bar">
+                        <div class="cand-bar-fill" [style.width.%]="c.match"></div>
+                      </div>
+                      <span class="cand-bar-val">{{ c.match }}%</span>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </ng-container>
+
+          <ng-template #funnelEmpty>
+            <div class="empty">Clique em uma vaga para ver candidatos.</div>
+          </ng-template>
         </div>
       </section>
     </aside>
   </div>
 
-  <app-tail-chat-panel *ngIf="selectedJob" [job]="selectedJob" (close)="closePanel()"></app-tail-chat-panel>
+  <app-tail-chat-panel
+    *ngIf="selectedChatJob"
+    [job]="selectedChatJob"
+    [startIndex]="chatStartIndex"
+    (close)="closeChat()">
+  </app-tail-chat-panel>
 </div>

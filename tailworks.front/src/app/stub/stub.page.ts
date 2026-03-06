@@ -49,48 +49,37 @@ export class StubPage {
 
   readonly radarTotal = 87;
   readonly radarDelta = 12;
+
   readonly radarCategories: RadarCategory[] = [
-    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, #f5b300, #f59e0b)', offset: -2 },
+    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, #f5b300, #f59e0b)' },
     { label: 'Frontend', value: 81, color: 'linear-gradient(90deg, #f6c340, #f5b300)' },
     { label: 'Cloud', value: 66, color: '#d5d9e6' },
     { label: 'DevOps', value: 55, color: '#cacedc' },
   ];
 
-  readonly funnel = [
-    { label: 'Radar', count: 154, percent: 88 },
-    { label: 'Negociação', count: 65, percent: 62 },
-    { label: 'Contratação', count: 12, percent: 28 },
-  ];
-
-  readonly conversations = [
-    { name: 'Alex Chen', avatarUrl: '/assets/avatars/avatar-rafael.png', snippet: 'Enviei rea portfólio attaaiada...', minutesAgo: 22, statusDot: 'online' },
-    { name: 'Maria Silva', avatarUrl: '/assets/avatars/avatar-rafael.png', snippet: 'Enviei o portfólio e o Design.', minutesAgo: 30, statusDot: 'online' },
-    { name: 'James Wilson', avatarUrl: '/assets/avatars/avatar-rafael.png', snippet: 'Aceitei o convite de entrevista.', minutesAgo: 32, statusDot: 'online' },
-  ];
-
-  readonly aiSummary = [
-    '3 vagas com alto match',
-    '2 candidatos próximos da contratações',
-    '1 negociação parada há 3 dias'
-  ];
-
   activeTab: JobCard['status'] = 'ativas';
 
-  selectedJob: ChatJob | null = null;
+  selectedJobPanel: ChatJob | null = null;
+  selectedChatJob: ChatJob | null = null;
+  chatStartIndex = 0;
 
   readonly jobCards: JobCard[] = [
     {
       title: 'Backend .NET Sênior',
       company: 'Banco Itaú',
       location: 'Rio de Janeiro - RJ',
-      priority: 'Rio de Janeiro - RJ',
+      priority: 'RIO DE JANEIRO - RJ',
       workModel: 'Remoto',
       match: 89,
       talents: 23,
       radarCount: 23,
       ageLabel: '2 dias',
       postedLabel: '',
-      avatars: ['/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png'],
+      avatars: [
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png'
+      ],
       extraCount: 18,
       status: 'ativas',
       candidates: [
@@ -110,7 +99,11 @@ export class StubPage {
       radarCount: 6,
       ageLabel: '1 dia',
       postedLabel: '',
-      avatars: ['/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png'],
+      avatars: [
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png'
+      ],
       extraCount: 18,
       status: 'ativas',
       candidates: [
@@ -129,8 +122,11 @@ export class StubPage {
       talents: 9,
       radarCount: 4,
       ageLabel: '3 dias',
-      postedLabel: 'Posticado na 6 a 9 dias',
-      avatars: ['/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png'],
+      postedLabel: '',
+      avatars: [
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png'
+      ],
       extraCount: 6,
       status: 'rascunhos',
       candidates: [
@@ -142,14 +138,18 @@ export class StubPage {
       title: 'DevOps Engineer',
       company: 'Stone',
       location: 'Remoto - Brasil',
-      priority: 'Remoto',
+      priority: 'REMOTO',
       workModel: 'Remoto',
       match: 82,
       talents: 18,
       radarCount: 12,
       ageLabel: '4 dias',
       postedLabel: '',
-      avatars: ['/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png'],
+      avatars: [
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png'
+      ],
       extraCount: 10,
       status: 'ativas',
       candidates: [
@@ -161,14 +161,17 @@ export class StubPage {
       title: 'QA Automation Pleno',
       company: 'RD Station',
       location: 'Florianópolis - SC',
-      priority: 'Prioridade Média',
+      priority: 'PRIORIDADE MÉDIA',
       workModel: 'Híbrido',
       match: 74,
       talents: 11,
       radarCount: 7,
       ageLabel: '5 dias',
       postedLabel: '',
-      avatars: ['/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png'],
+      avatars: [
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png'
+      ],
       extraCount: 5,
       status: 'ativas',
       candidates: [
@@ -186,8 +189,11 @@ export class StubPage {
       talents: 8,
       radarCount: 3,
       ageLabel: '2 dias',
-      postedLabel: 'Posticado na 2 a 5 dias',
-      avatars: ['/assets/avatars/avatar-rafael.png','/assets/avatars/avatar-rafael.png'],
+      postedLabel: '',
+      avatars: [
+        '/assets/avatars/avatar-rafael.png',
+        '/assets/avatars/avatar-rafael.png'
+      ],
       extraCount: 4,
       status: 'encerradas',
       candidates: [
@@ -195,6 +201,14 @@ export class StubPage {
         { name: 'Rogério Lima', role: 'Product Ops', match: 65, minutesAgo: 120, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
       ],
     },
+  ];
+
+  readonly stageLabels = [
+    'Em Candidatura',
+    'Em Entrevista',
+    'Em Entrevista Técnica',
+    'Documentação recebida',
+    'Aguardando aceite de Aprovação',
   ];
 
   setTab(tab: JobCard['status']) {
@@ -205,17 +219,44 @@ export class StubPage {
     return this.jobCards.filter(j => j.status === this.activeTab);
   }
 
+  findJobByTitle(title: string): JobCard {
+    return this.jobCards.find(j => j.title === title)!;
+  }
+
   openPanel(job: JobCard) {
-    this.selectedJob = {
+    const asChatJob: ChatJob = {
       title: job.title,
       company: job.company,
       location: job.location,
       workModel: job.workModel,
       candidates: job.candidates,
     };
+
+    this.selectedJobPanel = asChatJob;
+    this.selectedChatJob = null;
+    this.chatStartIndex = 0;
   }
 
-  closePanel() {
-    this.selectedJob = null;
+  openCandidate(job: JobCard, index: number) {
+    const asChatJob: ChatJob = {
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      workModel: job.workModel,
+      candidates: job.candidates,
+    };
+
+    this.selectedJobPanel = asChatJob;
+    this.selectedChatJob = asChatJob;
+    this.chatStartIndex = index;
+  }
+
+  getStageLabel(index: number): string {
+    if (index >= 0 && index < this.stageLabels.length) return this.stageLabels[index];
+    return this.stageLabels[this.stageLabels.length - 1];
+  }
+
+  closeChat() {
+    this.selectedChatJob = null;
   }
 }

@@ -52,6 +52,7 @@ export class TailChatPanelComponent implements OnChanges {
   private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() job!: ChatJob;
+  @Input() startIndex = 0;
   @Output() close = new EventEmitter<void>();
 
   searchText = '';
@@ -76,7 +77,8 @@ export class TailChatPanelComponent implements OnChanges {
 
   ngOnChanges() {
     this.conversations = this.job?.candidates ?? [];
-    this.selectedConversationIndex = 0;
+    const maxIndex = Math.max(0, this.conversations.length - 1);
+    this.selectedConversationIndex = Math.min(this.startIndex || 0, maxIndex);
     this.resetStages();
     this.buildConfetti();
   }
@@ -136,7 +138,7 @@ export class TailChatPanelComponent implements OnChanges {
 
   private buildConfetti() {
     const colors = ['#22c55e', '#16a34a', '#4ade80', '#86efac', '#a5f3fc', '#d946ef'];
-    this.confettiPieces = Array.from({ length: 90 }, (): ConfettiPiece => {
+    this.confettiPieces = Array.from({ length: 110 }, (): ConfettiPiece => {
       const angle = Math.random() * Math.PI * 2;
       const dist = 30 + Math.random() * 40; // vh distance
       const dx = Math.cos(angle) * dist;
@@ -147,8 +149,8 @@ export class TailChatPanelComponent implements OnChanges {
         offsetX: dx,
         offsetY: dy,
         color: colors[Math.floor(Math.random() * colors.length)],
-        delay: Math.random() * 700,
-        duration: 3600 + Math.random() * 2600,
+        delay: Math.random() * 900,
+        duration: 4800 + Math.random() * 3200,
       };
     });
   }
