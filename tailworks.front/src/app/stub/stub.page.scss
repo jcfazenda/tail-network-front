@@ -57,10 +57,11 @@
 }
 
 .panel-stack {
-  height: calc(100vh - 220px);
+  height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-top: 0;
 }
 
 .panel-stack .panel-block {
@@ -75,7 +76,7 @@
 .panel-conv {
   background: rgba(247, 244, 238, 0.5);
   border-radius: 14px;
-  padding: 10px;
+  padding: 4px 6px; // reduzido para diminuir altura
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   border: 1px solid rgba(15, 23, 42, 0.05);
   display: flex;
@@ -244,8 +245,8 @@
 
 .cand-list {
   display: grid;
-  gap: 4px;
-  margin-top: 16px;
+  gap: 2px; // reduzido
+  margin-top: 8px; // reduzido
   padding-top: 0;
   border-top: none;
   overflow-y: auto;
@@ -284,8 +285,8 @@
   text-align: left;
   cursor: pointer;
   display: flex;
-  gap: 12px;
-  padding: 10px 8px;
+  gap: 8px; // reduzido
+  padding: 6px 6px; // reduzido
   border-radius: 10px;
   background: linear-gradient(180deg, #ffffff 0%, #fbf8f2 100%);
   border: 1px solid rgba(15, 23, 42, 0.05);
@@ -802,167 +803,34 @@ p {
   border-radius: 20px;
   border: 1px solid rgba(15, 23, 42, 0.05);
   box-shadow: 0 14px 26px rgba(15, 23, 42, 0.08);
-  padding: 14px 18px 28px 20px;
+  padding: 8px 10px 12px 12px;
   margin-bottom: 0;
   overflow: hidden;
-  min-height: 360px;
-}
+  min-height: 0;
 
-.card-stripe {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(245, 179, 0, 0.6) 0%,
-    rgba(245, 179, 0, 0.26) 55%,
-    rgba(245, 179, 0, 0.08) 100%);
-  border-radius: 20px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 10px 18px rgba(245, 179, 0, 0.12);
-  opacity: 0.1;
-}
+  h3 {
+    margin: 6px 0 4px;
+    padding-left: 4px;
+    font-size: 20px;
+  }
 
-.card-body {
-  position: relative;
-  z-index: 1;
-}
-
-.job-card h3 {
-  margin: 18px 0 12px;
-  padding-left: 8px;
-  font-size: 26px;
-  font-weight: 500;
-  color: rgba(15, 23, 42, 0.92);
-  line-height: 1.1;
-}
-
-.badges {
-  display: inline-flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-  padding-right: 4px;
-}
-
-.header-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-weight: 200;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.35px;
-}
-
-.badge-priority {
-  background: linear-gradient(180deg, rgb(244, 238, 222), rgb(253, 235, 196));
-  color: #7a4b00;
-  box-shadow: 0 6px 12px rgba(245, 179, 0, 0.18);
-}
-.badge-priority.wm-remoto{
-  background: linear-gradient(180deg, #e6f8f5, #d2f1eb);
-  color: #0f7468;
-  box-shadow: 0 6px 12px rgba(15, 116, 104, 0.12);
-}
-.badge-priority.wm-presencial{
-  background: linear-gradient(180deg, #fff3cc, #ffe3a1);
-  color: #9c6b05;
-  box-shadow: 0 6px 12px rgba(156, 107, 5, 0.12);
-}
-.badge-priority.wm-híbrido, .badge-priority.wm-hibrido{
-  background: linear-gradient(180deg, #f3ecff, #e3daff);
-  color: #5c2faf;
-  box-shadow: 0 6px 12px rgba(92, 47, 175, 0.12);
-}
-
-.cta {
-  border: none;
-  border-radius: 24px;
-  padding: 12px 18px;
-  background: linear-gradient(180deg, #f5b300, #f59e0b);
-  color: #fff;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 12px 24px rgba(245, 179, 0, 0.28);
-  min-width: 150px;
-}
-
-.cta.light {
-  background: linear-gradient(180deg, rgb(209, 174, 48), #f4c23f);
-  box-shadow: 0 10px 20px rgba(195, 153, 38, 0.22);
-}
-
-.job-brief {
-  padding-left: 4px;
-  display: grid;
-  gap: 6px;
-  margin-bottom: 10px;
-  color: rgba(15, 23, 42, 0.72);
-  font-size: 13px;
-}
-
-.job-meta-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: rgba(15, 23, 42, 0.7);
-}
-
-.job-location-icon {
-  font-size: 14px;
-}
-
-.job-location {
-  font-weight: 700;
-}
-
-.job-dot {
-  color: rgba(15, 23, 42, 0.35);
-  font-weight: 800;
-}
-
-.job-company {
-  font-weight: 700;
-  color: rgba(15, 23, 42, 0.8);
-}
-
-.job-model {
-  width: fit-content;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: rgba(15, 23, 42, 0.6);
-}
-
-.job-card {
-  .progress-label {
+  .job-brief {
+    margin-bottom: 2px;
     font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.65);
-    margin-top: 6px;
+    gap: 2px;
   }
 
   .progress-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 6px;
-    margin-top: 69px;
-    padding: 14px 0 16px;
-    border-top: 1px dashed rgba(15,23,42,0.14);
+    margin-top: 12px;
+    padding: 6px 0 8px;
+    border-top: none;
+  }
+
+  .progress-label {
+    font-size: 13px;
+    color: rgba(15,23,42,0.55);
+    font-weight: 400;
+    margin-top: 6px;
   }
 
   .progress-header{
@@ -1065,6 +933,36 @@ p {
   background: rgba(255, 255, 255, 0.65);
 }
 
+/* Chip para tipo de vaga (REMOTO, PRESENCIAL, HÍBRIDO) */
+.job-type-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #f3ecff 0%, #e3daff 100%);
+  color: #5c2faf;
+  box-shadow: 0 2px 8px rgba(92, 47, 175, 0.08);
+  border: none;
+  margin-right: 8px;
+  margin-top: 6px;
+}
+.job-type-chip.remoto {
+  background: linear-gradient(180deg, #e6f8f5 0%, #d2f1eb 100%);
+  color: #0f7468;
+}
+.job-type-chip.presencial {
+  background: linear-gradient(180deg, #fff3cc 0%, #ffe3a1 100%);
+  color: #9c6b05;
+}
+.job-type-chip.hibrido, .job-type-chip.híbrido {
+  background: linear-gradient(180deg, #f3ecff 0%, #e3daff 100%);
+  color: #5c2faf;
+}
+
 @media (max-width: 1280px) {
   .layout {
     grid-template-columns: 1fr;
@@ -1118,4 +1016,29 @@ p {
     backdrop-filter: blur(3px);
     z-index: 24;
   }
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 8px;
+  padding-right: 4px;
+}
+
+.header-row h3 {
+  margin: 0;
+  padding-left: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.92);
+  line-height: 1.1;
+}
+
+.header-actions {
+  margin-left: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
 }

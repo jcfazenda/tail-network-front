@@ -87,18 +87,15 @@
 
               <div class="card-body">
                 <div class="header-row">
-                <div class="badges">
-                  <span class="badge badge-priority" [ngClass]="'wm-' + (job.workModel | lowercase)">{{ job.workModel | uppercase }}</span>
-                </div>
-
+                  <h3 style="margin: 0; padding-left: 0; font-size: 20px; font-weight: 700; color: rgba(15,23,42,0.92); line-height: 1.1;">
+                    {{ job.title }}
+                  </h3>
                   <div class="header-actions">
-                    <button class="cta light" (click)="$event.stopPropagation(); openPanel(job)">
-                      Visualizar
-                    </button>
+                    <span class="job-type-chip {{ job.workModel | lowercase }}">
+                      {{ job.workModel | uppercase }}
+                    </span>
                   </div>
                 </div>
-
-                <h3>{{ job.title }}</h3>
 
                 <div class="job-brief">
                   <div class="job-meta-line">
@@ -111,7 +108,7 @@
 
                 <div class="progress-row">
                   <div class="progress-header">
-                    <div class="progress-label">Média dos candidatos</div>
+                    <div class="progress-label">Aderência</div>
                     <div class="progress-avatars progress-avatars--inline">
                       <div class="avatars tiny">
                         <ng-container *ngFor="let avatar of job.avatars; let i = index">
@@ -148,91 +145,14 @@
     <aside class="aside" [class.aside--open]="selectedJobPanel">
       <section class="panel panel-stack">
         <div class="panel-block panel-conv">
-          <ng-container *ngIf="selectedJobPanel; else funnelEmpty">
-
-            <!-- TOPO DA VAGA -->
-            <div class="job-sheet">
-              <div class="job-sheet__topcard">
-                <button class="panel-close-btn" type="button" (click)="closePanel()">close</button>
-                <div class="job-sheet__profile">
-                  <div class="job-sheet__avatar"></div>
-                  <div class="job-sheet__profile-text">
-                    <div class="job-sheet__profile-name">Rafael Souza</div>
-                    <div class="job-sheet__profile-role">Talent Acquisition</div>
-                  </div>
-                </div>
-
-                <div class="job-sheet__title-row">
-                  <div class="job-sheet__title">{{ selectedJobPanel.title }}</div>
-                  <div class="job-sheet__icon">settings</div>
-                </div>
-
-                <div class="job-sheet__meta">
-                  <div class="job-sheet__meta-left">
-                    <span class="job-sheet__item">{{ selectedJobPanel.company }}</span>
-                  </div>
-                  <div class="job-sheet__meta-right">
-                    <span class="job-sheet__item">{{ selectedJobPanel.workModel | uppercase }}</span>
-                  </div>
-                  <div class="job-sheet__meta-bottom">
-                    <span class="job-sheet__item">{{ selectedJobPanel.location }} 📍</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- LISTA DE CANDIDATOS -->
-            <div class="cand-list">
-              <div class="candidate-divider">
-                <span>Candidatos no radar</span>
-              </div>
-              <ng-container *ngIf="sortedCandidatesFor(selectedJobPanel) as list">
-                <ng-container *ngFor="let c of list; let i = index">
-
-                  <div class="stage-gap" *ngIf="i > 0 && c.stage !== list[i-1].stage"></div>
-
-                  <button
-                    type="button"
-                    class="candidate-card"
-                    (click)="openCandidate(findJobByTitle(selectedJobPanel!.title), i)"
-                  >
-                    <span class="cand-chat" title="Abrir chat" aria-hidden="true">
-                      <span class="cand-chat__badge" *ngIf="i % 2 === 0">{{ (i % 3 === 0) ? 3 : (i % 3 === 1 ? 1 : 2) }}</span>
-                      <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path>
-                      </svg>
-                    </span>
-                    <div class="cand-body">
-                      <div class="cand-main">
-                        <span class="cand-avatar" [style.backgroundImage]="'url(' + c.avatar + ')'"></span>
-                        <div class="cand-text">
-                          <div class="cand-name" style="font-size:13px;">{{ c.name }}</div>
-                          <div class="cand-role">{{ c.role }}</div>
-                        </div>
-                      </div>
-
-                      <div class="cand-progress">
-                        <div class="cand-status-chip" [ngClass]="'stage-' + (c.stage || 'processo')">
-                          <span>{{ stageLabel(c.stage) }}</span>
-                        </div>
-                        <div class="cand-bar-wrap">
-                          <div class="cand-bar" [ngClass]="'stage-' + (c.stage || 'processo')">
-                            <div class="cand-bar-fill" [style.width.%]="c.match" [ngClass]="'stage-' + (c.stage || 'processo')"></div>
-                          </div>
-                          <span class="cand-bar-val">{{ c.match }}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                </ng-container>
-              </ng-container>
-            </div>
-
-          </ng-container>
-
-          <ng-template #funnelEmpty>
-            <div class="empty">Clique em uma vaga para ver candidatos.</div>
-          </ng-template>
+          <app-panel-candidatos-list
+            [selectedJobPanel]="selectedJobPanel"
+            [sortedCandidatesFor]="sortedCandidatesFor"
+            [openCandidate]="openCandidate"
+            [findJobByTitle]="findJobByTitle"
+            [stageLabel]="stageLabel"
+            (closePanelEvent)="closePanel()"
+          ></app-panel-candidatos-list>
         </div>
       </section>
     </aside>
