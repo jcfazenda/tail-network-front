@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { StubPage } from './stub.page';
+import { StubPage } from './stub/stub.page';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'vagas', pathMatch: 'full' },

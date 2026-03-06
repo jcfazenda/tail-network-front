@@ -1,0 +1,146 @@
+<div class="stub">
+  <div class="layout">
+    <div class="main">
+      <h1>Olá, Rafael <span aria-hidden="true">👋</span></h1>
+      <p>Especialista em Recrutamento.</p>
+
+      <section class="radar-card" aria-label="Radar da semana">
+        <header>
+          <div>
+            <h2>Radar da Semana</h2>
+            <div class="subtitle subtitle-row">
+              <span><strong>{{ radarTotal }}</strong> novos talentos encontrados</span>
+              <span class="delta">+{{ radarDelta }} desde ontem</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="bars">
+          <div class="bar" *ngFor="let cat of radarCategories">
+            <div class="label">
+              <span class="dot" [style.background]="cat.color"></span>
+              {{ cat.label }}
+            </div>
+            <div class="track" [style.--val]="cat.value">
+              <div class="fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+              <div class="value">{{ cat.value }}%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="jobs">
+        <div class="jobs__header">
+          <h2>Minhas Vagas</h2>
+          <div class="tabs">
+            <button class="tab" [class.active]="activeTab==='ativas'" (click)="setTab('ativas')">Ativas</button>
+            <button class="tab" [class.active]="activeTab==='rascunhos'" (click)="setTab('rascunhos')">Rascunhos</button>
+            <button class="tab" [class.active]="activeTab==='encerradas'" (click)="setTab('encerradas')">Encerradas</button>
+          </div>
+        </div>
+
+        <ng-container *ngIf="filteredJobs.length; else emptyState">
+          <div class="job-card" *ngFor="let job of filteredJobs">
+            <div class="card-stripe"></div>
+            <div class="card-body">
+              <div class="header-row">
+                <div class="badges">
+                  <span class="badge badge-priority" *ngIf="job.priority">{{ job.priority }}</span>
+                  <span class="badge badge-ghost" *ngIf="job.workModel">{{ job.workModel }}</span>
+                </div>
+                <div class="header-actions">
+                  <div></div>
+                  <button class="cta light">Visualizar</button>
+                </div>
+              </div>
+
+              <h3>{{ job.title }}</h3>
+
+              <div class="summary-row">
+                <span class="pill match-pill">✅ {{ job.match }}% Match</span>
+                <span class="pill pill-muted">📡 {{ job.talents }} Candidator no radar</span>
+                <span class="pill pill-muted">🤝 5 Negociando</span>
+              </div>
+
+              <div class="progress-track">
+                <div class="segment segment-fill" [style.flex]="job.match"></div>
+                <span class="progress-value">{{ job.match }}%</span>
+                <div class="segment segment-rest" [style.flex]="100 - job.match"></div>
+                <div class="progress-avatars">
+                  <div class="avatars tiny">
+                    <ng-container *ngFor="let avatar of job.avatars; let i = index">
+                      <div
+                        class="avatar"
+                        [style.zIndex]="i + 1"
+                        [style.marginLeft.px]="i === 0 ? 0 : -12"
+                        [style.backgroundImage]="'url(' + avatar + ')'"></div>
+                    </ng-container>
+                    <div class="avatar extra">+{{ job.extraCount }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #emptyState>
+          <div class="empty">
+            Nenhuma vaga em {{ activeTab }}.
+          </div>
+        </ng-template>
+      </section>
+    </div>
+
+    <aside class="aside">
+      <section class="panel panel-stack">
+        <div class="panel-block">
+          <h3>Funil de Recrutamento</h3>
+          <div class="funnel" *ngFor="let f of funnel">
+            <div class="funnel__row">
+              <span>{{ f.label }}</span>
+              <span class="count">{{ f.count }}</span>
+            </div>
+            <div class="funnel__track">
+              <div class="funnel__fill" [style.width.%]="f.percent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <div class="panel-block panel-conv">
+          <div class="panel__header">
+            <h3>Conversas Recentes</h3>
+            <button class="link">View all</button>
+          </div>
+          <div class="conv" *ngFor="let c of conversations">
+            <div class="conv__avatar" [style.backgroundImage]="'url(' + c.avatarUrl + ')'"></div>
+            <div class="conv__body">
+              <div class="conv__top">
+                <span class="name">{{ c.name }}</span>
+                <span class="time">{{ c.minutesAgo }}m</span>
+              </div>
+              <div class="conv__text">{{ c.snippet }}</div>
+              <span class="status-dot" [class.online]="c.statusDot==='online'"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <div class="panel-block panel-ai">
+          <div class="panel__header">
+            <div class="label">
+              <span class="icon">📄</span> IA TailWorks
+            </div>
+            <button class="icon-btn">⋯</button>
+          </div>
+          <h4>Resumo por I.A.</h4>
+          <ul class="ai-list">
+            <li *ngFor="let item of aiSummary">{{ item }}</li>
+          </ul>
+          <button class="cta ai-cta">Gerar relatório semanal →</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
