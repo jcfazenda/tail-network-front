@@ -142,20 +142,16 @@
       </section>
     </div>
 
-    <aside class="aside" [class.aside--open]="selectedJobPanel">
-      <section class="panel panel-stack">
-        <div class="panel-block panel-conv">
-          <app-panel-candidatos-list
-            [selectedJobPanel]="selectedJobPanel"
-            [sortedCandidatesFor]="sortedCandidatesFor"
-            [openCandidate]="openCandidate"
-            [findJobByTitle]="findJobByTitle"
-            [stageLabel]="stageLabel"
-            (closePanelEvent)="closePanel()"
-          ></app-panel-candidatos-list>
-        </div>
-      </section>
-    </aside>
+    <app-panel-candidatos-list
+      *ngIf="selectedJobPanel"
+      class="panel-candidatos-right"
+      [selectedJobPanel]="selectedJobPanel"
+      [sortedCandidatesFor]="sortedCandidatesFor"
+      [findJobByTitle]="findJobByTitle"
+      [stageLabel]="stageLabel"
+      (closePanelEvent)="closePanel()"
+      (openChat)="openCandidate(findJobByTitle(selectedJobPanel!.title), $event)"
+    ></app-panel-candidatos-list>
 
     <div class="panel-backdrop" *ngIf="selectedJobPanel" (click)="closePanel()"></div>
   </div>

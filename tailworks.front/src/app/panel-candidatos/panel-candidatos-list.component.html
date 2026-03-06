@@ -37,7 +37,7 @@
         <button
           type="button"
           class="candidate-card"
-          (click)="openCandidate(findJobByTitle(selectedJobPanel!.title), i)"
+          (click)="handleOpenChat(i)"
         >
           <span class="cand-chat" title="Abrir chat" aria-hidden="true">
             <span class="cand-chat__badge" *ngIf="i % 2 === 0">{{ (i % 3 === 0) ? 3 : (i % 3 === 1 ? 1 : 2) }}</span>

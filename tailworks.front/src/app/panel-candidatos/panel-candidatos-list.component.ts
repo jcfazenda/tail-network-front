@@ -17,8 +17,13 @@ export class PanelCandidatosListComponent {
   @Input() findJobByTitle!: (title: string) => any;
   @Input() stageLabel!: (stage?: CandidateStage) => string;
   @Output() closePanelEvent = new EventEmitter<void>();
+  @Output() openChat = new EventEmitter<number>();
 
   closePanel() {
     this.closePanelEvent.emit();
+  }
+
+  handleOpenChat(index: number) {
+    this.openChat.emit(index);
   }
 }
