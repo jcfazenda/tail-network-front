@@ -118,9 +118,9 @@ export class StubPage {
       extraCount: 18,
       status: 'ativas',
       candidates: [
-        { name: 'Marina Dias', role: 'Product Designer', match: 95, minutesAgo: 5, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Ivan Costa', role: 'UX Researcher', match: 87, minutesAgo: 21, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Letícia Prado', role: 'Design Ops', match: 82, minutesAgo: 37, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
+        { name: 'Marina Dias', role: 'Product Designer', match: 95, minutesAgo: 5, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Ivan Costa', role: 'UX Researcher', match: 87, minutesAgo: 21, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Letícia Prado', role: 'Design Ops', match: 82, minutesAgo: 37, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
       ],
     },
     {
@@ -141,8 +141,8 @@ export class StubPage {
       extraCount: 6,
       status: 'rascunhos',
       candidates: [
-        { name: 'Paula Neri', role: 'Data Analyst', match: 79, minutesAgo: 42, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Rafael Nunes', role: 'BI Analyst', match: 74, minutesAgo: 58, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
+        { name: 'Paula Neri', role: 'Data Analyst', match: 79, minutesAgo: 42, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Rafael Nunes', role: 'BI Analyst', match: 74, minutesAgo: 58, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
       ],
     },
     {
@@ -164,8 +164,8 @@ export class StubPage {
       extraCount: 10,
       status: 'ativas',
       candidates: [
-        { name: 'Camila Rocha', role: 'DevOps', match: 86, minutesAgo: 11, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Diego Martins', role: 'SRE', match: 80, minutesAgo: 29, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
+        { name: 'Camila Rocha', role: 'DevOps', match: 86, minutesAgo: 11, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Diego Martins', role: 'SRE', match: 80, minutesAgo: 29, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
       ],
     },
     {
@@ -186,8 +186,8 @@ export class StubPage {
       extraCount: 5,
       status: 'ativas',
       candidates: [
-        { name: 'Juliana Prado', role: 'QA Engineer', match: 77, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Felipe Ramos', role: 'Automation Eng.', match: 71, minutesAgo: 62, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
+        { name: 'Juliana Prado', role: 'QA Engineer', match: 77, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Felipe Ramos', role: 'Automation Eng.', match: 71, minutesAgo: 62, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
       ],
     },
     {
@@ -208,8 +208,8 @@ export class StubPage {
       extraCount: 4,
       status: 'encerradas',
       candidates: [
-        { name: 'Ana Paula', role: 'PM', match: 70, minutesAgo: 80, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
-        { name: 'Rogério Lima', role: 'Product Ops', match: 65, minutesAgo: 120, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png' },
+        { name: 'Ana Paula', role: 'PM', match: 70, minutesAgo: 80, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
+        { name: 'Rogério Lima', role: 'Product Ops', match: 65, minutesAgo: 120, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
       ],
     },
   ];

@@ -31,7 +31,10 @@
 
       <section class="jobs">
         <div class="jobs__header">
-          <h2>Minhas Vagas</h2>
+          <div class="jobs__search">
+            <span class="jobs__search-icon">search</span>
+            <input type="text" placeholder="Filtrar vagas..." class="jobs__search-input" />
+          </div>
           <div class="tabs">
             <button class="tab" [class.active]="activeTab==='ativas'" (click)="setTab('ativas')">Ativas</button>
             <button class="tab" [class.active]="activeTab==='rascunhos'" (click)="setTab('rascunhos')">Rascunhos</button>
@@ -40,56 +43,58 @@
         </div>
 
         <ng-container *ngIf="filteredJobs.length; else emptyState">
-          <div class="job-card" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
-            <div class="card-stripe"></div>
+          <div class="jobs__grid">
+            <div class="job-card" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
+              <div class="card-stripe"></div>
 
-            <div class="card-body">
-              <div class="header-row">
+              <div class="card-body">
+                <div class="header-row">
                 <div class="badges">
-                  <span class="badge badge-priority" *ngIf="job.priority">{{ job.priority }}</span>
+                  <span class="badge badge-priority" [ngClass]="'wm-' + (job.workModel | lowercase)">{{ job.workModel | uppercase }}</span>
                 </div>
 
-                <div class="header-actions">
-                  <button class="cta light" (click)="$event.stopPropagation(); openPanel(job)">
-                    Visualizar
-                  </button>
-                </div>
-              </div>
-
-              <h3>{{ job.title }}</h3>
-
-              <div class="job-brief">
-                <div class="job-meta-line">
-                  <span class="job-location-icon">📍</span>
-                  <span class="job-location">{{ job.location }}</span>
-                  <span class="job-dot">•</span>
-                  <span class="job-company">{{ job.company }}</span>
+                  <div class="header-actions">
+                    <button class="cta light" (click)="$event.stopPropagation(); openPanel(job)">
+                      Visualizar
+                    </button>
+                  </div>
                 </div>
 
-                <div class="job-model" *ngIf="job.workModel">
-                  {{ job.workModel | uppercase }}
+                <h3>{{ job.title }}</h3>
+
+                <div class="job-brief">
+                  <div class="job-meta-line">
+                    <span class="job-location-icon">📍</span>
+                    <span class="job-location">{{ job.location }}</span>
+                    <span class="job-dot">•</span>
+                    <span class="job-company">{{ job.company }}</span>
+                  </div>
+
+                  <div class="job-model" *ngIf="job.workModel">
+                    {{ job.workModel | uppercase }}
+                  </div>
                 </div>
-              </div>
 
-              <div class="progress-label">Nível de aderência à vaga</div>
+                <div class="progress-label">Nível de aderência à vaga</div>
 
-              <div class="progress-row">
-                <div class="progress-bar-split">
-                  <div class="bar filled" [style.flex]="job.match"></div>
-                  <span class="progress-value">{{ job.match }}%</span>
-                  <div class="bar rest" [style.flex]="100 - job.match"></div>
-                </div>
+                <div class="progress-row">
+                  <div class="progress-bar-split">
+                    <div class="bar filled" [style.flex]="job.match"></div>
+                    <span class="progress-value">{{ job.match }}%</span>
+                    <div class="bar rest" [style.flex]="100 - job.match"></div>
+                  </div>
 
-                <div class="progress-avatars">
-                  <div class="avatars tiny">
-                    <ng-container *ngFor="let avatar of job.avatars; let i = index">
-                      <div
-                        class="avatar"
-                        [style.zIndex]="i + 1"
-                        [style.marginLeft.px]="i === 0 ? 0 : -12"
-                        [style.backgroundImage]="'url(' + avatar + ')'"></div>
-                    </ng-container>
-                    <div class="avatar extra">+{{ job.extraCount }}</div>
+                  <div class="progress-avatars">
+                    <div class="avatars tiny">
+                      <ng-container *ngFor="let avatar of job.avatars; let i = index">
+                        <div
+                          class="avatar"
+                          [style.zIndex]="i + 1"
+                          [style.marginLeft.px]="i === 0 ? 0 : -12"
+                          [style.backgroundImage]="'url(' + avatar + ')'"></div>
+                      </ng-container>
+                      <div class="avatar extra">+{{ job.extraCount }}</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -112,20 +117,30 @@
 
             <!-- TOPO DA VAGA -->
             <div class="job-sheet">
-              <div class="job-sheet__title-row">
-                <div class="job-sheet__title">{{ selectedJobPanel.title }}</div>
-                <div class="job-sheet__icon">⚙️</div>
-              </div>
+              <div class="job-sheet__topcard">
+                <div class="job-sheet__profile">
+                  <div class="job-sheet__avatar"></div>
+                  <div class="job-sheet__profile-text">
+                    <div class="job-sheet__profile-name">Rafael Souza</div>
+                    <div class="job-sheet__profile-role">Talent Acquisition</div>
+                  </div>
+                </div>
 
-              <div class="job-sheet__meta">
-                <div class="job-sheet__meta-left">
-                  <span class="job-sheet__item">📍 {{ selectedJobPanel.location }}</span>
+                <div class="job-sheet__title-row">
+                  <div class="job-sheet__title">{{ selectedJobPanel.title }}</div>
+                  <div class="job-sheet__icon">settings</div>
                 </div>
-                <div class="job-sheet__meta-right">
-                  <span class="job-sheet__item">{{ selectedJobPanel.workModel | uppercase }}</span>
-                </div>
-                <div class="job-sheet__meta-bottom">
-                  <span class="job-sheet__item">{{ selectedJobPanel.company }}</span>
+
+                <div class="job-sheet__meta">
+                  <div class="job-sheet__meta-left">
+                    <span class="job-sheet__item">{{ selectedJobPanel.company }}</span>
+                  </div>
+                  <div class="job-sheet__meta-right">
+                    <span class="job-sheet__item">{{ selectedJobPanel.workModel | uppercase }}</span>
+                  </div>
+                  <div class="job-sheet__meta-bottom">
+                    <span class="job-sheet__item">{{ selectedJobPanel.location }} 📍</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -138,7 +153,7 @@
               <ng-container *ngIf="sortedCandidatesFor(selectedJobPanel) as list">
                 <ng-container *ngFor="let c of list; let i = index">
 
-                  <div class="stage-separator" *ngIf="i > 0 && c.stage !== list[i-1].stage"></div>
+                  <div class="stage-gap" *ngIf="i > 0 && c.stage !== list[i-1].stage"></div>
 
                   <button
                     type="button"
@@ -160,8 +175,8 @@
                           <span>{{ stageLabel(c.stage) }}</span>
                         </div>
                         <div class="cand-bar-wrap">
-                          <div class="cand-bar">
-                            <div class="cand-bar-fill" [style.width.%]="c.match"></div>
+                          <div class="cand-bar" [ngClass]="'stage-' + (c.stage || 'processo')">
+                            <div class="cand-bar-fill" [style.width.%]="c.match" [ngClass]="'stage-' + (c.stage || 'processo')"></div>
                           </div>
                           <span class="cand-bar-val">{{ c.match }}%</span>
                         </div>
@@ -177,15 +192,6 @@
           <ng-template #funnelEmpty>
             <div class="empty">Clique em uma vaga para ver candidatos.</div>
           </ng-template>
-        </div>
-        <div class="panel-footer">
-          <div class="recruiter-card">
-            <div class="rec-avatar"></div>
-            <div class="rec-text">
-              <div class="rec-name">Rafael Souza</div>
-              <div class="rec-role">Talent Acquisition</div>
-            </div>
-          </div>
         </div>
       </section>
     </aside>

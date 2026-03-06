@@ -5,10 +5,21 @@
 .layout {
   display: grid;
   grid-template-columns: 1fr 360px;
-  gap: 16px;
+  gap: 10px;
   align-items: start;
   overflow-x: hidden;
   padding: 0 24px;
+  position: relative;
+}
+
+.layout::before{
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('/assets/images/fundo-tela.png') center/cover no-repeat;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .main {
@@ -29,10 +40,10 @@
 }
 
 .panel {
-  background: linear-gradient(180deg, #f2f0e8 0%, #f8f5ef 100%);
+  background: transparent;
   border-radius: 8px;
-  border: 1px solid rgba(15, 23, 42, 0.04);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+  border: none;
+  box-shadow: none;
   padding: 0;
   overflow: hidden;
 }
@@ -45,7 +56,7 @@
 }
 
 .panel-stack .panel-block {
-  padding: 16px;
+  padding: 0;
 }
 
 .panel-stack .panel-block:first-child {
@@ -54,12 +65,10 @@
 }
 
 .panel-conv {
-  background: #f7f4ee;
+  background: rgba(247, 244, 238, 0.5);
   border-radius: 14px;
-  padding: 3px 3px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 12px 26px rgba(15, 23, 42, 0.07);
+  padding: 10px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   border: 1px solid rgba(15, 23, 42, 0.05);
   display: flex;
   flex-direction: column;
@@ -69,8 +78,47 @@
 .job-sheet {
   padding: 6px 2px 18px;
   display: grid;
-  gap: 19px;
+  gap: 12px;
   text-align: right;
+
+  &__topcard{
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(15,23,42,0.05);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 10px 22px rgba(15,23,42,0.06);
+    display: grid;
+    gap: 12px;
+  }
+
+  &__profile{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  &__avatar{
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png'), linear-gradient(135deg, #f5b300, #f59e0b);
+    border: 2px solid #fff;
+    box-shadow: 0 8px 16px rgba(15,23,42,0.12);
+  }
+  &__profile-text{
+    text-align: left;
+  }
+  &__profile-name{
+    font-weight: 800;
+    color: #1f1f1f;
+    font-size: 14px;
+    line-height: 1.1;
+  }
+  &__profile-role{
+    font-size: 12px;
+    color: rgba(15,23,42,0.62);
+    font-weight: 600;
+  }
 
   &__title-row{
     display: grid;
@@ -80,10 +128,28 @@
     justify-items: start;
   }
   &__icon{
+    font-family: 'Material Symbols Rounded';
     font-size: 18px;
-    opacity: 0.75;
+    opacity: 0.82;
+    color: rgba(15,23,42,0.68);
     justify-self: end;
     margin-left: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(15,23,42,0.04);
+    border: 1px solid rgba(15,23,42,0.06);
+    box-shadow: 0 2px 6px rgba(15,23,42,0.06);
+    transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+
+    &:hover{
+      opacity: 1;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(15,23,42,0.08);
+    }
   }
 
   &__title {
@@ -158,7 +224,7 @@
 
 .cand-list {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   margin-top: 16px;
   padding-top: 0;
   border-top: none;
@@ -168,9 +234,14 @@
   scrollbar-width: none;
   flex: 1;
   min-height: 0;
+  align-content: start;
 }
 .cand-list::-webkit-scrollbar{
   display: none;
+}
+
+.stage-gap{
+  height: 10px;
 }
 
 .stage-separator{
@@ -181,47 +252,10 @@
   border-top: 1px dashed rgba(15,23,42,0.25);
 }
 
-.recruiter-card{
+.cand-list > .stage-separator:last-of-type{
+  border-top: none;
   margin: 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 8px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #fdfbf7 0%, #f8f4ec 100%);
-  border: 1px solid rgba(15,23,42,0.05);
-  box-shadow: 0 6px 14px rgba(15,23,42,0.08);
-}
-.rec-avatar{
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png'), linear-gradient(135deg, #f5b300, #f59e0b);
-  border: 2px solid #fff;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-}
-.rec-text{
-  display: grid;
-  gap: 2px;
-}
-.rec-name{
-  font-weight: 800;
-  color: #1f1f1f;
-  font-size: 14px;
-}
-.rec-role{
-  font-size: 12px;
-  color: rgba(15,23,42,0.68);
-  font-weight: 600;
-}
-.rec-msg{
-  font-size: 12px;
-  color: rgba(15,23,42,0.6);
-}
-
-.panel-footer{
-  padding: 10px 8px 12px;
+  padding: 0;
 }
 
 .candidate-card {
@@ -302,16 +336,17 @@
   justify-content: center;
   padding: 5px 10px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #f5e8c7 0%, #f2ddb1 100%);
-  color: #7a5710;
+  background: linear-gradient(180deg, #f9f2df 0%, #f3e6c8 100%);
+  color: #6b5110;
+  box-shadow: 0 2px 6px rgba(15,23,42,0.04);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: 0.15px;
 }
 .cand-status-chip.stage-aguardando{
-  background: linear-gradient(180deg, #d9e9ff 0%, #bfd8ff 100%);
-  color: #0a4f9c;
+  background: linear-gradient(180deg, #e6f0ff 0%, #d5e5ff 100%);
+  color: #245d9b;
 }
 .cand-status-chip.stage-processo{
   background: linear-gradient(180deg, #e6f8f5 0%, #d1f1ea 100%);
@@ -368,6 +403,25 @@
   width: 100%;
 }
 
+.cand-bar.stage-aguardando{
+  background: linear-gradient(180deg, #e6f0ff 0%, #d5e5ff 100%);
+}
+.cand-bar.stage-processo{
+  background: linear-gradient(180deg, #e6f8f5 0%, #d1f1ea 100%);
+}
+.cand-bar.stage-tecnica{
+  background: linear-gradient(180deg, #fff3cc 0%, #ffe9a3 100%);
+}
+.cand-bar.stage-documentacao{
+  background: linear-gradient(180deg, #f3ecff 0%, #e4d9ff 100%);
+}
+.cand-bar.stage-candidatura{
+  background: linear-gradient(180deg, #fff5e3 0%, #ffe9c7 100%);
+}
+.cand-bar.stage-cancelado{
+  background: linear-gradient(180deg, #f1f1f1 0%, #e1e1e1 100%);
+}
+
 .cand-bar-fill {
   position: absolute;
   inset: 0 auto 0 0;
@@ -377,6 +431,25 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.cand-bar-fill.stage-aguardando{
+  background: linear-gradient(180deg, #7fb2ff 0%, #5f9af0 100%);
+}
+.cand-bar-fill.stage-processo{
+  background: linear-gradient(180deg, #6fd8ca 0%, #41b7a8 100%);
+}
+.cand-bar-fill.stage-tecnica{
+  background: linear-gradient(180deg, #f6c64f 0%, #efb429 100%);
+}
+.cand-bar-fill.stage-documentacao{
+  background: linear-gradient(180deg, #c9b5ff 0%, #a98dff 100%);
+}
+.cand-bar-fill.stage-candidatura{
+  background: linear-gradient(180deg, #f6c64f 0%, #efb429 100%);
+}
+.cand-bar-fill.stage-cancelado{
+  background: linear-gradient(180deg, #bfbfbf 0%, #a7a7a7 100%);
 }
 
 .cand-percent{
@@ -408,15 +481,15 @@ p {
 
 /* RADAR */
 .radar-card {
-  margin-top: 22px;
+  margin: 22px auto 0;
   padding: 20px 22px 24px;
-  max-width: 940px;
+  max-width: 1100px;
   background:
-    radial-gradient(160% 140% at 10% 0%, rgba(245, 179, 0, 0.08), rgba(255, 255, 255, 0)),
-    linear-gradient(180deg, #ffffff 0%, #f9f6f1 100%);
+    radial-gradient(160% 140% at 10% 0%, rgba(245, 179, 0, 0.04), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(249, 246, 241, 0.64) 100%);
   border-radius: 22px;
   border: 1px solid rgba(15, 23, 42, 0.04);
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.04);
 }
 
 .radar-card h2 {
@@ -512,7 +585,7 @@ p {
 /* JOBS */
 .jobs {
   margin-top: 44px;
-  max-width: 940px;
+  max-width: 1100px;
 }
 
 .jobs__header {
@@ -524,11 +597,30 @@ p {
   justify-content: space-between;
 }
 
-.jobs__header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 500;
-  color: rgba(15, 23, 42, 0.9);
+.jobs__search{
+  flex: 1;
+  max-width: 360px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(15,23,42,0.05);
+  box-shadow: 0 8px 18px rgba(15,23,42,0.06);
+}
+.jobs__search-icon{
+  font-family: 'Material Symbols Rounded';
+  font-size: 20px;
+  color: rgba(15,23,42,0.45);
+}
+.jobs__search-input{
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: rgba(15,23,42,0.8);
+  outline: none;
 }
 
 .tabs {
@@ -538,6 +630,13 @@ p {
   display: inline-flex;
   gap: 6px;
   margin-left: 8px;
+}
+
+.jobs__grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+  align-items: start;
 }
 
 .tab {
@@ -559,12 +658,13 @@ p {
 .job-card {
   position: relative;
   display: block;
-  background: linear-gradient(180deg, #ffffff 0%, #f9f6f1 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(249, 246, 241, 0.88) 100%);
   border-radius: 20px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.08);
   padding: 14px 18px 22px 20px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
   overflow: hidden;
 }
 
@@ -574,7 +674,7 @@ p {
   top: 0;
   bottom: 0;
   width: 8px;
-  background: linear-gradient(180deg, #f5b300, #f59e0b);
+  background: linear-gradient(180deg, rgba(245, 179, 0, 0.9), rgba(245, 158, 11, 0.78));
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
 }
@@ -630,6 +730,21 @@ p {
   background: linear-gradient(180deg, rgb(244, 238, 222), rgb(253, 235, 196));
   color: #7a4b00;
   box-shadow: 0 6px 12px rgba(245, 179, 0, 0.18);
+}
+.badge-priority.wm-remoto{
+  background: linear-gradient(180deg, #e6f8f5, #d2f1eb);
+  color: #0f7468;
+  box-shadow: 0 6px 12px rgba(15, 116, 104, 0.12);
+}
+.badge-priority.wm-presencial{
+  background: linear-gradient(180deg, #fff3cc, #ffe3a1);
+  color: #9c6b05;
+  box-shadow: 0 6px 12px rgba(156, 107, 5, 0.12);
+}
+.badge-priority.wm-híbrido, .badge-priority.wm-hibrido{
+  background: linear-gradient(180deg, #f3ecff, #e3daff);
+  color: #5c2faf;
+  box-shadow: 0 6px 12px rgba(92, 47, 175, 0.12);
 }
 
 .cta {

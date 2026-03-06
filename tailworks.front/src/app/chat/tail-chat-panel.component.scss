@@ -76,12 +76,13 @@
   }
 
   &__meta{
-    color: #9a8d7b;
-    font-size: 0.8rem;
-    font-weight: 400;
+    color: rgba(58, 52, 43, 0.7);
+    font-size: 0.78rem;
+    font-weight: 500;
     white-space: nowrap;
     line-height: 1.05;
     justify-self: end;
+    text-align: right;
   }
 
   &.stage--done .stage__icon{
