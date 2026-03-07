@@ -169,6 +169,28 @@
                     </label>
                   </div>
                 </div>
+
+                <div class="contract-settings__group contract-settings__group--candidate-suggestion">
+                  <label class="salary-shell salary-shell--toggle">
+                    <span class="salary-shell__prefix salary-shell__prefix--toggle material-symbols-rounded" aria-hidden="true">payments</span>
+
+                    <span class="salary-shell__copy">
+                      <span class="salary-shell__title">Candidato pode colocar um valor</span>
+                      <span class="salary-shell__hint">Aparece para o candidato sugerir quando visualizar a vaga</span>
+                    </span>
+
+                    <span class="visibility-toggle visibility-toggle--inside">
+                      <input
+                        type="checkbox"
+                        name="allowCandidateSalarySuggestion"
+                        [(ngModel)]="allowCandidateSalarySuggestion"
+                      />
+                      <span class="visibility-toggle__track" aria-hidden="true">
+                        <span class="visibility-toggle__thumb"></span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -198,7 +220,7 @@
                 </div>
 
                 <div class="benefits-card__list">
-                  <article class="benefit-entry" *ngFor="let item of selectedBenefits">
+                  <button class="benefit-entry" type="button" *ngFor="let item of selectedBenefits; let i = index" (click)="editBenefit(i)">
                     <div class="benefit-entry__head">
                       <div class="benefit-entry__content">
                         <div class="benefit-entry__title-wrap">
@@ -207,9 +229,11 @@
                         </div>
                         <p class="benefit-entry__description" *ngIf="item.description">{{ item.description }}</p>
                       </div>
-                      <span class="benefit-entry__side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                      <div class="benefit-entry__meta">
+                        <span class="benefit-entry__side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                      </div>
                     </div>
-                  </article>
+                  </button>
                 </div>
               </div>
             </section>
@@ -218,17 +242,17 @@
               <div class="documents-card">
                 <div class="resource-card__header">
                   <h2 class="resource-card__title">Documentos</h2>
-                  <button class="benefits-card__add" type="button">
+                  <button class="benefits-card__add" type="button" (click)="openDocumentModal()">
                     <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
                     <span>Adicionar</span>
                   </button>
                 </div>
 
                 <div class="documents-card__list">
-                  <div class="documents-card__item" *ngFor="let item of documentOptions">
+                  <button class="documents-card__item" type="button" *ngFor="let item of selectedDocuments; let i = index" (click)="editDocument(i)">
                     <span class="documents-card__item-marker material-symbols-rounded" aria-hidden="true">description</span>
                     <span class="documents-card__item-label">{{ item }}</span>
-                  </div>
+                  </button>
                 </div>
 
                 <p class="documents-card__notice">
@@ -247,150 +271,85 @@
 
   <aside class="job-create__summary-panel">
     <section class="summary-card summary-card--side">
-      <div class="summary-card__header">
-        <h3 class="summary-card__title">RESUMO</h3>
+      <div class="summary-card__body summary-card__body--tabs">
         <div class="summary-card__actions">
-          <button class="summary-card__add" type="button" *ngIf="isSummaryBackVisible" (click)="openResponsibilityModal()">
-            <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-            <span>Adicionar</span>
-          </button>
-
-          <button
-            class="summary-card__flip"
-            type="button"
-            [class.summary-card__flip--active]="isSummaryBackVisible"
-            [attr.aria-label]="isSummaryBackVisible ? 'Voltar para a frente do resumo' : 'Ver o verso do resumo'"
-            [attr.title]="isSummaryBackVisible ? 'Voltar para a frente do resumo' : 'Ver o verso do resumo'"
-            (click)="toggleSummaryPanelFace()"
-          >
-            <svg class="summary-card__flip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path
-                d="M7 7h7a3 3 0 0 1 3 3v8M7 7l2.8-2.8M7 7l2.8 2.8M17 17H10a3 3 0 0 1-3-3V6M17 17l-2.8-2.8M17 17l-2.8 2.8"
-              ></path>
-            </svg>
-            <span>{{ isSummaryBackVisible ? 'Voltar' : 'Mais detalhes' }}</span>
-          </button>
+          <div class="summary-card__tabs" role="tablist" aria-label="Navegação do resumo da vaga">
+            <button
+              class="summary-card__tab"
+              type="button"
+              [class.summary-card__tab--active]="activeSummaryView === 'benefits'"
+              (click)="selectSummaryView('benefits')"
+            >
+              Beneficios
+            </button>
+            <button
+              class="summary-card__tab"
+              type="button"
+              [class.summary-card__tab--active]="activeSummaryView === 'details'"
+              (click)="selectSummaryView('details')"
+            >
+              Detalhes
+            </button>
+            <button
+              class="summary-card__tab"
+              type="button"
+              [class.summary-card__tab--active]="activeSummaryView === 'status'"
+              (click)="selectSummaryView('status')"
+            >
+              Status da Vaga
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="summary-card__body summary-card__body--flip" [class.summary-card__body--back]="isSummaryBackVisible">
-        <div class="summary-card__pager">
-          <div class="summary-card__page summary-card__page--front">
-            <div class="summary-card__front-top">
-              <div class="summary-card__company summary-card__company--top">
-                <div class="summary-card__company-top">
-                  <div class="summary-card__company-brand">
-                    <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
+        <div class="summary-card__company summary-card__company--top">
+          <div class="summary-card__company-top">
+            <div class="summary-card__company-brand">
+              <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
 
-                    <div class="summary-card__company-meta">
-                      <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
-                      <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <p class="summary-card__company-description">
-                  {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
-                </p>
+              <div class="summary-card__company-meta">
+                <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
+                <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
               </div>
+            </div>
+          </div>
 
-              <section class="summary-card__section summary-card__section--about">
-                <div class="summary-card__section-header">
-                  <h4 class="summary-card__section-title">Sobre a vaga</h4>
-                  <button
-                    class="summary-card__section-edit"
-                    type="button"
-                    aria-label="Editar descricao da vaga"
-                    title="Editar descricao da vaga"
-                    (click)="openJobSummaryModal('front')"
-                  >
-                    <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                      <path
-                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
+          <p class="summary-card__company-description">
+            {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
+          </p>
+        </div>
 
-                <p class="summary-card__about-text" [class.summary-card__about-text--empty]="summaryPanelDescription === 'Nao ha descricao'">
-                  {{ summaryPanelDescription }}
-                </p>
-              </section>
+        <div class="summary-card__tab-content">
+          <ng-container [ngSwitch]="activeSummaryView">
+            <div class="summary-card__tab-page" *ngSwitchCase="'status'">
+              <div class="summary-card__sections">
+                <section class="summary-card__section summary-card__section--status-panel">
+                  <div class="summary-card__fact summary-card__fact--status">
+                    <span class="summary-card__fact-label">Status da vaga</span>
 
-              <div class="summary-card__stack-block">
-                <h4 class="summary-card__stack-title">Percentual de Conhecimentos minimos</h4>
-
-                <div class="summary-card__stack">
-                  <div class="stack-card__list">
-                    <div class="stack-item" *ngFor="let item of techStackItems">
-                      <div class="stack-item__meta">
-                        <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
-                        <span class="stack-item__name">{{ item.name }}</span>
-                      </div>
-
-                      <div class="stack-item__progress">
-                        <span class="stack-item__track" aria-hidden="true">
-                          <span class="stack-item__fill" [style.width.%]="item.match"></span>
-                          <span class="stack-item__thumb" [style.left.%]="item.match"></span>
-                        </span>
-                        <span class="stack-item__value">{{ item.match }}%</span>
+                    <div class="summary-card__benefits-list">
+                      <div class="summary-card__benefit-option summary-card__benefit-option--status" *ngFor="let item of candidateStatusPreview">
+                        <div class="summary-card__benefit-option-head">
+                          <span
+                            class="summary-card__benefit-option-check summary-card__benefit-option-check--status"
+                            [class.summary-card__benefit-option-check--done]="item.completed"
+                            aria-hidden="true"
+                          ></span>
+                          <div class="summary-card__benefit-option-copy">
+                            <span class="summary-card__benefit-option-label" [class.summary-card__benefit-option-label--muted]="!item.completed">
+                              {{ item.label }}
+                            </span>
+                          </div>
+                          <span class="summary-card__benefit-option-time">{{ item.timeLabel }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  <button class="stack-card__add summary-card__stack-add" type="button">
-                    <span class="stack-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                    <span>Adicionar</span>
-                  </button>
-                </div>
+                </section>
               </div>
             </div>
 
-            <div class="summary-card__front-scroll">
-              <div class="summary-card__sections summary-card__sections--back">
-                <section class="summary-card__section summary-card__section--contract-info">
-                  <div class="summary-card__contract-panel">
-                  <div class="summary-card__facts">
-                    <div class="summary-card__fact-grid">
-                      <div class="summary-card__fact-card summary-card__fact-card--salary" *ngIf="showSalaryRangeInCard">
-                        <span class="summary-card__fact-label">Valor da vaga</span>
-                        <span class="summary-card__fact-money" [class.summary-card__fact-money--empty]="!hasSalaryRangeValue">{{ contractSalaryDisplay }}</span>
-                      </div>
-
-                      <div class="summary-card__fact-card summary-card__fact-card--contract">
-                        <span class="summary-card__fact-pill">{{ contractType }}</span>
-                      </div>
-                    </div>
-
-                    <div class="summary-card__fact-note" *ngIf="hybridWorkModelDetail as hybridDetail">
-                      <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
-                      <span>{{ hybridDetail }}</span>
-                    </div>
-
-                    <div class="summary-card__fact summary-card__fact--benefits">
-                      <span class="summary-card__fact-label">Benefícios</span>
-
-                      <div class="summary-card__benefits-list" *ngIf="selectedBenefits.length; else emptyFrontContractBenefits">
-                        <div class="summary-card__benefit-option" *ngFor="let item of selectedBenefits">
-                          <div class="summary-card__benefit-option-head">
-                            <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
-                            <div class="summary-card__benefit-option-copy">
-                              <span class="summary-card__benefit-option-label">{{ item.title }}</span>
-                              <span class="summary-card__benefit-option-description" *ngIf="item.description">{{ item.description }}</span>
-                            </div>
-                            <span class="summary-card__benefit-option-side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ng-template #emptyFrontContractBenefits>
-                        <span class="summary-card__fact-empty">Nenhum beneficio informado</span>
-                      </ng-template>
-                    </div>
-                  </div>
-                  </div>
-                </section>
-
+            <div class="summary-card__tab-page summary-card__tab-page--benefits" *ngSwitchCase="'benefits'">
+              <div class="summary-card__sections">
                 <section class="summary-card__section summary-card__section--about">
                   <div class="summary-card__section-header">
                     <h4 class="summary-card__section-title">Sobre a contratacao</h4>
@@ -439,31 +398,140 @@
                     </li>
                   </ul>
                 </section>
+
+                <section class="summary-card__section summary-card__section--contract-info summary-card__section--contract-footer">
+                  <div class="summary-card__contract-panel">
+                    <div class="summary-card__facts">
+                      <div class="summary-card__fact summary-card__fact--benefits">
+                        <span class="summary-card__fact-label">Benefícios</span>
+
+                        <div class="summary-card__benefits-list" *ngIf="selectedBenefits.length; else emptyFrontContractBenefits">
+                          <div class="summary-card__benefit-option" *ngFor="let item of selectedBenefits">
+                            <div class="summary-card__benefit-option-head">
+                              <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
+                              <div class="summary-card__benefit-option-copy">
+                                <span class="summary-card__benefit-option-label">{{ item.title }}</span>
+                                <span class="summary-card__benefit-option-description" *ngIf="item.description">{{ item.description }}</span>
+                              </div>
+                              <span class="summary-card__benefit-option-side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <ng-template #emptyFrontContractBenefits>
+                          <span class="summary-card__fact-empty">Nenhum beneficio informado</span>
+                        </ng-template>
+                      </div>
+
+                      <div class="summary-card__fact summary-card__fact--documents">
+                        <span class="summary-card__fact-label">Documentos</span>
+
+                        <div class="summary-card__benefits-list" *ngIf="selectedDocuments.length; else emptyFrontContractDocuments">
+                          <div class="summary-card__benefit-option" *ngFor="let item of selectedDocuments">
+                            <div class="summary-card__benefit-option-head">
+                              <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
+                              <div class="summary-card__benefit-option-copy">
+                                <span class="summary-card__benefit-option-label">{{ item }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <ng-template #emptyFrontContractDocuments>
+                          <span class="summary-card__fact-empty">Nenhum documento informado</span>
+                        </ng-template>
+                      </div>
+
+                      <div class="summary-card__contract-footer-main">
+                        <div class="summary-card__contract-offer" *ngIf="showSalaryRangeInCard">
+                          <div class="summary-card__contract-offer-head">
+                            <span class="summary-card__contract-offer-label">Proposta da Empresa</span>
+                          </div>
+                          <div class="summary-card__contract-offer-body">
+                            <span class="summary-card__fact-money" [class.summary-card__fact-money--empty]="!hasSalaryRangeValue">{{ contractSalaryDisplay }}</span>
+                            <span class="summary-card__contract-switch-chip summary-card__contract-switch-chip--active">
+                              {{ contractType }}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="summary-card__fact-card summary-card__fact-card--candidate-suggestion" *ngIf="allowCandidateSalarySuggestion">
+                          <span class="summary-card__fact-label">Sugestão do candidato</span>
+                          <span class="summary-card__fact-value">{{ candidateSalarySuggestionDisplay }}</span>
+                        </div>
+
+                        <div class="summary-card__fact-note" *ngIf="hybridWorkModelDetail as hybridDetail">
+                          <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                          <span>{{ hybridDetail }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </div>
             </div>
-          </div>
 
-          <div class="summary-card__page summary-card__page--back">
-            <div class="summary-card__back">
-              <div class="summary-card__company summary-card__company--top">
-                <div class="summary-card__company-top">
-                  <div class="summary-card__company-brand">
-                    <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
+            <div class="summary-card__tab-page summary-card__tab-page--details" *ngSwitchCase="'details'">
+              <div class="summary-card__sections">
+                <section class="summary-card__section summary-card__section--about">
+                  <div class="summary-card__section-header">
+                    <h4 class="summary-card__section-title">Sobre a vaga</h4>
+                    <button
+                      class="summary-card__section-edit"
+                      type="button"
+                      aria-label="Editar descricao da vaga"
+                      title="Editar descricao da vaga"
+                      (click)="openJobSummaryModal('front')"
+                    >
+                      <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path
+                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
 
-                    <div class="summary-card__company-meta">
-                      <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
-                      <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
+                  <p class="summary-card__about-text" [class.summary-card__about-text--empty]="summaryPanelDescription === 'Nao ha descricao'">
+                    {{ summaryPanelDescription }}
+                  </p>
+                </section>
+
+                <div class="summary-card__stack-block">
+                  <div class="summary-card__stack-head">
+                    <h4 class="summary-card__stack-title">Percentual de Conhecimentos minimos</h4>
+
+                    <button
+                      class="summary-card__add summary-card__stack-add"
+                      type="button"
+                      aria-label="Adicionar habilidade"
+                      title="Adicionar habilidade"
+                      (click)="openTechStackModal()"
+                    >
+                      <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                    </button>
+                  </div>
+
+                  <div class="summary-card__stack">
+                    <div class="stack-card__list">
+                      <button class="stack-item" type="button" *ngFor="let item of selectedTechStackItems; let i = index" (click)="editTechStack(i)">
+                        <div class="stack-item__meta">
+                          <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                          <span class="stack-item__name">{{ item.name }}</span>
+                        </div>
+
+                        <div class="stack-item__progress">
+                          <span class="stack-item__track" aria-hidden="true">
+                            <span class="stack-item__fill" [style.width.%]="item.match"></span>
+                            <span class="stack-item__thumb" [style.left.%]="item.match"></span>
+                          </span>
+                          <span class="stack-item__value">{{ item.match }}%</span>
+                        </div>
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                <p class="summary-card__company-description">
-                  {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
-                </p>
-              </div>
-
-              <div class="summary-card__sections">
-                <section class="summary-card__section" *ngFor="let section of frontResponsibilitySections">
+                <section class="summary-card__section summary-card__section--carousel" *ngIf="currentFrontResponsibilitySection as section; else emptyFrontResponsibilitySections">
                   <div class="summary-card__section-header">
                     <h4 class="summary-card__section-title">{{ section.title }}</h4>
                     <button
@@ -481,16 +549,71 @@
                     </button>
                   </div>
 
-                  <ul class="summary-card__items">
-                    <li class="summary-card__item" *ngFor="let item of section.items">
-                      <span class="summary-card__item-marker" aria-hidden="true"></span>
-                      <span class="summary-card__item-text">{{ item }}</span>
-                    </li>
-                  </ul>
+                  <div class="summary-card__carousel-body">
+                    <ul class="summary-card__items summary-card__items--carousel">
+                      <li class="summary-card__item" *ngFor="let item of section.items">
+                        <span class="summary-card__item-marker" aria-hidden="true"></span>
+                        <span class="summary-card__item-text">{{ item }}</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="summary-card__carousel-nav">
+                    <div class="summary-card__carousel-controls" *ngIf="frontResponsibilitySections.length > 1">
+                      <button
+                        class="summary-card__carousel-button"
+                        type="button"
+                        aria-label="Bloco anterior"
+                        [disabled]="!canGoToPreviousFrontResponsibilitySection"
+                        (click)="showPreviousFrontResponsibilitySection()"
+                      >
+                        &lt;
+                      </button>
+                      <span class="summary-card__carousel-page">{{ frontResponsibilityPageNumber }} / {{ frontResponsibilitySections.length }}</span>
+                      <button
+                        class="summary-card__carousel-button"
+                        type="button"
+                        aria-label="Próximo bloco"
+                        [disabled]="!canGoToNextFrontResponsibilitySection"
+                        (click)="showNextFrontResponsibilitySection()"
+                      >
+                        &gt;
+                      </button>
+                    </div>
+
+                    <button
+                      class="summary-card__add summary-card__carousel-add"
+                      type="button"
+                      aria-label="Adicionar"
+                      title="Adicionar"
+                      (click)="openResponsibilityModal()"
+                    >
+                      <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                    </button>
+                  </div>
                 </section>
+
+                <ng-template #emptyFrontResponsibilitySections>
+                  <section class="summary-card__section summary-card__section--carousel-empty">
+                    <p class="summary-card__about-text summary-card__about-text--empty">Nenhum bloco adicionado</p>
+
+                    <div class="summary-card__carousel-nav summary-card__carousel-nav--empty">
+                      <span class="summary-card__carousel-page summary-card__carousel-page--empty">0 / 0</span>
+                      <button
+                        class="summary-card__add summary-card__carousel-add"
+                        type="button"
+                        aria-label="Adicionar"
+                        title="Adicionar"
+                        (click)="openResponsibilityModal()"
+                      >
+                        <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                      </button>
+                    </div>
+                  </section>
+                </ng-template>
               </div>
             </div>
-          </div>
+          </ng-container>
         </div>
       </div>
     </section>
@@ -504,7 +627,7 @@
 >
   <section class="summary-modal summary-modal--benefit" (click)="$event.stopPropagation()">
     <div class="summary-modal__header">
-      <h3 class="summary-modal__title">Adicionar benefício</h3>
+      <h3 class="summary-modal__title">{{ benefitModalTitle }}</h3>
       <button class="summary-modal__close" type="button" (click)="closeBenefitModal()">
         <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
@@ -540,6 +663,14 @@
       </label>
 
       <div class="summary-modal__actions">
+        <button
+          class="summary-modal__button summary-modal__button--danger"
+          type="button"
+          *ngIf="editingBenefitIndex !== null"
+          (click)="deleteBenefit()"
+        >
+          Excluir
+        </button>
         <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeBenefitModal()">
           Cancelar
         </button>
@@ -549,7 +680,114 @@
           [disabled]="!canSaveBenefit"
           (click)="saveBenefit()"
         >
-          Adicionar benefício
+          {{ benefitModalSubmitLabel }}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div
+  class="summary-modal-backdrop"
+  *ngIf="isTechStackModalOpen"
+  (click)="closeTechStackModal()"
+>
+  <section class="summary-modal summary-modal--benefit" (click)="$event.stopPropagation()">
+    <div class="summary-modal__header">
+      <h3 class="summary-modal__title">{{ techStackModalTitle }}</h3>
+      <button class="summary-modal__close" type="button" (click)="closeTechStackModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="summary-modal__body">
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">Habilidade</span>
+        <input
+          type="text"
+          [(ngModel)]="techStackDraftName"
+          placeholder="Ex: Kubernetes"
+        />
+      </label>
+
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">% mínimo</span>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          [(ngModel)]="techStackDraftMatch"
+          placeholder="Ex: 70"
+        />
+      </label>
+
+      <div class="summary-modal__actions">
+        <button
+          class="summary-modal__button summary-modal__button--danger"
+          type="button"
+          *ngIf="editingTechStackIndex !== null"
+          (click)="deleteTechStack()"
+        >
+          Excluir
+        </button>
+        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeTechStackModal()">
+          Cancelar
+        </button>
+        <button
+          class="summary-modal__button summary-modal__button--primary"
+          type="button"
+          [disabled]="!canSaveTechStack"
+          (click)="saveTechStack()"
+        >
+          {{ techStackModalSubmitLabel }}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div
+  class="summary-modal-backdrop"
+  *ngIf="isDocumentModalOpen"
+  (click)="closeDocumentModal()"
+>
+  <section class="summary-modal summary-modal--benefit" (click)="$event.stopPropagation()">
+    <div class="summary-modal__header">
+      <h3 class="summary-modal__title">{{ documentModalTitle }}</h3>
+      <button class="summary-modal__close" type="button" (click)="closeDocumentModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="summary-modal__body">
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">Documento</span>
+        <input
+          type="text"
+          [(ngModel)]="documentDraftLabel"
+          placeholder="Ex: Comprovante de Residencia"
+        />
+      </label>
+
+      <div class="summary-modal__actions">
+        <button
+          class="summary-modal__button summary-modal__button--danger"
+          type="button"
+          *ngIf="editingDocumentIndex !== null"
+          (click)="deleteDocument()"
+        >
+          Excluir
+        </button>
+        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeDocumentModal()">
+          Cancelar
+        </button>
+        <button
+          class="summary-modal__button summary-modal__button--primary"
+          type="button"
+          [disabled]="!canSaveDocument"
+          (click)="saveDocument()"
+        >
+          {{ documentModalSubmitLabel }}
         </button>
       </div>
     </div>

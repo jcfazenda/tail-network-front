@@ -8,6 +8,7 @@ import { VagasMockService } from '../data/vagas-mock.service';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
+type SummaryView = 'status' | 'benefits' | 'details';
 type ResponsibilitySection = {
   id: string;
   pageId: SummaryPageId;
@@ -21,6 +22,12 @@ type CompanySummaryProfile = {
   description: string;
   linkedinCount: string;
   logoLabel: string;
+};
+
+type CandidateStatusPreview = {
+  label: string;
+  completed: boolean;
+  timeLabel: string;
 };
 
 @Component({
@@ -48,7 +55,7 @@ export class CadastroPage {
     '/assets/avatars/avatar-rafael.png',
   ];
   readonly previewAvatarExtraCount = 18;
-  readonly documentOptions = [
+  readonly initialDocumentOptions = [
     'Copia do Certificado de conclusão',
     'Copia da Identidade e CPF',
     'Comprovante de Residencia',
@@ -82,7 +89,7 @@ export class CadastroPage {
   ];
   readonly workModels: WorkModel[] = ['Remoto', 'Hibrido', 'Presencial'];
   readonly contractTypes: ContractType[] = ['CLT', 'PJ', 'Freelancer'];
-  readonly techStackItems: TechStackItem[] = [
+  readonly initialTechStackItems: TechStackItem[] = [
     { name: '.NET / C#', match: 80 },
     { name: 'Entity Framework', match: 65 },
     { name: 'REST API', match: 75 },
@@ -118,6 +125,14 @@ export class CadastroPage {
       logoLabel: 'st',
     },
   };
+  readonly candidateStatusPreview: CandidateStatusPreview[] = [
+    { label: 'No radar', completed: true, timeLabel: '2 Jul 23hs32.' },
+    { label: 'Se candidatou', completed: true, timeLabel: '2 Jul 23hs32.' },
+    { label: 'Em processo', completed: true, timeLabel: '2 Jul 23hs32.' },
+    { label: 'Contratação Solicitada', completed: true, timeLabel: '2 Jul 23hs32.' },
+    { label: 'Cancelado', completed: false, timeLabel: '2 Jul 23hs32.' },
+    { label: 'Contratado', completed: false, timeLabel: '2 Jul 23hs32.' },
+  ];
   responsibilitySections: ResponsibilitySection[] = [
     {
       id: 'summary-section-1',
@@ -162,6 +177,7 @@ export class CadastroPage {
   contractType: ContractType = 'CLT';
   contractSummary = '';
   salaryRange = '';
+  allowCandidateSalarySuggestion = true;
   hybridOnsiteDaysDescription = '2 dias presenciais por semana';
   showSalaryRangeInCard = true;
   selectedBenefits = this.initialSelectedBenefits.map((item) => ({ ...item }));
@@ -171,19 +187,30 @@ export class CadastroPage {
     Nubank: false,
     Stone: false,
   };
-  isSummaryBackVisible = false;
+  activeSummaryView: SummaryView = 'status';
+  activeFrontResponsibilityIndex = 0;
   editingSummaryDescriptionPageId: SummaryPageId | null = null;
   isBenefitModalOpen = false;
+  editingBenefitIndex: number | null = null;
+  isDocumentModalOpen = false;
+  editingDocumentIndex: number | null = null;
+  isTechStackModalOpen = false;
+  editingTechStackIndex: number | null = null;
   isResponsibilityModalOpen = false;
   editingResponsibilitySectionId: string | null = null;
   responsibilityDraftPageId: SummaryPageId = 'front';
   benefitDraftTitle = '';
   benefitDraftSideLabel = '';
   benefitDraftDescription = '';
+  documentDraftLabel = '';
+  techStackDraftName = '';
+  techStackDraftMatch = '60';
   jobSummaryDraft = '';
   responsibilityDraftTitle = '';
   responsibilityDraftItem = '';
   responsibilityDraftItems: string[] = [];
+  selectedDocuments = [...this.initialDocumentOptions];
+  selectedTechStackItems = this.initialTechStackItems.map((item) => ({ ...item }));
 
   get previewContractType(): ContractType {
     return this.contractType;
@@ -207,11 +234,41 @@ export class CadastroPage {
   }
 
   get activeSummaryPageId(): SummaryPageId {
-    return this.isSummaryBackVisible ? 'front' : 'back';
+    return this.activeSummaryView === 'benefits' ? 'back' : 'front';
+  }
+
+  get canAddSummarySection(): boolean {
+    return this.activeSummaryView !== 'status';
   }
 
   get frontResponsibilitySections(): ResponsibilitySection[] {
     return this.responsibilitySections.filter((section) => section.pageId === 'front');
+  }
+
+  get currentFrontResponsibilitySection(): ResponsibilitySection | null {
+    const sections = this.frontResponsibilitySections;
+    if (!sections.length) {
+      return null;
+    }
+
+    return sections[Math.min(this.activeFrontResponsibilityIndex, sections.length - 1)] ?? null;
+  }
+
+  get frontResponsibilityPageNumber(): number {
+    const count = this.frontResponsibilitySections.length;
+    if (!count) {
+      return 0;
+    }
+
+    return Math.min(this.activeFrontResponsibilityIndex, count - 1) + 1;
+  }
+
+  get canGoToPreviousFrontResponsibilitySection(): boolean {
+    return this.frontResponsibilitySections.length > 1 && this.frontResponsibilityPageNumber > 1;
+  }
+
+  get canGoToNextFrontResponsibilitySection(): boolean {
+    return this.frontResponsibilitySections.length > 1 && this.frontResponsibilityPageNumber < this.frontResponsibilitySections.length;
   }
 
   get backResponsibilitySections(): ResponsibilitySection[] {
@@ -224,6 +281,38 @@ export class CadastroPage {
 
   get canSaveBenefit(): boolean {
     return this.benefitDraftTitle.trim().length > 0;
+  }
+
+  get benefitModalTitle(): string {
+    return this.editingBenefitIndex === null ? 'Adicionar benefício' : 'Editar benefício';
+  }
+
+  get benefitModalSubmitLabel(): string {
+    return this.editingBenefitIndex === null ? 'Adicionar benefício' : 'Salvar benefício';
+  }
+
+  get canSaveDocument(): boolean {
+    return this.documentDraftLabel.trim().length > 0;
+  }
+
+  get documentModalTitle(): string {
+    return this.editingDocumentIndex === null ? 'Adicionar documento' : 'Editar documento';
+  }
+
+  get documentModalSubmitLabel(): string {
+    return this.editingDocumentIndex === null ? 'Adicionar documento' : 'Salvar documento';
+  }
+
+  get canSaveTechStack(): boolean {
+    return this.techStackDraftName.trim().length > 0;
+  }
+
+  get techStackModalTitle(): string {
+    return this.editingTechStackIndex === null ? 'Adicionar habilidade' : 'Editar habilidade';
+  }
+
+  get techStackModalSubmitLabel(): string {
+    return this.editingTechStackIndex === null ? 'Adicionar habilidade' : 'Salvar habilidade';
   }
 
   get summaryPanelDescription(): string {
@@ -247,6 +336,12 @@ export class CadastroPage {
     }
 
     return value.startsWith('R$') ? value : `R$ ${value}`;
+  }
+
+  get candidateSalarySuggestionDisplay(): string {
+    return this.allowCandidateSalarySuggestion
+      ? 'Candidato pode sugerir um valor'
+      : 'Candidato nao pode sugerir valor';
   }
 
   get hybridWorkModelDetail(): string | null {
@@ -307,14 +402,29 @@ export class CadastroPage {
   }
 
   openBenefitModal(): void {
+    this.editingBenefitIndex = null;
     this.benefitDraftTitle = '';
     this.benefitDraftSideLabel = '';
     this.benefitDraftDescription = '';
     this.isBenefitModalOpen = true;
   }
 
+  editBenefit(index: number): void {
+    const benefit = this.selectedBenefits[index];
+    if (!benefit) {
+      return;
+    }
+
+    this.editingBenefitIndex = index;
+    this.benefitDraftTitle = benefit.title;
+    this.benefitDraftSideLabel = benefit.sideLabel ?? '';
+    this.benefitDraftDescription = benefit.description ?? '';
+    this.isBenefitModalOpen = true;
+  }
+
   closeBenefitModal(): void {
     this.isBenefitModalOpen = false;
+    this.editingBenefitIndex = null;
     this.benefitDraftTitle = '';
     this.benefitDraftSideLabel = '';
     this.benefitDraftDescription = '';
@@ -326,16 +436,147 @@ export class CadastroPage {
       return;
     }
 
+    const benefit: JobBenefitItem = {
+      title,
+      sideLabel: this.benefitDraftSideLabel.trim() || undefined,
+      description: this.benefitDraftDescription.trim() || undefined,
+    };
+
+    if (this.editingBenefitIndex !== null) {
+      this.selectedBenefits = this.selectedBenefits.map((item, itemIndex) =>
+        itemIndex === this.editingBenefitIndex ? benefit : item,
+      );
+      this.closeBenefitModal();
+      return;
+    }
+
     this.selectedBenefits = [
       ...this.selectedBenefits,
-      {
-        title,
-        sideLabel: this.benefitDraftSideLabel.trim() || undefined,
-        description: this.benefitDraftDescription.trim() || undefined,
-      },
+      benefit,
     ];
 
     this.closeBenefitModal();
+  }
+
+  deleteBenefit(): void {
+    if (this.editingBenefitIndex === null) {
+      return;
+    }
+
+    this.selectedBenefits = this.selectedBenefits.filter((_, itemIndex) => itemIndex !== this.editingBenefitIndex);
+    this.closeBenefitModal();
+  }
+
+  openDocumentModal(): void {
+    this.editingDocumentIndex = null;
+    this.documentDraftLabel = '';
+    this.isDocumentModalOpen = true;
+  }
+
+  editDocument(index: number): void {
+    const document = this.selectedDocuments[index];
+    if (!document) {
+      return;
+    }
+
+    this.editingDocumentIndex = index;
+    this.documentDraftLabel = document;
+    this.isDocumentModalOpen = true;
+  }
+
+  closeDocumentModal(): void {
+    this.isDocumentModalOpen = false;
+    this.editingDocumentIndex = null;
+    this.documentDraftLabel = '';
+  }
+
+  saveDocument(): void {
+    const label = this.documentDraftLabel.trim();
+    if (!label) {
+      return;
+    }
+
+    if (this.editingDocumentIndex !== null) {
+      this.selectedDocuments = this.selectedDocuments.map((item, itemIndex) =>
+        itemIndex === this.editingDocumentIndex ? label : item,
+      );
+      this.closeDocumentModal();
+      return;
+    }
+
+    this.selectedDocuments = [...this.selectedDocuments, label];
+    this.closeDocumentModal();
+  }
+
+  deleteDocument(): void {
+    if (this.editingDocumentIndex === null) {
+      return;
+    }
+
+    this.selectedDocuments = this.selectedDocuments.filter((_, itemIndex) => itemIndex !== this.editingDocumentIndex);
+    this.closeDocumentModal();
+  }
+
+  openTechStackModal(): void {
+    this.editingTechStackIndex = null;
+    this.techStackDraftName = '';
+    this.techStackDraftMatch = '60';
+    this.isTechStackModalOpen = true;
+  }
+
+  editTechStack(index: number): void {
+    const item = this.selectedTechStackItems[index];
+    if (!item) {
+      return;
+    }
+
+    this.editingTechStackIndex = index;
+    this.techStackDraftName = item.name;
+    this.techStackDraftMatch = String(item.match);
+    this.isTechStackModalOpen = true;
+  }
+
+  closeTechStackModal(): void {
+    this.isTechStackModalOpen = false;
+    this.editingTechStackIndex = null;
+    this.techStackDraftName = '';
+    this.techStackDraftMatch = '60';
+  }
+
+  saveTechStack(): void {
+    const name = this.techStackDraftName.trim();
+    if (!name) {
+      return;
+    }
+
+    const match = Number.parseInt(this.techStackDraftMatch, 10);
+    const normalizedMatch = Number.isNaN(match) ? 0 : Math.max(0, Math.min(100, match));
+
+    const techStackItem: TechStackItem = {
+      name,
+      match: normalizedMatch,
+    };
+
+    if (this.editingTechStackIndex !== null) {
+      this.selectedTechStackItems = this.selectedTechStackItems.map((item, itemIndex) =>
+        itemIndex === this.editingTechStackIndex ? techStackItem : item,
+      );
+      this.closeTechStackModal();
+      return;
+    }
+
+    this.selectedTechStackItems = [...this.selectedTechStackItems, techStackItem];
+
+    this.closeTechStackModal();
+  }
+
+  deleteTechStack(): void {
+    if (this.editingTechStackIndex === null) {
+      return;
+    }
+
+    this.selectedTechStackItems = this.selectedTechStackItems.filter((_, itemIndex) => itemIndex !== this.editingTechStackIndex);
+    this.closeTechStackModal();
   }
 
   toggleRefinementOption(item: RefinementItem): void {
@@ -355,8 +596,24 @@ export class CadastroPage {
     };
   }
 
-  toggleSummaryPanelFace(): void {
-    this.isSummaryBackVisible = !this.isSummaryBackVisible;
+  selectSummaryView(view: SummaryView): void {
+    this.activeSummaryView = view;
+  }
+
+  showPreviousFrontResponsibilitySection(): void {
+    if (!this.canGoToPreviousFrontResponsibilitySection) {
+      return;
+    }
+
+    this.activeFrontResponsibilityIndex -= 1;
+  }
+
+  showNextFrontResponsibilitySection(): void {
+    if (!this.canGoToNextFrontResponsibilitySection) {
+      return;
+    }
+
+    this.activeFrontResponsibilityIndex += 1;
   }
 
   openJobSummaryModal(pageId: SummaryPageId): void {
@@ -426,9 +683,24 @@ export class CadastroPage {
       return;
     }
 
+    const sectionToDelete = this.responsibilitySections.find(
+      (section) => section.id === this.editingResponsibilitySectionId,
+    );
+    const deletedFrontIndex = sectionToDelete?.pageId === 'front'
+      ? this.frontResponsibilitySections.findIndex((section) => section.id === sectionToDelete.id)
+      : -1;
+
     this.responsibilitySections = this.responsibilitySections.filter(
       (section) => section.id !== this.editingResponsibilitySectionId,
     );
+
+    if (deletedFrontIndex >= 0) {
+      if (this.activeFrontResponsibilityIndex >= deletedFrontIndex && this.activeFrontResponsibilityIndex > 0) {
+        this.activeFrontResponsibilityIndex -= 1;
+      }
+      this.normalizeFrontResponsibilityIndex();
+    }
+
     this.closeResponsibilityModal();
   }
 
@@ -461,6 +733,11 @@ export class CadastroPage {
         items: [...this.responsibilityDraftItems],
       },
     ];
+
+    if (this.responsibilityDraftPageId === 'front') {
+      this.activeFrontResponsibilityIndex = this.frontResponsibilitySections.length - 1;
+    }
+
     this.closeResponsibilityModal();
   }
 
@@ -474,6 +751,18 @@ export class CadastroPage {
 
   get responsibilityModalSubmitLabel(): string {
     return this.editingResponsibilitySectionId === null ? 'Salvar bloco' : 'Salvar alterações';
+  }
+
+  private normalizeFrontResponsibilityIndex(): void {
+    if (!this.frontResponsibilitySections.length) {
+      this.activeFrontResponsibilityIndex = 0;
+      return;
+    }
+
+    this.activeFrontResponsibilityIndex = Math.min(
+      this.activeFrontResponsibilityIndex,
+      this.frontResponsibilitySections.length - 1,
+    );
   }
 
   saveAsDraft(): void {
@@ -510,9 +799,10 @@ export class CadastroPage {
       contractType: this.contractType,
       salaryRange: this.salaryRange.trim(),
       showSalaryRangeInCard: this.showSalaryRangeInCard,
+      allowCandidateSalarySuggestion: this.allowCandidateSalarySuggestion,
       hybridOnsiteDaysDescription: this.hybridOnsiteDaysDescription.trim(),
       benefits: this.selectedBenefits.map((item) => ({ ...item })),
-      techStack: this.techStackItems.map((item) => ({ ...item })),
+      techStack: this.selectedTechStackItems.map((item) => ({ ...item })),
       differentials: [...this.selectedRefinementOptions],
     };
   }
