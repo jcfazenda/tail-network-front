@@ -1,22 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
-import { VagaPanelDraft } from './vaga-panel/vaga-panel.component';
+import { ContractType, MockJobDraft, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
+import { VagasMockService } from '../data/vagas-mock.service';
 
-type WorkModel = 'Presencial' | 'Hibrido' | 'Remoto';
-type ContractType = 'CLT' | 'PJ' | 'Freelancer';
-
-interface TechStackItem {
-  name: string;
-  match: number;
-}
-
-type RefinementItem =
-  | 'Experiência com Azure ou Aws'
-  | 'Trabalho em Equipe'
-  | 'Teste Unitário e Integrado'
-  | 'Viajar a Trabalho';
+type RefinementItem = string;
 
 @Component({
   standalone: true,
@@ -27,6 +17,9 @@ type RefinementItem =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CadastroPage {
+  private readonly router = inject(Router);
+  private readonly vagasMockService = inject(VagasMockService);
+
   readonly configurationProgress = 60;
   readonly previewAderencia = 89;
   readonly previewAvatars = [
@@ -120,5 +113,43 @@ export class CadastroPage {
     }
 
     this.selectedRefinementOptions = [...this.selectedRefinementOptions, item];
+  }
+
+  saveAsDraft(): void {
+    const savedJob = this.vagasMockService.saveJob({
+      draft: this.buildDraftPayload(),
+      status: 'rascunhos',
+      previewAderencia: this.previewAderencia,
+      previewAvatars: this.previewAvatars,
+      previewAvatarExtraCount: this.previewAvatarExtraCount,
+    });
+
+    void this.router.navigate(['/vagas'], {
+      queryParams: { tab: 'rascunhos', created: savedJob.id },
+    });
+  }
+
+  publishJob(): void {
+    const savedJob = this.vagasMockService.saveJob({
+      draft: this.buildDraftPayload(),
+      status: 'ativas',
+      previewAderencia: this.previewAderencia,
+      previewAvatars: this.previewAvatars,
+      previewAvatarExtraCount: this.previewAvatarExtraCount,
+    });
+
+    void this.router.navigate(['/vagas'], {
+      queryParams: { tab: 'ativas', created: savedJob.id },
+    });
+  }
+
+  private buildDraftPayload(): MockJobDraft {
+    return {
+      ...this.jobDraft,
+      contractType: this.contractType,
+      benefits: [...this.selectedBenefits],
+      techStack: this.techStackItems.map((item) => ({ ...item })),
+      differentials: [...this.selectedRefinementOptions],
+    };
   }
 }

@@ -147,10 +147,9 @@
       class="panel-candidatos-right"
       [selectedJobPanel]="selectedJobPanel"
       [sortedCandidatesFor]="sortedCandidatesFor"
-      [findJobByTitle]="findJobByTitle"
       [stageLabel]="stageLabel"
       (closePanelEvent)="closePanel()"
-      (openChat)="openCandidate(findJobByTitle(selectedJobPanel!.title), $event)"
+      (openChat)="openCandidate(findJobById(selectedJobPanel!.id), $event)"
     ></app-panel-candidatos-list>
 
     <div class="panel-backdrop" *ngIf="selectedJobPanel" (click)="closePanel()"></div>

@@ -35,7 +35,6 @@ export class PanelCandidatosListComponent {
   @Input() selectedJobPanel: any = null;
   @Input() sortedCandidatesFor!: (job: any) => any[];
   @Input() openCandidate!: (job: any, index: number) => void;
-  @Input() findJobByTitle!: (title: string) => any;
   @Input() stageLabel!: (stage?: CandidateStage) => string;
   @Output() closePanelEvent = new EventEmitter<void>();
   @Output() openChat = new EventEmitter<number>();

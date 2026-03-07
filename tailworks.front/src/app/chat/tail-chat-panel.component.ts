@@ -18,6 +18,7 @@ export interface ChatCandidate {
 }
 
 export interface ChatJob {
+  id: string;
   title: string;
   company: string;
   location: string;

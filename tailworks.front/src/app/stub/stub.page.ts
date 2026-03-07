@@ -3,41 +3,14 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
+import { JobStatus, MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
+import { VagasMockService } from '../vagas/data/vagas-mock.service';
 
 interface RadarCategory {
   label: string;
   value: number;
   color: string;
   offset?: number;
-}
-
-interface JobCard {
-  title: string;
-  company: string;
-  location: string;
-  priority: string;
-  workModel: string;
-  match: number;
-  talents: number;
-  radarCount: number;
-  ageLabel: string;
-  postedLabel: string;
-  avatars: string[];
-  extraCount: number;
-  status: 'ativas' | 'rascunhos' | 'encerradas';
-  candidates: Candidate[];
-}
-
-interface Candidate {
-  name: string;
-  role: string;
-  match: number;
-  minutesAgo: number;
-  status: 'online' | 'offline';
-  avatar: string;
-  stage?: 'radar' | 'aguardando' | 'processo' | 'tecnica' | 'cancelado';
-  availabilityLabel?: string;
-  radarOnly?: boolean;
 }
 
 @Component({
@@ -50,6 +23,7 @@ interface Candidate {
 })
 export class StubPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly vagasMockService = inject(VagasMockService);
 
   readonly radarTotal = 87;
   readonly radarDelta = 12;
@@ -61,162 +35,6 @@ export class StubPage {
     { label: 'DevOps', value: 55, color: '#cacedc' },
   ];
 
-  activeTab: JobCard['status'] = 'ativas';
-
-  selectedJobPanel: ChatJob | null = null;
-  selectedChatJob: ChatJob | null = null;
-  chatStartIndex = 0;
-
-  readonly jobCards: JobCard[] = [
-    {
-      title: 'Backend .NET Sênior',
-      company: 'Banco Itaú',
-      location: 'Rio de Janeiro - RJ',
-      priority: 'RIO DE JANEIRO - RJ',
-      workModel: 'Remoto',
-      match: 89,
-      talents: 23,
-      radarCount: 23,
-      ageLabel: '2 dias',
-      postedLabel: '',
-      avatars: [
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png'
-      ],
-      extraCount: 18,
-      status: 'ativas',
-      candidates: [
-        { name: 'Alex Chen', role: 'Backend .NET', match: 92, minutesAgo: 8, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'aguardando', availabilityLabel: 'Disponibilidade imediata' },
-        { name: 'Bianca Lima', role: 'Eng. Software', match: 88, minutesAgo: 16, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Carlos Souza', role: 'Tech Lead .NET', match: 81, minutesAgo: 28, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
-        { name: 'Mariana Alves', role: 'Full Stack .NET', match: 86, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
-        { name: 'Diego Farias', role: 'Backend .NET', match: 77, minutesAgo: 44, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica', radarOnly: true },
-        { name: 'Fernanda Lopes', role: 'Backend .NET', match: 79, minutesAgo: 52, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
-        { name: 'Gustavo Prado', role: 'Backend .NET', match: 82, minutesAgo: 63, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
-        { name: 'Helena Duarte', role: 'Backend .NET', match: 84, minutesAgo: 71, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'tecnica' },
-        { name: 'Ícaro Mendes', role: 'Backend .NET', match: 64, minutesAgo: 88, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
-        { name: 'Joana Ribeiro', role: 'Backend .NET', match: 61, minutesAgo: 94, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
-        { name: 'Kamila Torres', role: 'Backend .NET', match: 59, minutesAgo: 103, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
-        { name: 'Leonardo Braga', role: 'Backend .NET', match: 56, minutesAgo: 117, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
-        { name: 'Marta Silveira', role: 'Backend .NET', match: 53, minutesAgo: 126, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'cancelado' },
-      ],
-    },
-    {
-      title: 'Senior Product Designer',
-      company: 'Nubank',
-      location: 'São Paulo - SP',
-      priority: 'SÃO PAULO - SP',
-      workModel: 'Presencial',
-      match: 94,
-      talents: 15,
-      radarCount: 6,
-      ageLabel: '1 dia',
-      postedLabel: '',
-      avatars: [
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png'
-      ],
-      extraCount: 18,
-      status: 'ativas',
-      candidates: [
-        { name: 'Marina Dias', role: 'Product Designer', match: 95, minutesAgo: 5, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
-        { name: 'Ivan Costa', role: 'UX Researcher', match: 87, minutesAgo: 21, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Letícia Prado', role: 'Design Ops', match: 82, minutesAgo: 37, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
-      ],
-    },
-    {
-      title: 'Data Analyst Mid-Level',
-      company: 'XP Inc.',
-      location: 'Rio de Janeiro - RJ',
-      priority: '',
-      workModel: 'Híbrido',
-      match: 76,
-      talents: 9,
-      radarCount: 4,
-      ageLabel: '3 dias',
-      postedLabel: '',
-      avatars: [
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png'
-      ],
-      extraCount: 6,
-      status: 'rascunhos',
-      candidates: [
-        { name: 'Paula Neri', role: 'Data Analyst', match: 79, minutesAgo: 42, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
-        { name: 'Rafael Nunes', role: 'BI Analyst', match: 74, minutesAgo: 58, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
-      ],
-    },
-    {
-      title: 'DevOps Engineer',
-      company: 'Stone',
-      location: 'Remoto - Brasil',
-      priority: 'REMOTO',
-      workModel: 'Remoto',
-      match: 82,
-      talents: 18,
-      radarCount: 12,
-      ageLabel: '4 dias',
-      postedLabel: '',
-      avatars: [
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png'
-      ],
-      extraCount: 10,
-      status: 'ativas',
-      candidates: [
-        { name: 'Camila Rocha', role: 'DevOps', match: 86, minutesAgo: 11, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
-        { name: 'Diego Martins', role: 'SRE', match: 80, minutesAgo: 29, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-      ],
-    },
-    {
-      title: 'QA Automation Pleno',
-      company: 'RD Station',
-      location: 'Florianópolis - SC',
-      priority: 'PRIORIDADE MÉDIA',
-      workModel: 'Híbrido',
-      match: 74,
-      talents: 11,
-      radarCount: 7,
-      ageLabel: '5 dias',
-      postedLabel: '',
-      avatars: [
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png'
-      ],
-      extraCount: 5,
-      status: 'ativas',
-      candidates: [
-        { name: 'Juliana Prado', role: 'QA Engineer', match: 77, minutesAgo: 34, status: 'online', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', availabilityLabel: 'Disponibilidade imediata' },
-        { name: 'Felipe Ramos', role: 'Automation Eng.', match: 71, minutesAgo: 62, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo', radarOnly: true },
-      ],
-    },
-    {
-      title: 'Product Manager',
-      company: 'Loft',
-      location: 'São Paulo - SP',
-      priority: '',
-      workModel: 'Remoto',
-      match: 68,
-      talents: 8,
-      radarCount: 3,
-      ageLabel: '2 dias',
-      postedLabel: '',
-      avatars: [
-        '/assets/avatars/avatar-rafael.png',
-        '/assets/avatars/avatar-rafael.png'
-      ],
-      extraCount: 4,
-      status: 'encerradas',
-      candidates: [
-        { name: 'Ana Paula', role: 'PM', match: 70, minutesAgo: 80, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-        { name: 'Rogério Lima', role: 'Product Ops', match: 65, minutesAgo: 120, status: 'offline', avatar: '/assets/avatars/avatar-rafael.png', stage: 'processo' },
-      ],
-    },
-  ];
-
   readonly stageLabels = [
     'Contratação Solicitada',
     'Em Entrevista Técnica',
@@ -226,20 +44,27 @@ export class StubPage {
     'Cancelado',
   ];
 
-  setTab(tab: JobCard['status']) {
+  activeTab: JobStatus = this.resolveInitialTab();
+
+  selectedJobPanel: ChatJob | null = null;
+  selectedChatJob: ChatJob | null = null;
+  chatStartIndex = 0;
+
+  setTab(tab: JobStatus) {
     this.activeTab = tab;
   }
 
-  get filteredJobs(): JobCard[] {
-    return this.jobCards.filter(j => j.status === this.activeTab);
+  get filteredJobs(): MockJobRecord[] {
+    return this.vagasMockService.getJobs().filter((job) => job.status === this.activeTab);
   }
 
-  findJobByTitle(title: string): JobCard {
-    return this.jobCards.find(j => j.title === title)!;
+  findJobById(id: string): MockJobRecord {
+    return this.vagasMockService.getJobById(id)!;
   }
 
-  openPanel(job: JobCard) {
+  openPanel(job: MockJobRecord) {
     const asChatJob: ChatJob = {
+      id: job.id,
       title: job.title,
       company: job.company,
       location: job.location,
@@ -252,8 +77,9 @@ export class StubPage {
     this.chatStartIndex = 0;
   }
 
-  openCandidate(job: JobCard, index: number) {
+  openCandidate(job: MockJobRecord, index: number) {
     const asChatJob: ChatJob = {
+      id: job.id,
       title: job.title,
       company: job.company,
       location: job.location,
@@ -267,11 +93,14 @@ export class StubPage {
   }
 
   getStageLabel(index: number): string {
-    if (index >= 0 && index < this.stageLabels.length) return this.stageLabels[index];
+    if (index >= 0 && index < this.stageLabels.length) {
+      return this.stageLabels[index];
+    }
+
     return this.stageLabels[this.stageLabels.length - 1];
   }
 
-  stageLabel(stage?: Candidate['stage']): string {
+  stageLabel(stage?: MockJobCandidate['stage']): string {
     switch (stage) {
       case 'radar':
         return 'No Radar';
@@ -297,14 +126,21 @@ export class StubPage {
     this.selectedJobPanel = null;
   }
 
-  sortedCandidatesFor(job: JobCard | ChatJob): Candidate[] {
+  sortedCandidatesFor(job: MockJobRecord | ChatJob): MockJobCandidate[] {
     const order = ['radar', 'aguardando', 'tecnica', 'processo', 'documentacao', 'candidatura', 'cancelado'];
-    return [...job.candidates as Candidate[]].sort((a, b) => {
-      const stageA = a.radarOnly ? 'radar' : (a.stage ?? 'processo');
-      const stageB = b.radarOnly ? 'radar' : (b.stage ?? 'processo');
-      const ia = order.indexOf(stageA);
-      const ib = order.indexOf(stageB);
-      return ia - ib;
+    return [...job.candidates as MockJobCandidate[]].sort((left, right) => {
+      const stageLeft = left.radarOnly ? 'radar' : (left.stage ?? 'processo');
+      const stageRight = right.radarOnly ? 'radar' : (right.stage ?? 'processo');
+      return order.indexOf(stageLeft) - order.indexOf(stageRight);
     });
+  }
+
+  private resolveInitialTab(): JobStatus {
+    const queryTab = this.route.snapshot.queryParamMap.get('tab');
+    if (queryTab === 'ativas' || queryTab === 'rascunhos' || queryTab === 'encerradas') {
+      return queryTab;
+    }
+
+    return 'ativas';
   }
 }

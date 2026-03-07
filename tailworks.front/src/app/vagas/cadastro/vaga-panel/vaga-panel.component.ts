@@ -1,19 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { VagaPanelDraft } from '../../data/vagas.models';
 
 export interface VagaPanelRecruiter {
   name: string;
   role: string;
   avatar: string;
-}
-
-export interface VagaPanelDraft {
-  title: string;
-  company: string;
-  location: string;
-  workModel: string;
-  seniority: string;
-  summary: string;
 }
 
 @Component({
