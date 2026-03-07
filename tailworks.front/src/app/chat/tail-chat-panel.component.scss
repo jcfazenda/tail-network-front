@@ -148,31 +148,38 @@
     background: #faf7f2;
   }
   &__job-title{
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 800;
     color: #2b2b2b;
-    margin: 0;
+    margin: 0 0 12px;
+    line-height: 1.1;
   }
   &__job-meta{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: grid;
+    gap: 4px;
     font-size: 12px;
     font-weight: 700;
     color: rgba(15,23,42,0.65);
+  }
+  &__job-company{
+    color: rgba(15,23,42,0.76);
+  }
+  &__job-submeta{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
+    width: 100%;
   }
   &__job-location{
     display: inline-flex;
     align-items: center;
     gap: 6px;
   }
-  &__job-dot{
-    color: rgba(15,23,42,0.35);
-  }
   &__job-chip{
     display: inline-flex;
     align-items: center;
+    margin-left: auto;
     padding: 4px 10px;
     border-radius: 999px;
     background: linear-gradient(135deg, #f6c340, #f2a900);
@@ -410,9 +417,17 @@
 
 .chat-active {
   &__header {
-    padding: 18px 20px;
+    padding: 14px 20px 16px;
     border-bottom: 1px solid #e9e2d6;
     background: #fbf8f2;
+  }
+
+  &__topcard {
+    background: transparent;
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: none;
   }
 
   &__profile {
@@ -421,32 +436,92 @@
     gap: 12px;
   }
 
+  &__avatar-wrap {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+  }
+
   &__avatar{
+    display: block;
     width: 68px;
     height: 68px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    flex-shrink: 0;
   }
 
-  &__info{
+  &__avatar-badge {
+    position: absolute;
+    right: -4px;
+    bottom: -12px;
+    width: 28px;
+    height: 28px;
+    display: block;
+    background: url('/assets/images/bola-basebal.png') center / contain no-repeat;
+  }
+
+  &__profile-text {
     flex: 1;
     min-width: 0;
     display: grid;
-    gap: 4px;
+    gap: 3px;
   }
+
   &__name {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #242424;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1f1f1f;
+    line-height: 1.1;
+  }
+
+  &__role {
+    font-size: 0.82rem;
+    color: rgba(15, 23, 42, 0.62);
+    font-weight: 600;
+    line-height: 1.2;
   }
 
   &__availability-label{
-    font-size: 0.9rem;
+    font-size: 0.84rem;
     color: #588e6a;
     font-weight: 600;
+    line-height: 1.25;
+  }
+
+  &__availability-label--radar {
+    color: #295b9a;
+  }
+
+  &__radar-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 20px 16px;
+    border-bottom: 1px solid #ede6da;
+    background: #fbf8f2;
+  }
+
+  &__radar-note--header {
+    padding: 0 0 12px;
+    border-bottom: none;
+    background: transparent;
+  }
+
+  &__radar-note-icon {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    background: url('/assets/images/bola-basebal.png') center / contain no-repeat;
+  }
+
+  &__radar-note-text {
+    color: rgba(15, 23, 42, 0.72);
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.4;
   }
 
   &__status-row{
@@ -459,9 +534,9 @@
   }
 
   &__status{
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    color: #7a6a4d;
+    color: rgba(15, 23, 42, 0.58);
     white-space: nowrap;
   }
 

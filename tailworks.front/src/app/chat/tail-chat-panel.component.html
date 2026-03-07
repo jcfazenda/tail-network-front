@@ -2,8 +2,7 @@
 <div class="chat-panel">
   <div class="chat-panel__header">
     <div class="chat-panel__title-wrap">
-      <div class="chat-panel__icon">💬</div>
-      <h2 class="chat-panel__title">Conversas</h2>
+      <h2 class="chat-panel__title">Chat com Candidato</h2>
     </div>
 
     <button class="chat-panel__close" type="button" (click)="closePanel()">
@@ -14,31 +13,49 @@
   <div class="chat-panel__job">
     <div class="chat-panel__job-title">{{ job.title }}</div>
     <div class="chat-panel__job-meta">
-      <span class="chat-panel__job-location">📍 {{ job.location }}</span>
-      <span class="chat-panel__job-dot">·</span>
       <span class="chat-panel__job-company">{{ job.company }}</span>
-      <span class="chat-panel__job-chip" *ngIf="job.workModel">
-        {{ job.workModel | uppercase }}
-      </span>
+      <div class="chat-panel__job-submeta">
+        <span class="chat-panel__job-location">{{ job.location }} 📍</span>
+        <span class="chat-panel__job-chip" *ngIf="job.workModel">
+          {{ job.workModel | uppercase }}
+        </span>
+      </div>
     </div>
   </div>
 
   <div class="chat-panel__body">
     <div class="chat-panel__conversation" *ngIf="selectedConversation as selected">
       <div class="chat-active__header">
-        <div class="chat-active__profile">
-          <img [src]="selected.avatar" [alt]="selected.name" class="chat-active__avatar" />
-          <div class="chat-active__info">
-            <div class="chat-active__name">{{ selected.name }}</div>
-            <div class="chat-active__availability-label">Disponibilidade imediata</div>
+        <div class="chat-active__radar-note chat-active__radar-note--header" *ngIf="selected.radarOnly">
+          <span class="chat-active__radar-note-icon" aria-hidden="true"></span>
+          <div class="chat-active__radar-note-text">
+            Este profissional foi encontrado pelo radar e ainda nao iniciou candidatura para esta vaga.
+          </div>
+        </div>
+
+        <div class="chat-active__topcard">
+          <div class="chat-active__profile">
+            <div class="chat-active__avatar-wrap">
+              <img [src]="selected.avatar" [alt]="selected.name" class="chat-active__avatar" />
+              <span *ngIf="selected.radarOnly" class="chat-active__avatar-badge" aria-hidden="true"></span>
+            </div>
+            <div class="chat-active__profile-text">
+              <div class="chat-active__name">{{ selected.name }}</div>
+              <div class="chat-active__role">{{ selectedRoleLabel }}</div>
+              <div
+                class="chat-active__availability-label"
+                *ngIf="selectedAvailabilityLabel"
+                [class.chat-active__availability-label--radar]="selected.radarOnly"
+              >
+                {{ selectedAvailabilityLabel }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="chat-active__status-row" *ngIf="selected.match">
-        <span class="chat-active__status">
-          {{ selected.stack || selected.role }}
-        </span>
+        <span class="chat-active__status">Compatibilidade</span>
         <div class="chat-active__progress">
           <div class="chat-active__track">
             <div class="chat-active__fill" [style.width.%]="selected.match"></div>
@@ -47,6 +64,7 @@
         </div>
       </div>
 
+      <ng-template #hiringFlow>
       <div class="chat-active__stages">
         <div
           class="stage"
@@ -65,6 +83,7 @@
       <div class="chat-panel__cta chat-panel__cta--spaced">
         <button type="button" class="btn-advance" (click)="advanceStage()">Avançar etapa do candidato</button>
       </div>
+      </ng-template>
 
       <div class="chat-active__messages">
         <div

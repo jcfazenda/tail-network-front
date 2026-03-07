@@ -13,6 +13,8 @@ export interface ChatCandidate {
   lastMessage?: string;
   time?: string;
   stage?: string;
+  availabilityLabel?: string;
+  radarOnly?: boolean;
 }
 
 export interface ChatJob {
@@ -91,6 +93,18 @@ export class TailChatPanelComponent implements OnChanges {
 
   get selectedConversation(): ChatCandidate | undefined {
     return this.filteredConversations[this.selectedConversationIndex] ?? this.filteredConversations[0];
+  }
+
+  get selectedAvailabilityLabel(): string | null {
+    return this.selectedConversation?.availabilityLabel ?? null;
+  }
+
+  get selectedRoleLabel(): string {
+    return this.selectedConversation?.stack || this.selectedConversation?.role || '';
+  }
+
+  get showHiringFlow(): boolean {
+    return !this.selectedConversation?.radarOnly;
   }
 
   selectConversation(index: number) {
@@ -178,6 +192,12 @@ export class TailChatPanelComponent implements OnChanges {
 
   private updateStagesForSelected() {
     const selected = this.selectedConversation;
+    if (selected?.radarOnly) {
+      this.stages = [];
+      this.cdr.markForCheck();
+      return;
+    }
+
     const fallbackIndex = this.stageOrder.indexOf('processo');
     const currentIndexRaw = selected?.stage ? this.stageOrder.indexOf(selected.stage) : fallbackIndex;
     const currentIndex = currentIndexRaw === -1 ? fallbackIndex : currentIndexRaw;

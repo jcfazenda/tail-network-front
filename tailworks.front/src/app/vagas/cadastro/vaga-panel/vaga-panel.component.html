@@ -1,0 +1,53 @@
+<div class="job-preview-panel__sticky">
+  <div class="job-preview-panel__intro">
+    <p class="job-preview-panel__eyebrow">Preview ao vivo..</p>
+    <h3 class="job-preview-panel__title">Disposicao da vaga</h3>
+    <p class="job-preview-panel__description">
+      Esse painel mostra como os dados principais vao se organizar para o time.
+    </p>
+  </div>
+
+  <div class="job-preview-sheet">
+    <div class="job-preview-sheet__topcard">
+      <div class="job-preview-sheet__profile">
+        <div
+          class="job-preview-sheet__avatar"
+          [style.backgroundImage]="'url(' + recruiter.avatar + ')'"
+          aria-hidden="true"
+        ></div>
+        <div class="job-preview-sheet__profile-text">
+          <div class="job-preview-sheet__profile-name">{{ recruiter.name }}</div>
+          <div class="job-preview-sheet__profile-role">{{ recruiter.role }}</div>
+        </div>
+      </div>
+
+      <div class="job-preview-sheet__title-row">
+        <div class="job-preview-sheet__title">
+          {{ jobDraft.title || 'Titulo da vaga' }}
+        </div>
+        <div class="job-preview-sheet__icon" aria-hidden="true">tune</div>
+      </div>
+
+      <div class="job-preview-sheet__meta">
+        <div class="job-preview-sheet__meta-left">
+          <span class="job-preview-sheet__item">{{ jobDraft.company || 'Empresa' }}</span>
+        </div>
+        <div class="job-preview-sheet__meta-right">
+          <span class="job-preview-sheet__item">{{ jobDraft.workModel | uppercase }}</span>
+        </div>
+        <div class="job-preview-sheet__meta-bottom">
+          <span class="job-preview-sheet__item">{{ jobDraft.location || 'Localidade' }} 📍</span>
+        </div>
+      </div>
+
+      <div class="job-preview-sheet__summary">
+        {{ jobDraft.summary || 'Resumo da oportunidade.' }}
+      </div>
+
+      <div class="job-preview-sheet__chips">
+        <span class="job-preview-sheet__chip">{{ jobDraft.seniority }}</span>
+        <span class="job-preview-sheet__chip job-preview-sheet__chip--soft">Radar ativo</span>
+      </div>
+    </div>
+  </div>
+</div>

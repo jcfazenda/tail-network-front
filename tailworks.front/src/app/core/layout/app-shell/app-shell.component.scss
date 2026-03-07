@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: grid;
   grid-template-columns: 300px 1fr;
-  background: linear-gradient(120deg, #fdf9f2 0%, #f8f2e9 32%, #f5f3ee 58%, #f3f5fb 100%);
+  background: linear-gradient(120deg, rgba(253, 249, 242, 0.34) 0%, rgba(248, 242, 233, 0.28) 32%, rgba(245, 243, 238, 0.24) 58%, rgba(243, 245, 251, 0.26) 100%);
   overflow-x: hidden;
 }
 
@@ -10,7 +10,7 @@
   min-width: 0;
   display: grid;
   grid-template-rows: 120px 1fr;
-  background: linear-gradient(115deg, #eeebe5 0%, #f7f1e9 30%, #f4f2ee 56%, #f6f6f6 100%);
+  background: linear-gradient(115deg, rgba(238, 235, 229, 0.14) 0%, rgba(247, 241, 233, 0.18) 30%, rgba(244, 242, 238, 0.14) 56%, rgba(246, 246, 246, 0.12) 100%);
 }
 
 .shell__content{
