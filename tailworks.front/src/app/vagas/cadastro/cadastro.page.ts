@@ -126,13 +126,18 @@ export class CadastroPage {
     },
   };
   readonly candidateStatusPreview: CandidateStatusPreview[] = [
-    { label: 'No radar', completed: true, timeLabel: '2 Jul 23hs32.' },
-    { label: 'Se candidatou', completed: true, timeLabel: '2 Jul 23hs32.' },
-    { label: 'Em processo', completed: true, timeLabel: '2 Jul 23hs32.' },
-    { label: 'Contratação Solicitada', completed: true, timeLabel: '2 Jul 23hs32.' },
-    { label: 'Cancelado', completed: false, timeLabel: '2 Jul 23hs32.' },
-    { label: 'Contratado', completed: false, timeLabel: '2 Jul 23hs32.' },
+    { label: 'No radar', completed: true, timeLabel: 'Semana passada' },
+    { label: 'Se candidatou', completed: true, timeLabel: '5 dias atras' },
+    { label: 'Em processo', completed: true, timeLabel: 'Ontem' },
+    { label: 'Contratação Solicitada', completed: true, timeLabel: 'Há 20 min.' },
+    { label: 'Cancelado', completed: false, timeLabel: 'Há 20 min.' },
+    { label: 'Contratado', completed: false, timeLabel: 'Há 20 min.' },
   ];
+
+  get hasRequestedContractStatus(): boolean {
+    return this.candidateStatusPreview.some(item => item.label === 'Contratação Solicitada');
+  }
+
   responsibilitySections: ResponsibilitySection[] = [
     {
       id: 'summary-section-1',

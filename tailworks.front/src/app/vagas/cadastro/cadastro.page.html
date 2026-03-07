@@ -320,7 +320,7 @@
 
         <div class="summary-card__tab-content">
           <ng-container [ngSwitch]="activeSummaryView">
-            <div class="summary-card__tab-page" *ngSwitchCase="'status'">
+            <div class="summary-card__tab-page summary-card__tab-page--status" *ngSwitchCase="'status'">
               <div class="summary-card__sections">
                 <section class="summary-card__section summary-card__section--status-panel">
                   <div class="summary-card__fact summary-card__fact--status">
@@ -339,12 +339,23 @@
                               {{ item.label }}
                             </span>
                           </div>
-                          <span class="summary-card__benefit-option-time">{{ item.timeLabel }}</span>
+                          <span class="summary-card__benefit-option-time" *ngIf="item.completed">{{ item.timeLabel }}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </section>
+
+                <div class="summary-card__status-footer" *ngIf="hasRequestedContractStatus">
+                  <button class="summary-card__status-action summary-card__status-action--primary" type="button">
+                    <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">task_alt</span>
+                    Aceitar
+                  </button>
+                  <button class="summary-card__status-action summary-card__status-action--secondary" type="button">
+                    <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">schedule</span>
+                    Fica para Proxima
+                  </button>
+                </div>
               </div>
             </div>
 
