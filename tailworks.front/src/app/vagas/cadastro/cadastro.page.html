@@ -10,18 +10,20 @@
 
       <div class="job-create__hero-actions">
         <div class="job-create__hero-buttons">
-          <div class="job-create__hero-progress" aria-label="Andamento da configuracao da vaga">
-            <span class="job-create__hero-progress-label">Configuracao {{ configurationProgress }}%</span>
-            <span class="job-create__hero-progress-track" aria-hidden="true">
-              <span class="job-create__hero-progress-fill" [style.width.%]="configurationProgress"></span>
-            </span>
-          </div>
-
           <button class="job-create__hero-button job-create__hero-button--ghost" type="button" (click)="saveAsDraft()">Salvar Rascunho</button>
           <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">Publicar Vaga</button>
         </div>
       </div>
     </section>
+
+    <div class="job-create__panel-progress">
+      <div class="job-create__hero-progress" aria-label="Andamento da configuracao da vaga">
+        <span class="job-create__hero-progress-label">Configuracao {{ configurationProgress }}%</span>
+        <span class="job-create__hero-progress-track" aria-hidden="true">
+          <span class="job-create__hero-progress-fill" [style.width.%]="configurationProgress"></span>
+        </span>
+      </div>
+    </div>
 
     <section class="job-preview-banner" aria-label="Resumo visual da vaga">
       <div class="job-preview-banner__main">
@@ -186,45 +188,53 @@
         <section class="job-create__support-row">
           <div class="job-create__support-main">
             <section class="benefits-block">
-            <h2 class="benefits-block__title">Benefícios</h2>
+              <div class="benefits-card">
+                <div class="resource-card__header">
+                  <h2 class="resource-card__title">Benefícios</h2>
+                  <button class="benefits-card__add" type="button" (click)="openBenefitModal()">
+                    <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                    <span>Adicionar</span>
+                  </button>
+                </div>
 
-            <div class="benefits-card">
-              <button class="benefits-card__add" type="button">
-                <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                <span>Adicionar Benefício</span>
-              </button>
-
-              <div class="benefits-card__list">
-                <label
-                  class="benefit-option"
-                  *ngFor="let item of benefitOptions"
-                  [class.benefit-option--active]="selectedBenefits.includes(item)"
-                >
-                  <input
-                    class="benefit-option__input"
-                    type="checkbox"
-                    [checked]="selectedBenefits.includes(item)"
-                    (change)="toggleBenefit(item)"
-                  />
-                  <span class="benefit-option__check material-symbols-rounded" aria-hidden="true">check</span>
-                  <span class="benefit-option__label">{{ item }}</span>
-                </label>
+                <div class="benefits-card__list">
+                  <article class="benefit-entry" *ngFor="let item of selectedBenefits">
+                    <div class="benefit-entry__head">
+                      <div class="benefit-entry__content">
+                        <div class="benefit-entry__title-wrap">
+                          <span class="benefit-entry__icon material-symbols-rounded" aria-hidden="true">check_circle</span>
+                          <span class="benefit-entry__title">{{ item.title }}</span>
+                        </div>
+                        <p class="benefit-entry__description" *ngIf="item.description">{{ item.description }}</p>
+                      </div>
+                      <span class="benefit-entry__side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                    </div>
+                  </article>
+                </div>
               </div>
-            </div>
             </section>
 
-            <section class="summary-card summary-card--inline">
-              <div class="summary-card__header">
-                <h3 class="summary-card__title">Resumo da Oportunidade</h3>
-                <button class="summary-card__edit" type="button" (click)="openJobSummaryModal('front')">
-                  <span class="summary-card__edit-icon material-symbols-rounded" aria-hidden="true">edit</span>
-                  <span>Editar Resumo</span>
-                </button>
-              </div>
+            <section class="documents-block">
+              <div class="documents-card">
+                <div class="resource-card__header">
+                  <h2 class="resource-card__title">Documentos</h2>
+                  <button class="benefits-card__add" type="button">
+                    <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                    <span>Adicionar</span>
+                  </button>
+                </div>
 
-              <div class="summary-card__body">
-                <div class="summary-card__headline">{{ jobDraft.title }}</div>
-                <p class="summary-card__text">{{ jobDraft.summary }}</p>
+                <div class="documents-card__list">
+                  <div class="documents-card__item" *ngFor="let item of documentOptions">
+                    <span class="documents-card__item-marker material-symbols-rounded" aria-hidden="true">description</span>
+                    <span class="documents-card__item-label">{{ item }}</span>
+                  </div>
+                </div>
+
+                <p class="documents-card__notice">
+                  <span class="documents-card__notice-icon material-symbols-rounded" aria-hidden="true">warning</span>
+                  <span>Esses documentos so serão vistos pelo recrutador caso o candidato clique em Aceitar.</span>
+                </p>
               </div>
             </section>
           </div>
@@ -240,7 +250,7 @@
       <div class="summary-card__header">
         <h3 class="summary-card__title">RESUMO</h3>
         <div class="summary-card__actions">
-          <button class="summary-card__add" type="button" (click)="openResponsibilityModal()">
+          <button class="summary-card__add" type="button" *ngIf="!isSummaryBackVisible" (click)="openResponsibilityModal()">
             <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
             <span>Adicionar</span>
           </button>
@@ -258,7 +268,7 @@
                 d="M7 7h7a3 3 0 0 1 3 3v8M7 7l2.8-2.8M7 7l2.8 2.8M17 17H10a3 3 0 0 1-3-3V6M17 17l-2.8-2.8M17 17l-2.8 2.8"
               ></path>
             </svg>
-            <span>Mais detalhes</span>
+            <span>{{ isSummaryBackVisible ? 'Voltar' : 'Mais detalhes' }}</span>
           </button>
         </div>
       </div>
@@ -313,7 +323,7 @@
 
                   <button class="stack-card__add summary-card__stack-add" type="button">
                     <span class="stack-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                    <span>Adicionar Habilidade</span>
+                    <span>Adicionar</span>
                   </button>
                 </div>
               </div>
@@ -379,8 +389,50 @@
 
           <div class="summary-card__page summary-card__page--back">
             <div class="summary-card__back">
-              <h4 class="summary-card__back-title">Contratação</h4>
               <div class="summary-card__sections summary-card__sections--back">
+                <section class="summary-card__section summary-card__section--contract-info">
+                  <div class="summary-card__contract-panel">
+                  <div class="summary-card__facts">
+                    <div class="summary-card__fact-grid">
+                      <div class="summary-card__fact-card summary-card__fact-card--salary" *ngIf="showSalaryRangeInCard">
+                        <span class="summary-card__fact-label">Valor da vaga</span>
+                        <span class="summary-card__fact-money" [class.summary-card__fact-money--empty]="!hasSalaryRangeValue">{{ contractSalaryDisplay }}</span>
+                      </div>
+
+                      <div class="summary-card__fact-card summary-card__fact-card--contract">
+                        <span class="summary-card__fact-pill">{{ contractType }}</span>
+                      </div>
+                    </div>
+
+                    <div class="summary-card__fact-note" *ngIf="hybridWorkModelDetail as hybridDetail">
+                      <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                      <span>{{ hybridDetail }}</span>
+                    </div>
+
+                    <div class="summary-card__fact summary-card__fact--benefits">
+                      <span class="summary-card__fact-label">Benefícios</span>
+
+                      <div class="summary-card__benefits-list" *ngIf="selectedBenefits.length; else emptyContractBenefits">
+                        <div class="summary-card__benefit-option" *ngFor="let item of selectedBenefits">
+                          <div class="summary-card__benefit-option-head">
+                            <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
+                            <div class="summary-card__benefit-option-copy">
+                              <span class="summary-card__benefit-option-label">{{ item.title }}</span>
+                              <span class="summary-card__benefit-option-description" *ngIf="item.description">{{ item.description }}</span>
+                            </div>
+                            <span class="summary-card__benefit-option-side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <ng-template #emptyContractBenefits>
+                        <span class="summary-card__fact-empty">Nenhum beneficio informado</span>
+                      </ng-template>
+                    </div>
+                  </div>
+                  </div>
+                </section>
+
                 <section class="summary-card__section summary-card__section--about">
                   <div class="summary-card__section-header">
                     <h4 class="summary-card__section-title">Sobre a contratacao</h4>
@@ -402,41 +454,6 @@
                   <p class="summary-card__about-text" [class.summary-card__about-text--empty]="contractPanelDescription === 'Nao ha descricao'">
                     {{ contractPanelDescription }}
                   </p>
-                </section>
-
-                <section class="summary-card__section summary-card__section--contract-info">
-                  <div class="summary-card__facts">
-                    <div class="summary-card__fact-grid">
-                      <div class="summary-card__fact-card" *ngIf="showSalaryRangeInCard">
-                        <span class="summary-card__fact-label">Valor da vaga</span>
-                        <span class="summary-card__fact-money">{{ contractSalaryDisplay }}</span>
-                      </div>
-
-                      <div class="summary-card__fact-card">
-                        <span class="summary-card__fact-pill">{{ contractType }}</span>
-                      </div>
-                    </div>
-
-                    <div class="summary-card__fact-note" *ngIf="hybridWorkModelDetail as hybridDetail">
-                      <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
-                      <span>{{ hybridDetail }}</span>
-                    </div>
-
-                    <div class="summary-card__fact summary-card__fact--benefits">
-                      <span class="summary-card__fact-label">Benefícios</span>
-
-                      <div class="summary-card__benefits-list" *ngIf="selectedBenefits.length; else emptyContractBenefits">
-                        <div class="summary-card__benefit-option" *ngFor="let item of selectedBenefits">
-                          <span class="summary-card__benefit-option-check material-symbols-rounded" aria-hidden="true">check</span>
-                          <span class="summary-card__benefit-option-label">{{ item }}</span>
-                        </div>
-                      </div>
-
-                      <ng-template #emptyContractBenefits>
-                        <span class="summary-card__fact-empty">Nenhum beneficio informado</span>
-                      </ng-template>
-                    </div>
-                  </div>
                 </section>
 
                 <section class="summary-card__section" *ngFor="let section of backResponsibilitySections">
@@ -471,6 +488,65 @@
       </div>
     </section>
   </aside>
+</div>
+
+<div
+  class="summary-modal-backdrop"
+  *ngIf="isBenefitModalOpen"
+  (click)="closeBenefitModal()"
+>
+  <section class="summary-modal summary-modal--benefit" (click)="$event.stopPropagation()">
+    <div class="summary-modal__header">
+      <h3 class="summary-modal__title">Adicionar benefício</h3>
+      <button class="summary-modal__close" type="button" (click)="closeBenefitModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="summary-modal__body">
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">Benefício</span>
+        <input
+          type="text"
+          [(ngModel)]="benefitDraftTitle"
+          placeholder="Ex: Plano de Saúde"
+        />
+      </label>
+
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">Texto ao lado do nome</span>
+        <input
+          type="text"
+          [(ngModel)]="benefitDraftSideLabel"
+          placeholder="Ex: Cobre 50% ou Abonado"
+        />
+      </label>
+
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">Breve descrição</span>
+        <textarea
+          class="summary-modal__textarea"
+          [(ngModel)]="benefitDraftDescription"
+          rows="3"
+          placeholder="Ex: Sulamerica Seguros + Leito e Internação"
+        ></textarea>
+      </label>
+
+      <div class="summary-modal__actions">
+        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeBenefitModal()">
+          Cancelar
+        </button>
+        <button
+          class="summary-modal__button summary-modal__button--primary"
+          type="button"
+          [disabled]="!canSaveBenefit"
+          (click)="saveBenefit()"
+        >
+          Adicionar benefício
+        </button>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div
@@ -537,7 +613,7 @@
           <span class="summary-modal__label">Item</span>
           <button class="summary-modal__add" type="button" (click)="addResponsibilityDraftItem()">
             <span class="material-symbols-rounded" aria-hidden="true">add</span>
-            <span>Adicionar item</span>
+            <span>Adicionar</span>
           </button>
         </div>
 

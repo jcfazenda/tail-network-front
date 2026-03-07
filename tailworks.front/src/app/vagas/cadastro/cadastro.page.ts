@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
-import { ContractType, MockJobDraft, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
+import { ContractType, JobBenefitItem, MockJobDraft, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
 
 type RefinementItem = string;
@@ -48,23 +48,27 @@ export class CadastroPage {
     '/assets/avatars/avatar-rafael.png',
   ];
   readonly previewAvatarExtraCount = 18;
-  readonly benefitOptions = [
-    'Plano de Saúde',
-    'Plano Odontológico',
-    'Day Off Aniversário',
-    'Gympass',
-    'Vale Alimentação',
-    'Vale Refeição',
-    'Vale Transporte',
-    'Cartão Gasolina',
-    'Seguro de Vida',
+  readonly documentOptions = [
+    'Copia do Certificado de conclusão',
+    'Copia da Identidade e CPF',
+    'Comprovante de Residencia',
   ];
-  readonly initialSelectedBenefits = [
-    'Plano de Saúde',
-    'Plano Odontológico',
-    'Day Off Aniversário',
-    'Gympass',
-    'Seguro de Vida',
+  readonly initialSelectedBenefits: JobBenefitItem[] = [
+    {
+      title: 'Plano de Saúde',
+      sideLabel: 'Cobre 50%',
+      description: 'Sulamerica Seguros + Leito e Internação',
+    },
+    {
+      title: 'Plano Odontológico',
+      sideLabel: '100%',
+      description: 'Cobertura nacional com reembolso e rede credenciada',
+    },
+    {
+      title: 'Day Off Aniversário',
+      sideLabel: 'Abonado',
+      description: 'Folga remunerada no mês do aniversario',
+    },
   ];
   readonly companyOptions = [
     'Banco Itaú',
@@ -160,7 +164,7 @@ export class CadastroPage {
   salaryRange = '';
   hybridOnsiteDaysDescription = '2 dias presenciais por semana';
   showSalaryRangeInCard = true;
-  selectedBenefits = [...this.initialSelectedBenefits];
+  selectedBenefits = this.initialSelectedBenefits.map((item) => ({ ...item }));
   selectedRefinementOptions = [...this.initialSelectedRefinementOptions];
   followingCompanies: Record<string, boolean> = {
     'Banco Itaú': true,
@@ -169,9 +173,13 @@ export class CadastroPage {
   };
   isSummaryBackVisible = false;
   editingSummaryDescriptionPageId: SummaryPageId | null = null;
+  isBenefitModalOpen = false;
   isResponsibilityModalOpen = false;
   editingResponsibilitySectionId: string | null = null;
   responsibilityDraftPageId: SummaryPageId = 'front';
+  benefitDraftTitle = '';
+  benefitDraftSideLabel = '';
+  benefitDraftDescription = '';
   jobSummaryDraft = '';
   responsibilityDraftTitle = '';
   responsibilityDraftItem = '';
@@ -212,6 +220,10 @@ export class CadastroPage {
 
   get isJobSummaryModalOpen(): boolean {
     return this.editingSummaryDescriptionPageId !== null;
+  }
+
+  get canSaveBenefit(): boolean {
+    return this.benefitDraftTitle.trim().length > 0;
   }
 
   get summaryPanelDescription(): string {
@@ -294,13 +306,36 @@ export class CadastroPage {
     this.salaryRange = this.formatSalaryRange(value);
   }
 
-  toggleBenefit(item: string): void {
-    if (this.selectedBenefits.includes(item)) {
-      this.selectedBenefits = this.selectedBenefits.filter((benefit) => benefit !== item);
+  openBenefitModal(): void {
+    this.benefitDraftTitle = '';
+    this.benefitDraftSideLabel = '';
+    this.benefitDraftDescription = '';
+    this.isBenefitModalOpen = true;
+  }
+
+  closeBenefitModal(): void {
+    this.isBenefitModalOpen = false;
+    this.benefitDraftTitle = '';
+    this.benefitDraftSideLabel = '';
+    this.benefitDraftDescription = '';
+  }
+
+  saveBenefit(): void {
+    const title = this.benefitDraftTitle.trim();
+    if (!title) {
       return;
     }
 
-    this.selectedBenefits = [...this.selectedBenefits, item];
+    this.selectedBenefits = [
+      ...this.selectedBenefits,
+      {
+        title,
+        sideLabel: this.benefitDraftSideLabel.trim() || undefined,
+        description: this.benefitDraftDescription.trim() || undefined,
+      },
+    ];
+
+    this.closeBenefitModal();
   }
 
   toggleRefinementOption(item: RefinementItem): void {
@@ -465,7 +500,7 @@ export class CadastroPage {
       salaryRange: this.salaryRange.trim(),
       showSalaryRangeInCard: this.showSalaryRangeInCard,
       hybridOnsiteDaysDescription: this.hybridOnsiteDaysDescription.trim(),
-      benefits: [...this.selectedBenefits],
+      benefits: this.selectedBenefits.map((item) => ({ ...item })),
       techStack: this.techStackItems.map((item) => ({ ...item })),
       differentials: [...this.selectedRefinementOptions],
     };

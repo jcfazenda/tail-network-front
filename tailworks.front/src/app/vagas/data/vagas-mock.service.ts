@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SaveMockJobCommand, MockJobCandidate, MockJobDraft, MockJobRecord } from './vagas.models';
+import { JobBenefitItem, SaveMockJobCommand, MockJobCandidate, MockJobDraft, MockJobRecord } from './vagas.models';
 import { VAGAS_MOCK_SEED } from './vagas-mock.seed';
 
 @Injectable({ providedIn: 'root' })
@@ -36,15 +36,15 @@ export class VagasMockService {
 
     const raw = storage.getItem(this.storageKey);
     if (!raw) {
-      this.cache = [...VAGAS_MOCK_SEED];
+      this.cache = this.normalizeJobs(VAGAS_MOCK_SEED);
       return this.cache;
     }
 
     try {
       const parsed = JSON.parse(raw) as MockJobRecord[];
-      this.cache = Array.isArray(parsed) && parsed.length ? parsed : [...VAGAS_MOCK_SEED];
+      this.cache = Array.isArray(parsed) && parsed.length ? this.normalizeJobs(parsed) : this.normalizeJobs(VAGAS_MOCK_SEED);
     } catch {
-      this.cache = [...VAGAS_MOCK_SEED];
+      this.cache = this.normalizeJobs(VAGAS_MOCK_SEED);
     }
 
     return this.cache;
@@ -88,10 +88,44 @@ export class VagasMockService {
       createdAt: now,
       updatedAt: now,
       ...command.draft,
-      benefits: [...command.draft.benefits],
+      benefits: command.draft.benefits.map((item) => ({ ...item })),
       techStack: command.draft.techStack.map((item) => ({ ...item })),
       differentials: [...command.draft.differentials],
     };
+  }
+
+  private normalizeJobs(records: MockJobRecord[]): MockJobRecord[] {
+    return records.map((record) => ({
+      ...record,
+      benefits: this.normalizeBenefits(record.benefits),
+      techStack: record.techStack.map((item) => ({ ...item })),
+      differentials: [...record.differentials],
+      candidates: record.candidates.map((candidate) => ({ ...candidate })),
+      avatars: [...record.avatars],
+    }));
+  }
+
+  private normalizeBenefits(benefits: unknown): JobBenefitItem[] {
+    if (!Array.isArray(benefits)) {
+      return [];
+    }
+
+    return benefits.map((item) => {
+      if (typeof item === 'string') {
+        return { title: item };
+      }
+
+      if (item && typeof item === 'object') {
+        const value = item as Partial<JobBenefitItem>;
+        return {
+          title: value.title?.trim() || 'Benefício',
+          sideLabel: value.sideLabel?.trim() || undefined,
+          description: value.description?.trim() || undefined,
+        };
+      }
+
+      return { title: 'Benefício' };
+    });
   }
 
   private buildCandidates(draft: MockJobDraft, match: number): MockJobCandidate[] {

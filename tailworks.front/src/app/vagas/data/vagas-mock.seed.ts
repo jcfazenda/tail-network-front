@@ -1,4 +1,4 @@
-import { MockJobRecord } from './vagas.models';
+import { JobBenefitItem, MockJobRecord } from './vagas.models';
 
 const avatar = '/assets/avatars/avatar-rafael.png';
 const now = '2026-03-07T00:00:00.000Z';
@@ -9,6 +9,14 @@ function seedJob(job: Omit<MockJobRecord, 'createdAt' | 'updatedAt'>): MockJobRe
     createdAt: now,
     updatedAt: now,
   };
+}
+
+function benefit(title: string, sideLabel?: string, description?: string): JobBenefitItem {
+  return { title, sideLabel, description };
+}
+
+function benefitList(...items: Array<string | JobBenefitItem>): JobBenefitItem[] {
+  return items.map((item) => (typeof item === 'string' ? benefit(item) : item));
 }
 
 export const VAGAS_MOCK_SEED: MockJobRecord[] = [
@@ -23,7 +31,12 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
     seniority: 'Senior',
     summary:
       'Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.',
-    benefits: ['Plano de Saúde', 'Plano Odontológico', 'Gympass', 'Seguro de Vida'],
+    benefits: benefitList(
+      benefit('Plano de Saúde', 'Cobre 50%', 'Sulamerica Seguros + Leito e Internação'),
+      benefit('Plano Odontológico', '100%', 'Cobertura nacional com rede credenciada'),
+      'Gympass',
+      'Seguro de Vida',
+    ),
     techStack: [
       { name: '.NET / C#', match: 80 },
       { name: 'Entity Framework', match: 65 },
@@ -71,7 +84,7 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
     contractType: 'CLT',
     seniority: 'Senior',
     summary: 'Designer senior para liderar descoberta, prototipacao e evolucao de experiencias financeiras digitais.',
-    benefits: ['Plano de Saúde', 'Plano Odontológico', 'Vale Refeição', 'Seguro de Vida'],
+    benefits: benefitList('Plano de Saúde', 'Plano Odontológico', 'Vale Refeição', 'Seguro de Vida'),
     techStack: [
       { name: 'Product Design', match: 88 },
       { name: 'Design System', match: 84 },
@@ -102,7 +115,7 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
     contractType: 'PJ',
     seniority: 'Pleno',
     summary: 'Analista para estruturar dashboards, apoiar negocio e transformar dados em decisoes operacionais.',
-    benefits: ['Plano de Saúde', 'Vale Refeição', 'Vale Transporte'],
+    benefits: benefitList('Plano de Saúde', 'Vale Refeição', 'Vale Transporte'),
     techStack: [
       { name: 'SQL', match: 78 },
       { name: 'Power BI', match: 74 },
@@ -132,7 +145,7 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
     contractType: 'CLT',
     seniority: 'Senior',
     summary: 'Pessoa engenheira para escalar pipelines, observabilidade e operacao cloud de ponta a ponta.',
-    benefits: ['Plano de Saúde', 'Plano Odontológico', 'Gympass'],
+    benefits: benefitList('Plano de Saúde', 'Plano Odontológico', 'Gympass'),
     techStack: [
       { name: 'AWS', match: 82 },
       { name: 'Kubernetes', match: 76 },
@@ -162,7 +175,7 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
     contractType: 'CLT',
     seniority: 'Pleno',
     summary: 'Pessoa QA para estruturar automacao confiavel, ampliar cobertura de testes e acompanhar entregas criticas.',
-    benefits: ['Plano de Saúde', 'Vale Alimentação', 'Gympass'],
+    benefits: benefitList('Plano de Saúde', 'Vale Alimentação', 'Gympass'),
     techStack: [
       { name: 'Cypress', match: 78 },
       { name: 'API Testing', match: 70 },
@@ -192,7 +205,7 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
     contractType: 'PJ',
     seniority: 'Senior',
     summary: 'PM para coordenar roadmap, discovery e alinhamento entre tecnologia, negocio e operacao.',
-    benefits: ['Plano de Saúde', 'Vale Refeição', 'Seguro de Vida'],
+    benefits: benefitList('Plano de Saúde', 'Vale Refeição', 'Seguro de Vida'),
     techStack: [
       { name: 'Product Discovery', match: 74 },
       { name: 'Analytics', match: 66 },

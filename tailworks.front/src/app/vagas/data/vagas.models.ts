@@ -15,6 +15,12 @@ export interface TechStackItem {
   match: number;
 }
 
+export interface JobBenefitItem {
+  title: string;
+  sideLabel?: string;
+  description?: string;
+}
+
 export interface VagaPanelDraft {
   title: string;
   company: string;
@@ -29,7 +35,7 @@ export interface MockJobDraft extends VagaPanelDraft {
   salaryRange?: string;
   showSalaryRangeInCard?: boolean;
   hybridOnsiteDaysDescription?: string;
-  benefits: string[];
+  benefits: JobBenefitItem[];
   techStack: TechStackItem[];
   differentials: string[];
 }
