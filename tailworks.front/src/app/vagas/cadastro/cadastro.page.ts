@@ -207,7 +207,7 @@ export class CadastroPage {
   }
 
   get activeSummaryPageId(): SummaryPageId {
-    return this.isSummaryBackVisible ? 'back' : 'front';
+    return this.isSummaryBackVisible ? 'front' : 'back';
   }
 
   get frontResponsibilitySections(): ResponsibilitySection[] {
@@ -419,6 +419,17 @@ export class CadastroPage {
 
   removeResponsibilityDraftItem(index: number): void {
     this.responsibilityDraftItems = this.responsibilityDraftItems.filter((_, itemIndex) => itemIndex !== index);
+  }
+
+  deleteResponsibilitySection(): void {
+    if (this.editingResponsibilitySectionId === null) {
+      return;
+    }
+
+    this.responsibilitySections = this.responsibilitySections.filter(
+      (section) => section.id !== this.editingResponsibilitySectionId,
+    );
+    this.closeResponsibilityModal();
   }
 
   saveResponsibilitySection(): void {

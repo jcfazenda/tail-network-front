@@ -250,7 +250,7 @@
       <div class="summary-card__header">
         <h3 class="summary-card__title">RESUMO</h3>
         <div class="summary-card__actions">
-          <button class="summary-card__add" type="button" *ngIf="!isSummaryBackVisible" (click)="openResponsibilityModal()">
+          <button class="summary-card__add" type="button" *ngIf="isSummaryBackVisible" (click)="openResponsibilityModal()">
             <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
             <span>Adicionar</span>
           </button>
@@ -276,7 +276,24 @@
       <div class="summary-card__body summary-card__body--flip" [class.summary-card__body--back]="isSummaryBackVisible">
         <div class="summary-card__pager">
           <div class="summary-card__page summary-card__page--front">
-            <div class="summary-card__sections">
+            <div class="summary-card__front-top">
+              <div class="summary-card__company summary-card__company--top">
+                <div class="summary-card__company-top">
+                  <div class="summary-card__company-brand">
+                    <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
+
+                    <div class="summary-card__company-meta">
+                      <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
+                      <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="summary-card__company-description">
+                  {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
+                </p>
+              </div>
+
               <section class="summary-card__section summary-card__section--about">
                 <div class="summary-card__section-header">
                   <h4 class="summary-card__section-title">Sobre a vaga</h4>
@@ -327,68 +344,9 @@
                   </button>
                 </div>
               </div>
-
-              <section class="summary-card__section" *ngFor="let section of frontResponsibilitySections">
-                <div class="summary-card__section-header">
-                  <h4 class="summary-card__section-title">{{ section.title }}</h4>
-                  <button
-                    class="summary-card__section-edit"
-                    type="button"
-                    aria-label="Editar bloco"
-                    title="Editar bloco"
-                    (click)="editResponsibilitySection(section.id)"
-                  >
-                    <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                      <path
-                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-
-                <ul class="summary-card__items">
-                  <li class="summary-card__item" *ngFor="let item of section.items">
-                    <span class="summary-card__item-marker" aria-hidden="true"></span>
-                    <span class="summary-card__item-text">{{ item }}</span>
-                  </li>
-                </ul>
-              </section>
             </div>
 
-            <div class="summary-card__company">
-              <div class="summary-card__company-title">Sobre a empresa</div>
-
-              <div class="summary-card__company-top">
-                <div class="summary-card__company-brand">
-                  <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
-
-                  <div class="summary-card__company-meta">
-                    <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
-                    <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
-                  </div>
-                </div>
-
-                <button
-                  class="summary-card__company-follow"
-                  type="button"
-                  [class.summary-card__company-follow--active]="isFollowingCurrentCompany"
-                  (click)="toggleCompanyFollow()"
-                >
-                  <span class="material-symbols-rounded" aria-hidden="true">
-                    {{ isFollowingCurrentCompany ? 'check' : 'add' }}
-                  </span>
-                  <span>{{ isFollowingCurrentCompany ? 'Seguindo' : 'Seguir' }}</span>
-                </button>
-              </div>
-
-              <p class="summary-card__company-description">
-                {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
-              </p>
-            </div>
-          </div>
-
-          <div class="summary-card__page summary-card__page--back">
-            <div class="summary-card__back">
+            <div class="summary-card__front-scroll">
               <div class="summary-card__sections summary-card__sections--back">
                 <section class="summary-card__section summary-card__section--contract-info">
                   <div class="summary-card__contract-panel">
@@ -412,7 +370,7 @@
                     <div class="summary-card__fact summary-card__fact--benefits">
                       <span class="summary-card__fact-label">Benefícios</span>
 
-                      <div class="summary-card__benefits-list" *ngIf="selectedBenefits.length; else emptyContractBenefits">
+                      <div class="summary-card__benefits-list" *ngIf="selectedBenefits.length; else emptyFrontContractBenefits">
                         <div class="summary-card__benefit-option" *ngFor="let item of selectedBenefits">
                           <div class="summary-card__benefit-option-head">
                             <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
@@ -425,7 +383,7 @@
                         </div>
                       </div>
 
-                      <ng-template #emptyContractBenefits>
+                      <ng-template #emptyFrontContractBenefits>
                         <span class="summary-card__fact-empty">Nenhum beneficio informado</span>
                       </ng-template>
                     </div>
@@ -457,6 +415,55 @@
                 </section>
 
                 <section class="summary-card__section" *ngFor="let section of backResponsibilitySections">
+                  <div class="summary-card__section-header">
+                    <h4 class="summary-card__section-title">{{ section.title }}</h4>
+                    <button
+                      class="summary-card__section-edit"
+                      type="button"
+                      aria-label="Editar bloco"
+                      title="Editar bloco"
+                      (click)="editResponsibilitySection(section.id)"
+                    >
+                      <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path
+                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <ul class="summary-card__items">
+                    <li class="summary-card__item" *ngFor="let item of section.items">
+                      <span class="summary-card__item-marker" aria-hidden="true"></span>
+                      <span class="summary-card__item-text">{{ item }}</span>
+                    </li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card__page summary-card__page--back">
+            <div class="summary-card__back">
+              <div class="summary-card__company summary-card__company--top">
+                <div class="summary-card__company-top">
+                  <div class="summary-card__company-brand">
+                    <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
+
+                    <div class="summary-card__company-meta">
+                      <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
+                      <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="summary-card__company-description">
+                  {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
+                </p>
+              </div>
+
+              <div class="summary-card__sections">
+                <section class="summary-card__section" *ngFor="let section of frontResponsibilitySections">
                   <div class="summary-card__section-header">
                     <h4 class="summary-card__section-title">{{ section.title }}</h4>
                     <button
@@ -641,6 +648,14 @@
       </div>
 
       <div class="summary-modal__actions">
+        <button
+          class="summary-modal__button summary-modal__button--danger"
+          type="button"
+          *ngIf="editingResponsibilitySectionId !== null"
+          (click)="deleteResponsibilitySection()"
+        >
+          Excluir bloco
+        </button>
         <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeResponsibilityModal()">
           Cancelar
         </button>
