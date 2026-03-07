@@ -74,244 +74,181 @@
   </section>
 
   <section class="job-create__layout">
-    <div class="job-create__form">
-      <nav class="job-create__nav" aria-label="Etapas do cadastro da vaga">
-        <button
-          class="job-create__nav-item"
-          [class.job-create__nav-item--active]="activeStep === 'basic'"
-          type="button"
-          (click)="setActiveStep('basic')"
-        >
-          Informacoes principais da vaga
-        </button>
-        <button
-          class="job-create__nav-item"
-          [class.job-create__nav-item--active]="activeStep === 'benefits'"
-          type="button"
-          (click)="setActiveStep('benefits')"
-        >
-          Beneficios
-        </button>
-        <button
-          class="job-create__nav-item"
-          [class.job-create__nav-item--active]="activeStep === 'profile'"
-          type="button"
-          (click)="setActiveStep('profile')"
-        >
-          Perfil da Vaga
-        </button>
-      </nav>
+    <div class="job-create__main">
+      <section class="job-info-block">
+        <h2 class="job-info-block__title">Informações da Vaga</h2>
 
-      <section class="job-card">
-        <div class="job-card__header">
-          <div>
-            <h2 class="job-card__title">{{ currentStepTitle }}</h2>
-            <p class="job-card__description">{{ currentStepDescription }}</p>
-          </div>
-        </div>
+        <div class="job-info-card">
+          <div class="job-info-card__grid">
+            <label class="field field--title">
+              <span class="field__label field__label--soft">Título da vaga</span>
+              <input
+                type="text"
+                name="title"
+                placeholder="Ex: Backend .NET Sênior"
+                [(ngModel)]="jobDraft.title"
+              />
+            </label>
 
-        <div class="job-card__grid" *ngIf="activeStep === 'basic'">
-          <label class="field field--full">
-            <span class="field__label">Titulo da vaga</span>
-            <input
-              type="text"
-              name="title"
-              placeholder="Ex: Backend .NET Senior"
-              [(ngModel)]="jobDraft.title"
-            />
-          </label>
+            <label class="field">
+              <span class="field__label field__label--soft">Tipo de trabalho</span>
+              <div class="work-model-list">
+                <label
+                  class="option-card"
+                  *ngFor="let item of workModels"
+                  [class.option-card--active]="item === jobDraft.workModel"
+                >
+                  <input class="option-card__input" type="radio" name="workModel" [value]="item" [(ngModel)]="jobDraft.workModel" />
+                  <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="option-card__label">{{ item }}</span>
+                </label>
+              </div>
+            </label>
 
-          <label class="field">
-            <span class="field__label">Empresa</span>
-            <input type="text" name="company" placeholder="Ex: Banco Itau" [(ngModel)]="jobDraft.company" />
-          </label>
+            <label class="field field--select-elevated">
+              <span class="field__label field__label--soft">Empresa</span>
+              <span class="select-shell">
+                <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">apartment</span>
+                <select name="company" [(ngModel)]="jobDraft.company">
+                  <option *ngFor="let item of companyOptions" [value]="item">{{ item }}</option>
+                </select>
+                <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
+              </span>
+            </label>
 
-          <label class="field">
-            <span class="field__label">Localidade</span>
-            <input
-              type="text"
-              name="location"
-              placeholder="Ex: Rio de Janeiro - RJ"
-              [(ngModel)]="jobDraft.location"
-            />
-          </label>
+            <label class="field field--select-elevated">
+              <span class="field__label field__label--soft">Localidade</span>
+              <span class="select-shell">
+                <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">location_on</span>
+                <select name="location" [(ngModel)]="jobDraft.location">
+                  <option *ngFor="let item of locationOptions" [value]="item">{{ item }}</option>
+                </select>
+                <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
+              </span>
+            </label>
 
-          <div class="field field--full field--section">
-            <span class="field__label field__label--divider">Modelo de trabalho</span>
-            <div class="option-list">
-              <label
-                class="option-card"
-                *ngFor="let item of workModels"
-                [class.option-card--active]="item === jobDraft.workModel"
-              >
-                <input class="option-card__input" type="radio" name="workModel" [value]="item" [(ngModel)]="jobDraft.workModel" />
-                <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
-                <span class="option-card__label">{{ item }}</span>
-              </label>
+            <div class="field field--full">
+              <div class="contract-type-list">
+                <label
+                  class="contract-chip"
+                  *ngFor="let item of contractTypes"
+                  [class.contract-chip--active]="item === contractType"
+                >
+                  <input class="contract-chip__input" type="radio" name="contractType" [value]="item" [(ngModel)]="contractType" />
+                  <span class="contract-chip__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="contract-chip__label">{{ item }}</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div class="profile-sections" *ngIf="activeStep === 'profile'">
-          <section class="profile-panel">
-            <header class="profile-panel__header">
-              <h3 class="profile-panel__title">Contexto da Vaga</h3>
-            </header>
+      <section class="job-create__support-row">
+        <div class="job-create__support-main">
+          <section class="benefits-block">
+            <h2 class="benefits-block__title">Benefícios</h2>
 
-            <div class="profile-panel__body">
-              <label class="field field--full">
-                <span class="field__label">Resumo da oportunidade</span>
-                <textarea
-                  rows="5"
-                  name="summary"
-                  placeholder="Descreva objetivo da vaga, desafios do cargo e entregas esperadas nos primeiros meses."
-                  [(ngModel)]="jobDraft.summary"
-                ></textarea>
-              </label>
+            <div class="benefits-card">
+              <button class="benefits-card__add" type="button">
+                <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                <span>Adicionar Benefício</span>
+              </button>
 
-              <label class="field field--full">
-                <span class="field__label">Missão da vaga</span>
-                <textarea
-                  rows="5"
-                  name="mission"
-                  placeholder="Explique o objetivo central da posição e os desafios do papel."
-                  [(ngModel)]="roleProfile.mission"
-                ></textarea>
-              </label>
-
-              <div class="field field--full field--section field--compact">
-                <span class="field__label field__label--divider">Senioridade</span>
-                <div class="option-list">
-                  <label
-                    class="option-card"
-                    *ngFor="let item of seniorities"
-                    [class.option-card--active]="item === jobDraft.seniority"
-                  >
-                    <input class="option-card__input" type="radio" name="seniority" [value]="item" [(ngModel)]="jobDraft.seniority" />
-                    <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
-                    <span class="option-card__label">{{ item }}</span>
-                  </label>
-                </div>
+              <div class="benefits-card__list">
+                <label
+                  class="benefit-option"
+                  *ngFor="let item of benefitOptions"
+                  [class.benefit-option--active]="selectedBenefits.includes(item)"
+                >
+                  <input
+                    class="benefit-option__input"
+                    type="checkbox"
+                    [checked]="selectedBenefits.includes(item)"
+                    (change)="toggleBenefit(item)"
+                  />
+                  <span class="benefit-option__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="benefit-option__label">{{ item }}</span>
+                </label>
               </div>
             </div>
           </section>
+        </div>
 
-          <section class="profile-panel">
-            <header class="profile-panel__header">
-              <h3 class="profile-panel__title">Skills de Conhecimento</h3>
-            </header>
+        <section class="summary-card">
+          <div class="summary-card__header">
+            <h3 class="summary-card__title">Resumo da Oportunidade</h3>
+            <button class="summary-card__edit" type="button">
+              <span class="summary-card__edit-icon material-symbols-rounded" aria-hidden="true">edit</span>
+              <span>Editar</span>
+            </button>
+          </div>
 
-            <div class="profile-panel__body">
-              <div class="field field--full field--section">
-                <span class="field__label field__label--divider">Radar esperado da vaga</span>
+          <div class="summary-card__body">
+            <div class="summary-card__headline">{{ jobDraft.title }}</div>
+            <p class="summary-card__text">{{ jobDraft.summary }}</p>
+          </div>
+        </section>
 
-                <div class="tech-radar">
-                  <div class="tech-radar__controls">
-                    <label class="field tech-radar__field">
-                      <span class="field__label">Tecnologias</span>
-                      <input
-                        type="text"
-                        name="knowledgeSkillName"
-                        placeholder="Ex: .NET"
-                        [(ngModel)]="knowledgeSkillDraft.name"
-                      />
-                    </label>
+        <section class="tech-section">
+          <section class="stack-block">
+            <h2 class="stack-block__title">Stack Tecnológica</h2>
 
-                    <label class="field tech-radar__field tech-radar__field--score">
-                      <span class="field__label">Aderencia (%)</span>
-                      <input
-                        type="number"
-                        min="1"
-                        max="100"
-                        name="knowledgeSkillMatch"
-                        [(ngModel)]="knowledgeSkillDraft.match"
-                      />
-                    </label>
+            <div class="stack-card">
+              <div class="stack-card__body">
+                <button class="stack-card__add" type="button">
+                  <span class="stack-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                  <span>Adicionar tecnologia</span>
+                </button>
 
-                    <button class="tech-radar__add" type="button" (click)="addKnowledgeSkill()">Inserir</button>
-                  </div>
+                <div class="stack-card__list">
+                  <div class="stack-item" *ngFor="let item of techStackItems">
+                    <div class="stack-item__meta">
+                      <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                      <span class="stack-item__name">{{ item.name }}</span>
+                    </div>
 
-                  <div class="tech-radar__list" *ngIf="knowledgeSkills.length">
-                    <div class="tech-radar__item" *ngFor="let item of knowledgeSkills">
-                      <div class="tech-radar__item-top">
-                        <span class="tech-radar__name">{{ item.name }}</span>
-                        <span class="tech-radar__value">{{ item.match }}%</span>
-                      </div>
-                      <div class="tech-radar__bar">
-                        <div class="tech-radar__bar-fill" [style.width.%]="item.match"></div>
-                      </div>
+                    <div class="stack-item__progress">
+                      <span class="stack-item__track" aria-hidden="true">
+                        <span class="stack-item__fill" [style.width.%]="item.match"></span>
+                        <span class="stack-item__thumb" [style.left.%]="item.match"></span>
+                      </span>
+                      <span class="stack-item__value">{{ item.match }}%</span>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <label class="field field--full">
-                <span class="field__label">Diferenciais</span>
-                <textarea
-                  rows="4"
-                  name="niceToHave"
-                  placeholder="Adicione experiencias e sinais de aderencia que contam pontos extras."
-                  [(ngModel)]="roleProfile.niceToHave"
-                ></textarea>
-              </label>
             </div>
           </section>
-        </div>
 
-        <div class="job-card__grid" *ngIf="activeStep === 'benefits'">
-          <div class="benefits-row field--full">
-            <div class="field field--section">
-              <span class="field__label field__label--divider">Beneficios</span>
-              <div class="option-list">
+          <section class="description-block">
+            <h2 class="description-block__title">Diferenciais</h2>
+
+            <div class="description-card">
+              <button class="description-card__add" type="button">
+                <span class="description-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                <span>Adicionar Diferenciais</span>
+              </button>
+
+              <div class="description-card__list">
                 <label
-                  class="option-card option-card--checkbox"
-                  *ngFor="let item of benefitOptions"
-                  [class.option-card--active]="selectedBenefits.includes(item)"
+                  class="description-card__item"
+                  *ngFor="let item of refinementOptions"
+                  [class.description-card__item--active]="selectedRefinementOptions.includes(item)"
                 >
                   <input
-                    class="option-card__input"
+                    class="description-card__input"
                     type="checkbox"
-                    [checked]="selectedBenefits.includes(item)"
-                    (change)="toggleBenefit(item)"
+                    [checked]="selectedRefinementOptions.includes(item)"
+                    (change)="toggleRefinementOption(item)"
                   />
-                  <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
-                  <span class="option-card__label">{{ item }}</span>
+                  <span class="description-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="description-card__label">{{ item }}</span>
                 </label>
               </div>
             </div>
-
-            <div class="field field--section field--proposal-notes">
-              <span class="field__label field__label--divider">Outros beneficios</span>
-              <div class="option-list">
-                <label
-                  class="option-card option-card--checkbox"
-                  *ngFor="let item of extraBenefitOptions"
-                  [class.option-card--active]="selectedBenefits.includes(item)"
-                >
-                  <input
-                    class="option-card__input"
-                    type="checkbox"
-                    [checked]="selectedBenefits.includes(item)"
-                    (change)="toggleBenefit(item)"
-                  />
-                  <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
-                  <span class="option-card__label">{{ item }}</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="job-card__footer">
-          <button class="job-card__ghost" type="button" *ngIf="currentStepNumber > 1" (click)="goPreviousStep()">
-            Voltar
-          </button>
-          <button class="job-card__ghost" type="button" *ngIf="currentStepNumber === 1">Salvar rascunho</button>
-          <button class="job-card__primary" type="button" (click)="goNextStep()" *ngIf="!isLastStep">
-            Continuar
-          </button>
-          <button class="job-card__primary" type="button" *ngIf="isLastStep">Finalizar cadastro</button>
-        </div>
+          </section>
+        </section>
       </section>
     </div>
 

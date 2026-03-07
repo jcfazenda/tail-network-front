@@ -10,7 +10,7 @@
   display: block;
 }
 
-.job-create__form{
+.job-create__main{
   display: grid;
   gap: 14px;
   min-width: 0;
@@ -82,15 +82,15 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 18px;
-  flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: nowrap;
   margin-left: auto;
 }
 
 .job-create__hero-progress{
-  min-width: 176px;
+  min-width: 154px;
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .job-create__hero-progress-label{
@@ -118,13 +118,13 @@
 .job-create__hero-buttons{
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .job-create__hero-button{
   min-height: 34px;
-  padding: 0 14px;
+  padding: 0 12px;
   border-radius: 10px;
   font: inherit;
   font-size: 11px;
@@ -147,8 +147,8 @@
 
 .job-preview-banner{
   display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(430px, 0.92fr);
-  gap: 28px;
+  grid-template-columns: minmax(0, 1.02fr) minmax(500px, 1fr);
+  gap: 22px;
   align-items: center;
   padding: 16px 18px;
   border-radius: 18px;
@@ -290,6 +290,450 @@
 
 .job-preview-banner__side{
   min-width: 0;
+  width: 100%;
+}
+
+.job-info-block{
+  display: grid;
+  gap: 12px;
+}
+
+.job-info-block__title{
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #263142;
+  padding-left: 12px;
+}
+
+.job-info-card{
+  background: rgba(253, 253, 253, 0.58);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 16px 14px 18px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  display: grid;
+  gap: 18px;
+}
+
+.job-create__support-main{
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.benefits-block{
+  display: grid;
+  gap: 18px;
+  margin-top: 10px;
+  min-width: 0;
+}
+
+.benefits-block__title{
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #263142;
+  padding-left: 12px;
+}
+
+.tech-section{
+  grid-column: 1 / -1;
+  display: grid;
+  width: min(100%, 1200px);
+  grid-template-columns: minmax(0, 1fr) minmax(440px, 500px);
+  gap: 16px;
+  align-items: start;
+  margin-top: 10px;
+  justify-self: start;
+}
+
+.stack-block{
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.description-block{
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.stack-block__title{
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #263142;
+  padding-left: 12px;
+}
+
+.description-block__title{
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #263142;
+  padding-left: 12px;
+}
+
+.stack-card{
+  width: 100%;
+  background: rgba(253, 253, 253, 0.58);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 12px 12px 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  display: grid;
+  gap: 12px;
+}
+
+.stack-card__body{
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.description-card{
+  min-width: 0;
+  background: rgba(253, 253, 253, 0.58);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 12px 12px 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  display: grid;
+  gap: 10px;
+}
+
+.description-card__add{
+  width: fit-content;
+  min-height: 28px;
+  padding: 0 12px;
+  margin: 4px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(247, 191, 24, 0.16);
+  color: #8d6200;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.description-card__add-icon{
+  font-family: 'Material Symbols Rounded';
+  font-size: 16px;
+  line-height: 1;
+}
+
+.description-card__list{
+  display: grid;
+  gap: 6px;
+}
+
+.description-card__item{
+  position: relative;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.description-card__item:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+}
+
+.description-card__item--active{
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.description-card__input{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.description-card__check{
+  font-family: 'Material Symbols Rounded';
+  font-size: 15px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.22);
+  flex: 0 0 auto;
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.description-card__item--active .description-card__check{
+  color: #f2b31a;
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.description-card__label{
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgba(15, 23, 42, 0.76);
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+
+.description-card__item--active .description-card__label{
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.stack-card__add{
+  width: fit-content;
+  min-height: 28px;
+  padding: 0 12px;
+  margin: 4px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(247, 191, 24, 0.16);
+  color: #8d6200;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.stack-card__add-icon{
+  font-family: 'Material Symbols Rounded';
+  font-size: 16px;
+  line-height: 1;
+}
+
+.stack-card__list{
+  display: grid;
+  gap: 6px;
+}
+
+.stack-item{
+  display: grid;
+  grid-template-columns: minmax(140px, 210px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.stack-item__meta{
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stack-item__drag{
+  font-family: 'Material Symbols Rounded';
+  font-size: 15px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.3);
+}
+
+.stack-item__name{
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.stack-item__progress{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stack-item__track{
+  position: relative;
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.stack-item__fill{
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f7bf18, #f2a900);
+}
+
+.stack-item__thumb{
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f2b31a;
+  box-shadow: 0 0 0 3px rgba(242, 179, 26, 0.18);
+  transform: translate(-50%, -50%);
+}
+
+.stack-item__value{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.job-create__support-row{
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.benefits-card{
+  width: 100%;
+  background: rgba(253, 253, 253, 0.58);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 12px 12px 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  display: grid;
+  gap: 10px;
+}
+
+.benefits-card__add{
+  width: fit-content;
+  min-height: 28px;
+  padding: 0 12px;
+  margin: 4px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(247, 191, 24, 0.16);
+  color: #8d6200;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.benefits-card__add-icon{
+  font-family: 'Material Symbols Rounded';
+  font-size: 16px;
+  line-height: 1;
+}
+
+.summary-card{
+  background: rgba(253, 253, 253, 0.58);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 12px 12px 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+  margin-top: 46px;
+  height: calc(100% - 46px);
+}
+
+.summary-card__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.summary-card__title{
+  margin: 0;
+  padding-left: 8px;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #263142;
+}
+
+.summary-card__edit{
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.54);
+  color: rgba(15, 23, 42, 0.62);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.summary-card__edit-icon{
+  font-family: 'Material Symbols Rounded';
+  font-size: 15px;
+  line-height: 1;
+}
+
+.benefits-card__list{
+  display: grid;
+  gap: 6px;
+}
+
+.summary-card__body{
+  min-height: 64px;
+  height: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.44);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.summary-card__headline{
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #263142;
+}
+
+.summary-card__text{
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(15, 23, 42, 0.52);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.job-info-card__grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 16px;
 }
 
 .job-card{
@@ -417,6 +861,13 @@
   padding-left: 16px;
 }
 
+.field__label--soft{
+  padding-left: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.52);
+}
+
 .field__label--divider{
   display: flex;
   align-items: center;
@@ -436,6 +887,7 @@
 }
 
 .field input,
+.field select,
 .field textarea{
   width: 100%;
   box-sizing: border-box;
@@ -451,14 +903,207 @@
 }
 
 .field input:focus,
+.field select:focus,
 .field textarea:focus{
   border-color: rgba(242, 169, 0, 0.75);
   box-shadow: 0 0 0 4px rgba(242, 169, 0, 0.12);
 }
 
 .field input::placeholder,
+.field select::placeholder,
 .field textarea::placeholder{
   color: rgba(15, 23, 42, 0.36);
+}
+
+.field--select-elevated{
+  gap: 8px;
+}
+
+.select-shell{
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 244, 239, 0.84));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    0 8px 18px rgba(15, 23, 42, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.select-shell:focus-within{
+  border-color: rgba(242, 169, 0, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    0 0 0 4px rgba(242, 169, 0, 0.1),
+    0 10px 20px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
+}
+
+.select-shell__icon,
+.select-shell__chevron{
+  font-family: 'Material Symbols Rounded';
+  font-size: 18px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.42);
+}
+
+.select-shell__icon{
+  color: rgba(242, 169, 0, 0.92);
+}
+
+.field--select-elevated select{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 15px 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.82);
+}
+
+.field--select-elevated select:focus{
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.work-model-list{
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 8px 2px 0;
+}
+
+.work-model-list .option-card{
+  min-height: auto;
+}
+
+.work-model-list .option-card__label{
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.contract-type-list{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  padding-left: 12px;
+}
+
+.contract-chip{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(15, 23, 42, 0.56);
+  cursor: pointer;
+}
+
+.contract-chip__input{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.contract-chip__check{
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid rgba(15, 23, 42, 0.14);
+  background: transparent;
+  color: transparent;
+  font-size: 9px;
+  line-height: 1;
+}
+
+.contract-chip__label{
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.contract-chip--active{
+  border-color: rgba(242, 169, 0, 0.24);
+  background: rgba(247, 191, 24, 0.12);
+  color: #6b4b00;
+}
+
+.contract-chip--active .contract-chip__check{
+  border-color: transparent;
+  background: linear-gradient(135deg, #f7bf18, #f2a900);
+  color: #ffffff;
+}
+
+.benefit-option{
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 0;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+  color: rgba(15, 23, 42, 0.62);
+  cursor: pointer;
+}
+
+.benefit-option__input{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.benefit-option__check{
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid rgba(15, 23, 42, 0.16);
+  background: transparent;
+  color: transparent;
+  font-size: 9px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.benefit-option__label{
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.benefit-option--active{
+  color: #273142;
+}
+
+.benefit-option--active .benefit-option__check{
+  border-color: transparent;
+  background: linear-gradient(135deg, #f7bf18, #f2a900);
+  color: #ffffff;
 }
 
 .option-list{
@@ -653,10 +1298,6 @@
     padding: 0 16px;
   }
 
-  .job-create__layout{
-    grid-template-columns: 1fr;
-  }
-
   .job-create__hero,
   .job-card__header{
     flex-direction: column;
@@ -666,6 +1307,7 @@
   .job-create__hero-actions{
     width: 100%;
     justify-content: space-between;
+    gap: 10px;
     margin-left: 0;
   }
 
@@ -675,6 +1317,33 @@
 
   .job-preview-banner__side{
     width: 100%;
+  }
+
+  .job-info-card__grid{
+    grid-template-columns: 1fr;
+  }
+
+  .job-create__support-row{
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card{
+    margin-top: 0;
+    height: auto;
+  }
+
+  .benefits-block{
+    margin-top: 0;
+  }
+
+  .tech-section{
+    grid-template-columns: 1fr;
+  }
+
+  .stack-item{
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px 10px;
   }
 
   .job-create__nav{
@@ -752,6 +1421,10 @@
   .job-create__hero-actions,
   .job-create__hero-buttons{
     width: 100%;
+  }
+
+  .job-create__hero-buttons{
+    flex-wrap: wrap;
   }
 
   .job-create__hero-progress{

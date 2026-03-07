@@ -6,6 +6,8 @@ export type RadarLegendTone = 'high' | 'medium' | 'potential';
 export interface RadarLegendItem {
   label: string;
   tone: RadarLegendTone;
+  percent?: number;
+  detail?: string;
   count?: number;
 }
 
@@ -24,8 +26,8 @@ export class AlcanceRadarComponent {
   @Input() title = 'Alcance do radar';
   @Input() score = 89;
   @Input() items: RadarLegendItem[] = [
-    { label: 'Alta compatibilidade', tone: 'high' },
-    { label: 'Media compatibilidade', tone: 'medium' },
+    { label: 'Alta compatibilidade', tone: 'high', percent: 76 },
+    { label: 'Media de Compatibilidade', tone: 'medium', detail: '(60-85%)' },
     { label: 'Potenciais', tone: 'potential', count: 97 },
   ];
 

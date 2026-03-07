@@ -11,8 +11,10 @@
         <span class="radar-overview__legend-row">
           <span class="radar-overview__icon" aria-hidden="true"></span>
           <span class="radar-overview__label">{{ item.label }}</span>
+          <span class="radar-overview__detail" *ngIf="item.detail">{{ item.detail }}</span>
+          <strong class="radar-overview__percent" *ngIf="item.percent !== undefined">+{{ item.percent }}%</strong>
+          <strong class="radar-overview__count" *ngIf="item.count !== undefined">{{ item.count }}</strong>
         </span>
-        <strong class="radar-overview__count" *ngIf="item.count !== undefined">{{ item.count }}</strong>
       </div>
     </div>
   </div>
