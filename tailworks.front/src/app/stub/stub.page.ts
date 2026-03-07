@@ -135,6 +135,23 @@ export class StubPage {
     });
   }
 
+  jobCardOfferLine(job: MockJobRecord): string {
+    const segments: string[] = [job.contractType];
+    const salary = this.formatJobSalary(job.salaryRange);
+
+    if (salary) {
+      segments.push(salary);
+    }
+
+    let line = segments.join(' - ');
+
+    if (job.benefits.length > 0) {
+      line = `${line} + Beneficios`;
+    }
+
+    return line;
+  }
+
   private resolveInitialTab(): JobStatus {
     const queryTab = this.route.snapshot.queryParamMap.get('tab');
     if (queryTab === 'ativas' || queryTab === 'rascunhos' || queryTab === 'encerradas') {
@@ -142,5 +159,14 @@ export class StubPage {
     }
 
     return 'ativas';
+  }
+
+  private formatJobSalary(value?: string): string | null {
+    const normalized = value?.trim();
+    if (!normalized) {
+      return null;
+    }
+
+    return normalized.startsWith('R$') ? normalized : `R$ ${normalized}`;
   }
 }

@@ -26,6 +26,9 @@ export interface VagaPanelDraft {
 
 export interface MockJobDraft extends VagaPanelDraft {
   contractType: ContractType;
+  salaryRange?: string;
+  showSalaryRangeInCard?: boolean;
+  hybridOnsiteDaysDescription?: string;
   benefits: string[];
   techStack: TechStackItem[];
   differentials: string[];
