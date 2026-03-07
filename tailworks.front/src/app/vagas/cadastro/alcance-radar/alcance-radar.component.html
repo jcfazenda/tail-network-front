@@ -1,0 +1,39 @@
+<section class="radar-overview" aria-label="Alcance do radar">
+  <div class="radar-overview__content">
+    <span class="radar-overview__kicker">{{ title }}</span>
+
+    <div class="radar-overview__legend-list">
+      <div
+        class="radar-overview__legend-item"
+        *ngFor="let item of items"
+        [ngClass]="'radar-overview__legend-item--' + item.tone"
+      >
+        <span class="radar-overview__legend-row">
+          <span class="radar-overview__icon" aria-hidden="true"></span>
+          <span class="radar-overview__label">{{ item.label }}</span>
+        </span>
+        <strong class="radar-overview__count" *ngIf="item.count !== undefined">{{ item.count }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="radar-overview__gauge-wrap">
+    <svg class="radar-overview__gauge-svg" viewBox="0 0 112 112" aria-hidden="true">
+      <circle class="radar-overview__gauge-orbit" cx="56" cy="56" r="50"></circle>
+      <circle class="radar-overview__gauge-track" cx="56" cy="56" [attr.r]="gaugeRadius"></circle>
+      <circle
+        class="radar-overview__gauge-progress"
+        cx="56"
+        cy="56"
+        [attr.r]="gaugeRadius"
+        [attr.stroke-dasharray]="gaugeCircumference"
+        [attr.stroke-dashoffset]="gaugeDashOffset"
+      ></circle>
+    </svg>
+
+    <span class="radar-overview__gauge-core">
+      <strong>{{ safeScore }}%</strong>
+      <span>Aderencia</span>
+    </span>
+  </div>
+</section>

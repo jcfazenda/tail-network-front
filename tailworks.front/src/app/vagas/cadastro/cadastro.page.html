@@ -1,58 +1,89 @@
 <div class="job-create">
   <section class="job-create__hero">
     <div class="job-create__hero-copy">
-      <p class="job-create__eyebrow">Nova vaga</p>
-      <h1 class="job-create__title">Cadastro de vaga</h1>
+      <h1 class="job-create__title">Criar Nova Vaga</h1>
       <p class="job-create__description">
-        Estruture o briefing da oportunidade para ativar o radar, alinhar o time e abrir a busca com
-        contexto.
+        Veja como o card da vaga ficara a medida que voce preenche os dados
       </p>
     </div>
 
-    <div class="job-create__hero-tag">Rascunho inicial</div>
+    <div class="job-create__hero-actions">
+      <div class="job-create__hero-buttons">
+        <div class="job-create__hero-progress" aria-label="Andamento da configuracao da vaga">
+          <span class="job-create__hero-progress-label">Configuracao {{ configurationProgress }}%</span>
+          <span class="job-create__hero-progress-track" aria-hidden="true">
+            <span class="job-create__hero-progress-fill" [style.width.%]="configurationProgress"></span>
+          </span>
+        </div>
+
+        <button class="job-create__hero-button job-create__hero-button--ghost" type="button">Salvar Rascunho</button>
+        <button class="job-create__hero-button job-create__hero-button--primary" type="button">Publicar Vaga</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="job-preview-banner" aria-label="Resumo visual da vaga">
+    <div class="job-preview-banner__main">
+      <h2 class="job-preview-banner__title">{{ jobDraft.title }}</h2>
+
+      <div class="job-preview-banner__meta">
+        <span>{{ jobDraft.company }}</span>
+        <span class="job-preview-banner__meta-dot" aria-hidden="true"></span>
+        <span>{{ jobDraft.location }}</span>
+        <span class="job-preview-banner__chip">{{ jobDraft.workModel | uppercase }}</span>
+      </div>
+
+      <div class="job-preview-banner__benefits">
+        <span>{{ previewContractType }}</span>
+        <ng-container *ngFor="let item of previewBenefitHighlights">
+          <span class="job-preview-banner__benefit-separator" aria-hidden="true">-</span>
+          <span>{{ item }}</span>
+        </ng-container>
+      </div>
+
+      <div class="job-preview-banner__footer">
+        <div class="job-preview-banner__fit">
+          <span class="job-preview-banner__fit-label">Aderencia</span>
+          <span class="job-preview-banner__fit-bar" aria-hidden="true">
+            <span class="job-preview-banner__fit-bar-fill" [style.width.%]="previewAderencia"></span>
+          </span>
+          <span class="job-preview-banner__fit-value">{{ previewAderencia }}%</span>
+        </div>
+
+        <div class="job-preview-banner__avatars">
+          <div class="job-preview-banner__avatars-stack">
+            <ng-container *ngFor="let avatar of previewAvatars; let i = index">
+              <span
+                class="job-preview-banner__avatar"
+                [style.zIndex]="i + 1"
+                [style.marginLeft.px]="i === 0 ? 0 : -12"
+                [style.backgroundImage]="'url(' + avatar + ')'"
+                aria-hidden="true"
+              ></span>
+            </ng-container>
+            <span class="job-preview-banner__avatar job-preview-banner__avatar--extra">+{{ previewAvatarExtraCount }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-alcance-radar
+      class="job-preview-banner__side"
+      [score]="previewAderencia"
+    ></app-alcance-radar>
   </section>
 
   <section class="job-create__layout">
     <div class="job-create__form">
-      <section class="job-card job-card--basic">
-        <div class="job-card__header">
-          <div>
-            <h2 class="job-card__title">Informacoes principais da vaga</h2>
-            <p class="job-card__description">
-              Esses dados ajudam o time a calibrar aderencia, compatibilidade e os primeiros perfis do radar.
-            </p>
-          </div>
-        </div>
-
-        <div class="job-card__grid">
-          <label class="field field--full">
-            <span class="field__label">Titulo da vaga</span>
-            <input
-              type="text"
-              name="title"
-              placeholder="Ex: Backend .NET Senior"
-              [(ngModel)]="jobDraft.title"
-            />
-          </label>
-
-          <label class="field">
-            <span class="field__label">Empresa</span>
-            <input type="text" name="company" placeholder="Ex: Banco Itau" [(ngModel)]="jobDraft.company" />
-          </label>
-
-          <label class="field">
-            <span class="field__label">Localidade</span>
-            <input
-              type="text"
-              name="location"
-              placeholder="Ex: Rio de Janeiro - RJ"
-              [(ngModel)]="jobDraft.location"
-            />
-          </label>
-        </div>
-      </section>
-
       <nav class="job-create__nav" aria-label="Etapas do cadastro da vaga">
+        <button
+          class="job-create__nav-item"
+          [class.job-create__nav-item--active]="activeStep === 'basic'"
+          type="button"
+          (click)="setActiveStep('basic')"
+        >
+          Informacoes principais da vaga
+        </button>
         <button
           class="job-create__nav-item"
           [class.job-create__nav-item--active]="activeStep === 'benefits'"
@@ -79,54 +110,32 @@
           </div>
         </div>
 
-        <div class="job-card__grid job-card__grid--profile" *ngIf="activeStep === 'profile'">
+        <div class="job-card__grid" *ngIf="activeStep === 'basic'">
           <label class="field field--full">
-            <span class="field__label">Resumo da oportunidade</span>
-            <textarea
-              rows="5"
-              name="summary"
-              placeholder="Descreva objetivo da vaga, desafios do cargo e entregas esperadas nos primeiros meses."
-              [(ngModel)]="jobDraft.summary"
-            ></textarea>
+            <span class="field__label">Titulo da vaga</span>
+            <input
+              type="text"
+              name="title"
+              placeholder="Ex: Backend .NET Senior"
+              [(ngModel)]="jobDraft.title"
+            />
           </label>
 
-          <label class="field field--full">
-            <span class="field__label">Missão da vaga</span>
-            <textarea
-              rows="5"
-              name="mission"
-              placeholder="Explique o objetivo central da posição e os desafios do papel."
-              [(ngModel)]="roleProfile.mission"
-            ></textarea>
+          <label class="field">
+            <span class="field__label">Empresa</span>
+            <input type="text" name="company" placeholder="Ex: Banco Itau" [(ngModel)]="jobDraft.company" />
           </label>
 
-          <div class="field field--full field--section field--compact">
-            <span class="field__label field__label--divider">Senioridade</span>
-            <div class="option-list">
-              <label
-                class="option-card"
-                *ngFor="let item of seniorities"
-                [class.option-card--active]="item === jobDraft.seniority"
-              >
-                <input class="option-card__input" type="radio" name="seniority" [value]="item" [(ngModel)]="jobDraft.seniority" />
-                <span class="option-card__label">{{ item }}</span>
-                <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
-              </label>
-            </div>
-          </div>
-
-          <label class="field field--full">
-            <span class="field__label">Diferenciais</span>
-            <textarea
-              rows="4"
-              name="niceToHave"
-              placeholder="Adicione experiencias e sinais de aderencia que contam pontos extras."
-              [(ngModel)]="roleProfile.niceToHave"
-            ></textarea>
+          <label class="field">
+            <span class="field__label">Localidade</span>
+            <input
+              type="text"
+              name="location"
+              placeholder="Ex: Rio de Janeiro - RJ"
+              [(ngModel)]="jobDraft.location"
+            />
           </label>
-        </div>
 
-        <div class="job-card__grid" *ngIf="activeStep === 'benefits'">
           <div class="field field--full field--section">
             <span class="field__label field__label--divider">Modelo de trabalho</span>
             <div class="option-list">
@@ -136,40 +145,161 @@
                 [class.option-card--active]="item === jobDraft.workModel"
               >
                 <input class="option-card__input" type="radio" name="workModel" [value]="item" [(ngModel)]="jobDraft.workModel" />
-                <span class="option-card__label">{{ item }}</span>
                 <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                <span class="option-card__label">{{ item }}</span>
               </label>
             </div>
           </div>
+        </div>
 
-          <div class="field field--full field--section">
-            <span class="field__label field__label--divider">Beneficios oferecidos</span>
-            <div class="option-list option-list--wide">
-              <label
-                class="option-card"
-                *ngFor="let item of benefitOptions"
-                [class.option-card--active]="selectedBenefits.includes(item)"
-              >
-                <input
-                  class="option-card__input"
-                  type="checkbox"
-                  [checked]="selectedBenefits.includes(item)"
-                  (change)="toggleBenefit(item)"
-                />
-                <span class="option-card__label">{{ item }}</span>
-                <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+        <div class="profile-sections" *ngIf="activeStep === 'profile'">
+          <section class="profile-panel">
+            <header class="profile-panel__header">
+              <h3 class="profile-panel__title">Contexto da Vaga</h3>
+            </header>
+
+            <div class="profile-panel__body">
+              <label class="field field--full">
+                <span class="field__label">Resumo da oportunidade</span>
+                <textarea
+                  rows="5"
+                  name="summary"
+                  placeholder="Descreva objetivo da vaga, desafios do cargo e entregas esperadas nos primeiros meses."
+                  [(ngModel)]="jobDraft.summary"
+                ></textarea>
+              </label>
+
+              <label class="field field--full">
+                <span class="field__label">Missão da vaga</span>
+                <textarea
+                  rows="5"
+                  name="mission"
+                  placeholder="Explique o objetivo central da posição e os desafios do papel."
+                  [(ngModel)]="roleProfile.mission"
+                ></textarea>
+              </label>
+
+              <div class="field field--full field--section field--compact">
+                <span class="field__label field__label--divider">Senioridade</span>
+                <div class="option-list">
+                  <label
+                    class="option-card"
+                    *ngFor="let item of seniorities"
+                    [class.option-card--active]="item === jobDraft.seniority"
+                  >
+                    <input class="option-card__input" type="radio" name="seniority" [value]="item" [(ngModel)]="jobDraft.seniority" />
+                    <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                    <span class="option-card__label">{{ item }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-panel">
+            <header class="profile-panel__header">
+              <h3 class="profile-panel__title">Skills de Conhecimento</h3>
+            </header>
+
+            <div class="profile-panel__body">
+              <div class="field field--full field--section">
+                <span class="field__label field__label--divider">Radar esperado da vaga</span>
+
+                <div class="tech-radar">
+                  <div class="tech-radar__controls">
+                    <label class="field tech-radar__field">
+                      <span class="field__label">Tecnologias</span>
+                      <input
+                        type="text"
+                        name="knowledgeSkillName"
+                        placeholder="Ex: .NET"
+                        [(ngModel)]="knowledgeSkillDraft.name"
+                      />
+                    </label>
+
+                    <label class="field tech-radar__field tech-radar__field--score">
+                      <span class="field__label">Aderencia (%)</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        name="knowledgeSkillMatch"
+                        [(ngModel)]="knowledgeSkillDraft.match"
+                      />
+                    </label>
+
+                    <button class="tech-radar__add" type="button" (click)="addKnowledgeSkill()">Inserir</button>
+                  </div>
+
+                  <div class="tech-radar__list" *ngIf="knowledgeSkills.length">
+                    <div class="tech-radar__item" *ngFor="let item of knowledgeSkills">
+                      <div class="tech-radar__item-top">
+                        <span class="tech-radar__name">{{ item.name }}</span>
+                        <span class="tech-radar__value">{{ item.match }}%</span>
+                      </div>
+                      <div class="tech-radar__bar">
+                        <div class="tech-radar__bar-fill" [style.width.%]="item.match"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <label class="field field--full">
+                <span class="field__label">Diferenciais</span>
+                <textarea
+                  rows="4"
+                  name="niceToHave"
+                  placeholder="Adicione experiencias e sinais de aderencia que contam pontos extras."
+                  [(ngModel)]="roleProfile.niceToHave"
+                ></textarea>
               </label>
             </div>
-          </div>
+          </section>
+        </div>
 
-          <label class="field field--full field--proposal-notes">
-            <span class="field__label">Sobre a proposta</span>
-            <textarea
-              rows="5"
-              name="proposalNotes"
-              placeholder="Descreva politica de bonus, flexibilidade, apoio a desenvolvimento e outros atrativos."
-            ></textarea>
-          </label>
+        <div class="job-card__grid" *ngIf="activeStep === 'benefits'">
+          <div class="benefits-row field--full">
+            <div class="field field--section">
+              <span class="field__label field__label--divider">Beneficios</span>
+              <div class="option-list">
+                <label
+                  class="option-card option-card--checkbox"
+                  *ngFor="let item of benefitOptions"
+                  [class.option-card--active]="selectedBenefits.includes(item)"
+                >
+                  <input
+                    class="option-card__input"
+                    type="checkbox"
+                    [checked]="selectedBenefits.includes(item)"
+                    (change)="toggleBenefit(item)"
+                  />
+                  <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="option-card__label">{{ item }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="field field--section field--proposal-notes">
+              <span class="field__label field__label--divider">Outros beneficios</span>
+              <div class="option-list">
+                <label
+                  class="option-card option-card--checkbox"
+                  *ngFor="let item of extraBenefitOptions"
+                  [class.option-card--active]="selectedBenefits.includes(item)"
+                >
+                  <input
+                    class="option-card__input"
+                    type="checkbox"
+                    [checked]="selectedBenefits.includes(item)"
+                    (change)="toggleBenefit(item)"
+                  />
+                  <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="option-card__label">{{ item }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="job-card__footer">

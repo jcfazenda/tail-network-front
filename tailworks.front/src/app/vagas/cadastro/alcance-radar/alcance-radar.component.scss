@@ -1,0 +1,198 @@
+:host {
+  display: block;
+  min-width: 0;
+  align-self: stretch;
+  padding-left: 28px;
+  border-left: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.radar-overview {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 178px;
+  justify-items: center;
+  align-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+.radar-overview__content {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+.radar-overview__kicker {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(15, 23, 42, 0.52);
+}
+
+.radar-overview__legend-list {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+}
+
+.radar-overview__legend-item {
+  display: grid;
+  gap: 2px;
+}
+
+.radar-overview__legend-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.radar-overview__icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.radar-overview__icon::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0.2;
+}
+
+.radar-overview__label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: rgba(15, 23, 42, 0.66);
+}
+
+.radar-overview__count {
+  padding-left: 22px;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 900;
+  color: #253041;
+}
+
+.radar-overview__legend-item--high {
+  color: #f2a900;
+}
+
+.radar-overview__legend-item--medium {
+  color: #41af7d;
+}
+
+.radar-overview__legend-item--potential {
+  color: #5d8fe8;
+}
+
+.radar-overview__gauge-wrap {
+  position: relative;
+  width: 178px;
+  height: 178px;
+  display: grid;
+  place-items: center;
+  justify-self: end;
+}
+
+.radar-overview__gauge-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.radar-overview__gauge-orbit,
+.radar-overview__gauge-track,
+.radar-overview__gauge-progress {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.radar-overview__gauge-core {
+  position: relative;
+  z-index: 1;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.96), rgba(252, 249, 243, 0.94)),
+    rgba(255, 255, 255, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    inset 0 10px 18px rgba(255, 255, 255, 0.52);
+}
+
+.radar-overview__gauge-orbit {
+  stroke: rgba(242, 169, 0, 0.18);
+  stroke-width: 1.5;
+  stroke-dasharray: 2.5 6.5;
+}
+
+.radar-overview__gauge-track {
+  stroke: rgba(15, 23, 42, 0.1);
+  stroke-width: 8;
+}
+
+.radar-overview__gauge-progress {
+  stroke: #f2a900;
+  stroke-width: 8;
+  filter: drop-shadow(0 4px 8px rgba(242, 169, 0, 0.18));
+}
+
+.radar-overview__gauge-core strong {
+  display: block;
+  font-size: 31px;
+  line-height: 0.95;
+  color: #253041;
+}
+
+.radar-overview__gauge-core span {
+  display: block;
+  margin-top: 0;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(15, 23, 42, 0.58);
+}
+
+@media (max-width: 960px) {
+  :host {
+    width: 100%;
+    padding-left: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  :host {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .radar-overview {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 18px;
+  }
+
+  .radar-overview__gauge-wrap {
+    justify-self: start;
+  }
+}
