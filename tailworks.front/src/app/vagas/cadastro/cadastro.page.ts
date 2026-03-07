@@ -71,6 +71,18 @@ export class CadastroPage {
     'Teste Unitário e Integrado',
     'Viajar a Trabalho',
   ];
+  responsibilityItems = [
+    'Design, develop, and maintain fullstack applications using C# and .NET',
+    'Build and maintain REST APIs and MVC-based applications',
+    'Work with Entity Framework for data access and modeling',
+    'Develop and maintain serverless components using Azure Functions',
+    'Handle structured data formats such as XML and JSON',
+    'Design, optimize, and maintain SQL databases and queries',
+    'Develop and maintain ETL processes using SSIS',
+    'Integrate and manage messaging/queue systems (e.g., SQS)',
+    'Collaborate with cross-functional teams to deliver scalable and reliable solutions',
+    'Ensure high code quality through testing, debugging, and performance optimization',
+  ];
   readonly initialSelectedRefinementOptions: RefinementItem[] = [...this.refinementOptions];
 
   readonly jobDraft: VagaPanelDraft = {
@@ -113,6 +125,10 @@ export class CadastroPage {
     }
 
     this.selectedRefinementOptions = [...this.selectedRefinementOptions, item];
+  }
+
+  removeResponsibility(item: string): void {
+    this.responsibilityItems = this.responsibilityItems.filter((responsibility) => responsibility !== item);
   }
 
   saveAsDraft(): void {

@@ -1,81 +1,83 @@
-<div class="job-create">
-  <section class="job-create__hero">
-    <div class="job-create__hero-copy">
-      <h1 class="job-create__title">Criar Nova Vaga</h1>
-      <p class="job-create__description">
-        Veja como o card da vaga ficara a medida que voce preenche os dados
-      </p>
-    </div>
+<div class="job-create-shell">
+  <div class="job-create">
+    <section class="job-create__hero">
+      <div class="job-create__hero-copy">
+        <h1 class="job-create__title">Criar Nova Vaga</h1>
+        <p class="job-create__description">
+          Veja o card da vaga sendo montado conforme o preenchimento
+        </p>
+      </div>
 
-    <div class="job-create__hero-actions">
-      <div class="job-create__hero-buttons">
-        <div class="job-create__hero-progress" aria-label="Andamento da configuracao da vaga">
-          <span class="job-create__hero-progress-label">Configuracao {{ configurationProgress }}%</span>
-          <span class="job-create__hero-progress-track" aria-hidden="true">
-            <span class="job-create__hero-progress-fill" [style.width.%]="configurationProgress"></span>
-          </span>
+      <div class="job-create__hero-actions">
+        <div class="job-create__hero-buttons">
+          <div class="job-create__hero-progress" aria-label="Andamento da configuracao da vaga">
+            <span class="job-create__hero-progress-label">Configuracao {{ configurationProgress }}%</span>
+            <span class="job-create__hero-progress-track" aria-hidden="true">
+              <span class="job-create__hero-progress-fill" [style.width.%]="configurationProgress"></span>
+            </span>
+          </div>
+
+          <button class="job-create__hero-button job-create__hero-button--ghost" type="button" (click)="saveAsDraft()">Salvar Rascunho</button>
+          <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">Publicar Vaga</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="job-preview-banner" aria-label="Resumo visual da vaga">
+      <div class="job-preview-banner__main">
+        <h2 class="job-preview-banner__title">{{ jobDraft.title }}</h2>
+
+        <div class="job-preview-banner__meta">
+          <span>{{ jobDraft.company }}</span>
+          <span class="job-preview-banner__meta-dot" aria-hidden="true"></span>
+          <span>{{ jobDraft.location }}</span>
+          <span class="job-preview-banner__chip">{{ jobDraft.workModel | uppercase }}</span>
         </div>
 
-        <button class="job-create__hero-button job-create__hero-button--ghost" type="button" (click)="saveAsDraft()">Salvar Rascunho</button>
-        <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">Publicar Vaga</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="job-preview-banner" aria-label="Resumo visual da vaga">
-    <div class="job-preview-banner__main">
-      <h2 class="job-preview-banner__title">{{ jobDraft.title }}</h2>
-
-      <div class="job-preview-banner__meta">
-        <span>{{ jobDraft.company }}</span>
-        <span class="job-preview-banner__meta-dot" aria-hidden="true"></span>
-        <span>{{ jobDraft.location }}</span>
-        <span class="job-preview-banner__chip">{{ jobDraft.workModel | uppercase }}</span>
-      </div>
-
-      <div class="job-preview-banner__benefits">
-        <span>{{ previewContractType }}</span>
-        <ng-container *ngFor="let item of previewBenefitHighlights">
-          <span class="job-preview-banner__benefit-separator" aria-hidden="true">-</span>
-          <span>{{ item }}</span>
-        </ng-container>
-      </div>
-
-      <div class="job-preview-banner__footer">
-        <div class="job-preview-banner__fit">
-          <span class="job-preview-banner__fit-label">Aderencia</span>
-          <span class="job-preview-banner__fit-bar" aria-hidden="true">
-            <span class="job-preview-banner__fit-bar-fill" [style.width.%]="previewAderencia"></span>
-          </span>
-          <span class="job-preview-banner__fit-value">{{ previewAderencia }}%</span>
+        <div class="job-preview-banner__benefits">
+          <span>{{ previewContractType }}</span>
+          <ng-container *ngFor="let item of previewBenefitHighlights">
+            <span class="job-preview-banner__benefit-separator" aria-hidden="true">-</span>
+            <span>{{ item }}</span>
+          </ng-container>
         </div>
 
-        <div class="job-preview-banner__avatars">
-          <div class="job-preview-banner__avatars-stack">
-            <ng-container *ngFor="let avatar of previewAvatars; let i = index">
-              <span
-                class="job-preview-banner__avatar"
-                [style.zIndex]="i + 1"
-                [style.marginLeft.px]="i === 0 ? 0 : -12"
-                [style.backgroundImage]="'url(' + avatar + ')'"
-                aria-hidden="true"
-              ></span>
-            </ng-container>
-            <span class="job-preview-banner__avatar job-preview-banner__avatar--extra">+{{ previewAvatarExtraCount }}</span>
+        <div class="job-preview-banner__footer">
+          <div class="job-preview-banner__fit">
+            <span class="job-preview-banner__fit-label">Aderencia</span>
+            <span class="job-preview-banner__fit-bar" aria-hidden="true">
+              <span class="job-preview-banner__fit-bar-fill" [style.width.%]="previewAderencia"></span>
+            </span>
+            <span class="job-preview-banner__fit-value">{{ previewAderencia }}%</span>
+          </div>
+
+          <div class="job-preview-banner__avatars">
+            <div class="job-preview-banner__avatars-stack">
+              <ng-container *ngFor="let avatar of previewAvatars; let i = index">
+                <span
+                  class="job-preview-banner__avatar"
+                  [style.zIndex]="i + 1"
+                  [style.marginLeft.px]="i === 0 ? 0 : -12"
+                  [style.backgroundImage]="'url(' + avatar + ')'"
+                  aria-hidden="true"
+                ></span>
+              </ng-container>
+              <span class="job-preview-banner__avatar job-preview-banner__avatar--extra">+{{ previewAvatarExtraCount }}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <app-alcance-radar
-      class="job-preview-banner__side"
-      [score]="previewAderencia"
-    ></app-alcance-radar>
-  </section>
+      <app-alcance-radar
+        class="job-preview-banner__side"
+        [score]="previewAderencia"
+      ></app-alcance-radar>
+    </section>
 
-  <section class="job-create__layout">
-    <div class="job-create__main">
-      <section class="job-info-block">
+    <section class="job-create__content">
+      <section class="job-create__layout">
+      <div class="job-create__main">
+        <section class="job-info-block">
         <h2 class="job-info-block__title">Informações da Vaga</h2>
 
         <div class="job-info-card">
@@ -142,11 +144,11 @@
             </div>
           </div>
         </div>
-      </section>
+        </section>
 
-      <section class="job-create__support-row">
-        <div class="job-create__support-main">
-          <section class="benefits-block">
+        <section class="job-create__support-row">
+          <div class="job-create__support-main">
+            <section class="benefits-block">
             <h2 class="benefits-block__title">Benefícios</h2>
 
             <div class="benefits-card">
@@ -172,26 +174,26 @@
                 </label>
               </div>
             </div>
-          </section>
-        </div>
+            </section>
 
-        <section class="summary-card">
-          <div class="summary-card__header">
-            <h3 class="summary-card__title">Resumo da Oportunidade</h3>
-            <button class="summary-card__edit" type="button">
-              <span class="summary-card__edit-icon material-symbols-rounded" aria-hidden="true">edit</span>
-              <span>Editar</span>
-            </button>
+            <section class="summary-card summary-card--inline">
+              <div class="summary-card__header">
+                <h3 class="summary-card__title">Resumo da Oportunidade</h3>
+                <button class="summary-card__edit" type="button">
+                  <span class="summary-card__edit-icon material-symbols-rounded" aria-hidden="true">edit</span>
+                  <span>Editar Resumo</span>
+                </button>
+              </div>
+
+              <div class="summary-card__body">
+                <div class="summary-card__headline">{{ jobDraft.title }}</div>
+                <p class="summary-card__text">{{ jobDraft.summary }}</p>
+              </div>
+            </section>
           </div>
 
-          <div class="summary-card__body">
-            <div class="summary-card__headline">{{ jobDraft.title }}</div>
-            <p class="summary-card__text">{{ jobDraft.summary }}</p>
-          </div>
-        </section>
-
-        <section class="tech-section">
-          <section class="stack-block">
+          <section class="tech-section">
+            <section class="stack-block">
             <h2 class="stack-block__title">Stack Tecnológica</h2>
 
             <div class="stack-card">
@@ -219,9 +221,9 @@
                 </div>
               </div>
             </div>
-          </section>
+            </section>
 
-          <section class="description-block">
+            <section class="description-block">
             <h2 class="description-block__title">Diferenciais</h2>
 
             <div class="description-card">
@@ -247,10 +249,41 @@
                 </label>
               </div>
             </div>
+            </section>
           </section>
         </section>
+      </div>
       </section>
-    </div>
+    </section>
+  </div>
 
-  </section>
+  <aside class="job-create__summary-panel">
+    <section class="summary-card summary-card--side">
+      <div class="summary-card__header">
+        <h3 class="summary-card__title">O QUE VOCÊ VAI FAZER:</h3>
+        <button class="summary-card__add" type="button">
+          <span class="summary-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+          <span>Adicionar</span>
+        </button>
+      </div>
+
+      <div class="summary-card__body">
+        <ul class="summary-card__responsibilities">
+          <li class="summary-card__responsibility" *ngFor="let item of responsibilityItems">
+            <span class="summary-card__responsibility-marker" aria-hidden="true"></span>
+            <span class="summary-card__responsibility-text">{{ item }}</span>
+            <button
+              class="summary-card__remove"
+              type="button"
+              aria-label="Remover item"
+              title="Remover item"
+              (click)="removeResponsibility(item)"
+            >
+              <span class="summary-card__remove-icon material-symbols-rounded" aria-hidden="true">delete</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </aside>
 </div>
