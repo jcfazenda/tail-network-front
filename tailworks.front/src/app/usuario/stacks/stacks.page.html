@@ -68,6 +68,15 @@
 
     <div class="candidate-stacks__form-card">
       <div class="candidate-stacks__toolbar">
+        <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
+          <app-alcance-radar
+            title="Seu alcance no Ecossistema."
+            [score]="radarPreviewScore"
+            [showGaugeLabel]="false"
+            [items]="radarPreviewItems"
+          />
+        </div>
+
         <button class="candidate-stacks__add-button" type="button" (click)="openCreateStackModal()" aria-label="Adicionar nova stack" title="Adicionar nova stack">
           <span class="material-symbols-rounded" aria-hidden="true">add</span>
         </button>
@@ -76,6 +85,8 @@
       <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
 
       <div class="candidate-stacks__stack-box">
+        <p>Adicione outras tecnologias (3 a 10 termos).</p>
+
         <div class="candidate-stacks__stack-list">
           <button
             *ngFor="let stack of stacks; let index = index"
@@ -99,9 +110,11 @@
             </div>
           </button>
         </div>
-
-        <p>Adicione outras tecnologias (3 a 10 termos).</p>
       </div>
+
+      <p class="candidate-stacks__helper">
+        Mova os percentuais para ver sua aderência e alcance no Ecossistema.
+      </p>
     </div>
 
     <div class="candidate-stacks__footer">

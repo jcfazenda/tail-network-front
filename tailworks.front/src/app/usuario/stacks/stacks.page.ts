@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 
 type RegistrationStep = {
   label: string;
@@ -30,7 +31,7 @@ type CandidateBasicDraft = {
 @Component({
   standalone: true,
   selector: 'app-stacks-page',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, AlcanceRadarComponent],
   templateUrl: './stacks.page.html',
   styleUrls: ['./stacks.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,6 +51,12 @@ export class StacksPage implements OnInit {
   ];
 
   readonly maxStacks = 10;
+  readonly radarPreviewScore = 89;
+  readonly radarPreviewItems: RadarLegendItem[] = [
+    { label: 'Alta compatibilidade', tone: 'high', percent: 76 },
+    { label: 'Media de Compatibilidade', tone: 'medium', detail: '(60-85%)' },
+    { label: 'Potenciais', tone: 'potential', count: 97 },
+  ];
 
   stackError = '';
   stacks: StackChip[] = [];
