@@ -6,6 +6,10 @@
   overflow-x: hidden;
 }
 
+.shell--plain{
+  display: block;
+}
+
 .shell__main{
   min-width: 0;
   display: grid;
@@ -16,4 +20,10 @@
 .shell__content{
   padding: 50px 44px 40px;
   min-height: 0;
+}
+
+.shell__content--plain{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-top: 72px;
 }

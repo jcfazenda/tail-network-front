@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
 
@@ -12,4 +12,10 @@ import { TopbarComponent } from '../topbar/topbar.component';
   styleUrls: ['./app-shell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppShellComponent {}
+export class AppShellComponent {
+  private readonly router = inject(Router);
+
+  get isHomeEntry(): boolean {
+    return this.router.url === '/home' || this.router.url === '/login';
+  }
+}

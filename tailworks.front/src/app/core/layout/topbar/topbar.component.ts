@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 
 @Component({
@@ -13,6 +13,15 @@ import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 })
 export class TopbarComponent {
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly router = inject(Router);
+
+  get isSelectionMode(): boolean {
+    return this.router.url === '/home' || this.router.url === '/login';
+  }
+
+  get isCandidateMode(): boolean {
+    return this.router.url.startsWith('/usuario');
+  }
 
   clearPublishedJobsForTesting(): void {
     this.vagasMockService.clearJobs();

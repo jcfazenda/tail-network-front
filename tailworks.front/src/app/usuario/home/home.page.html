@@ -1,0 +1,36 @@
+<section class="candidate-home">
+  <div class="candidate-home__hero">
+    <div class="candidate-home__copy">
+      <span class="candidate-home__eyebrow">Ecossistema</span>
+      <h1>Seu proximo movimento comeca aqui.</h1>
+      <p>
+        Explore vagas, acompanhe oportunidades e centralize sua jornada profissional em um unico lugar.
+      </p>
+
+      <a *ngIf="hasRecruiterAccess" class="candidate-home__switch" routerLink="/vagas">
+        <span class="material-symbols-rounded" aria-hidden="true">switch_account</span>
+        <span>Entrar como Recruiter</span>
+      </a>
+    </div>
+
+    <div class="candidate-home__spotlight">
+      <span class="candidate-home__spotlight-kicker">Radar ativo</span>
+      <strong>12 vagas com alta compatibilidade</strong>
+      <p>Seu perfil ja esta pronto para aparecer nas melhores oportunidades.</p>
+    </div>
+  </div>
+
+  <div class="candidate-home__grid">
+    <article class="candidate-home__card">
+      <span class="candidate-home__card-kicker">Acompanhamento</span>
+      <h2>Visualize o andamento das suas candidaturas.</h2>
+      <p>Quando avancarmos no fluxo do candidato, essa area vira a base da experiencia.</p>
+    </article>
+
+    <article class="candidate-home__card candidate-home__card--accent">
+      <span class="candidate-home__card-kicker">Preparacao</span>
+      <h2>Seu perfil e documentos vao aparecer aqui.</h2>
+      <p>Deixei a Home pronta como ponto de entrada do modo candidato.</p>
+    </article>
+  </div>
+</section>

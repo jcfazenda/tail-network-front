@@ -1,10 +1,16 @@
-<div class="shell">
-  <app-sidebar></app-sidebar>
+<div class="shell" [class.shell--plain]="isHomeEntry">
+  <ng-container *ngIf="!isHomeEntry">
+    <app-sidebar></app-sidebar>
 
-  <div class="shell__main">
-    <app-topbar></app-topbar>
-    <section class="shell__content">
-      <router-outlet />
-    </section>
-  </div>
+    <div class="shell__main">
+      <app-topbar></app-topbar>
+      <section class="shell__content">
+        <router-outlet />
+      </section>
+    </div>
+  </ng-container>
+
+  <section *ngIf="isHomeEntry" class="shell__content shell__content--plain">
+    <router-outlet />
+  </section>
 </div>

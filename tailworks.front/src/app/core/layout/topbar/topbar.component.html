@@ -1,16 +1,26 @@
 <header class="topbar">
-  <div class="topbar__primary">
+  <div class="topbar__primary" *ngIf="!isSelectionMode; else selectionTopbar">
     <div class="search">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
-      <input type="search" placeholder="Buscar" aria-label="Buscar talentos ou vagas" />
+      <input
+        type="search"
+        [placeholder]="isCandidateMode ? 'Buscar vagas' : 'Buscar'"
+        [attr.aria-label]="isCandidateMode ? 'Buscar vagas' : 'Buscar talentos ou vagas'"
+      />
     </div>
 
-    <a class="topbar__cta" routerLink="/vagas/cadastro" aria-label="Abrir vaga">
+    <a *ngIf="!isCandidateMode" class="topbar__cta" routerLink="/vagas/cadastro" aria-label="Abrir vaga">
       <span class="material-symbols-rounded" aria-hidden="true">add</span>
       <span>Abrir Vaga</span>
     </a>
 
-    <button class="topbar__cta topbar__cta--clear" type="button" (click)="clearPublishedJobsForTesting()" aria-label="Limpar testes">
+    <button
+      *ngIf="!isCandidateMode"
+      class="topbar__cta topbar__cta--clear"
+      type="button"
+      (click)="clearPublishedJobsForTesting()"
+      aria-label="Limpar testes"
+    >
       <span class="material-symbols-rounded" aria-hidden="true">ink_eraser</span>
       <span>Limpar Testes</span>
     </button>
@@ -23,3 +33,12 @@
     <div class="avatar" aria-label="Perfil"></div>
   </div>
 </header>
+
+<ng-template #selectionTopbar>
+  <div class="topbar__primary">
+    <div class="search">
+      <span class="material-symbols-rounded" aria-hidden="true">door_open</span>
+      <input type="search" value="Escolha seu acesso" aria-label="Escolha seu acesso" readonly />
+    </div>
+  </div>
+</ng-template>
