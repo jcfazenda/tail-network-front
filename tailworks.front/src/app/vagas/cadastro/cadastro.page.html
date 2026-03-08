@@ -2,7 +2,7 @@
   <div class="job-create">
     <section class="job-create__hero">
       <div class="job-create__hero-copy">
-        <h1 class="job-create__title">Criar Nova Vaga</h1>
+        <h1 class="job-create__title">{{ isEditingJob ? 'Editar Vaga' : 'Criar Nova Vaga' }}</h1>
         <p class="job-create__description">
           Veja o card da vaga sendo montado conforme o preenchimento
         </p>
@@ -10,8 +10,18 @@
 
       <div class="job-create__hero-actions">
         <div class="job-create__hero-buttons">
+          <button
+            *ngIf="isEditingJob"
+            class="job-create__hero-button job-create__hero-button--ghost"
+            type="button"
+            (click)="openJobActionsModal()"
+          >
+            {{ editingJobStatusLabel }}
+          </button>
           <button class="job-create__hero-button job-create__hero-button--ghost" type="button" (click)="saveAsDraft()">Salvar Rascunho</button>
-          <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">Publicar Vaga</button>
+          <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">
+            {{ isEditingJob ? 'Salvar' : 'Publicar Vaga' }}
+          </button>
         </div>
       </div>
     </section>
@@ -44,7 +54,7 @@
 
         <div class="job-preview-banner__footer">
           <div class="job-preview-banner__fit">
-            <span class="job-preview-banner__fit-label">Aderencia</span>
+            <span class="job-preview-banner__fit-label">Compatíveis</span>
             <span class="job-preview-banner__fit-bar" aria-hidden="true">
               <span class="job-preview-banner__fit-bar-fill" [style.width.%]="previewAderencia"></span>
             </span>
@@ -812,6 +822,70 @@
       </div>
     </section>
   </aside>
+</div>
+
+<div
+  class="summary-modal-backdrop"
+  *ngIf="isJobActionsModalOpen"
+  (click)="closeJobActionsModal()"
+>
+  <section class="summary-modal summary-modal--job-actions" (click)="$event.stopPropagation()">
+    <div class="summary-modal__header">
+      <h3 class="summary-modal__title">Ações da vaga</h3>
+      <button class="summary-modal__close" type="button" (click)="closeJobActionsModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="summary-modal__body">
+      <div class="summary-modal__field">
+        <span class="summary-modal__label">Status da vaga</span>
+        <div class="summary-modal__status-options">
+          <label
+            *ngFor="let item of editableJobStatuses"
+            class="option-card option-card--checkbox summary-modal__status-option"
+            [class.option-card--active]="item.value === jobActionsStatusDraft"
+          >
+            <input
+              class="option-card__input"
+              type="radio"
+              name="jobActionStatus"
+              [checked]="item.value === jobActionsStatusDraft"
+              (change)="selectEditingJobStatus(item.value)"
+            />
+            <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+            <span class="option-card__label">{{ item.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <label class="summary-modal__field">
+        <span class="summary-modal__label">Motivo</span>
+        <textarea
+          class="summary-modal__textarea summary-modal__textarea--summary"
+          [(ngModel)]="jobActionsStatusReasonDraft"
+          rows="4"
+          placeholder="Descreva o motivo da alteração de status"
+        ></textarea>
+      </label>
+
+      <div class="summary-modal__actions">
+        <button
+          class="summary-modal__button summary-modal__button--danger"
+          type="button"
+          (click)="deleteEditingJob()"
+        >
+          Excluir vaga
+        </button>
+        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeJobActionsModal()">
+          Cancelar
+        </button>
+        <button class="summary-modal__button summary-modal__button--primary" type="button" (click)="saveEditedJobStatus()">
+          Salvar status
+        </button>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div

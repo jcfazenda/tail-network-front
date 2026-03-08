@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { JobBenefitItem, SaveMockJobCommand, MockJobCandidate, MockJobDraft, MockJobRecord } from './vagas.models';
-import { VAGAS_MOCK_SEED } from './vagas-mock.seed';
+import { JobBenefitItem, SaveMockJobCommand, MockJobRecord } from './vagas.models';
 
 @Injectable({ providedIn: 'root' })
 export class VagasMockService {
-  private readonly storageKey = 'tailworks.front.mock-vagas';
+  private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
   private cache: MockJobRecord[] | null = null;
 
   getJobs(): MockJobRecord[] {
@@ -23,6 +22,44 @@ export class VagasMockService {
     return record;
   }
 
+  updateJob(id: string, command: SaveMockJobCommand): MockJobRecord {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === id);
+
+    if (!existing) {
+      return this.saveJob(command);
+    }
+
+    const record = this.buildRecord(command, existing);
+    this.cache = [record, ...jobs.filter((job) => job.id !== id)];
+    this.persist();
+    return record;
+  }
+
+  publishOnlyJob(command: SaveMockJobCommand): MockJobRecord {
+    const record = this.buildRecord(command);
+    this.cache = [record];
+    this.persist();
+    return record;
+  }
+
+  clearJobs(): void {
+    this.cache = [];
+
+    const storage = this.getStorage();
+    if (!storage) {
+      return;
+    }
+
+    storage.removeItem(this.storageKey);
+  }
+
+  deleteJob(id: string): void {
+    const jobs = this.loadJobs();
+    this.cache = jobs.filter((job) => job.id !== id);
+    this.persist();
+  }
+
   private loadJobs(): MockJobRecord[] {
     if (this.cache) {
       return this.cache;
@@ -30,21 +67,21 @@ export class VagasMockService {
 
     const storage = this.getStorage();
     if (!storage) {
-      this.cache = [...VAGAS_MOCK_SEED];
+      this.cache = [];
       return this.cache;
     }
 
     const raw = storage.getItem(this.storageKey);
     if (!raw) {
-      this.cache = this.normalizeJobs(VAGAS_MOCK_SEED);
+      this.cache = [];
       return this.cache;
     }
 
     try {
       const parsed = JSON.parse(raw) as MockJobRecord[];
-      this.cache = Array.isArray(parsed) && parsed.length ? this.normalizeJobs(parsed) : this.normalizeJobs(VAGAS_MOCK_SEED);
+      this.cache = Array.isArray(parsed) && parsed.length ? this.normalizeJobs(parsed) : [];
     } catch {
-      this.cache = this.normalizeJobs(VAGAS_MOCK_SEED);
+      this.cache = [];
     }
 
     return this.cache;
@@ -67,14 +104,14 @@ export class VagasMockService {
     return window.localStorage;
   }
 
-  private buildRecord(command: SaveMockJobCommand): MockJobRecord {
+  private buildRecord(command: SaveMockJobCommand, existing?: MockJobRecord): MockJobRecord {
     const now = new Date().toISOString();
     const talents = Math.max(8, command.previewAvatarExtraCount + command.previewAvatars.length);
     const radarCount = Math.max(4, Math.round(talents * 0.72));
     const match = Math.min(99, Math.max(42, Math.round(command.previewAderencia)));
 
     return {
-      id: this.createId(),
+      id: existing?.id ?? this.createId(),
       priority: command.draft.location.toUpperCase(),
       match,
       talents,
@@ -84,8 +121,8 @@ export class VagasMockService {
       avatars: [...command.previewAvatars],
       extraCount: command.previewAvatarExtraCount,
       status: command.status,
-      candidates: this.buildCandidates(command.draft, match),
-      createdAt: now,
+      candidates: existing?.candidates.map((candidate) => ({ ...candidate })) ?? [],
+      createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       ...command.draft,
       benefits: command.draft.benefits.map((item) => ({ ...item })),
@@ -127,78 +164,6 @@ export class VagasMockService {
 
       return { title: 'Benefício' };
     });
-  }
-
-  private buildCandidates(draft: MockJobDraft, match: number): MockJobCandidate[] {
-    const avatar = '/assets/avatars/avatar-rafael.png';
-    const primaryStack = draft.techStack[0]?.name || draft.title;
-    const roleBase = this.resolveRoleBase(draft.title, primaryStack);
-
-    return [
-      {
-        name: 'Amanda Costa',
-        role: roleBase,
-        match: Math.min(98, match + 3),
-        minutesAgo: 6,
-        status: 'online',
-        avatar,
-        stage: 'aguardando',
-        availabilityLabel: 'Disponibilidade imediata',
-      },
-      {
-        name: 'Bruno Martins',
-        role: roleBase,
-        match: Math.max(70, match - 2),
-        minutesAgo: 18,
-        status: 'offline',
-        avatar,
-        stage: 'processo',
-      },
-      {
-        name: 'Carla Nogueira',
-        role: roleBase,
-        match: Math.max(68, match - 5),
-        minutesAgo: 32,
-        status: 'online',
-        avatar,
-        stage: 'processo',
-        radarOnly: true,
-      },
-      {
-        name: 'Diego Prado',
-        role: roleBase,
-        match: Math.max(64, match - 8),
-        minutesAgo: 47,
-        status: 'offline',
-        avatar,
-        stage: 'tecnica',
-      },
-    ];
-  }
-
-  private resolveRoleBase(title: string, primaryStack: string): string {
-    const normalized = title.toLowerCase();
-    if (normalized.includes('designer')) {
-      return 'Product Designer';
-    }
-
-    if (normalized.includes('devops')) {
-      return 'DevOps Engineer';
-    }
-
-    if (normalized.includes('analyst') || normalized.includes('analista')) {
-      return 'Data Analyst';
-    }
-
-    if (normalized.includes('qa')) {
-      return 'QA Engineer';
-    }
-
-    if (normalized.includes('manager')) {
-      return 'Product Manager';
-    }
-
-    return primaryStack;
   }
 
   private createId(): string {

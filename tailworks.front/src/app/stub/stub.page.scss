@@ -331,6 +331,10 @@ p {
 }
 
 .job-card {
+  position: relative;
+}
+
+.job-card__surface{
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.92fr);
   gap: 14px;
@@ -343,6 +347,42 @@ p {
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
   cursor: pointer;
   text-align: left;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.job-card__edit{
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 246, 249, 0.92));
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+}
+
+.job-card__edit .material-symbols-rounded{
+  font-size: 16px;
+}
+
+.job-card__edit:hover{
+  border-color: rgba(242, 169, 0, 0.22);
+  color: #7b5600;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(250, 239, 206, 0.98));
+}
+
+.job-card__surface{
+  padding-top: 54px;
 }
 
 .job-card__main{
@@ -513,7 +553,7 @@ p {
 }
 
 @media (max-width: 1180px) {
-  .job-card{
+  .job-card__surface{
     grid-template-columns: 1fr;
   }
 
@@ -523,8 +563,9 @@ p {
 }
 
 @media (max-width: 760px) {
-  .job-card{
+  .job-card__surface{
     padding: 14px;
+    padding-top: 52px;
     gap: 16px;
   }
 
@@ -539,6 +580,11 @@ p {
 
   .job-card__fit{
     width: 100%;
+  }
+
+  .job-card__edit{
+    top: 12px;
+    right: 12px;
   }
 }
 

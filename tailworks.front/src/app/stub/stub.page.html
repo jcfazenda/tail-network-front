@@ -76,62 +76,70 @@
           <div class="tabs">
             <button class="tab" [class.active]="activeTab==='ativas'" (click)="setTab('ativas')">Ativas</button>
             <button class="tab" [class.active]="activeTab==='rascunhos'" (click)="setTab('rascunhos')">Rascunhos</button>
+            <button class="tab" [class.active]="activeTab==='pausadas'" (click)="setTab('pausadas')">Pausadas</button>
             <button class="tab" [class.active]="activeTab==='encerradas'" (click)="setTab('encerradas')">Encerradas</button>
           </div>
         </div>
 
         <ng-container *ngIf="filteredJobs.length; else emptyState">
           <div class="jobs__grid">
-            <button class="job-card" type="button" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
-              <div class="job-card__main">
-                <div class="job-card__title-row">
-                  <h3 class="job-card__title">{{ job.title }}</h3>
-                  <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
-                </div>
+            <article class="job-card" *ngFor="let job of filteredJobs">
+              <button class="job-card__edit" type="button" (click)="editJob(job, $event)">
+                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                <span>Editar</span>
+              </button>
 
-                <div class="job-card__meta">
-                  <span>{{ job.company }}</span>
-                  <span class="job-card__meta-dot" aria-hidden="true"></span>
-                  <span>{{ job.location }}</span>
-                </div>
-
-                <div class="job-card__offer">
-                  <span>{{ jobCardOfferLine(job) }}</span>
-                </div>
-
-                <div class="job-card__footer">
-                  <div class="job-card__fit">
-                    <span class="job-card__fit-label">Aderencia</span>
-                    <span class="job-card__fit-bar" aria-hidden="true">
-                      <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
-                    </span>
-                    <span class="job-card__fit-value">{{ job.match }}%</span>
+              <button class="job-card__surface" type="button" (click)="openPanel(job)">
+                <div class="job-card__main">
+                  <div class="job-card__title-row">
+                    <h3 class="job-card__title">{{ job.title }}</h3>
+                    <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
                   </div>
 
-                  <div class="job-card__avatars">
-                    <div class="job-card__avatars-stack">
-                      <ng-container *ngFor="let avatar of job.avatars; let i = index">
-                        <span
-                          class="job-card__avatar"
-                          [style.zIndex]="i + 1"
-                          [style.marginLeft.px]="i === 0 ? 0 : -12"
-                          [style.backgroundImage]="'url(' + avatar + ')'"
-                          aria-hidden="true"
-                        ></span>
-                      </ng-container>
-                      <span class="job-card__avatar job-card__avatar--extra">+{{ job.extraCount }}</span>
+                  <div class="job-card__meta">
+                    <span>{{ job.company }}</span>
+                    <span class="job-card__meta-dot" aria-hidden="true"></span>
+                    <span>{{ job.location }}</span>
+                  </div>
+
+                  <div class="job-card__offer">
+                    <span>{{ jobCardOfferLine(job) }}</span>
+                  </div>
+
+                  <div class="job-card__footer">
+                    <div class="job-card__fit">
+                      <span class="job-card__fit-label">Compatíveis</span>
+                      <span class="job-card__fit-bar" aria-hidden="true">
+                        <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
+                      </span>
+                      <span class="job-card__fit-value">{{ job.match }}%</span>
+                    </div>
+
+                    <div class="job-card__avatars">
+                      <div class="job-card__avatars-stack">
+                        <ng-container *ngFor="let avatar of job.avatars; let i = index">
+                          <span
+                            class="job-card__avatar"
+                            [style.zIndex]="i + 1"
+                            [style.marginLeft.px]="i === 0 ? 0 : -12"
+                            [style.backgroundImage]="'url(' + avatar + ')'"
+                            aria-hidden="true"
+                          ></span>
+                        </ng-container>
+                        <span class="job-card__avatar job-card__avatar--extra">+{{ job.extraCount }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <app-alcance-radar
-                class="job-card__side"
-                [score]="job.match"
-                [showGaugeLabel]="false"
-                [items]="jobRadarItems(job)"
-              ></app-alcance-radar>
-            </button>
+                <app-alcance-radar
+                  class="job-card__side"
+                  [score]="job.match"
+                  [showGaugeLabel]="false"
+                  [items]="jobRadarItems(job)"
+                ></app-alcance-radar>
+              </button>
+            </article>
           </div>
         </ng-container>
 

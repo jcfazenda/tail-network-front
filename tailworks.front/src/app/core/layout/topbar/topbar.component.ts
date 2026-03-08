@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 
 @Component({
   standalone: true,
@@ -10,4 +11,10 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopbarComponent {}
+export class TopbarComponent {
+  private readonly vagasMockService = inject(VagasMockService);
+
+  clearPublishedJobsForTesting(): void {
+    this.vagasMockService.clearJobs();
+  }
+}

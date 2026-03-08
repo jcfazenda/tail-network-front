@@ -1,4 +1,4 @@
-export type JobStatus = 'ativas' | 'rascunhos' | 'encerradas';
+export type JobStatus = 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas';
 export type WorkModel = 'Presencial' | 'Hibrido' | 'Remoto';
 export type ContractType = 'CLT' | 'PJ' | 'Freelancer';
 export type CandidateStage =
@@ -32,6 +32,7 @@ export interface VagaPanelDraft {
 
 export interface MockJobDraft extends VagaPanelDraft {
   contractType: ContractType;
+  statusReason?: string;
   salaryRange?: string;
   showSalaryRangeInCard?: boolean;
   allowCandidateSalarySuggestion?: boolean;

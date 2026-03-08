@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
 import { JobStatus, MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
@@ -24,6 +24,7 @@ interface RadarCategory {
 })
 export class StubPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly vagasMockService = inject(VagasMockService);
 
   readonly radarTotal = 87;
@@ -76,6 +77,13 @@ export class StubPage {
     this.selectedJobPanel = asChatJob;
     this.selectedChatJob = null;
     this.chatStartIndex = 0;
+  }
+
+  editJob(job: MockJobRecord, event: Event): void {
+    event.stopPropagation();
+    void this.router.navigate(['/vagas/cadastro'], {
+      queryParams: { edit: job.id },
+    });
   }
 
   openCandidate(job: MockJobRecord, index: number) {
@@ -175,7 +183,7 @@ export class StubPage {
 
   private resolveInitialTab(): JobStatus {
     const queryTab = this.route.snapshot.queryParamMap.get('tab');
-    if (queryTab === 'ativas' || queryTab === 'rascunhos' || queryTab === 'encerradas') {
+    if (queryTab === 'ativas' || queryTab === 'rascunhos' || queryTab === 'pausadas' || queryTab === 'encerradas') {
       return queryTab;
     }
 

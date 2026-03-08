@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
-import { ContractType, JobBenefitItem, MockJobDraft, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
+import { ContractType, JobBenefitItem, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
 import { MatStepperModule } from '@angular/material/stepper';
 
@@ -55,12 +55,16 @@ type ConfettiPiece = {
 export class CadastroPage {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
   private summarySectionCounter = 3;
   private readonly brlNumberFormatter = new Intl.NumberFormat('pt-BR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+  private editingJobId: string | null = null;
+  editingJobStatus: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
+  editingJobStatusReason = '';
 
   readonly configurationProgress = 60;
   readonly previewAderencia = 89;
@@ -109,6 +113,12 @@ export class CadastroPage {
   ];
   readonly workModels: WorkModel[] = ['Remoto', 'Hibrido', 'Presencial'];
   readonly contractTypes: ContractType[] = ['CLT', 'PJ', 'Freelancer'];
+  readonly editableJobStatuses: Array<{ value: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas'; label: string }> = [
+    { value: 'ativas', label: 'Ativa' },
+    { value: 'rascunhos', label: 'Rascunho' },
+    { value: 'pausadas', label: 'Pausada' },
+    { value: 'encerradas', label: 'Encerrada' },
+  ];
   readonly initialTechStackItems: TechStackItem[] = [
     { name: '.NET / C#', match: 80 },
     { name: 'Entity Framework', match: 65 },
@@ -122,6 +132,10 @@ export class CadastroPage {
     'Teste Unitário e Integrado',
     'Viajar a Trabalho',
   ];
+
+  constructor() {
+    this.loadEditingJobIfPresent();
+  }
   readonly companyProfiles: Record<string, CompanySummaryProfile> = {
     'Banco Itaú': {
       name: 'Banco Itaú',
@@ -474,7 +488,10 @@ export class CadastroPage {
   isTechStackModalOpen = false;
   editingTechStackIndex: number | null = null;
   isResponsibilityModalOpen = false;
+  isJobActionsModalOpen = false;
   editingResponsibilitySectionId: string | null = null;
+  jobActionsStatusDraft: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
+  jobActionsStatusReasonDraft = '';
   responsibilityDraftPageId: SummaryPageId = 'front';
   benefitDraftTitle = '';
   benefitDraftSideLabel = '';
@@ -491,6 +508,14 @@ export class CadastroPage {
 
   get previewContractType(): ContractType {
     return this.contractType;
+  }
+
+  get isEditingJob(): boolean {
+    return this.editingJobId !== null;
+  }
+
+  get editingJobStatusLabel(): string {
+    return this.editableJobStatuses.find((item) => item.value === this.editingJobStatus)?.label ?? 'Ativa';
   }
 
   get previewCardOfferLine(): string {
@@ -1043,13 +1068,7 @@ export class CadastroPage {
   }
 
   saveAsDraft(): void {
-    const savedJob = this.vagasMockService.saveJob({
-      draft: this.buildDraftPayload(),
-      status: 'rascunhos',
-      previewAderencia: this.previewAderencia,
-      previewAvatars: this.previewAvatars,
-      previewAvatarExtraCount: this.previewAvatarExtraCount,
-    });
+    const savedJob = this.persistJob('rascunhos');
 
     void this.router.navigate(['/vagas'], {
       queryParams: { tab: 'rascunhos', created: savedJob.id },
@@ -1057,23 +1076,126 @@ export class CadastroPage {
   }
 
   publishJob(): void {
-    const savedJob = this.vagasMockService.saveJob({
+    const savedJob = this.persistJob(this.isEditingJob ? this.editingJobStatus : 'ativas');
+
+    void this.router.navigate(['/vagas'], {
+      queryParams: { tab: savedJob.status, created: savedJob.id },
+    });
+  }
+
+  openJobActionsModal(): void {
+    if (!this.isEditingJob) {
+      return;
+    }
+
+    this.jobActionsStatusDraft = this.editingJobStatus;
+    this.jobActionsStatusReasonDraft = this.editingJobStatusReason;
+    this.isJobActionsModalOpen = true;
+  }
+
+  closeJobActionsModal(): void {
+    this.isJobActionsModalOpen = false;
+  }
+
+  selectEditingJobStatus(status: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas'): void {
+    this.jobActionsStatusDraft = status;
+  }
+
+  saveEditedJobStatus(): void {
+    if (!this.editingJobId) {
+      return;
+    }
+
+    this.editingJobStatus = this.jobActionsStatusDraft;
+    this.editingJobStatusReason = this.jobActionsStatusReasonDraft.trim();
+
+    const savedJob = this.persistJob(this.editingJobStatus);
+    this.closeJobActionsModal();
+
+    void this.router.navigate(['/vagas'], {
+      queryParams: { tab: savedJob.status, updated: savedJob.id },
+    });
+  }
+
+  deleteEditingJob(): void {
+    if (!this.editingJobId) {
+      return;
+    }
+
+    const confirmed = window.confirm('Deseja realmente excluir esta vaga?');
+    if (!confirmed) {
+      return;
+    }
+
+    const currentStatus = this.editingJobStatus;
+    this.vagasMockService.deleteJob(this.editingJobId);
+    this.closeJobActionsModal();
+
+    void this.router.navigate(['/vagas'], {
+      queryParams: { tab: currentStatus },
+    });
+  }
+
+  private persistJob(status: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas') {
+    const command = {
       draft: this.buildDraftPayload(),
-      status: 'ativas',
+      status,
       previewAderencia: this.previewAderencia,
       previewAvatars: this.previewAvatars,
       previewAvatarExtraCount: this.previewAvatarExtraCount,
+    } satisfies SaveMockJobCommand;
+
+    if (!this.editingJobId) {
+      return this.vagasMockService.saveJob(command);
+    }
+
+    this.editingJobStatus = status;
+    return this.vagasMockService.updateJob(this.editingJobId, command);
+  }
+
+  private loadEditingJobIfPresent(): void {
+    const editingId = this.route.snapshot.queryParamMap.get('edit');
+    if (!editingId) {
+      return;
+    }
+
+    const job = this.vagasMockService.getJobById(editingId);
+    if (!job) {
+      return;
+    }
+
+    this.hydrateFromJob(job);
+  }
+
+  private hydrateFromJob(job: MockJobRecord): void {
+    this.editingJobId = job.id;
+    this.editingJobStatus = job.status;
+    this.editingJobStatusReason = job.statusReason?.trim() || '';
+
+    Object.assign(this.jobDraft, {
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      workModel: job.workModel,
+      seniority: job.seniority,
+      summary: job.summary,
     });
 
-    void this.router.navigate(['/vagas'], {
-      queryParams: { tab: 'ativas', created: savedJob.id },
-    });
+    this.contractType = job.contractType;
+    this.salaryRange = job.salaryRange ?? '';
+    this.showSalaryRangeInCard = job.showSalaryRangeInCard ?? true;
+    this.allowCandidateSalarySuggestion = job.allowCandidateSalarySuggestion ?? true;
+    this.hybridOnsiteDaysDescription = job.hybridOnsiteDaysDescription?.trim() || '2 dias presenciais por semana';
+    this.selectedBenefits = job.benefits.map((item) => ({ ...item }));
+    this.selectedTechStackItems = job.techStack.map((item) => ({ ...item }));
+    this.selectedRefinementOptions = [...job.differentials];
   }
 
   private buildDraftPayload(): MockJobDraft {
     return {
       ...this.jobDraft,
       contractType: this.contractType,
+      statusReason: this.editingJobStatusReason.trim() || undefined,
       salaryRange: this.salaryRange.trim(),
       showSalaryRangeInCard: this.showSalaryRangeInCard,
       allowCandidateSalarySuggestion: this.allowCandidateSalarySuggestion,

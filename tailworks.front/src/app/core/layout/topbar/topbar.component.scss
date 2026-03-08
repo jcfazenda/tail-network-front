@@ -72,6 +72,12 @@
   font-size: 20px;
 }
 
+.topbar__cta--clear{
+  background: linear-gradient(135deg, #df8d17, #bf6f00);
+  color: #fff9ef;
+  box-shadow: 0 12px 24px rgba(191, 111, 0, 0.22);
+}
+
 .actions{
   display: inline-flex;
   align-items: center;

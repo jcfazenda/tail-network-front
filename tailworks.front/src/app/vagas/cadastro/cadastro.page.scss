@@ -3179,6 +3179,20 @@
   box-shadow: none;
 }
 
+.summary-modal__status-options{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.summary-modal__status-option{
+  min-height: 46px;
+}
+
+.summary-modal__status-option .option-card__label{
+  font-size: 12px;
+}
+
 .job-info-card__grid{
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
