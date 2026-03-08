@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -114,6 +114,9 @@ export class ExperienciaPage implements OnInit {
   experienceModalError = '';
   editingExperienceIndex: number | null = null;
   expandedResponsibilityIndex: number | null = null;
+  editingResponsibilityIndex: number | null = null;
+  responsibilityDraft = '';
+  @ViewChild('responsibilityInlineEditor') private responsibilityInlineEditor?: ElementRef<HTMLDivElement>;
 
   experienceDraft: ExperienceEntry = this.createEmptyExperienceDraft();
 
@@ -315,8 +318,16 @@ export class ExperienciaPage implements OnInit {
 
     if (this.expandedResponsibilityIndex === index) {
       this.expandedResponsibilityIndex = null;
+      this.editingResponsibilityIndex = null;
     } else if (this.expandedResponsibilityIndex !== null && this.expandedResponsibilityIndex > index) {
       this.expandedResponsibilityIndex -= 1;
+    }
+
+    if (this.editingResponsibilityIndex === index) {
+      this.editingResponsibilityIndex = null;
+      this.responsibilityDraft = '';
+    } else if (this.editingResponsibilityIndex !== null && this.editingResponsibilityIndex > index) {
+      this.editingResponsibilityIndex -= 1;
     }
 
     this.persistExperiences();
@@ -334,11 +345,82 @@ export class ExperienciaPage implements OnInit {
   toggleResponsibilities(index: number): void {
     const current = this.experiences[index];
 
-    if (!current?.responsibilities.trim()) {
+    if (!current) {
       return;
     }
 
-    this.expandedResponsibilityIndex = this.expandedResponsibilityIndex === index ? null : index;
+    if (this.expandedResponsibilityIndex === index && this.editingResponsibilityIndex === index) {
+      this.expandedResponsibilityIndex = null;
+      this.editingResponsibilityIndex = null;
+      this.responsibilityDraft = '';
+      return;
+    }
+
+    this.expandedResponsibilityIndex = index;
+    this.editingResponsibilityIndex = index;
+    this.responsibilityDraft = current.responsibilities;
+    this.scheduleResponsibilityEditorSync();
+  }
+
+  saveResponsibilitiesInline(index: number): void {
+    const current = this.experiences[index];
+
+    if (!current) {
+      return;
+    }
+
+    const nextResponsibilities = this.responsibilityDraft.trim();
+    const hasResponsibilities = this.hasRichContent(nextResponsibilities);
+
+    this.experiences = this.experiences.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            responsibilities: nextResponsibilities,
+          }
+        : item,
+    );
+
+    this.persistExperiences();
+    this.expandedResponsibilityIndex = hasResponsibilities ? index : null;
+    this.editingResponsibilityIndex = null;
+    this.responsibilityDraft = '';
+  }
+
+  cancelResponsibilitiesInline(index: number): void {
+    const current = this.experiences[index];
+    this.responsibilityDraft = '';
+    this.editingResponsibilityIndex = null;
+    this.expandedResponsibilityIndex = this.hasRichContent(current?.responsibilities ?? '') ? index : null;
+  }
+
+  onResponsibilityInput(event: Event): void {
+    this.responsibilityDraft = (event.target as HTMLDivElement).innerHTML;
+  }
+
+  applyResponsibilityFormat(command: 'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList'): void {
+    const editor = this.responsibilityInlineEditor?.nativeElement;
+
+    if (!editor) {
+      return;
+    }
+
+    editor.focus();
+    document.execCommand(command, false);
+    this.responsibilityDraft = editor.innerHTML;
+  }
+
+  clearResponsibilityFormat(): void {
+    const editor = this.responsibilityInlineEditor?.nativeElement;
+
+    if (!editor) {
+      return;
+    }
+
+    editor.focus();
+    document.execCommand('removeFormat', false);
+    document.execCommand('unlink', false);
+    this.responsibilityDraft = editor.innerHTML;
   }
 
   updateExperienceActuation(index: number, nextValue: number | string): void {
@@ -431,6 +513,18 @@ export class ExperienciaPage implements OnInit {
 
   private persistExperiences(): void {
     localStorage.setItem(ExperienciaPage.storageKey, JSON.stringify(this.experiences));
+  }
+
+  private scheduleResponsibilityEditorSync(): void {
+    setTimeout(() => {
+      const editor = this.responsibilityInlineEditor?.nativeElement;
+
+      if (!editor) {
+        return;
+      }
+
+      editor.innerHTML = this.responsibilityDraft || '';
+    });
   }
 
   private restoreIntroLogo(): void {
@@ -572,5 +666,24 @@ export class ExperienciaPage implements OnInit {
     }
 
     return [trimmed, ...options];
+  }
+
+  private hasRichContent(value: string): boolean {
+    return this.getRichContentPlainText(value).length > 0;
+  }
+
+  private getRichContentPlainText(value: string): string {
+    if (!value.trim()) {
+      return '';
+    }
+
+    return value
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/(p|div|li|ul|ol|h1|h2|h3|h4|h5|h6)>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   }
 }

@@ -151,19 +151,20 @@
 
 .candidate-experience__section-head{
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-columns: 96px minmax(0, 1fr);
   gap: 16px;
   align-items: center;
   position: relative;
+  padding-left: 12px;
   padding-right: 56px;
 }
 
 .candidate-experience__crest{
   display: grid;
   place-items: center;
-  width: 112px;
-  height: 112px;
-  flex: 0 0 112px;
+  width: 96px;
+  height: 96px;
+  flex: 0 0 96px;
   overflow: hidden;
   padding: 0;
   border-radius: 22px;
@@ -601,7 +602,7 @@
 
 .candidate-experience__experience-item-description{
   display: grid;
-  gap: 4px;
+  gap: 10px;
   padding-left: 0;
   padding-top: 6px;
   padding-bottom: 6px;
@@ -613,12 +614,88 @@
   line-height: 1.4;
 }
 
-.candidate-experience__experience-item-description span,
-.candidate-experience__experience-item-description p{
+.candidate-experience__experience-item-description :where(span, p, ul, ol){
   margin: 0;
   color: rgba(15, 23, 42, 0.56);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.candidate-experience__experience-item-description :where(ul, ol){
+  padding-left: 18px;
+}
+
+.candidate-experience__editor{
+  display: grid;
+  gap: 10px;
+}
+
+.candidate-experience__editor-toolbar{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.candidate-experience__editor-tool{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(15, 23, 42, 0.62);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.candidate-experience__editor-tool .material-symbols-rounded{
+  font-size: 18px;
+}
+
+.candidate-experience__editor-surface{
+  min-height: 156px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.65;
+  outline: none;
+  overflow: auto;
+}
+
+.candidate-experience__editor-surface--inline{
+  min-height: 138px;
+}
+
+.candidate-experience__editor-surface:focus{
+  border-color: rgba(242, 169, 0, 0.42);
+  box-shadow: 0 0 0 4px rgba(242, 169, 0, 0.12);
+}
+
+.candidate-experience__editor-surface:empty::before{
+  content: attr(data-placeholder);
+  color: rgba(15, 23, 42, 0.34);
+}
+
+.candidate-experience__editor-surface :where(p, ul, ol){
+  margin: 0 0 8px;
+}
+
+.candidate-experience__editor-surface :where(ul, ol){
+  padding-left: 18px;
+}
+
+.candidate-experience__experience-item-description-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+  flex-wrap: wrap;
 }
 
 .candidate-experience__helper{
