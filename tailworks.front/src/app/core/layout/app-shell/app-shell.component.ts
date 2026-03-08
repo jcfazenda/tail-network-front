@@ -22,4 +22,8 @@ export class AppShellComponent {
   get isCandidateArea(): boolean {
     return this.router.url.startsWith('/usuario');
   }
+
+  get isFormationPage(): boolean {
+    return this.router.url.startsWith('/usuario/dados-cadastrais/formacao');
+  }
 }

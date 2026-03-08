@@ -36,8 +36,13 @@ export const routes: Routes = [
   },
   {
     path: 'usuario/dados-cadastrais/formacao',
-    loadComponent: () => import('./usuario/placeholder/placeholder.page').then((m) => m.PlaceholderPage),
+    loadComponent: () => import('./usuario/formacao/formacao.page').then((m) => m.FormacaoPage),
     data: { title: 'Formação' },
+  },
+  {
+    path: 'usuario/dados-cadastrais/geral',
+    loadComponent: () => import('./usuario/placeholder/placeholder.page').then((m) => m.PlaceholderPage),
+    data: { title: 'Geral' },
   },
   {
     path: 'usuario/minhas-candidaturas',

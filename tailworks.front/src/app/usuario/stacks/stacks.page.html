@@ -15,14 +15,19 @@
       </div>
 
       <div class="candidate-stacks__identity-copy">
-        <strong>{{ displayName }}</strong>
-        <span>{{ displayFormation }}</span>
+        <div class="candidate-stacks__identity-name">
+          <strong>{{ displayName }}</strong>
+          <span
+            class="candidate-stacks__identity-verified material-symbols-rounded"
+            aria-label="Validado no sistema"
+            title="Validado no sistema"
+          >
+            verified
+          </span>
+        </div>
+        <strong class="candidate-stacks__identity-degree">{{ displayGraduation }}</strong>
+        <span>{{ displaySpecialization }}</span>
       </div>
-    </div>
-
-    <div class="candidate-stacks__hero-copy">
-      <h1>Crie seu radar profissional</h1>
-      <p>Candidate-se e receba indicações de vagas compatíveis.</p>
     </div>
   </header>
 

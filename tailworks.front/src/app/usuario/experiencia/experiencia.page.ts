@@ -62,7 +62,8 @@ export class ExperienciaPage implements OnInit {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly logoDraftStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
-  private static readonly radarAvailabilityStorageKey = 'tailworks:candidate-experience-radar-availability:v1';
+  private static readonly ecosystemVisibilityStorageKey = 'tailworks:candidate-experience-ecosystem-visibility:v1';
+  private static readonly candidacyAvailabilityStorageKey = 'tailworks:candidate-experience-candidacy-availability:v1';
 
   private readonly router = inject(Router);
 
@@ -70,8 +71,7 @@ export class ExperienciaPage implements OnInit {
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
     { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia', active: true },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
-    { index: 5, label: 'Geral' },
+    { index: 4, label: 'Geral', route: '/usuario/dados-cadastrais/geral' },
   ];
 
   readonly workModelOptions: ExperienceEntry['workModel'][] = ['Presencial', 'Híbrido', 'Remoto'];
@@ -106,7 +106,8 @@ export class ExperienciaPage implements OnInit {
     educationStatus: 'Concluído',
   };
   formationDraft: FormationCopyDraft = { ...this.formationCopy };
-  isAvailableInRadar = true;
+  isVisibleInEcosystem = true;
+  isAvailableForApplications = true;
 
   experiences: ExperienceEntry[] = [];
   isExperienceModalOpen = false;
@@ -123,11 +124,7 @@ export class ExperienciaPage implements OnInit {
   readonly trackByExperience = (_index: number, experience: ExperienceEntry): string => experience.id;
 
   get displayName(): string {
-    return this.profile.name.trim() || 'Seu nome';
-  }
-
-  get displayFormation(): string {
-    return this.profile.formation.trim() || 'Sua formação';
+    return this.profile.name.trim() || 'Julio Fazenda';
   }
 
   get displayGraduation(): string {
@@ -146,12 +143,6 @@ export class ExperienciaPage implements OnInit {
     return this.formationCopy.graduated
       ? `Formado em ${this.formationCopy.endMonth} ${this.formationCopy.endYear}`
       : 'Cursando';
-  }
-
-  get displayExperienceHeading(): string {
-    return this.experiences.some((experience) => experience.currentlyWorkingHere)
-      ? 'Atualmente trabalhando'
-      : 'Procurando oportunidade';
   }
 
   get availableCompanyOptions(): string[] {
@@ -195,7 +186,7 @@ export class ExperienciaPage implements OnInit {
     this.restoreExperiences();
     this.restoreIntroLogo();
     this.restoreFormationCopy();
-    this.restoreRadarAvailability();
+    this.restoreExperienceToggles();
   }
 
   openFormationModal(): void {
@@ -468,13 +459,18 @@ export class ExperienciaPage implements OnInit {
     return Boolean(control && control.invalid && (control.touched || this.submitAttempted));
   }
 
-  continueToFormation(): void {
-    void this.router.navigate(['/usuario/dados-cadastrais/formacao']);
+  continueToGeneral(): void {
+    void this.router.navigate(['/usuario/dados-cadastrais/geral']);
   }
 
-  updateRadarAvailability(nextValue: boolean): void {
-    this.isAvailableInRadar = nextValue;
-    this.persistRadarAvailability();
+  updateVisibleInEcosystem(nextValue: boolean): void {
+    this.isVisibleInEcosystem = nextValue;
+    this.persistExperienceToggles();
+  }
+
+  updateAvailableForApplications(nextValue: boolean): void {
+    this.isAvailableForApplications = nextValue;
+    this.persistExperienceToggles();
   }
 
   private restoreBasicDraft(): void {
@@ -569,18 +565,22 @@ export class ExperienciaPage implements OnInit {
     localStorage.setItem(ExperienciaPage.formationCopyStorageKey, JSON.stringify(this.formationCopy));
   }
 
-  private restoreRadarAvailability(): void {
-    const rawDraft = localStorage.getItem(ExperienciaPage.radarAvailabilityStorageKey);
+  private restoreExperienceToggles(): void {
+    const ecosystemVisibility = localStorage.getItem(ExperienciaPage.ecosystemVisibilityStorageKey);
+    const candidacyAvailability = localStorage.getItem(ExperienciaPage.candidacyAvailabilityStorageKey);
 
-    if (rawDraft === null) {
-      return;
+    if (ecosystemVisibility !== null) {
+      this.isVisibleInEcosystem = ecosystemVisibility === 'true';
     }
 
-    this.isAvailableInRadar = rawDraft === 'true';
+    if (candidacyAvailability !== null) {
+      this.isAvailableForApplications = candidacyAvailability === 'true';
+    }
   }
 
-  private persistRadarAvailability(): void {
-    localStorage.setItem(ExperienciaPage.radarAvailabilityStorageKey, String(this.isAvailableInRadar));
+  private persistExperienceToggles(): void {
+    localStorage.setItem(ExperienciaPage.ecosystemVisibilityStorageKey, String(this.isVisibleInEcosystem));
+    localStorage.setItem(ExperienciaPage.candidacyAvailabilityStorageKey, String(this.isAvailableForApplications));
   }
 
   private handleIntroLogoFile(file: File | null): void {

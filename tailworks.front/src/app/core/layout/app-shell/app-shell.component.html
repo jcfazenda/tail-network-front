@@ -2,9 +2,17 @@
   <ng-container *ngIf="!isHomeEntry">
     <app-sidebar></app-sidebar>
 
-    <div class="shell__main" [class.shell__main--candidate]="isCandidateArea">
+    <div
+      class="shell__main"
+      [class.shell__main--candidate]="isCandidateArea"
+      [class.shell__main--formation]="isFormationPage"
+    >
       <app-topbar></app-topbar>
-      <section class="shell__content" [class.shell__content--candidate]="isCandidateArea">
+      <section
+        class="shell__content"
+        [class.shell__content--candidate]="isCandidateArea"
+        [class.shell__content--formation]="isFormationPage"
+      >
         <router-outlet />
       </section>
     </div>

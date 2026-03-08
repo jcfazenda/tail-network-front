@@ -26,6 +26,11 @@ type CandidateBasicDraft = {
   photoFileName?: string;
 };
 
+type FormationCopyDraft = {
+  graduation: string;
+  specialization: string;
+};
+
 @Component({
   standalone: true,
   selector: 'app-dados-cadastrais-page',
@@ -36,6 +41,7 @@ type CandidateBasicDraft = {
 })
 export class DadosCadastraisPage implements OnInit, OnDestroy {
   private static readonly draftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
 
   private readonly router = inject(Router);
 
@@ -43,8 +49,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais', active: true },
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
     { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
-    { index: 5, label: 'Geral' },
+    { index: 4, label: 'Geral', route: '/usuario/dados-cadastrais/geral' },
   ];
 
   readonly stateOptions = [
@@ -73,17 +78,26 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   photoPreviewUrl = '';
   photoFileName = '';
   photoError = '';
+  formationCopy: FormationCopyDraft = {
+    graduation: 'Bacharelado em Sistemas de Informação',
+    specialization: 'Especialização em Arquitetura de Software',
+  };
 
   get displayName(): string {
-    return this.profile.name.trim() || 'Seu nome';
+    return this.profile.name.trim() || 'Julio Fazenda';
   }
 
-  get displayFormation(): string {
-    return this.profile.formation.trim() || 'Sua formação';
+  get displayGraduation(): string {
+    return this.formationCopy.graduation;
+  }
+
+  get displaySpecialization(): string {
+    return this.formationCopy.specialization;
   }
 
   ngOnInit(): void {
     this.restoreDraft();
+    this.restoreFormationCopy();
   }
 
   ngOnDestroy(): void {
@@ -219,6 +233,24 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
       this.photoFileName = draft.photoFileName ?? '';
     } catch {
       localStorage.removeItem(DadosCadastraisPage.draftStorageKey);
+    }
+  }
+
+  private restoreFormationCopy(): void {
+    const rawDraft = localStorage.getItem(DadosCadastraisPage.formationCopyStorageKey);
+
+    if (!rawDraft) {
+      return;
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as Partial<FormationCopyDraft>;
+      this.formationCopy = {
+        graduation: draft.graduation?.trim() || this.formationCopy.graduation,
+        specialization: draft.specialization?.trim() || this.formationCopy.specialization,
+      };
+    } catch {
+      localStorage.removeItem(DadosCadastraisPage.formationCopyStorageKey);
     }
   }
 

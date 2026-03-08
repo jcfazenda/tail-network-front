@@ -1,0 +1,187 @@
+<section class="candidate-formation">
+  <header class="candidate-formation__hero">
+    <div class="candidate-formation__identity">
+      <div class="candidate-formation__avatar" aria-hidden="true">
+        <img
+          *ngIf="photoPreviewUrl; else defaultAvatar"
+          [src]="photoPreviewUrl"
+          alt=""
+          class="candidate-formation__avatar-image"
+        />
+
+        <ng-template #defaultAvatar>
+          <span class="material-symbols-rounded">person</span>
+        </ng-template>
+      </div>
+
+      <div class="candidate-formation__identity-copy">
+        <div class="candidate-formation__identity-name">
+          <strong>{{ displayName }}</strong>
+          <span
+            class="candidate-formation__identity-verified material-symbols-rounded"
+            aria-label="Validado no sistema"
+            title="Validado no sistema"
+          >
+            verified
+          </span>
+        </div>
+        <strong class="candidate-formation__identity-degree">{{ displayGraduation }}</strong>
+        <span>{{ displaySpecialization }}</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="candidate-formation__steps" aria-label="Etapas de cadastro">
+    <ng-container *ngFor="let step of steps">
+      <a
+        *ngIf="step.route; else staticStep"
+        class="candidate-formation__step"
+        [class.candidate-formation__step--active]="step.active"
+        [routerLink]="step.route"
+      >
+        <span class="candidate-formation__step-index">{{ step.index }}</span>
+        <span class="candidate-formation__step-label">{{ step.label }}</span>
+      </a>
+
+      <ng-template #staticStep>
+        <span class="candidate-formation__step" [class.candidate-formation__step--active]="step.active">
+          <span class="candidate-formation__step-index">{{ step.index }}</span>
+          <span class="candidate-formation__step-label">{{ step.label }}</span>
+        </span>
+      </ng-template>
+    </ng-container>
+  </nav>
+
+  <section class="candidate-formation__card">
+    <input
+      #introLogoInput
+      class="candidate-formation__intro-logo-input"
+      type="file"
+      accept="image/jpeg,image/png,image/gif,image/webp"
+      (change)="onIntroLogoSelected($event)"
+    />
+
+    <div class="candidate-formation__form-card">
+      <div class="candidate-formation__section-head">
+        <button
+          class="candidate-formation__crest"
+          type="button"
+          (click)="openIntroLogoPicker(introLogoInput)"
+          (keydown)="onIntroLogoKeydown($event, introLogoInput)"
+          aria-label="Selecionar imagem da formação"
+          title="Selecionar imagem da formação"
+        >
+          <img [src]="introLogoUrl" alt="" class="candidate-formation__crest-image" />
+        </button>
+
+        <div class="candidate-formation__formation-copy">
+          <em>{{ displayFormationHeading }}</em>
+          <strong>{{ displayGraduation }}</strong>
+          <div class="candidate-formation__formation-meta">
+            <span>{{ displaySpecialization }}</span>
+            <small>{{ displayEducationStatus }}</small>
+          </div>
+        </div>
+
+        <button
+          class="candidate-formation__formation-edit"
+          type="button"
+          (click)="openFormationModal()"
+          aria-label="Editar formação"
+          title="Editar formação"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</section>
+
+<div
+  class="candidate-formation__modal-backdrop"
+  *ngIf="isFormationModalOpen"
+  (click)="closeFormationModal()"
+>
+  <section class="candidate-formation__modal candidate-formation__modal--formation" (click)="$event.stopPropagation()">
+    <div class="candidate-formation__modal-header">
+      <h3 class="candidate-formation__modal-title">Editar formação</h3>
+      <button class="candidate-formation__modal-close" type="button" (click)="closeFormationModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <form class="candidate-formation__modal-body" #formationForm="ngForm" (ngSubmit)="saveFormationCopy(formationForm)">
+      <label class="candidate-formation__modal-field">
+        <span class="candidate-formation__modal-label">Graduação</span>
+        <input
+          type="text"
+          name="graduation"
+          [(ngModel)]="formationDraft.graduation"
+          required
+          placeholder="Ex: Bacharelado em Sistemas de Informação"
+        />
+      </label>
+
+      <label class="candidate-formation__modal-field">
+        <span class="candidate-formation__modal-label">Especialização</span>
+        <input
+          type="text"
+          name="specialization"
+          [(ngModel)]="formationDraft.specialization"
+          required
+          placeholder="Ex: Especialização em Arquitetura de Software"
+        />
+      </label>
+
+      <div class="candidate-formation__modal-grid candidate-formation__modal-grid--date">
+        <label class="candidate-formation__modal-field">
+          <span class="candidate-formation__modal-label">Data de início</span>
+          <div class="candidate-formation__date-group">
+            <select name="formationStartMonth" [(ngModel)]="formationDraft.startMonth">
+              <option *ngFor="let month of monthOptions" [value]="month">{{ month }}</option>
+            </select>
+            <select name="formationStartYear" [(ngModel)]="formationDraft.startYear">
+              <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+        </label>
+
+        <label class="candidate-formation__modal-field">
+          <span class="candidate-formation__modal-label">Data de fim</span>
+          <div class="candidate-formation__date-group">
+            <select name="formationEndMonth" [(ngModel)]="formationDraft.endMonth" [disabled]="!formationDraft.graduated">
+              <option *ngFor="let month of monthOptions" [value]="month">{{ month }}</option>
+            </select>
+            <select name="formationEndYear" [(ngModel)]="formationDraft.endYear" [disabled]="!formationDraft.graduated">
+              <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+        </label>
+      </div>
+
+      <label class="candidate-formation__modal-field">
+        <span class="candidate-formation__modal-label">Formado</span>
+        <div class="candidate-formation__option-list">
+          <label class="candidate-formation__option">
+            <input type="radio" name="graduated" [value]="true" [(ngModel)]="formationDraft.graduated" />
+            <span>Sim</span>
+          </label>
+
+          <label class="candidate-formation__option">
+            <input type="radio" name="graduated" [value]="false" [(ngModel)]="formationDraft.graduated" />
+            <span>Ainda não</span>
+          </label>
+        </div>
+      </label>
+
+      <div class="candidate-formation__modal-actions">
+        <button type="button" class="candidate-formation__modal-cancel" (click)="closeFormationModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="candidate-formation__modal-submit">
+          Salvar formação
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

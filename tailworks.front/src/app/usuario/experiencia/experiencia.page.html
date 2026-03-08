@@ -15,14 +15,19 @@
       </div>
 
       <div class="candidate-experience__identity-copy">
-        <strong>{{ displayName }}</strong>
-        <span>{{ displayFormation }}</span>
+        <div class="candidate-experience__identity-name">
+          <strong>{{ displayName }}</strong>
+          <span
+            class="candidate-experience__identity-verified material-symbols-rounded"
+            aria-label="Validado no sistema"
+            title="Validado no sistema"
+          >
+            verified
+          </span>
+        </div>
+        <strong class="candidate-experience__identity-degree">{{ displayGraduation }}</strong>
+        <span>{{ displaySpecialization }}</span>
       </div>
-    </div>
-
-    <div class="candidate-experience__hero-copy">
-      <h1>Crie seu radar profissional</h1>
-      <p>Candidate-se e receba indicações de vagas compatíveis.</p>
     </div>
   </header>
 
@@ -97,19 +102,33 @@
 
     <div class="candidate-experience__form-card">
       <div class="candidate-experience__experience-intro">
-        <strong>{{ displayExperienceHeading }}</strong>
+        <strong>Como você quer estar no sistema?</strong>
 
-        <label class="candidate-experience__radar-toggle">
-          <input
-            type="checkbox"
-            [checked]="isAvailableInRadar"
-            (change)="updateRadarAvailability($any($event.target).checked)"
-          />
-          <span class="candidate-experience__radar-toggle-text">Visível no radar</span>
-          <span class="candidate-experience__radar-toggle-track" aria-hidden="true">
-            <span class="candidate-experience__radar-toggle-thumb"></span>
-          </span>
-        </label>
+        <div class="candidate-experience__experience-toggles">
+          <label class="candidate-experience__toggle">
+            <input
+              type="checkbox"
+              [checked]="isVisibleInEcosystem"
+              (change)="updateVisibleInEcosystem($any($event.target).checked)"
+            />
+            <span class="candidate-experience__toggle-track" aria-hidden="true">
+              <span class="candidate-experience__toggle-thumb"></span>
+            </span>
+            <span class="candidate-experience__toggle-text">Visível no ecossistema</span>
+          </label>
+
+          <label class="candidate-experience__toggle">
+            <input
+              type="checkbox"
+              [checked]="isAvailableForApplications"
+              (change)="updateAvailableForApplications($any($event.target).checked)"
+            />
+            <span class="candidate-experience__toggle-track" aria-hidden="true">
+              <span class="candidate-experience__toggle-thumb"></span>
+            </span>
+            <span class="candidate-experience__toggle-text">Disponível para Candidaturas</span>
+          </label>
+        </div>
 
         <p>Mostre por onde voce passou, quais desafios assumiu e como sua trajetória reforça seu radar profissional.</p>
       </div>
@@ -284,10 +303,10 @@
     </div>
 
     <div class="candidate-experience__footer">
-      <button class="candidate-experience__cta" type="button" (click)="continueToFormation()">
+      <button class="candidate-experience__cta" type="button" (click)="continueToGeneral()">
         <span>Continuar</span>
         <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-        <span>Preencher Formação</span>
+        <span>Preencher Geral</span>
       </button>
 
       <p>

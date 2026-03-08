@@ -29,6 +29,11 @@ type CandidateBasicDraft = {
   photoPreviewUrl?: string;
 };
 
+type FormationCopyDraft = {
+  graduation: string;
+  specialization: string;
+};
+
 @Component({
   standalone: true,
   selector: 'app-stacks-page',
@@ -40,6 +45,7 @@ type CandidateBasicDraft = {
 export class StacksPage implements OnInit {
   private static readonly storageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly stackDescriptionMaxLength = 920;
 
   private readonly router = inject(Router);
@@ -48,8 +54,7 @@ export class StacksPage implements OnInit {
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks', active: true },
     { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
-    { index: 5, label: 'Geral' },
+    { index: 4, label: 'Geral', route: '/usuario/dados-cadastrais/geral' },
   ];
 
   readonly maxStacks = 10;
@@ -74,15 +79,23 @@ export class StacksPage implements OnInit {
     formation: '',
   };
   photoPreviewUrl = '';
+  formationCopy: FormationCopyDraft = {
+    graduation: 'Bacharelado em Sistemas de Informação',
+    specialization: 'Especialização em Arquitetura de Software',
+  };
 
   readonly trackByStackName = (_index: number, stack: StackChip): string => stack.name;
 
   get displayName(): string {
-    return this.profile.name.trim() || 'Seu nome';
+    return this.profile.name.trim() || 'Julio Fazenda';
   }
 
-  get displayFormation(): string {
-    return this.profile.formation.trim() || 'Sua formação';
+  get displayGraduation(): string {
+    return this.formationCopy.graduation;
+  }
+
+  get displaySpecialization(): string {
+    return this.formationCopy.specialization;
   }
 
   get stackModalTitle(): string {
@@ -115,6 +128,7 @@ export class StacksPage implements OnInit {
 
   ngOnInit(): void {
     this.restoreBasicDraft();
+    this.restoreFormationCopy();
 
     const stored = localStorage.getItem(StacksPage.storageKey);
 
@@ -345,6 +359,24 @@ export class StacksPage implements OnInit {
       this.photoPreviewUrl = draft.photoPreviewUrl ?? '';
     } catch {
       localStorage.removeItem(StacksPage.basicDraftStorageKey);
+    }
+  }
+
+  private restoreFormationCopy(): void {
+    const rawDraft = localStorage.getItem(StacksPage.formationCopyStorageKey);
+
+    if (!rawDraft) {
+      return;
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as Partial<FormationCopyDraft>;
+      this.formationCopy = {
+        graduation: draft.graduation?.trim() || this.formationCopy.graduation,
+        specialization: draft.specialization?.trim() || this.formationCopy.specialization,
+      };
+    } catch {
+      localStorage.removeItem(StacksPage.formationCopyStorageKey);
     }
   }
 
