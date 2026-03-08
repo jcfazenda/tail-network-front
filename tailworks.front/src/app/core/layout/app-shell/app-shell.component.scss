@@ -17,9 +17,19 @@
   background: linear-gradient(115deg, rgba(238, 235, 229, 0.14) 0%, rgba(247, 241, 233, 0.18) 30%, rgba(244, 242, 238, 0.14) 56%, rgba(246, 246, 246, 0.12) 100%);
 }
 
+.shell__main--candidate{
+  background:
+    linear-gradient(115deg, rgba(255, 251, 245, 0.56) 0%, rgba(248, 242, 233, 0.54) 32%, rgba(244, 242, 238, 0.52) 58%, rgba(246, 246, 246, 0.48) 100%),
+    url('/assets/images/_fundo-tela.png') center / cover no-repeat;
+}
+
 .shell__content{
   padding: 50px 44px 40px;
   min-height: 0;
+}
+
+.shell__content--candidate{
+  background: transparent;
 }
 
 .shell__content--plain{

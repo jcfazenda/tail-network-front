@@ -18,4 +18,8 @@ export class AppShellComponent {
   get isHomeEntry(): boolean {
     return this.router.url === '/home' || this.router.url === '/login';
   }
+
+  get isCandidateArea(): boolean {
+    return this.router.url.startsWith('/usuario');
+  }
 }

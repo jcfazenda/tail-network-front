@@ -1,10 +1,10 @@
-<div class="shell" [class.shell--plain]="isHomeEntry">
+<div class="shell" [class.shell--plain]="isHomeEntry" [class.shell--candidate]="isCandidateArea">
   <ng-container *ngIf="!isHomeEntry">
     <app-sidebar></app-sidebar>
 
-    <div class="shell__main">
+    <div class="shell__main" [class.shell__main--candidate]="isCandidateArea">
       <app-topbar></app-topbar>
-      <section class="shell__content">
+      <section class="shell__content" [class.shell__content--candidate]="isCandidateArea">
         <router-outlet />
       </section>
     </div>

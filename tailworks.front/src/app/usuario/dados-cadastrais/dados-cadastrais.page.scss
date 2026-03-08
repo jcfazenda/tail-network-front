@@ -2,6 +2,7 @@
   display: grid;
   gap: 22px;
   max-width: 980px;
+  margin: 0 auto;
 }
 
 .candidate-profile__hero{
@@ -9,7 +10,7 @@
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 36px;
   align-items: center;
-  min-height: 108px;
+  height: 108px;
 }
 
 .candidate-profile__identity{
@@ -369,7 +370,7 @@
   .candidate-profile__hero{
     grid-template-columns: 1fr;
     gap: 20px;
-    min-height: 0;
+    height: auto;
     justify-items: start;
   }
 

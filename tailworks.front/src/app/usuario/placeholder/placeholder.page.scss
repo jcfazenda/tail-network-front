@@ -3,7 +3,9 @@
   display: grid;
   align-content: center;
   gap: 14px;
-  max-width: 780px;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .candidate-placeholder__eyebrow{
