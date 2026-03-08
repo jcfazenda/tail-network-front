@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
@@ -16,6 +16,7 @@ type StackChip = {
   short: string;
   tone: 'gold' | 'slate' | 'azure' | 'orange' | 'neutral';
   knowledge: number;
+  description: string;
 };
 
 type CandidateBasicProfile = {
@@ -39,6 +40,7 @@ type CandidateBasicDraft = {
 export class StacksPage implements OnInit {
   private static readonly storageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly stackDescriptionMaxLength = 920;
 
   private readonly router = inject(Router);
 
@@ -46,7 +48,7 @@ export class StacksPage implements OnInit {
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks', active: true },
     { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Formação' },
+    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
     { index: 5, label: 'Geral' },
   ];
 
@@ -61,9 +63,12 @@ export class StacksPage implements OnInit {
   stackError = '';
   stacks: StackChip[] = [];
   isStackModalOpen = false;
+  editingStackIndex: number | null = null;
   stackDraftName = '';
-  stackDraftKnowledge: number | null = null;
+  stackDraftDescription = '';
   stackModalError = '';
+  expandedDescriptionIndex: number | null = null;
+  @ViewChild('stackDescriptionEditor') private stackDescriptionEditor?: ElementRef<HTMLDivElement>;
   profile: CandidateBasicProfile = {
     name: '',
     formation: '',
@@ -81,18 +86,31 @@ export class StacksPage implements OnInit {
   }
 
   get stackModalTitle(): string {
-    return 'Adicionar Stack';
+    return this.editingStackIndex === null ? 'Adicionar Stack' : 'Editar Descrição';
   }
 
   get stackModalSubmitLabel(): string {
-    return 'Adicionar';
+    return this.editingStackIndex === null ? 'Adicionar' : 'Salvar';
+  }
+
+  get stackDescriptionCharacters(): number {
+    return this.getDescriptionPlainText(this.stackDraftDescription).length;
+  }
+
+  get stackDescriptionMaxLength(): number {
+    return StacksPage.stackDescriptionMaxLength;
+  }
+
+  get isStackDescriptionOverLimit(): boolean {
+    return this.stackDescriptionCharacters > this.stackDescriptionMaxLength;
   }
 
   get canSaveStack(): boolean {
-    return this.stackDraftName.trim().length > 0
-      && this.stackDraftKnowledge !== null
-      && this.stackDraftKnowledge >= 0
-      && this.stackDraftKnowledge <= 100;
+    if (this.isStackDescriptionOverLimit) {
+      return false;
+    }
+
+    return this.editingStackIndex !== null || this.stackDraftName.trim().length > 0;
   }
 
   ngOnInit(): void {
@@ -103,7 +121,7 @@ export class StacksPage implements OnInit {
     if (stored) {
       try {
         const parsedStacks = JSON.parse(stored) as Array<Partial<StackChip> & { name: string }>;
-        this.stacks = parsedStacks.map((item) => this.createStackChip(item.name, item.knowledge));
+        this.stacks = parsedStacks.map((item) => this.createStackChip(item.name, item.knowledge, item.description));
         return;
       } catch {
         localStorage.removeItem(StacksPage.storageKey);
@@ -128,31 +146,95 @@ export class StacksPage implements OnInit {
       return;
     }
 
+    this.editingStackIndex = null;
     this.stackDraftName = '';
-    this.stackDraftKnowledge = 70;
+    this.stackDraftDescription = '';
     this.stackModalError = '';
     this.isStackModalOpen = true;
+    this.scheduleEditorSync();
+  }
+
+  openEditStackModal(index: number): void {
+    const current = this.stacks[index];
+
+    if (!current) {
+      return;
+    }
+
+    this.editingStackIndex = index;
+    this.stackDraftName = current.name;
+    this.stackDraftDescription = current.description;
+    this.stackModalError = '';
+    this.isStackModalOpen = true;
+    this.scheduleEditorSync();
   }
 
   closeStackModal(): void {
     this.isStackModalOpen = false;
+    this.editingStackIndex = null;
     this.stackDraftName = '';
-    this.stackDraftKnowledge = null;
+    this.stackDraftDescription = '';
     this.stackModalError = '';
+  }
+
+  onStackDescriptionInput(event: Event): void {
+    this.stackDraftDescription = (event.target as HTMLDivElement).innerHTML;
+
+    if (!this.isStackDescriptionOverLimit && this.stackModalError === 'A descrição excedeu o limite de caracteres.') {
+      this.stackModalError = '';
+    }
+  }
+
+  applyDescriptionFormat(command: 'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList'): void {
+    const editor = this.stackDescriptionEditor?.nativeElement;
+
+    if (!editor) {
+      return;
+    }
+
+    editor.focus();
+    document.execCommand(command, false);
+    this.stackDraftDescription = editor.innerHTML;
+  }
+
+  clearDescriptionFormat(): void {
+    const editor = this.stackDescriptionEditor?.nativeElement;
+
+    if (!editor) {
+      return;
+    }
+
+    editor.focus();
+    document.execCommand('removeFormat', false);
+    document.execCommand('unlink', false);
+    this.stackDraftDescription = editor.innerHTML;
   }
 
   saveStack(): void {
     const trimmed = this.stackDraftName.trim();
-    const knowledge = Number(this.stackDraftKnowledge);
+    const description = this.stackDraftDescription.trim();
     this.stackModalError = '';
 
-    if (!trimmed) {
-      this.stackModalError = 'Digite uma stack para adicionar.';
+    if (this.isStackDescriptionOverLimit) {
+      this.stackModalError = 'A descrição excedeu o limite de caracteres.';
       return;
     }
 
-    if (Number.isNaN(knowledge) || knowledge < 0 || knowledge > 100) {
-      this.stackModalError = 'Informe um percentual entre 0 e 100.';
+    if (this.editingStackIndex !== null) {
+      const current = this.stacks[this.editingStackIndex];
+
+      if (!current) {
+        return;
+      }
+
+      current.description = description;
+      this.persistStacks();
+      this.closeStackModal();
+      return;
+    }
+
+    if (!trimmed) {
+      this.stackModalError = 'Digite uma stack para adicionar.';
       return;
     }
 
@@ -163,7 +245,7 @@ export class StacksPage implements OnInit {
       return;
     }
 
-    const nextItem = this.createStackChip(trimmed, knowledge);
+    const nextItem = this.createStackChip(trimmed, undefined, description);
 
     if (this.stacks.length >= this.maxStacks) {
       this.stackModalError = 'Você pode adicionar até 10 stacks.';
@@ -181,7 +263,24 @@ export class StacksPage implements OnInit {
     }
 
     this.stacks = this.stacks.filter((_, itemIndex) => itemIndex !== index);
+
+    if (this.expandedDescriptionIndex === index) {
+      this.expandedDescriptionIndex = null;
+    } else if (this.expandedDescriptionIndex !== null && this.expandedDescriptionIndex > index) {
+      this.expandedDescriptionIndex -= 1;
+    }
+
     this.persistStacks();
+  }
+
+  toggleStackDescription(index: number): void {
+    const current = this.stacks[index];
+
+    if (!current?.description.trim()) {
+      return;
+    }
+
+    this.expandedDescriptionIndex = this.expandedDescriptionIndex === index ? null : index;
   }
 
   updateStackKnowledge(index: number, nextValue: number | string): void {
@@ -218,6 +317,18 @@ export class StacksPage implements OnInit {
     localStorage.setItem(StacksPage.storageKey, JSON.stringify(this.stacks));
   }
 
+  private scheduleEditorSync(): void {
+    setTimeout(() => {
+      const editor = this.stackDescriptionEditor?.nativeElement;
+
+      if (!editor) {
+        return;
+      }
+
+      editor.innerHTML = this.stackDraftDescription || '';
+    });
+  }
+
   private restoreBasicDraft(): void {
     const rawDraft = localStorage.getItem(StacksPage.basicDraftStorageKey);
 
@@ -237,29 +348,30 @@ export class StacksPage implements OnInit {
     }
   }
 
-  private createStackChip(name: string, knowledge?: number): StackChip {
+  private createStackChip(name: string, knowledge?: number, description = ''): StackChip {
     const normalized = name.trim();
     const lower = normalized.toLowerCase();
     const resolvedKnowledge = knowledge ?? this.getDefaultKnowledge(lower);
+    const resolvedDescription = description.trim();
 
     if (lower === '.net / c#' || lower === '.net' || lower === 'c#') {
-      return { name: '.NET / C#', short: '.N', tone: 'gold', knowledge: resolvedKnowledge };
+      return { name: '.NET / C#', short: '.N', tone: 'gold', knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'entity framework') {
-      return { name: 'Entity Framework', short: 'EF', tone: 'slate', knowledge: resolvedKnowledge };
+      return { name: 'Entity Framework', short: 'EF', tone: 'slate', knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'rest api') {
-      return { name: 'REST API', short: 'API', tone: 'azure', knowledge: resolvedKnowledge };
+      return { name: 'REST API', short: 'API', tone: 'azure', knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'sql server') {
-      return { name: 'SQL Server', short: 'SQL', tone: 'orange', knowledge: resolvedKnowledge };
+      return { name: 'SQL Server', short: 'SQL', tone: 'orange', knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'azure') {
-      return { name: 'Azure', short: 'Az', tone: 'azure', knowledge: resolvedKnowledge };
+      return { name: 'Azure', short: 'Az', tone: 'azure', knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     return {
@@ -267,6 +379,7 @@ export class StacksPage implements OnInit {
       short: this.getShortLabel(normalized),
       tone: 'neutral',
       knowledge: resolvedKnowledge,
+      description: resolvedDescription,
     };
   }
 
@@ -304,5 +417,20 @@ export class StacksPage implements OnInit {
     }
 
     return `${parts[0][0]}${parts[1][0]}`;
+  }
+
+  private getDescriptionPlainText(value: string): string {
+    if (!value.trim()) {
+      return '';
+    }
+
+    return value
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/(p|div|li|ul|ol|h1|h2|h3|h4|h5|h6)>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   }
 }

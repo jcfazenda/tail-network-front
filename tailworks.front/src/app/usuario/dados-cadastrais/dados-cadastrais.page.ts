@@ -42,8 +42,8 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   readonly steps: RegistrationStep[] = [
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais', active: true },
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
-    { index: 3, label: 'Experiência' },
-    { index: 4, label: 'Formação' },
+    { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
+    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
     { index: 5, label: 'Geral' },
   ];
 

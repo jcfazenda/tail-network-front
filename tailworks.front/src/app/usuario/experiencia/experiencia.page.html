@@ -1,0 +1,459 @@
+<section class="candidate-experience">
+  <header class="candidate-experience__hero">
+    <div class="candidate-experience__identity">
+      <div class="candidate-experience__avatar" aria-hidden="true">
+        <img
+          *ngIf="photoPreviewUrl; else defaultAvatar"
+          [src]="photoPreviewUrl"
+          alt=""
+          class="candidate-experience__avatar-image"
+        />
+
+        <ng-template #defaultAvatar>
+          <span class="material-symbols-rounded">person</span>
+        </ng-template>
+      </div>
+
+      <div class="candidate-experience__identity-copy">
+        <strong>{{ displayName }}</strong>
+        <span>{{ displayFormation }}</span>
+      </div>
+    </div>
+
+    <div class="candidate-experience__hero-copy">
+      <h1>Crie seu radar profissional</h1>
+      <p>Candidate-se e receba indicações de vagas compatíveis.</p>
+    </div>
+  </header>
+
+  <nav class="candidate-experience__steps" aria-label="Etapas de cadastro">
+    <ng-container *ngFor="let step of steps">
+      <a
+        *ngIf="step.route; else staticStep"
+        class="candidate-experience__step"
+        [class.candidate-experience__step--active]="step.active"
+        [routerLink]="step.route"
+      >
+        <span class="candidate-experience__step-index">{{ step.index }}</span>
+        <span class="candidate-experience__step-label">{{ step.label }}</span>
+      </a>
+
+      <ng-template #staticStep>
+        <span
+          class="candidate-experience__step"
+          [class.candidate-experience__step--active]="step.active"
+        >
+          <span class="candidate-experience__step-index">{{ step.index }}</span>
+          <span class="candidate-experience__step-label">{{ step.label }}</span>
+        </span>
+      </ng-template>
+    </ng-container>
+  </nav>
+
+  <section class="candidate-experience__card">
+      <input
+        #introLogoInput
+        class="candidate-experience__intro-logo-input"
+        type="file"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        (change)="onIntroLogoSelected($event)"
+      />
+
+      <div class="candidate-experience__section-head">
+        <button
+          class="candidate-experience__crest"
+          type="button"
+          (click)="openIntroLogoPicker(introLogoInput)"
+          (keydown)="onIntroLogoKeydown($event, introLogoInput)"
+          aria-label="Selecionar imagem da formação"
+          title="Selecionar imagem da formação"
+        >
+          <img
+            [src]="introLogoUrl"
+            alt=""
+            class="candidate-experience__crest-image"
+          />
+        </button>
+
+        <div class="candidate-experience__formation-copy">
+          <em>{{ displayFormationHeading }}</em>
+          <strong>{{ displayGraduation }}</strong>
+          <div class="candidate-experience__formation-meta">
+            <span>{{ displaySpecialization }}</span>
+            <small>{{ displayEducationStatus }}</small>
+          </div>
+        </div>
+
+        <button
+          class="candidate-experience__formation-edit"
+          type="button"
+          (click)="openFormationModal()"
+          aria-label="Editar formação"
+          title="Editar formação"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+        </button>
+      </div>
+
+    <div class="candidate-experience__form-card">
+      <div class="candidate-experience__experience-intro">
+        <strong>{{ displayExperienceHeading }}</strong>
+
+        <label class="candidate-experience__radar-toggle">
+          <input
+            type="checkbox"
+            [checked]="isAvailableInRadar"
+            (change)="updateRadarAvailability($any($event.target).checked)"
+          />
+          <span class="candidate-experience__radar-toggle-text">Visível no radar</span>
+          <span class="candidate-experience__radar-toggle-track" aria-hidden="true">
+            <span class="candidate-experience__radar-toggle-thumb"></span>
+          </span>
+        </label>
+
+        <p>Mostre por onde voce passou, quais desafios assumiu e como sua trajetória reforça seu radar profissional.</p>
+      </div>
+
+      <div class="candidate-experience__experience-box" *ngIf="experiences.length; else emptyExperiences">
+        <div class="candidate-experience__experience-head">
+          <p>Atuação por experiência</p>
+          <button
+            class="candidate-experience__add-button candidate-experience__add-button--inline"
+            type="button"
+            (click)="openExperienceModal()"
+            aria-label="Adicionar experiência"
+            title="Adicionar experiência"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">add</span>
+          </button>
+        </div>
+
+        <div class="candidate-experience__experience-list">
+          <div
+            *ngFor="let experience of experiences; let index = index; trackBy: trackByExperience"
+            class="candidate-experience__experience-item"
+          >
+            <div class="candidate-experience__experience-item-head">
+              <span class="candidate-experience__experience-item-company">{{ experience.company }}</span>
+              <button
+                class="candidate-experience__experience-item-edit"
+                type="button"
+                (click)="openEditExperienceModal(index)"
+                [attr.aria-label]="'Editar ' + experience.role"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+              </button>
+            </div>
+
+            <div class="candidate-experience__experience-item-meta">
+              <div class="candidate-experience__experience-item-role-row">
+                <span class="candidate-experience__experience-item-role">{{ experience.role }}</span>
+                <button
+                  *ngIf="experience.responsibilities"
+                  class="candidate-experience__experience-item-info"
+                  type="button"
+                  (click)="toggleResponsibilities(index)"
+                  [class.candidate-experience__experience-item-info--active]="expandedResponsibilityIndex === index"
+                  [attr.aria-label]="(expandedResponsibilityIndex === index ? 'Ocultar' : 'Mostrar') + ' responsabilidades de ' + experience.role"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                </button>
+              </div>
+              <span class="candidate-experience__experience-item-context">
+                {{ experience.workModel }}
+              </span>
+            </div>
+
+            <div class="candidate-experience__experience-item-timeline">
+              <span class="candidate-experience__experience-item-timeline-label">
+                Setor: {{ experience.companySegment }}
+              </span>
+              <span class="candidate-experience__experience-item-timeline-dates">
+                {{ experience.startMonth }} {{ experience.startYear }}
+                •
+                {{ experience.currentlyWorkingHere ? 'Atual' : experience.endMonth + ' ' + experience.endYear }}
+              </span>
+            </div>
+
+            <div class="candidate-experience__experience-item-description" *ngIf="expandedResponsibilityIndex === index">
+              <span>{{ experience.positionLevel }} • {{ experience.companySize }} • {{ experience.sector }}</span>
+              <p>{{ experience.responsibilities }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyExperiences>
+        <div class="candidate-experience__empty-state">
+          <div class="candidate-experience__experience-head">
+            <p>Atuação por experiência</p>
+            <button
+              class="candidate-experience__add-button candidate-experience__add-button--inline"
+              type="button"
+              (click)="openExperienceModal()"
+              aria-label="Adicionar experiência"
+              title="Adicionar experiência"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">add</span>
+            </button>
+          </div>
+          <p>Nenhuma experiência adicionada ainda.</p>
+          <span>Use o botão <strong>+</strong> para começar e organizar seus últimos contextos profissionais.</span>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="candidate-experience__footer">
+      <button class="candidate-experience__cta" type="button" (click)="continueToFormation()">
+        <span>Continuar</span>
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+        <span>Preencher Formação</span>
+      </button>
+
+      <p>
+        Ao me cadastrar, aceito os
+        <strong>Termos de Uso</strong>
+        e a
+        <strong>Política de Privacidade</strong>
+      </p>
+    </div>
+  </section>
+</section>
+
+<div
+  class="candidate-experience__modal-backdrop"
+  *ngIf="isExperienceModalOpen"
+  (click)="closeExperienceModal()"
+>
+  <section class="candidate-experience__modal" (click)="$event.stopPropagation()">
+    <div class="candidate-experience__modal-header">
+      <h3 class="candidate-experience__modal-title">{{ experienceModalTitle }}</h3>
+      <button class="candidate-experience__modal-close" type="button" (click)="closeExperienceModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <form class="candidate-experience__modal-body" #experienceForm="ngForm" (ngSubmit)="saveExperience(experienceForm)">
+      <ng-container *ngIf="isEditingExperience">
+        <div class="candidate-experience__modal-summary">
+          <strong>{{ experienceDraft.role }}</strong>
+          <span>{{ experienceDraft.company }} • {{ experienceDraft.workModel }} • {{ experienceDraft.companySegment }}</span>
+          <small>{{ experienceDraftTimeline }} • {{ experienceDraft.positionLevel }} • {{ experienceDraft.sector }}</small>
+        </div>
+      </ng-container>
+
+      <div class="candidate-experience__modal-grid candidate-experience__modal-grid--company">
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Empresa</span>
+          <div class="candidate-experience__select-shell">
+            <select name="company" [(ngModel)]="experienceDraft.company" required>
+              <option *ngFor="let option of availableCompanyOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+        </label>
+
+        <label class="candidate-experience__checkbox candidate-experience__checkbox--inline">
+          <input type="checkbox" name="currentlyWorkingHere" [(ngModel)]="experienceDraft.currentlyWorkingHere" />
+          <span>Atualmente trabalho aqui</span>
+        </label>
+      </div>
+
+      <div class="candidate-experience__modal-grid candidate-experience__modal-grid--role">
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Cargo</span>
+          <input
+            type="text"
+            name="role"
+            [(ngModel)]="experienceDraft.role"
+            required
+            placeholder="Informe o cargo"
+          />
+        </label>
+
+        <label class="candidate-experience__modal-field candidate-experience__modal-field--compact">
+          <span class="candidate-experience__modal-label">Modelo de trabalho</span>
+          <div class="candidate-experience__select-shell">
+            <select name="workModel" [(ngModel)]="experienceDraft.workModel">
+              <option *ngFor="let option of workModelOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+        </label>
+      </div>
+
+      <label class="candidate-experience__modal-field candidate-experience__modal-field--spacious">
+        <span class="candidate-experience__modal-label">Nível da posição</span>
+        <div class="candidate-experience__option-list candidate-experience__option-list--vertical">
+          <label class="candidate-experience__option" *ngFor="let option of positionLevelOptions">
+            <input type="radio" name="positionLevel" [value]="option" [(ngModel)]="experienceDraft.positionLevel" />
+            <span>{{ option }}</span>
+          </label>
+        </div>
+      </label>
+
+      <label class="candidate-experience__modal-field candidate-experience__modal-field--divider-top">
+        <span class="candidate-experience__modal-label">Tamanho da empresa</span>
+        <div class="candidate-experience__option-list candidate-experience__option-list--wrap">
+          <label class="candidate-experience__option" *ngFor="let option of companySizeOptions">
+            <input type="radio" name="companySize" [value]="option" [(ngModel)]="experienceDraft.companySize" />
+            <span>{{ option }}</span>
+          </label>
+        </div>
+      </label>
+
+      <div class="candidate-experience__modal-grid candidate-experience__modal-grid--dual">
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Segmento da empresa</span>
+          <div class="candidate-experience__select-shell">
+            <select name="companySegment" [(ngModel)]="experienceDraft.companySegment">
+              <option *ngFor="let option of companySegmentOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+        </label>
+
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Setor</span>
+          <div class="candidate-experience__select-shell">
+            <select name="sector" [(ngModel)]="experienceDraft.sector">
+              <option *ngFor="let option of sectorOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+        </label>
+      </div>
+
+      <div class="candidate-experience__modal-grid candidate-experience__modal-grid--date">
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Data de início</span>
+          <input
+            type="date"
+            name="startDate"
+            [ngModel]="experienceDraftStartDateValue"
+            (ngModelChange)="updateExperienceDraftDate('start', $event)"
+          />
+        </label>
+
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Data de saída</span>
+          <input
+            type="date"
+            name="endDate"
+            [ngModel]="experienceDraftEndDateValue"
+            (ngModelChange)="updateExperienceDraftDate('end', $event)"
+            [disabled]="experienceDraft.currentlyWorkingHere"
+          />
+        </label>
+      </div>
+
+      <div class="candidate-experience__modal-divider" aria-hidden="true"></div>
+
+      <small class="candidate-experience__error" *ngIf="submitAttempted && experienceForm.invalid">
+        Preencha pelo menos empresa e cargo para salvar.
+      </small>
+
+      <div class="candidate-experience__modal-actions">
+        <button
+          *ngIf="isEditingExperience"
+          class="candidate-experience__modal-button candidate-experience__modal-button--danger"
+          type="button"
+          (click)="deleteEditingExperience()"
+        >
+          Excluir
+        </button>
+        <button class="candidate-experience__modal-button candidate-experience__modal-button--ghost" type="button" (click)="closeExperienceModal()">
+          Cancelar
+        </button>
+        <button class="candidate-experience__modal-button candidate-experience__modal-button--primary" type="submit">
+          {{ experienceModalSubmitLabel }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<div
+  class="candidate-experience__modal-backdrop"
+  *ngIf="isFormationModalOpen"
+  (click)="closeFormationModal()"
+>
+  <section class="candidate-experience__modal candidate-experience__modal--formation" (click)="$event.stopPropagation()">
+    <div class="candidate-experience__modal-header">
+      <h3 class="candidate-experience__modal-title">Editar formação</h3>
+      <button class="candidate-experience__modal-close" type="button" (click)="closeFormationModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <form class="candidate-experience__modal-body" #formationForm="ngForm" (ngSubmit)="saveFormationCopy(formationForm)">
+      <label class="candidate-experience__modal-field">
+        <span class="candidate-experience__modal-label">Graduação</span>
+        <input
+          type="text"
+          name="graduation"
+          [(ngModel)]="formationDraft.graduation"
+          required
+          placeholder="Ex: Bacharelado em Sistemas de Informação"
+        />
+      </label>
+
+      <label class="candidate-experience__modal-field">
+        <span class="candidate-experience__modal-label">Especialização</span>
+        <input
+          type="text"
+          name="specialization"
+          [(ngModel)]="formationDraft.specialization"
+          required
+          placeholder="Ex: Especialização em Arquitetura de Software"
+        />
+      </label>
+
+      <div class="candidate-experience__modal-grid candidate-experience__modal-grid--date">
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Data de início</span>
+          <div class="candidate-experience__date-group">
+            <select name="formationStartMonth" [(ngModel)]="formationDraft.startMonth">
+              <option *ngFor="let month of monthOptions" [value]="month">{{ month }}</option>
+            </select>
+            <select name="formationStartYear" [(ngModel)]="formationDraft.startYear">
+              <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+        </label>
+
+        <label class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Data de fim</span>
+          <div class="candidate-experience__date-group">
+            <select name="formationEndMonth" [(ngModel)]="formationDraft.endMonth" [disabled]="!formationDraft.graduated">
+              <option *ngFor="let month of monthOptions" [value]="month">{{ month }}</option>
+            </select>
+            <select name="formationEndYear" [(ngModel)]="formationDraft.endYear" [disabled]="!formationDraft.graduated">
+              <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+        </label>
+      </div>
+
+      <label class="candidate-experience__modal-field">
+        <span class="candidate-experience__modal-label">Formado</span>
+        <div class="candidate-experience__option-list">
+          <label class="candidate-experience__option">
+            <input type="radio" name="graduated" [value]="true" [(ngModel)]="formationDraft.graduated" />
+            <span>Sim</span>
+          </label>
+
+          <label class="candidate-experience__option">
+            <input type="radio" name="graduated" [value]="false" [(ngModel)]="formationDraft.graduated" />
+            <span>Ainda não</span>
+          </label>
+        </div>
+      </label>
+
+      <div class="candidate-experience__modal-actions">
+        <button type="button" class="candidate-experience__modal-cancel" (click)="closeFormationModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="candidate-experience__modal-submit">
+          Salvar formação
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

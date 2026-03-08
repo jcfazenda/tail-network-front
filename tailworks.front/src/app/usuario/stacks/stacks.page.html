@@ -93,8 +93,25 @@
             class="candidate-stacks__stack-item"
           >
             <div class="candidate-stacks__stack-item-meta">
-              <span class="candidate-stacks__stack-item-drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+              <button
+                class="candidate-stacks__stack-item-edit"
+                type="button"
+                (click)="openEditStackModal(index)"
+                [attr.aria-label]="'Editar descrição de ' + stack.name"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+              </button>
               <span class="candidate-stacks__stack-item-name">{{ stack.name }}</span>
+              <button
+                *ngIf="stack.description"
+                class="candidate-stacks__stack-item-info"
+                type="button"
+                (click)="toggleStackDescription(index)"
+                [class.candidate-stacks__stack-item-info--active]="expandedDescriptionIndex === index"
+                [attr.aria-label]="(expandedDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">search</span>
+              </button>
             </div>
 
             <div class="candidate-stacks__stack-item-progress">
@@ -120,6 +137,13 @@
               >
                 <span class="material-symbols-rounded" aria-hidden="true">close</span>
               </button>
+            </div>
+
+            <div
+              class="candidate-stacks__stack-item-description"
+              *ngIf="expandedDescriptionIndex === index && stack.description"
+              [innerHTML]="stack.description"
+            >
             </div>
           </div>
         </div>
@@ -161,7 +185,7 @@
     </div>
 
     <div class="candidate-stacks__modal-body">
-      <label class="candidate-stacks__modal-field">
+      <label class="candidate-stacks__modal-field" *ngIf="editingStackIndex === null; else stackReadonly">
         <span class="candidate-stacks__modal-label">Stack</span>
         <input
           type="text"
@@ -171,15 +195,84 @@
       </label>
 
       <label class="candidate-stacks__modal-field">
-        <span class="candidate-stacks__modal-label">% de conhecimento</span>
-        <input
-          type="number"
-          min="0"
-          max="100"
-          [(ngModel)]="stackDraftKnowledge"
-          placeholder="Ex: 70"
-        />
+        <span class="candidate-stacks__modal-label">Descrição</span>
+        <div class="candidate-stacks__editor">
+          <div class="candidate-stacks__editor-toolbar">
+            <button
+              class="candidate-stacks__editor-tool"
+              type="button"
+              (mousedown)="$event.preventDefault(); applyDescriptionFormat('bold')"
+              aria-label="Negrito"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">format_bold</span>
+            </button>
+            <button
+              class="candidate-stacks__editor-tool"
+              type="button"
+              (mousedown)="$event.preventDefault(); applyDescriptionFormat('italic')"
+              aria-label="Itálico"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">format_italic</span>
+            </button>
+            <button
+              class="candidate-stacks__editor-tool"
+              type="button"
+              (mousedown)="$event.preventDefault(); applyDescriptionFormat('underline')"
+              aria-label="Sublinhar"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">format_underlined</span>
+            </button>
+            <button
+              class="candidate-stacks__editor-tool"
+              type="button"
+              (mousedown)="$event.preventDefault(); applyDescriptionFormat('insertUnorderedList')"
+              aria-label="Lista com marcadores"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
+            </button>
+            <button
+              class="candidate-stacks__editor-tool"
+              type="button"
+              (mousedown)="$event.preventDefault(); applyDescriptionFormat('insertOrderedList')"
+              aria-label="Lista numerada"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">format_list_numbered</span>
+            </button>
+            <button
+              class="candidate-stacks__editor-tool"
+              type="button"
+              (mousedown)="$event.preventDefault(); clearDescriptionFormat()"
+              aria-label="Limpar formatação"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">format_clear</span>
+            </button>
+          </div>
+
+          <div
+            #stackDescriptionEditor
+            class="candidate-stacks__editor-surface"
+            contenteditable="true"
+            data-placeholder="Adicione um contexto breve sobre essa stack."
+            (input)="onStackDescriptionInput($event)"
+          ></div>
+        </div>
+
+        <div class="candidate-stacks__editor-meta">
+          <small
+            class="candidate-stacks__editor-count"
+            [class.candidate-stacks__editor-count--limit]="isStackDescriptionOverLimit"
+          >
+            {{ stackDescriptionCharacters }} de {{ stackDescriptionMaxLength }}
+          </small>
+        </div>
       </label>
+
+      <ng-template #stackReadonly>
+        <div class="candidate-stacks__modal-field">
+          <span class="candidate-stacks__modal-label">Stack</span>
+          <div class="candidate-stacks__modal-static">{{ stackDraftName }}</div>
+        </div>
+      </ng-template>
 
       <small class="candidate-stacks__error" *ngIf="stackModalError">{{ stackModalError }}</small>
 
