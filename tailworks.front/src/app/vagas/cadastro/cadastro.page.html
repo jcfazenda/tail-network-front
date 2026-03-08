@@ -304,17 +304,32 @@
         <div class="summary-card__company summary-card__company--top">
           <div class="summary-card__company-top">
             <div class="summary-card__company-brand">
-              <span class="summary-card__company-logo" aria-hidden="true">{{ currentCompanyProfile.logoLabel }}</span>
+              <span
+                class="summary-card__company-logo"
+                [class.summary-card__company-logo--image]="!!currentCompanyProfile.logoUrl"
+                [style.backgroundImage]="currentCompanyProfile.logoUrl ? 'url(' + currentCompanyProfile.logoUrl + ')' : null"
+                aria-hidden="true"
+              >{{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}</span>
 
               <div class="summary-card__company-meta">
-                <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
+                <div class="summary-card__company-name-row">
+                  <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
+                  <span class="summary-card__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
+                </div>
                 <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
               </div>
             </div>
           </div>
 
           <p class="summary-card__company-description">
-            {{ currentCompanyProfile.description }} · + de 10.001 funcionários · {{ currentCompanyProfile.linkedinCount }}
+            <span>{{ currentCompanyProfile.description }}</span>
+            <span class="summary-card__company-description-dot" aria-hidden="true"></span>
+            <span>+ de 10.001 funcionários</span>
+            <span class="summary-card__company-description-dot" aria-hidden="true"></span>
+            <span class="summary-card__company-description-location">
+              <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+              <span>{{ jobDraft.location }}</span>
+            </span>
           </p>
         </div>
 
@@ -324,37 +339,99 @@
               <div class="summary-card__sections">
                 <section class="summary-card__section summary-card__section--status-panel">
                   <div class="summary-card__fact summary-card__fact--status">
-                    <span class="summary-card__fact-label">Status da vaga</span>
+                    <div class="summary-card__status-head">
+                      <span class="summary-card__fact-label">Status da vaga</span>
+                      <span class="summary-card__status-pill" [ngClass]="'summary-card__status-pill--' + statusChipTone">
+                        {{ statusChipLabel }}
+                      </span>
+                    </div>
 
-                    <div class="summary-card__benefits-list">
-                      <div class="summary-card__benefit-option summary-card__benefit-option--status" *ngFor="let item of candidateStatusPreview">
-                        <div class="summary-card__benefit-option-head">
-                          <span
-                            class="summary-card__benefit-option-check summary-card__benefit-option-check--status"
-                            [class.summary-card__benefit-option-check--done]="item.completed"
-                            aria-hidden="true"
-                          ></span>
-                          <div class="summary-card__benefit-option-copy">
-                            <span class="summary-card__benefit-option-label" [class.summary-card__benefit-option-label--muted]="!item.completed">
+                    <mat-stepper
+                      class="summary-card__status-stepper"
+                      orientation="vertical"
+                      [selectedIndex]="statusSelectedIndex"
+                      animationDuration="0ms"
+                    >
+                      <ng-template matStepperIcon="number">
+                        <span class="summary-card__status-step-indicator summary-card__status-step-indicator--pending" aria-hidden="true"></span>
+                      </ng-template>
+
+                      <ng-template matStepperIcon="done">
+                        <span class="summary-card__status-step-indicator summary-card__status-step-indicator--done" aria-hidden="true">check</span>
+                      </ng-template>
+
+                      <ng-template matStepperIcon="edit">
+                        <span class="summary-card__status-step-indicator summary-card__status-step-indicator--active" aria-hidden="true">schedule</span>
+                      </ng-template>
+
+                      <mat-step
+                        *ngFor="let item of candidateStatusPreview"
+                        [completed]="item.completed"
+                        [editable]="false"
+                        [state]="item.label === statusCurrentLabel ? 'edit' : item.completed ? 'done' : 'number'"
+                      >
+                        <ng-template matStepLabel>
+                          <div class="summary-card__status-step-label">
+                            <span class="summary-card__status-step-name" [class.summary-card__status-step-name--muted]="!item.completed">
                               {{ item.label }}
                             </span>
+                            <span class="summary-card__status-step-time" *ngIf="item.completed">{{ item.timeLabel }}</span>
                           </div>
-                          <span class="summary-card__benefit-option-time" *ngIf="item.completed">{{ item.timeLabel }}</span>
+                        </ng-template>
+
+                        <div class="summary-card__status-step-content" *ngIf="item.label === statusCurrentLabel && statusCurrentDescription">
+                          {{ statusCurrentDescription }}
                         </div>
-                      </div>
-                    </div>
+                      </mat-step>
+                    </mat-stepper>
                   </div>
                 </section>
 
+                <label class="summary-card__status-updates">
+                  <span class="summary-card__status-updates-copy">
+                    <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                    <span>Receber atualizações por e-mail</span>
+                  </span>
+
+                  <span class="summary-card__status-switch">
+                    <input type="checkbox" name="statusEmailUpdatesEnabled" [(ngModel)]="statusEmailUpdatesEnabled" />
+                    <span class="summary-card__status-switch-track" aria-hidden="true">
+                      <span class="summary-card__status-switch-thumb"></span>
+                    </span>
+                  </span>
+                </label>
+
                 <div class="summary-card__status-footer" *ngIf="hasRequestedContractStatus">
-                  <button class="summary-card__status-action summary-card__status-action--primary" type="button">
-                    <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">task_alt</span>
-                    Aceitar
-                  </button>
-                  <button class="summary-card__status-action summary-card__status-action--secondary" type="button">
-                    <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">schedule</span>
-                    Fica para Proxima
-                  </button>
+                  <ng-container *ngIf="showStatusDecisionActions; else statusFooterResolved">
+                    <button class="summary-card__status-action summary-card__status-action--primary" type="button" (click)="selectAcceptedContractDecision()">
+                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">task_alt</span>
+                      Aceitar
+                    </button>
+                    <button class="summary-card__status-action summary-card__status-action--secondary" type="button" (click)="selectNextContractDecision()">
+                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">schedule</span>
+                      Fica para Proxima
+                    </button>
+                  </ng-container>
+
+                  <ng-template #statusFooterResolved>
+                    <button
+                      *ngIf="showSendDocumentsAction"
+                      class="summary-card__status-action summary-card__status-action--primary summary-card__status-action--documents"
+                      type="button"
+                      (click)="sendStatusDocuments()"
+                    >
+                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
+                      Enviar Documentos
+                    </button>
+
+                    <p class="summary-card__status-note" *ngIf="showRadarStatusMessage">
+                      Tudo bem, voce ainda esta no nosso Radar.
+                    </p>
+
+                    <p class="summary-card__status-note" *ngIf="showWelcomeStatusMessage">
+                      Parabens, bem-vindo ao time.
+                    </p>
+                  </ng-template>
                 </div>
               </div>
             </div>

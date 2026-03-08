@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
 import { ContractType, JobBenefitItem, MockJobDraft, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
+import { MatStepperModule } from '@angular/material/stepper';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
@@ -22,6 +23,7 @@ type CompanySummaryProfile = {
   description: string;
   linkedinCount: string;
   logoLabel: string;
+  logoUrl?: string;
 };
 
 type CandidateStatusPreview = {
@@ -30,10 +32,12 @@ type CandidateStatusPreview = {
   timeLabel: string;
 };
 
+type ContractDecision = 'accepted' | 'next' | null;
+
 @Component({
   standalone: true,
   selector: 'app-cadastro-page',
-  imports: [CommonModule, FormsModule, AlcanceRadarComponent],
+  imports: [CommonModule, FormsModule, AlcanceRadarComponent, MatStepperModule],
   templateUrl: './cadastro.page.html',
   styleUrls: ['./cadastro.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +59,11 @@ export class CadastroPage {
     '/assets/avatars/avatar-rafael.png',
   ];
   readonly previewAvatarExtraCount = 18;
+  readonly recruiterPreview = {
+    name: 'Rafael Souza',
+    role: 'Talent Acquisition',
+    avatar: '/assets/avatars/avatar-rafael.png',
+  };
   readonly initialDocumentOptions = [
     'Copia do Certificado de conclusão',
     'Copia da Identidade e CPF',
@@ -109,6 +118,7 @@ export class CadastroPage {
       description: 'Banco e serviços financeiros',
       linkedinCount: '5.248.921 no LinkedIn',
       logoLabel: 'it',
+      logoUrl: '/assets/images/logo-itau.png',
     },
     Nubank: {
       name: 'Nubank',
@@ -125,17 +135,213 @@ export class CadastroPage {
       logoLabel: 'st',
     },
   };
-  readonly candidateStatusPreview: CandidateStatusPreview[] = [
-    { label: 'No radar', completed: true, timeLabel: 'Semana passada' },
-    { label: 'Se candidatou', completed: true, timeLabel: '5 dias atras' },
-    { label: 'Em processo', completed: true, timeLabel: 'Ontem' },
-    { label: 'Contratação Solicitada', completed: true, timeLabel: 'Há 20 min.' },
-    { label: 'Cancelado', completed: false, timeLabel: 'Há 20 min.' },
-    { label: 'Contratado', completed: false, timeLabel: 'Há 20 min.' },
-  ];
+  contractDecision: ContractDecision = null;
+  documentsSent = false;
+  statusEmailUpdatesEnabled = true;
+
+  get candidateStatusPreview(): CandidateStatusPreview[] {
+    const baseStatuses: CandidateStatusPreview[] = [
+      { label: 'No radar', completed: true, timeLabel: 'Semana passada' },
+      { label: 'Se candidatou', completed: true, timeLabel: '5 dias atras' },
+      { label: 'Em processo', completed: true, timeLabel: 'Ontem' },
+      { label: 'Contratação Solicitada', completed: true, timeLabel: 'Há 20 min.' },
+    ];
+
+    if (this.contractDecision === 'next') {
+      return [
+        ...baseStatuses,
+        { label: 'Ficou para a proxima', completed: true, timeLabel: 'Há 20 min.' },
+        { label: 'Encerrado', completed: true, timeLabel: 'Há 20 min.' },
+      ];
+    }
+
+    if (this.contractDecision === 'accepted') {
+      return [
+        ...baseStatuses,
+        { label: 'Aceito', completed: true, timeLabel: 'Há 20 min.' },
+        this.documentsSent
+          ? { label: 'Documentos recebidos', completed: true, timeLabel: 'Há 5 min.' }
+          : { label: 'Validando documentos', completed: false, timeLabel: 'Há 20 min.' },
+        { label: 'Contratado', completed: this.documentsSent, timeLabel: 'Há 5 min.' },
+      ];
+    }
+
+    return [
+      ...baseStatuses,
+      { label: 'Aceito / Ficou pra próxima', completed: false, timeLabel: 'Há 20 min.' },
+      { label: 'Validando documentos', completed: false, timeLabel: 'Há 20 min.' },
+      { label: 'Contratado', completed: false, timeLabel: 'Há 5 min.' },
+    ];
+  }
 
   get hasRequestedContractStatus(): boolean {
     return this.candidateStatusPreview.some(item => item.label === 'Contratação Solicitada');
+  }
+
+  get statusSelectedIndex(): number {
+    const currentIndex = this.candidateStatusPreview.findIndex(item => item.label === this.statusCurrentLabel);
+    return currentIndex >= 0 ? currentIndex : 0;
+  }
+
+  get showStatusDecisionActions(): boolean {
+    return this.contractDecision === null;
+  }
+
+  get showSendDocumentsAction(): boolean {
+    return this.contractDecision === 'accepted' && !this.documentsSent;
+  }
+
+  get showRadarStatusMessage(): boolean {
+    return this.contractDecision === 'next';
+  }
+
+  get showWelcomeStatusMessage(): boolean {
+    return this.contractDecision === 'accepted' && this.documentsSent;
+  }
+
+  get statusCurrentLabel(): string {
+    if (this.contractDecision === 'next') {
+      return 'Ficou para a proxima';
+    }
+
+    if (this.contractDecision === 'accepted' && this.documentsSent) {
+      return 'Contratado';
+    }
+
+    if (this.contractDecision === 'accepted') {
+      return 'Aceito';
+    }
+
+    if (this.hasRequestedContractStatus) {
+      return 'Contratação Solicitada';
+    }
+
+    const lastCompletedStatus = [...this.candidateStatusPreview].reverse().find(item => item.completed);
+    return lastCompletedStatus?.label ?? 'No radar';
+  }
+
+  get statusCurrentTone(): string {
+    switch (this.statusCurrentLabel) {
+      case 'Aceito':
+      case 'Contratado':
+        return 'success';
+      case 'Ficou para a proxima':
+      case 'Encerrado':
+        return 'muted';
+      case 'Contratação Solicitada':
+      case 'Validando documentos':
+        return 'attention';
+      default:
+        return 'progress';
+    }
+  }
+
+  get statusChipLabel(): string {
+    const processMilestones = new Set([
+      'Em processo',
+      'Contratação Solicitada',
+      'Aceito',
+      'Ficou para a proxima',
+      'Validando documentos',
+      'Documentos recebidos',
+      'Contratado',
+      'Encerrado',
+    ]);
+
+    if (processMilestones.has(this.statusCurrentLabel)) {
+      return 'Em Processo';
+    }
+
+    return this.statusCurrentLabel;
+  }
+
+  get statusChipTone(): string {
+    if (this.statusChipLabel === 'Em Processo') {
+      return 'progress';
+    }
+
+    return this.statusCurrentTone;
+  }
+
+  get statusCurrentDescription(): string {
+    switch (this.statusCurrentLabel) {
+      case 'No radar':
+        return 'Perfil identificado com aderencia no radar da vaga';
+      case 'Se candidatou':
+        return 'Candidatura recebida e aguardando triagem';
+      case 'Em processo':
+        return 'Analisando perfil dos candidatos';
+      case 'Contratação Solicitada':
+        return 'Etapa final aguardando resposta do candidato';
+      case 'Aceito':
+        return 'Proposta aceita e pronta para seguir';
+      case 'Ficou para a proxima':
+        return 'Perfil mantido no radar para novas oportunidades';
+      case 'Validando documentos':
+        return 'Aguardando envio e validacao dos documentos';
+      case 'Contratado':
+        return 'Processo concluido com sucesso';
+      case 'Encerrado':
+        return 'Fluxo encerrado para esta oportunidade';
+      default:
+        return '';
+    }
+  }
+
+  get statusInsightTitle(): string {
+    if (this.showWelcomeStatusMessage) {
+      return 'Parabens, vaga concluida com sucesso!';
+    }
+
+    if (this.showRadarStatusMessage) {
+      return 'Perfil mantido no radar';
+    }
+
+    if (this.showSendDocumentsAction) {
+      return 'Etapa final liberada';
+    }
+
+    return 'Parabens, vaga quase contratada!';
+  }
+
+  get statusInsightText(): string {
+    if (this.showWelcomeStatusMessage) {
+      return 'Acompanhamento finalizado e contratacao registrada em tempo real.';
+    }
+
+    if (this.showRadarStatusMessage) {
+      return 'Mesmo sem seguir agora, o candidato permanece elegivel para novas vagas.';
+    }
+
+    if (this.showSendDocumentsAction) {
+      return 'Envie os documentos para concluir a validacao e avancar a contratacao.';
+    }
+
+    return 'Acompanhe o andamento do funil e os proximos passos do candidato.';
+  }
+
+  get statusProgressPercentage(): number {
+    const total = this.candidateStatusPreview.length;
+    if (!total) {
+      return 0;
+    }
+
+    const completed = this.candidateStatusPreview.filter(item => item.completed).length;
+    return Math.round((completed / total) * 100);
+  }
+
+  selectAcceptedContractDecision(): void {
+    this.contractDecision = 'accepted';
+    this.documentsSent = false;
+  }
+
+  selectNextContractDecision(): void {
+    this.contractDecision = 'next';
+    this.documentsSent = false;
+  }
+
+  sendStatusDocuments(): void {
+    this.documentsSent = true;
   }
 
   responsibilitySections: ResponsibilitySection[] = [
