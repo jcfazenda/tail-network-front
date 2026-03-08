@@ -5,6 +5,7 @@ import { ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.compone
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
 import { JobStatus, MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
+import { AlcanceRadarComponent, RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
 
 interface RadarCategory {
   label: string;
@@ -16,7 +17,7 @@ interface RadarCategory {
 @Component({
   standalone: true,
   selector: 'app-stub-page',
-  imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent],
+  imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent, AlcanceRadarComponent],
   templateUrl: './stub.page.html',
   styleUrls: ['./stub.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -137,7 +138,7 @@ export class StubPage {
 
   jobCardOfferLine(job: MockJobRecord): string {
     const segments: string[] = [job.contractType];
-    const salary = this.formatJobSalary(job.salaryRange);
+    const salary = job.showSalaryRangeInCard === false ? null : this.formatJobSalary(job.salaryRange);
 
     if (salary) {
       segments.push(salary);
@@ -150,6 +151,26 @@ export class StubPage {
     }
 
     return line;
+  }
+
+  jobRadarItems(job: MockJobRecord): RadarLegendItem[] {
+    return [
+      {
+        label: 'Alta compatibilidade',
+        tone: 'high',
+        percent: Math.max(48, Math.min(94, job.match - 13)),
+      },
+      {
+        label: 'Media de Compatibilidade',
+        tone: 'medium',
+        detail: '(60-85%)',
+      },
+      {
+        label: 'Potenciais',
+        tone: 'potential',
+        count: Math.max(job.radarCount, job.talents),
+      },
+    ];
   }
 
   private resolveInitialTab(): JobStatus {

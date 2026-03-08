@@ -35,7 +35,7 @@
 
     <span class="radar-overview__gauge-core">
       <strong>{{ safeScore }}%</strong>
-      <span>Aderencia</span>
+      <span *ngIf="showGaugeLabel">Aderencia</span>
     </span>
   </div>
 </section>

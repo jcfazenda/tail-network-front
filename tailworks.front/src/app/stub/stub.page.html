@@ -82,58 +82,56 @@
 
         <ng-container *ngIf="filteredJobs.length; else emptyState">
           <div class="jobs__grid">
-            <div class="job-card" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
-              <div class="card-stripe"></div>
+            <button class="job-card" type="button" *ngFor="let job of filteredJobs" (click)="openPanel(job)">
+              <div class="job-card__main">
+                <div class="job-card__title-row">
+                  <h3 class="job-card__title">{{ job.title }}</h3>
+                  <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
+                </div>
 
-              <div class="card-body">
-                <div class="header-row">
-                  <h3 style="margin: 0; padding-left: 0; font-size: 20px; font-weight: 700; color: rgba(15,23,42,0.92); line-height: 1.1;">
-                    {{ job.title }}
-                  </h3>
-                  <div class="header-actions">
-                    <span class="job-type-chip {{ job.workModel | lowercase }}">
-                      {{ job.workModel | uppercase }}
+                <div class="job-card__meta">
+                  <span>{{ job.company }}</span>
+                  <span class="job-card__meta-dot" aria-hidden="true"></span>
+                  <span>{{ job.location }}</span>
+                </div>
+
+                <div class="job-card__offer">
+                  <span>{{ jobCardOfferLine(job) }}</span>
+                </div>
+
+                <div class="job-card__footer">
+                  <div class="job-card__fit">
+                    <span class="job-card__fit-label">Aderencia</span>
+                    <span class="job-card__fit-bar" aria-hidden="true">
+                      <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
                     </span>
+                    <span class="job-card__fit-value">{{ job.match }}%</span>
                   </div>
-                </div>
 
-                <div class="job-brief">
-                  <div class="job-meta-line">
-                    <span class="job-company">{{ job.company }}</span>
-                  </div>
-                  <div class="job-meta-line">
-                    <span class="job-location">{{ job.location }} 📍</span>
-                  </div>
-                  <div class="job-meta-line job-meta-line--offer">
-                    <span>{{ jobCardOfferLine(job) }}</span>
-                  </div>
-                </div>
-
-                <div class="progress-row">
-                  <div class="progress-header">
-                    <div class="progress-label">Aderência</div>
-                    <div class="progress-avatars progress-avatars--inline">
-                      <div class="avatars tiny">
-                        <ng-container *ngFor="let avatar of job.avatars; let i = index">
-                          <div
-                            class="avatar"
-                            [style.zIndex]="i + 1"
-                            [style.marginLeft.px]="i === 0 ? 0 : -12"
-                            [style.backgroundImage]="'url(' + avatar + ')'"
-                          ></div>
-                        </ng-container>
-                        <div class="avatar extra">+{{ job.extraCount }}</div>
-                      </div>
+                  <div class="job-card__avatars">
+                    <div class="job-card__avatars-stack">
+                      <ng-container *ngFor="let avatar of job.avatars; let i = index">
+                        <span
+                          class="job-card__avatar"
+                          [style.zIndex]="i + 1"
+                          [style.marginLeft.px]="i === 0 ? 0 : -12"
+                          [style.backgroundImage]="'url(' + avatar + ')'"
+                          aria-hidden="true"
+                        ></span>
+                      </ng-container>
+                      <span class="job-card__avatar job-card__avatar--extra">+{{ job.extraCount }}</span>
                     </div>
-                  </div>
-                  <div class="progress-bar-split">
-                    <div class="bar filled" [style.flex]="job.match"></div>
-                    <span class="progress-value">{{ job.match }}%</span>
-                    <div class="bar rest" [style.flex]="100 - job.match"></div>
                   </div>
                 </div>
               </div>
-            </div>
+
+              <app-alcance-radar
+                class="job-card__side"
+                [score]="job.match"
+                [showGaugeLabel]="false"
+                [items]="jobRadarItems(job)"
+              ></app-alcance-radar>
+            </button>
           </div>
         </ng-container>
 

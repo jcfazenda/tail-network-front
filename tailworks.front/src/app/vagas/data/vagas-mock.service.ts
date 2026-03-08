@@ -97,6 +97,7 @@ export class VagasMockService {
   private normalizeJobs(records: MockJobRecord[]): MockJobRecord[] {
     return records.map((record) => ({
       ...record,
+      showSalaryRangeInCard: record.showSalaryRangeInCard ?? true,
       benefits: this.normalizeBenefits(record.benefits),
       techStack: record.techStack.map((item) => ({ ...item })),
       differentials: [...record.differentials],
