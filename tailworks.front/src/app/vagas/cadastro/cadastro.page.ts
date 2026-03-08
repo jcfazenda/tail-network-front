@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
@@ -34,6 +34,16 @@ type CandidateStatusPreview = {
 
 type ContractDecision = 'accepted' | 'next' | null;
 
+type ConfettiPiece = {
+  left: number;
+  top: number;
+  offsetX: number;
+  offsetY: number;
+  color: string;
+  delay: number;
+  duration: number;
+};
+
 @Component({
   standalone: true,
   selector: 'app-cadastro-page',
@@ -43,6 +53,7 @@ type ContractDecision = 'accepted' | 'next' | null;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CadastroPage {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly vagasMockService = inject(VagasMockService);
   private summarySectionCounter = 3;
@@ -135,17 +146,24 @@ export class CadastroPage {
       logoLabel: 'st',
     },
   };
+  statusStageIndex = 0;
   contractDecision: ContractDecision = null;
   documentsSent = false;
   statusEmailUpdatesEnabled = true;
+  statusDocumentsConsentAccepted = false;
+  confettiPieces: ConfettiPiece[] = [];
+  confettiActive = false;
 
   get candidateStatusPreview(): CandidateStatusPreview[] {
     const baseStatuses: CandidateStatusPreview[] = [
-      { label: 'No radar', completed: true, timeLabel: 'Semana passada' },
-      { label: 'Se candidatou', completed: true, timeLabel: '5 dias atras' },
-      { label: 'Em processo', completed: true, timeLabel: 'Ontem' },
-      { label: 'Contratação Solicitada', completed: true, timeLabel: 'Há 20 min.' },
-    ];
+      { label: 'No radar', timeLabel: 'Semana passada' },
+      { label: 'Candidatura enviada', timeLabel: '5 dias atras' },
+      { label: 'Em processo', timeLabel: 'Ontem' },
+      { label: 'Contratação Solicitada', timeLabel: 'Há 20 min.' },
+    ].map((item, index) => ({
+      ...item,
+      completed: index <= this.statusStageIndex,
+    }));
 
     if (this.contractDecision === 'next') {
       return [
@@ -158,7 +176,7 @@ export class CadastroPage {
     if (this.contractDecision === 'accepted') {
       return [
         ...baseStatuses,
-        { label: 'Aceito', completed: true, timeLabel: 'Há 20 min.' },
+        { label: 'Proposta aceita', completed: true, timeLabel: 'Há 20 min.' },
         this.documentsSent
           ? { label: 'Documentos recebidos', completed: true, timeLabel: 'Há 5 min.' }
           : { label: 'Validando documentos', completed: false, timeLabel: 'Há 20 min.' },
@@ -175,7 +193,7 @@ export class CadastroPage {
   }
 
   get hasRequestedContractStatus(): boolean {
-    return this.candidateStatusPreview.some(item => item.label === 'Contratação Solicitada');
+    return this.statusStageIndex >= 3 || this.contractDecision !== null || this.documentsSent;
   }
 
   get statusSelectedIndex(): number {
@@ -184,10 +202,33 @@ export class CadastroPage {
   }
 
   get showStatusDecisionActions(): boolean {
-    return this.contractDecision === null;
+    return this.contractDecision === null && this.statusStageIndex >= 3;
+  }
+
+  get showStatusApplyAction(): boolean {
+    return this.contractDecision === null && this.statusStageIndex === 0;
+  }
+
+  get showStatusAdvanceAction(): boolean {
+    return this.contractDecision === null && this.statusStageIndex > 0 && this.statusStageIndex < 3;
+  }
+
+  get statusAdvanceLabel(): string {
+    switch (this.statusStageIndex) {
+      case 1:
+        return 'Avançar para processo';
+      case 2:
+        return 'Solicitar contratação';
+      default:
+        return 'Avançar';
+    }
   }
 
   get showSendDocumentsAction(): boolean {
+    return this.contractDecision === 'accepted' && !this.documentsSent;
+  }
+
+  get showStatusDocumentsPreview(): boolean {
     return this.contractDecision === 'accepted' && !this.documentsSent;
   }
 
@@ -209,15 +250,10 @@ export class CadastroPage {
     }
 
     if (this.contractDecision === 'accepted') {
-      return 'Aceito';
+      return 'Proposta aceita';
     }
 
-    if (this.hasRequestedContractStatus) {
-      return 'Contratação Solicitada';
-    }
-
-    const lastCompletedStatus = [...this.candidateStatusPreview].reverse().find(item => item.completed);
-    return lastCompletedStatus?.label ?? 'No radar';
+    return this.candidateStatusPreview[this.statusStageIndex]?.label ?? 'No radar';
   }
 
   get statusCurrentTone(): string {
@@ -236,44 +272,17 @@ export class CadastroPage {
     }
   }
 
-  get statusChipLabel(): string {
-    const processMilestones = new Set([
-      'Em processo',
-      'Contratação Solicitada',
-      'Aceito',
-      'Ficou para a proxima',
-      'Validando documentos',
-      'Documentos recebidos',
-      'Contratado',
-      'Encerrado',
-    ]);
-
-    if (processMilestones.has(this.statusCurrentLabel)) {
-      return 'Em Processo';
-    }
-
-    return this.statusCurrentLabel;
-  }
-
-  get statusChipTone(): string {
-    if (this.statusChipLabel === 'Em Processo') {
-      return 'progress';
-    }
-
-    return this.statusCurrentTone;
-  }
-
   get statusCurrentDescription(): string {
     switch (this.statusCurrentLabel) {
       case 'No radar':
-        return 'Perfil identificado com aderencia no radar da vaga';
-      case 'Se candidatou':
+        return 'O sistema encontrou esse candidato no radar da vaga';
+      case 'Candidatura enviada':
         return 'Candidatura recebida e aguardando triagem';
       case 'Em processo':
         return 'Analisando perfil dos candidatos';
       case 'Contratação Solicitada':
         return 'Etapa final aguardando resposta do candidato';
-      case 'Aceito':
+      case 'Proposta aceita':
         return 'Proposta aceita e pronta para seguir';
       case 'Ficou para a proxima':
         return 'Perfil mantido no radar para novas oportunidades';
@@ -330,18 +339,75 @@ export class CadastroPage {
     return Math.round((completed / total) * 100);
   }
 
+  onStatusStepSelectionChange(index: number): void {
+    if (index < 0 || index > 3) {
+      return;
+    }
+
+    this.statusStageIndex = index;
+    this.contractDecision = null;
+    this.documentsSent = false;
+    this.statusDocumentsConsentAccepted = false;
+  }
+
   selectAcceptedContractDecision(): void {
+    this.statusStageIndex = 3;
     this.contractDecision = 'accepted';
     this.documentsSent = false;
+    this.statusDocumentsConsentAccepted = false;
   }
 
   selectNextContractDecision(): void {
+    this.statusStageIndex = 3;
     this.contractDecision = 'next';
     this.documentsSent = false;
+    this.statusDocumentsConsentAccepted = false;
   }
 
   sendStatusDocuments(): void {
     this.documentsSent = true;
+    this.triggerConfetti();
+  }
+
+  advanceStatusStage(): void {
+    if (this.statusStageIndex >= 3) {
+      return;
+    }
+
+    this.statusStageIndex += 1;
+    this.contractDecision = null;
+    this.documentsSent = false;
+    this.statusDocumentsConsentAccepted = false;
+  }
+
+  private buildConfetti(): void {
+    const colors = ['#f2b31a', '#f8c73c', '#ffd66b', '#3f9170', '#62b290', '#8ecfb4'];
+    this.confettiPieces = Array.from({ length: 220 }, (): ConfettiPiece => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 28 + Math.random() * 36;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist;
+
+      return {
+        left: 50,
+        top: 48,
+        offsetX: dx,
+        offsetY: dy,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        delay: Math.random() * 900,
+        duration: 4800 + Math.random() * 3200,
+      };
+    });
+  }
+
+  private triggerConfetti(): void {
+    this.buildConfetti();
+    this.confettiActive = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.confettiActive = false;
+      this.cdr.markForCheck();
+    }, 1600);
   }
 
   responsibilitySections: ResponsibilitySection[] = [

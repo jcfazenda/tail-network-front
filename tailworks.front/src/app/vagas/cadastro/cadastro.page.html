@@ -241,7 +241,7 @@
             <section class="documents-block">
               <div class="documents-card">
                 <div class="resource-card__header">
-                  <h2 class="resource-card__title">Documentos</h2>
+                  <h2 class="resource-card__title">Documentos para validação de contratação.</h2>
                   <button class="benefits-card__add" type="button" (click)="openDocumentModal()">
                     <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
                     <span>Adicionar</span>
@@ -337,13 +337,24 @@
           <ng-container [ngSwitch]="activeSummaryView">
             <div class="summary-card__tab-page summary-card__tab-page--status" *ngSwitchCase="'status'">
               <div class="summary-card__sections">
+                <label class="summary-card__status-updates">
+                  <span class="summary-card__status-updates-copy">
+                    <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+                    <span>Receber atualizações por e-mail</span>
+                  </span>
+
+                  <span class="summary-card__status-switch">
+                    <input type="checkbox" name="statusEmailUpdatesEnabled" [(ngModel)]="statusEmailUpdatesEnabled" />
+                    <span class="summary-card__status-switch-track" aria-hidden="true">
+                      <span class="summary-card__status-switch-thumb"></span>
+                    </span>
+                  </span>
+                </label>
+
                 <section class="summary-card__section summary-card__section--status-panel">
                   <div class="summary-card__fact summary-card__fact--status">
                     <div class="summary-card__status-head">
                       <span class="summary-card__fact-label">Status da vaga</span>
-                      <span class="summary-card__status-pill" [ngClass]="'summary-card__status-pill--' + statusChipTone">
-                        {{ statusChipLabel }}
-                      </span>
                     </div>
 
                     <mat-stepper
@@ -351,24 +362,37 @@
                       orientation="vertical"
                       [selectedIndex]="statusSelectedIndex"
                       animationDuration="0ms"
+                      (selectionChange)="onStatusStepSelectionChange($event.selectedIndex)"
                     >
-                      <ng-template matStepperIcon="number">
-                        <span class="summary-card__status-step-indicator summary-card__status-step-indicator--pending" aria-hidden="true"></span>
+                      <ng-template matStepperIcon="number" let-index="index">
+                        <span
+                          class="summary-card__status-step-indicator"
+                          [ngClass]="candidateStatusPreview[index]?.completed ? 'summary-card__status-step-indicator--done' : 'summary-card__status-step-indicator--pending'"
+                          aria-hidden="true"
+                        >{{ candidateStatusPreview[index]?.completed ? 'check' : '' }}</span>
                       </ng-template>
 
-                      <ng-template matStepperIcon="done">
-                        <span class="summary-card__status-step-indicator summary-card__status-step-indicator--done" aria-hidden="true">check</span>
+                      <ng-template matStepperIcon="done" let-index="index">
+                        <span
+                          class="summary-card__status-step-indicator"
+                          [ngClass]="candidateStatusPreview[index]?.completed ? 'summary-card__status-step-indicator--done' : 'summary-card__status-step-indicator--pending'"
+                          aria-hidden="true"
+                        >{{ candidateStatusPreview[index]?.completed ? 'check' : '' }}</span>
                       </ng-template>
 
-                      <ng-template matStepperIcon="edit">
-                        <span class="summary-card__status-step-indicator summary-card__status-step-indicator--active" aria-hidden="true">schedule</span>
+                      <ng-template matStepperIcon="edit" let-index="index">
+                        <span
+                          class="summary-card__status-step-indicator"
+                          [ngClass]="candidateStatusPreview[index]?.completed ? 'summary-card__status-step-indicator--done' : 'summary-card__status-step-indicator--pending'"
+                          aria-hidden="true"
+                        >{{ candidateStatusPreview[index]?.completed ? 'check' : '' }}</span>
                       </ng-template>
 
                       <mat-step
                         *ngFor="let item of candidateStatusPreview"
                         [completed]="item.completed"
                         [editable]="false"
-                        [state]="item.label === statusCurrentLabel ? 'edit' : item.completed ? 'done' : 'number'"
+                        [state]="item.completed ? 'done' : 'number'"
                       >
                         <ng-template matStepLabel>
                           <div class="summary-card__status-step-label">
@@ -387,37 +411,103 @@
                   </div>
                 </section>
 
-                <label class="summary-card__status-updates">
-                  <span class="summary-card__status-updates-copy">
-                    <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
-                    <span>Receber atualizações por e-mail</span>
-                  </span>
+                <section class="summary-card__section summary-card__section--status-documents" *ngIf="showStatusDocumentsPreview">
+                  <div class="summary-card__fact summary-card__fact--documents-preview">
+                    <div class="summary-card__status-documents-head">
+                      <div class="summary-card__status-documents-head-top">
+                        <span class="material-symbols-rounded summary-card__status-documents-head-icon" aria-hidden="true">description</span>
+                        <span class="summary-card__status-documents-head-title">Documentos para validação de contratação.</span>
+                      </div>
+                      <div class="summary-card__status-documents-head-copy">
+                        <span class="summary-card__status-documents-head-note">
+                          Esses documentos sao os mesmos que vc anexou no seu cadastro, se quiser revise la e depois volte aqui.
+                        </span>
+                      </div>
+                    </div>
 
-                  <span class="summary-card__status-switch">
-                    <input type="checkbox" name="statusEmailUpdatesEnabled" [(ngModel)]="statusEmailUpdatesEnabled" />
-                    <span class="summary-card__status-switch-track" aria-hidden="true">
-                      <span class="summary-card__status-switch-thumb"></span>
-                    </span>
-                  </span>
-                </label>
+                    <div class="summary-card__benefits-list" *ngIf="selectedDocuments.length; else emptyStatusDocuments">
+                      <div class="summary-card__benefit-option" *ngFor="let item of selectedDocuments">
+                        <div class="summary-card__benefit-option-head">
+                          <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
+                          <div class="summary-card__benefit-option-copy">
+                            <span class="summary-card__benefit-option-label">{{ item }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                <div class="summary-card__status-footer" *ngIf="hasRequestedContractStatus">
+                    <ng-template #emptyStatusDocuments>
+                      <span class="summary-card__fact-empty">Nenhum documento informado</span>
+                    </ng-template>
+
+                    <label class="summary-card__status-documents-consent">
+                      <span class="summary-card__status-documents-consent-control">
+                        <input
+                          type="checkbox"
+                          name="statusDocumentsConsentAccepted"
+                          [(ngModel)]="statusDocumentsConsentAccepted"
+                        />
+                        <span class="summary-card__status-documents-consent-check material-symbols-rounded" aria-hidden="true">check</span>
+                      </span>
+                      <span class="summary-card__status-documents-consent-text">
+                        Autorizo o uso, compartilhamento e verificação dos meus documentos para fins de validação do processo de contratação, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+                      </span>
+                    </label>
+                  </div>
+                </section>
+
+                <div class="summary-card__status-footer">
+                  <ng-container *ngIf="showStatusApplyAction; else statusFooterAdvanceOrDecision">
+                    <button
+                      class="summary-card__status-action summary-card__status-action--primary"
+                      type="button"
+                      (click)="advanceStatusStage()"
+                    >
+                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">person_add</span>
+                      Me candidatar
+                    </button>
+                  </ng-container>
+
+                  <ng-template #statusFooterAdvanceOrDecision>
+                  <ng-container *ngIf="showStatusAdvanceAction; else statusFooterDecisionOrResolved">
+                    <button
+                      class="summary-card__status-action summary-card__status-action--primary"
+                      type="button"
+                      (click)="advanceStatusStage()"
+                    >
+                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+                      {{ statusAdvanceLabel }}
+                    </button>
+                  </ng-container>
+                  </ng-template>
+
+                  <ng-template #statusFooterDecisionOrResolved>
                   <ng-container *ngIf="showStatusDecisionActions; else statusFooterResolved">
-                    <button class="summary-card__status-action summary-card__status-action--primary" type="button" (click)="selectAcceptedContractDecision()">
+                    <button
+                      class="summary-card__status-action summary-card__status-action--primary"
+                      type="button"
+                      (click)="selectAcceptedContractDecision()"
+                    >
                       <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">task_alt</span>
                       Aceitar
                     </button>
-                    <button class="summary-card__status-action summary-card__status-action--secondary" type="button" (click)="selectNextContractDecision()">
+                    <button
+                      class="summary-card__status-action summary-card__status-action--secondary"
+                      type="button"
+                      (click)="selectNextContractDecision()"
+                    >
                       <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">schedule</span>
                       Fica para Proxima
                     </button>
                   </ng-container>
+                  </ng-template>
 
                   <ng-template #statusFooterResolved>
                     <button
                       *ngIf="showSendDocumentsAction"
                       class="summary-card__status-action summary-card__status-action--primary summary-card__status-action--documents"
                       type="button"
+                      [disabled]="!statusDocumentsConsentAccepted"
                       (click)="sendStatusDocuments()"
                     >
                       <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
@@ -512,7 +602,7 @@
                       </div>
 
                       <div class="summary-card__fact summary-card__fact--documents">
-                        <span class="summary-card__fact-label">Documentos</span>
+                        <span class="summary-card__fact-label">Documentos para validação de contratação.</span>
 
                         <div class="summary-card__benefits-list" *ngIf="selectedDocuments.length; else emptyFrontContractDocuments">
                           <div class="summary-card__benefit-option" *ngFor="let item of selectedDocuments">
@@ -703,6 +793,22 @@
             </div>
           </ng-container>
         </div>
+      </div>
+
+      <div class="confetti confetti--summary" *ngIf="confettiActive">
+        <span
+          class="confetti-piece"
+          *ngFor="let piece of confettiPieces"
+          [ngStyle]="{
+            left: piece.left + '%',
+            top: piece.top + '%',
+            '--dx': piece.offsetX + 'vh',
+            '--dy': piece.offsetY + 'vh',
+            background: piece.color,
+            animationDuration: piece.duration + 'ms',
+            animationDelay: piece.delay + 'ms'
+          }"
+        ></span>
       </div>
     </section>
   </aside>
