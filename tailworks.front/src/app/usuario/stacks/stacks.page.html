@@ -88,12 +88,9 @@
         <p>Adicione outras tecnologias (3 a 10 termos).</p>
 
         <div class="candidate-stacks__stack-list">
-          <button
-            *ngFor="let stack of stacks; let index = index"
+          <div
+            *ngFor="let stack of stacks; let index = index; trackBy: trackByStackName"
             class="candidate-stacks__stack-item"
-            type="button"
-            (click)="editStack(index)"
-            [attr.aria-label]="'Editar ' + stack.name"
           >
             <div class="candidate-stacks__stack-item-meta">
               <span class="candidate-stacks__stack-item-drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
@@ -101,14 +98,30 @@
             </div>
 
             <div class="candidate-stacks__stack-item-progress">
-              <span class="candidate-stacks__stack-item-track" aria-hidden="true">
-                <span class="candidate-stacks__stack-item-fill" [style.width.%]="stack.knowledge"></span>
-                <span class="candidate-stacks__stack-item-thumb" [style.left.%]="stack.knowledge"></span>
-              </span>
+              <div class="candidate-stacks__stack-item-slider">
+                <input
+                  class="candidate-stacks__stack-item-range"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  [value]="stack.knowledge"
+                  [style.--stack-progress]="stack.knowledge + '%'"
+                  (input)="updateStackKnowledge(index, $any($event.target).value)"
+                  [attr.aria-label]="'Ajustar percentual de ' + stack.name"
+                />
+              </div>
               <span class="candidate-stacks__stack-item-value">{{ stack.knowledge }}%</span>
-              <span class="candidate-stacks__stack-item-remove material-symbols-rounded" aria-hidden="true">close</span>
+              <button
+                class="candidate-stacks__stack-item-remove"
+                type="button"
+                (click)="removeStack(index)"
+                [attr.aria-label]="'Remover ' + stack.name"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">close</span>
+              </button>
             </div>
-          </button>
+          </div>
         </div>
       </div>
 
@@ -171,14 +184,6 @@
       <small class="candidate-stacks__error" *ngIf="stackModalError">{{ stackModalError }}</small>
 
       <div class="candidate-stacks__modal-actions">
-        <button
-          class="candidate-stacks__modal-button candidate-stacks__modal-button--danger"
-          type="button"
-          *ngIf="editingStackIndex !== null"
-          (click)="deleteStack()"
-        >
-          Excluir
-        </button>
         <button class="candidate-stacks__modal-button candidate-stacks__modal-button--ghost" type="button" (click)="closeStackModal()">
           Cancelar
         </button>

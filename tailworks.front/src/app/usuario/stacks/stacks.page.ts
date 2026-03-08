@@ -61,7 +61,6 @@ export class StacksPage implements OnInit {
   stackError = '';
   stacks: StackChip[] = [];
   isStackModalOpen = false;
-  editingStackIndex: number | null = null;
   stackDraftName = '';
   stackDraftKnowledge: number | null = null;
   stackModalError = '';
@@ -70,6 +69,8 @@ export class StacksPage implements OnInit {
     formation: '',
   };
   photoPreviewUrl = '';
+
+  readonly trackByStackName = (_index: number, stack: StackChip): string => stack.name;
 
   get displayName(): string {
     return this.profile.name.trim() || 'Seu nome';
@@ -80,11 +81,11 @@ export class StacksPage implements OnInit {
   }
 
   get stackModalTitle(): string {
-    return this.editingStackIndex === null ? 'Adicionar Stack' : 'Editar Stack';
+    return 'Adicionar Stack';
   }
 
   get stackModalSubmitLabel(): string {
-    return this.editingStackIndex === null ? 'Adicionar' : 'Salvar';
+    return 'Adicionar';
   }
 
   get canSaveStack(): boolean {
@@ -127,31 +128,14 @@ export class StacksPage implements OnInit {
       return;
     }
 
-    this.editingStackIndex = null;
     this.stackDraftName = '';
     this.stackDraftKnowledge = 70;
     this.stackModalError = '';
     this.isStackModalOpen = true;
   }
 
-  editStack(index: number): void {
-    const stack = this.stacks[index];
-
-    if (!stack) {
-      return;
-    }
-
-    this.stackError = '';
-    this.editingStackIndex = index;
-    this.stackDraftName = stack.name;
-    this.stackDraftKnowledge = stack.knowledge;
-    this.stackModalError = '';
-    this.isStackModalOpen = true;
-  }
-
   closeStackModal(): void {
     this.isStackModalOpen = false;
-    this.editingStackIndex = null;
     this.stackDraftName = '';
     this.stackDraftKnowledge = null;
     this.stackModalError = '';
@@ -172,40 +156,50 @@ export class StacksPage implements OnInit {
       return;
     }
 
-    const duplicatedIndex = this.stacks.findIndex(
-      (item, index) => item.name.toLowerCase() === trimmed.toLowerCase() && index !== this.editingStackIndex,
-    );
+    const duplicated = this.stacks.some((item) => item.name.toLowerCase() === trimmed.toLowerCase());
 
-    if (duplicatedIndex !== -1) {
+    if (duplicated) {
       this.stackModalError = 'Essa stack já foi adicionada.';
       return;
     }
 
     const nextItem = this.createStackChip(trimmed, knowledge);
 
-    if (this.editingStackIndex === null) {
-      if (this.stacks.length >= this.maxStacks) {
-        this.stackModalError = 'Você pode adicionar até 10 stacks.';
-        return;
-      }
-
-      this.stacks = [...this.stacks, nextItem];
-    } else {
-      this.stacks = this.stacks.map((item, index) => index === this.editingStackIndex ? nextItem : item);
+    if (this.stacks.length >= this.maxStacks) {
+      this.stackModalError = 'Você pode adicionar até 10 stacks.';
+      return;
     }
 
+    this.stacks = [...this.stacks, nextItem];
     this.persistStacks();
     this.closeStackModal();
   }
 
-  deleteStack(): void {
-    if (this.editingStackIndex === null) {
+  removeStack(index: number): void {
+    if (!this.stacks[index]) {
       return;
     }
 
-    this.stacks = this.stacks.filter((_, index) => index !== this.editingStackIndex);
+    this.stacks = this.stacks.filter((_, itemIndex) => itemIndex !== index);
     this.persistStacks();
-    this.closeStackModal();
+  }
+
+  updateStackKnowledge(index: number, nextValue: number | string): void {
+    const current = this.stacks[index];
+
+    if (!current) {
+      return;
+    }
+
+    const parsedValue = Number(nextValue);
+
+    if (Number.isNaN(parsedValue)) {
+      return;
+    }
+
+    const knowledge = Math.max(0, Math.min(100, Math.round(parsedValue)));
+    current.knowledge = knowledge;
+    this.persistStacks();
   }
 
   continueToExperience(): void {
