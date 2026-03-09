@@ -118,12 +118,26 @@
   -webkit-mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.85) 70%, #000 100%);
 }
 .eco-btn{
-  width: 100%;
-  border-radius: 16px;
-  padding: 12px 14px;
-  background: linear-gradient(180deg, #f5b300, #f59e0b);
-  box-shadow: 0 12px 22px rgba(245,179,0,0.24);
+  width: min(100%, 228px);
+  min-height: 58px;
+  margin: 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  padding: 0 22px;
+  background:
+    radial-gradient(120% 160% at 50% 0%, rgba(255, 234, 174, 0.34), rgba(255,255,255,0)),
+    linear-gradient(180deg, #f6b70e, #f09b00);
+  color: #fffdf7;
+  text-decoration: none;
+  box-shadow:
+    0 16px 28px rgba(245,179,0,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.28);
+  font-size: 15px;
   font-weight: 800;
+  letter-spacing: 0.01em;
+  text-align: center;
 }
 .divider{
   height: 1px;

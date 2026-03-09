@@ -14,6 +14,16 @@
       <span>Abrir Vaga</span>
     </a>
 
+    <a
+      *ngIf="isCandidateMode"
+      class="topbar__cta topbar__cta--ecosystem"
+      routerLink="/usuario/ecossistema"
+      aria-label="Ir para Ecossistema"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">hub</span>
+      <span>Ecossistema</span>
+    </a>
+
     <button
       *ngIf="!isCandidateMode"
       class="topbar__cta topbar__cta--clear"
