@@ -12,8 +12,8 @@
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(115deg, rgba(255, 251, 245, 0.34) 0%, rgba(248, 242, 233, 0.28) 32%, rgba(244, 242, 238, 0.22) 58%, rgba(246, 246, 246, 0.26) 100%),
-    url('/assets/images/fundo-home-tailworks.png') center / cover no-repeat;
+    linear-gradient(115deg, rgba(255, 251, 245, 0.18) 0%, rgba(248, 242, 233, 0.14) 32%, rgba(244, 242, 238, 0.12) 58%, rgba(246, 246, 246, 0.14) 100%),
+    #f5ece1 url('/assets/images/fundo-home-tailworks.png') center / cover no-repeat;
 }
 
 .entry-home{

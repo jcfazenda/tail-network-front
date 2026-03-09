@@ -27,6 +27,12 @@
     url('/assets/images/_fundo-tela.png') center / cover no-repeat;
 }
 
+.shell__main--ecosystem{
+  background:
+    linear-gradient(115deg, rgba(255, 251, 245, 0.14) 0%, rgba(248, 242, 233, 0.12) 32%, rgba(244, 242, 238, 0.1) 58%, rgba(246, 246, 246, 0.08) 100%),
+    url('/assets/images/ecossistema-fundo.png') center / cover no-repeat;
+}
+
 .shell__content{
   padding: 50px 44px 40px;
   min-height: 0;

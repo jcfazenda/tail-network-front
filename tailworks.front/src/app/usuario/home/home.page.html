@@ -1,1 +1,93 @@
-<section class="candidate-home"></section>
+<section class="candidate-home">
+  <div class="candidate-home__rail">
+    <article class="eco-card eco-card--menu">
+      <nav class="eco-menu" aria-label="Navegação do ecossistema">
+        <a
+          *ngFor="let item of ecosystemItems"
+          href="#"
+          class="eco-menu__item"
+          [class.eco-menu__item--active]="item.active"
+          (click)="$event.preventDefault()"
+        >
+          <span class="material-symbols-rounded eco-menu__icon" aria-hidden="true">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      </nav>
+    </article>
+
+    <article class="eco-card eco-card--level">
+      <div class="eco-card__kicker">SEU NIVEL</div>
+
+      <div class="eco-level">
+        <div
+          class="eco-level__gauge"
+          [style.--value]="levelValue"
+          [attr.aria-label]="'Nivel do ecossistema: ' + levelValue + '%'"
+        >
+          <div class="eco-level__core">
+            <strong>{{ levelValue }}%</strong>
+            <span>Radar<br />Profissional</span>
+          </div>
+        </div>
+
+        <ul class="eco-level__legend">
+          <li *ngFor="let item of levelItems" [class]="'eco-level__legend-item eco-level__legend-item--' + item.tone">
+            <span class="eco-level__dot" aria-hidden="true"></span>
+            <span class="eco-level__text">{{ item.label }} {{ item.range }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="eco-card__actions">
+        <a href="#" class="eco-card__action" (click)="$event.preventDefault()">
+          <span class="material-symbols-rounded" aria-hidden="true">domain</span>
+          <span>Empresas</span>
+        </a>
+        <a href="#" class="eco-card__action" (click)="$event.preventDefault()">
+          <span class="material-symbols-rounded" aria-hidden="true">stack</span>
+          <span>Stacks</span>
+        </a>
+      </div>
+    </article>
+  </div>
+
+  <article class="eco-spotlight" aria-label="Card de destaque do ecossistema">
+    <div class="eco-spotlight__top">
+      <div class="eco-spotlight__company-brand">
+        <span
+          class="eco-spotlight__company-logo"
+          [class.eco-spotlight__company-logo--image]="!!spotlightCompanyProfile.logoUrl"
+          [style.backgroundImage]="spotlightCompanyProfile.logoUrl ? 'url(' + spotlightCompanyProfile.logoUrl + ')' : null"
+          aria-hidden="true"
+        >{{ spotlightCompanyProfile.logoUrl ? '' : spotlightCompanyProfile.logoLabel }}</span>
+
+        <div class="eco-spotlight__company-meta">
+          <div class="eco-spotlight__company-name-row">
+            <div class="eco-spotlight__company-name">{{ spotlightCompanyProfile.name }}</div>
+            <span class="eco-spotlight__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
+          </div>
+          <div class="eco-spotlight__company-followers">{{ spotlightCompanyProfile.followers }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eco-spotlight__stack-box">
+      <div class="eco-spotlight__stack">
+        <div class="eco-spotlight__stack-item" *ngFor="let item of spotlightItems">
+          <span class="eco-spotlight__stack-label">{{ item.label }}</span>
+          <span class="eco-spotlight__bar" aria-hidden="true">
+            <span [style.width.%]="item.score"></span>
+          </span>
+          <span class="eco-spotlight__stack-value">{{ item.score }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="eco-spotlight__meta">Remoto - CLT - Beneficios</div>
+
+    <a href="#" class="eco-spotlight__cta" (click)="$event.preventDefault()">
+      <span>Ver vaga</span>
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+    </a>
+  </article>
+</section>
