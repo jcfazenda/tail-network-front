@@ -5,13 +5,11 @@
     <div
       class="shell__main"
       [class.shell__main--candidate]="isCandidateArea"
-      [class.shell__main--formation]="isFormationPage"
     >
       <app-topbar></app-topbar>
       <section
         class="shell__content"
         [class.shell__content--candidate]="isCandidateArea"
-        [class.shell__content--formation]="isFormationPage"
       >
         <router-outlet />
       </section>

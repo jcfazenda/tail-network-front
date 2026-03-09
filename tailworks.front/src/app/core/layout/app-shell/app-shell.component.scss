@@ -23,13 +23,6 @@
     url('/assets/images/_fundo-tela.png') center / cover no-repeat;
 }
 
-.shell__main--formation{
-  background:
-    linear-gradient(180deg, rgba(255, 250, 244, 0.12), rgba(255, 250, 244, 0.12)),
-    url('/assets/images/fundo-home-tailworks.png') right center / contain no-repeat,
-    linear-gradient(115deg, rgba(255, 251, 245, 0.72) 0%, rgba(248, 242, 233, 0.68) 32%, rgba(244, 242, 238, 0.64) 58%, rgba(246, 246, 246, 0.62) 100%);
-}
-
 .shell__content{
   padding: 50px 44px 40px;
   min-height: 0;
@@ -39,12 +32,8 @@
   background: transparent;
 }
 
-.shell__content--formation{
-  background: transparent;
-}
-
 .shell__content--plain{
-  max-width: 1180px;
-  margin: 0 auto;
-  padding-top: 72px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }

@@ -1,7 +1,12 @@
 :host{
   display: block;
-  min-height: 100%;
-  background: transparent;
+  min-height: calc(100vh - 120px);
+  margin: -50px -44px -40px;
+  padding: 50px 44px 40px;
+  box-sizing: border-box;
+  background:
+    linear-gradient(115deg, rgba(255, 251, 245, 0.28) 0%, rgba(248, 242, 233, 0.24) 32%, rgba(244, 242, 238, 0.18) 58%, rgba(246, 246, 246, 0.22) 100%),
+    url('/assets/images/fundo-home-tailworks.png') center / cover no-repeat;
 }
 
 .candidate-formation{
@@ -9,6 +14,25 @@
   gap: 22px;
   max-width: 980px;
   margin: 0 auto;
+  position: relative;
+  isolation: isolate;
+}
+
+.candidate-formation::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255, 251, 245, 0.34) 0%, rgba(248, 242, 233, 0.28) 32%, rgba(244, 242, 238, 0.18) 58%, rgba(246, 246, 246, 0.22) 100%),
+    url('/assets/images/fundo-home-tailworks.png') right center / cover no-repeat;
+  opacity: 0.32;
+}
+
+.candidate-formation > *{
+  position: relative;
+  z-index: 1;
 }
 
 .candidate-formation__hero{
