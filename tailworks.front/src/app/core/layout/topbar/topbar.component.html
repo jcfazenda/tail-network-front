@@ -9,13 +9,23 @@
       />
     </div>
 
+    <a
+      *ngIf="isCandidateEcosystem"
+      class="topbar__cta topbar__cta--back"
+      routerLink="/usuario/dados-cadastrais/experiencia"
+      aria-label="Voltar"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
+      <span>Voltar</span>
+    </a>
+
     <a *ngIf="!isCandidateMode" class="topbar__cta" routerLink="/vagas/cadastro" aria-label="Abrir vaga">
       <span class="material-symbols-rounded" aria-hidden="true">add</span>
       <span>Abrir Vaga</span>
     </a>
 
     <a
-      *ngIf="isCandidateMode"
+      *ngIf="isCandidateMode && !isCandidateEcosystem"
       class="topbar__cta topbar__cta--ecosystem"
       routerLink="/usuario/ecossistema"
       aria-label="Ir para Ecossistema"

@@ -83,6 +83,12 @@
   color: #2a2000;
 }
 
+.topbar__cta--back{
+  background: linear-gradient(180deg, #fffefb, #f4ecdf);
+  color: rgba(15, 23, 42, 0.82);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
 .actions{
   display: inline-flex;
   align-items: center;

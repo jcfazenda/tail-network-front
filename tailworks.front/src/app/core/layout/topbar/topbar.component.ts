@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
 import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 
 @Component({
@@ -14,13 +16,26 @@ import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 export class TopbarComponent {
   private readonly vagasMockService = inject(VagasMockService);
   private readonly router = inject(Router);
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
 
   get isSelectionMode(): boolean {
-    return this.router.url === '/home' || this.router.url === '/login';
+    const url = this.currentUrl();
+    return url === '/home' || url === '/login';
   }
 
   get isCandidateMode(): boolean {
-    return this.router.url.startsWith('/usuario');
+    return this.currentUrl().startsWith('/usuario');
+  }
+
+  get isCandidateEcosystem(): boolean {
+    return this.currentUrl() === '/usuario/ecossistema';
   }
 
   clearPublishedJobsForTesting(): void {

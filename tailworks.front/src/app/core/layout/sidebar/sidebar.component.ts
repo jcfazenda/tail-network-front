@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
 
 type NavItem = { label: string; route: string; icon: string };
 
@@ -14,12 +16,21 @@ type NavItem = { label: string; route: string; icon: string };
 })
 export class SidebarComponent {
   private readonly router = inject(Router);
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
 
   private readonly recruiterItems: NavItem[] = [
     { label: 'Radar', route: '/radar', icon: 'radar' },
     { label: 'Minhas Vagas', route: '/vagas', icon: 'work' },
     { label: 'Talentos', route: '/talentos', icon: 'group' },
     { label: 'Propostas', route: '/propostas', icon: 'assignment' },
+    { label: 'Sair', route: '/home', icon: 'logout' },
   ];
 
   private readonly candidateItems: NavItem[] = [
@@ -68,11 +79,12 @@ export class SidebarComponent {
   }
 
   get isSelectionMode(): boolean {
-    return this.router.url === '/home' || this.router.url === '/login';
+    const url = this.currentUrl();
+    return url === '/home' || url === '/login';
   }
 
   get isCandidateMode(): boolean {
-    return this.router.url.startsWith('/usuario');
+    return this.currentUrl().startsWith('/usuario');
   }
 
   isExactRoute(item: NavItem): boolean {

@@ -1,10 +1,11 @@
 <div class="shell" [class.shell--plain]="isHomeEntry" [class.shell--candidate]="isCandidateArea">
   <ng-container *ngIf="!isHomeEntry">
-    <app-sidebar></app-sidebar>
+    <app-sidebar *ngIf="!isCandidateEcosystem"></app-sidebar>
 
     <div
       class="shell__main"
       [class.shell__main--candidate]="isCandidateArea"
+      [class.shell__main--full]="isCandidateEcosystem"
     >
       <app-topbar></app-topbar>
       <section

@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
 
@@ -14,12 +16,25 @@ import { TopbarComponent } from '../topbar/topbar.component';
 })
 export class AppShellComponent {
   private readonly router = inject(Router);
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
 
   get isHomeEntry(): boolean {
-    return this.router.url === '/home' || this.router.url === '/login';
+    const url = this.currentUrl();
+    return url === '/home' || url === '/login';
   }
 
   get isCandidateArea(): boolean {
-    return this.router.url.startsWith('/usuario');
+    return this.currentUrl().startsWith('/usuario');
+  }
+
+  get isCandidateEcosystem(): boolean {
+    return this.currentUrl() === '/usuario/ecossistema';
   }
 }
