@@ -1,103 +1,135 @@
 <section class="candidate-home">
-  <div class="candidate-home__rail">
-    <article class="eco-card eco-card--menu">
-      <nav class="eco-menu" aria-label="Navegação do ecossistema">
-        <a
-          *ngFor="let item of ecosystemItems"
-          href="#"
-          class="eco-menu__item"
-          [class.eco-menu__item--active]="item.active"
-          (click)="$event.preventDefault()"
-        >
-          <span class="material-symbols-rounded eco-menu__icon" aria-hidden="true">{{ item.icon }}</span>
-          <span>{{ item.label }}</span>
-        </a>
-      </nav>
-    </article>
-
-    <article class="eco-card eco-card--level">
-      <div class="eco-card__kicker">SEU NIVEL</div>
-
-      <div class="eco-level">
+  <div class="candidate-home__stage">
+    <div
+      #viewportElement
+      class="ecosystem-viewport"
+      [class.ecosystem-viewport--panning]="isPanning"
+      (wheel)="onViewportWheel($event)"
+      (pointerdown)="onViewportPointerDown($event)"
+      (pointermove)="onViewportPointerMove($event)"
+      (pointerup)="onViewportPointerUp($event)"
+      (pointercancel)="onViewportPointerUp($event)"
+    >
+      <div class="ecosystem-world-wrap">
         <div
-          class="eco-level__gauge"
-          [style.--value]="levelValue"
-          [attr.aria-label]="'Nivel do ecossistema: ' + levelValue + '%'"
+          class="ecosystem-world"
+          [class.ecosystem-world--panning]="isPanning"
+          [style.width.px]="worldWidth"
+          [style.height.px]="worldHeight"
+          [style.transform]="worldTransform"
         >
-          <div class="eco-level__core">
-            <strong>{{ levelValue }}%</strong>
-            <span>Radar<br />Profissional</span>
+          <div class="ecosystem-world__aurora" aria-hidden="true"></div>
+          <div class="ecosystem-world__rings" aria-hidden="true"></div>
+
+          <button
+            *ngFor="let node of ecosystemJobNodes; trackBy: trackByNodeId"
+            type="button"
+            class="ecosystem-job-node"
+            [class.ecosystem-job-node--active]="selectedJobId === node.id"
+            [style.left.px]="node.x"
+            [style.top.px]="node.y"
+            [style.--node-accent]="node.accent"
+            data-ecosystem-stop-pan="true"
+            (click)="selectJob(node.id)"
+          >
+            <span class="ecosystem-job-node__pulse" aria-hidden="true"></span>
+
+            <div class="ecosystem-job-node__content">
+              <div class="ecosystem-job-node__header">
+                <div class="ecosystem-job-node__company">{{ node.record.company }}</div>
+                <div class="ecosystem-job-node__match">{{ node.record.match }}%</div>
+              </div>
+
+              <div class="ecosystem-job-node__title">{{ node.record.title }}</div>
+              <div class="ecosystem-job-node__location">{{ node.record.location }}</div>
+
+              <div class="ecosystem-job-node__stacks" *ngIf="node.previewStacks.length">
+                <span *ngFor="let item of node.previewStacks">{{ item.label }}</span>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="ecosystem-viewport__controls" data-ecosystem-stop-pan="true">
+        <button type="button" class="ecosystem-viewport__control" (click)="zoomOut()">
+          <span class="material-symbols-rounded" aria-hidden="true">remove</span>
+        </button>
+        <span class="ecosystem-viewport__zoom">{{ zoomLabel }}</span>
+        <button type="button" class="ecosystem-viewport__control" (click)="zoomIn()">
+          <span class="material-symbols-rounded" aria-hidden="true">add</span>
+        </button>
+        <button type="button" class="ecosystem-viewport__control ecosystem-viewport__control--wide" (click)="recenterWorld()">
+          <span class="material-symbols-rounded" aria-hidden="true">center_focus_strong</span>
+          <span>Centralizar</span>
+        </button>
+      </div>
+    </div>
+
+    <app-radar-floating-card
+      *ngIf="selectedJobNode"
+      class="ecosystem-preview-widget"
+      [resizable]="false"
+      [centerOnFirstRender]="true"
+      [initialWidth]="388"
+      [initialHeight]="608"
+      [maxHeight]="760"
+      [storageKey]="'tailworks:ecosystem-preview-widget:v2'"
+      [dragHandleSelector]="'.eco-spotlight__company-logo'"
+    >
+      <article class="eco-spotlight ecosystem-preview" aria-label="Preview da vaga selecionada">
+        <div class="eco-spotlight__header">
+          <div class="eco-spotlight__top">
+            <div class="eco-spotlight__company-brand">
+              <span
+                class="eco-spotlight__company-logo radar-floating-card__drag-handle"
+                [class.eco-spotlight__company-logo--image]="!!spotlightCompanyProfile.logoUrl"
+                [style.backgroundImage]="spotlightCompanyProfile.logoUrl ? 'url(' + spotlightCompanyProfile.logoUrl + ')' : null"
+                aria-hidden="true"
+              >{{ spotlightCompanyProfile.logoUrl ? '' : spotlightCompanyProfile.logoLabel }}</span>
+
+              <div class="eco-spotlight__company-meta">
+                <div class="eco-spotlight__company-name-row">
+                  <div class="eco-spotlight__company-name">{{ spotlightCompanyProfile.name }}</div>
+                  <span class="eco-spotlight__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
+                </div>
+                <div class="eco-spotlight__company-followers">{{ spotlightCompanyProfile.followers }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-spotlight__job-head">
+            <div class="eco-spotlight__job-title">{{ spotlightJobTitle }}</div>
+            <div class="eco-spotlight__job-location">{{ spotlightJobLocation }}</div>
           </div>
         </div>
 
-        <ul class="eco-level__legend">
-          <li *ngFor="let item of levelItems" [class]="'eco-level__legend-item eco-level__legend-item--' + item.tone">
-            <span class="eco-level__dot" aria-hidden="true"></span>
-            <span class="eco-level__text">{{ item.label }} {{ item.range }}</span>
-          </li>
-        </ul>
-      </div>
+        <div class="eco-spotlight__stack-box">
+          <div class="eco-spotlight__stack">
+            <div class="eco-spotlight__stack-item" *ngFor="let item of spotlightItems">
+              <span class="eco-spotlight__stack-label">{{ item.label }}</span>
+              <span class="eco-spotlight__bar" aria-hidden="true">
+                <span [style.width.%]="item.score"></span>
+              </span>
+              <span class="eco-spotlight__stack-value">{{ item.score }}%</span>
+            </div>
+          </div>
+        </div>
 
-      <div class="eco-card__actions">
-        <a href="#" class="eco-card__action" (click)="$event.preventDefault()">
-          <span class="material-symbols-rounded" aria-hidden="true">domain</span>
-          <span>Empresas</span>
-        </a>
-        <a href="#" class="eco-card__action" (click)="$event.preventDefault()">
-          <span class="material-symbols-rounded" aria-hidden="true">stack</span>
-          <span>Stacks</span>
-        </a>
-      </div>
-    </article>
+        <div class="eco-spotlight__footer">
+          <div class="eco-spotlight__headline-score">
+            <span class="eco-spotlight__headline-score-value">{{ spotlightMatchScore }}</span>
+            <span class="eco-spotlight__headline-score-percent">%</span>
+            <span class="eco-spotlight__headline-score-copy">compatível</span>
+          </div>
+
+          <div class="eco-spotlight__meta">{{ spotlightMeta }}</div>
+
+          <a href="#" class="eco-spotlight__cta" (click)="$event.preventDefault()">
+            <span>Ver vaga</span>
+          </a>
+        </div>
+      </article>
+    </app-radar-floating-card>
   </div>
-
-  <article class="eco-spotlight" aria-label="Card de destaque do ecossistema">
-    <div class="eco-spotlight__top">
-      <div class="eco-spotlight__company-brand">
-        <span
-          class="eco-spotlight__company-logo"
-          [class.eco-spotlight__company-logo--image]="!!spotlightCompanyProfile.logoUrl"
-          [style.backgroundImage]="spotlightCompanyProfile.logoUrl ? 'url(' + spotlightCompanyProfile.logoUrl + ')' : null"
-          aria-hidden="true"
-        >{{ spotlightCompanyProfile.logoUrl ? '' : spotlightCompanyProfile.logoLabel }}</span>
-
-        <div class="eco-spotlight__company-meta">
-          <div class="eco-spotlight__company-name-row">
-            <div class="eco-spotlight__company-name">{{ spotlightCompanyProfile.name }}</div>
-            <span class="eco-spotlight__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
-          </div>
-          <div class="eco-spotlight__company-followers">{{ spotlightCompanyProfile.followers }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="eco-spotlight__job-head">
-      <div class="eco-spotlight__job-title">{{ spotlightJobTitle }}</div>
-      <div class="eco-spotlight__job-location">{{ spotlightJobLocation }}</div>
-    </div>
-
-    <div class="eco-spotlight__stack-box">
-      <div class="eco-spotlight__stack">
-        <div class="eco-spotlight__stack-item" *ngFor="let item of spotlightItems">
-          <span class="eco-spotlight__stack-label">{{ item.label }}</span>
-          <span class="eco-spotlight__bar" aria-hidden="true">
-            <span [style.width.%]="item.score"></span>
-          </span>
-          <span class="eco-spotlight__stack-value">{{ item.score }}%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="eco-spotlight__headline-score">
-      <span class="eco-spotlight__headline-score-value">91</span>
-      <span class="eco-spotlight__headline-score-percent">%</span>
-      <span class="eco-spotlight__headline-score-copy">compatível</span>
-    </div>
-
-    <div class="eco-spotlight__meta">Remoto • CLT + Beneficios</div>
-
-    <a href="#" class="eco-spotlight__cta" (click)="$event.preventDefault()">
-      <span>Ver vaga</span>
-    </a>
-  </article>
 </section>

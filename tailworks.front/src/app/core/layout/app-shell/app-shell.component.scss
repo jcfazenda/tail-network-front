@@ -15,6 +15,7 @@
   display: grid;
   grid-template-rows: 120px 1fr;
   background: linear-gradient(115deg, rgba(238, 235, 229, 0.14) 0%, rgba(247, 241, 233, 0.18) 30%, rgba(244, 242, 238, 0.14) 56%, rgba(246, 246, 246, 0.12) 100%);
+  min-height: 100vh;
 }
 
 .shell__main--full{
@@ -28,18 +29,28 @@
 }
 
 .shell__main--ecosystem{
+  grid-template-rows: 96px minmax(0, 1fr);
+  height: 100vh;
   background:
-    linear-gradient(115deg, rgba(255, 251, 245, 0.14) 0%, rgba(248, 242, 233, 0.12) 32%, rgba(244, 242, 238, 0.1) 58%, rgba(246, 246, 246, 0.08) 100%),
+    linear-gradient(115deg, rgba(255, 251, 245, 0.04) 0%, rgba(248, 242, 233, 0.03) 32%, rgba(244, 242, 238, 0.02) 58%, rgba(246, 246, 246, 0.02) 100%),
     url('/assets/images/ecossistema-fundo.png') center / cover no-repeat;
 }
 
 .shell__content{
   padding: 50px 44px 40px;
   min-height: 0;
+  box-sizing: border-box;
 }
 
 .shell__content--candidate{
   background: transparent;
+}
+
+.shell__content--ecosystem{
+  min-height: 0;
+  height: calc(100vh - 96px);
+  padding: 18px 28px 18px;
+  overflow: hidden;
 }
 
 .shell__content--plain{

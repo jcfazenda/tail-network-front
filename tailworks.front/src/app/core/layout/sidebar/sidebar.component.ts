@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
+import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.service';
 
 type NavItem = { label: string; route: string; icon: string };
 
@@ -16,6 +17,7 @@ type NavItem = { label: string; route: string; icon: string };
 })
 export class SidebarComponent {
   private readonly router = inject(Router);
+  private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -89,5 +91,11 @@ export class SidebarComponent {
 
   isExactRoute(item: NavItem): boolean {
     return item.route !== '/vagas' && item.route !== '/usuario/dados-cadastrais';
+  }
+
+  protected openEcosystem(event: Event): void {
+    event.preventDefault();
+    this.ecosystemEntryService.setMode(this.isCandidateMode ? 'talent' : 'recruiter');
+    void this.router.navigateByUrl('/usuario/ecossistema');
   }
 }

@@ -5,7 +5,7 @@
   </div>
 
   <div class="entry-home__actions">
-    <a class="entry-home__card entry-home__card--recruiter" routerLink="/vagas">
+    <a class="entry-home__card entry-home__card--recruiter" href="/vagas" (click)="enterAsRecruiter($event)">
       <span class="entry-home__icon material-symbols-rounded" aria-hidden="true">work</span>
       <div class="entry-home__copy">
         <strong>Entrar como Recruiter</strong>
@@ -13,7 +13,7 @@
       </div>
     </a>
 
-    <a class="entry-home__card entry-home__card--talent" routerLink="/usuario/ecossistema">
+    <a class="entry-home__card entry-home__card--talent" href="/usuario/ecossistema" (click)="enterAsTalent($event)">
       <span class="entry-home__icon material-symbols-rounded" aria-hidden="true">person</span>
       <div class="entry-home__copy">
         <strong>Entrar como Talento</strong>

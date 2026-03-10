@@ -1,0 +1,25 @@
+<div
+  #cardElement
+  class="radar-floating-card"
+  [class.radar-floating-card--dragging]="dragging"
+  [class.radar-floating-card--resizing]="resizing"
+  [style.left.px]="x"
+  [style.top.px]="y"
+  [style.width.px]="width"
+  [style.height.px]="height"
+>
+  <div #contentElement class="radar-floating-card__content">
+    <ng-content></ng-content>
+  </div>
+
+  <button
+    *ngIf="resizable"
+    type="button"
+    class="radar-floating-card__resize"
+    aria-label="Redimensionar card"
+    (pointerdown)="startResize($event)"
+  >
+    <span></span>
+    <span></span>
+  </button>
+</div>

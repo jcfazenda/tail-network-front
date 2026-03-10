@@ -89,6 +89,27 @@
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 }
 
+.topbar__mode-pill{
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 234, 0.96), rgba(245, 233, 208, 0.94));
+  border: 1px solid rgba(191, 111, 0, 0.12);
+  color: rgba(96, 56, 6, 0.92);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 18px rgba(140, 82, 8, 0.08);
+  white-space: nowrap;
+}
+
+.topbar__mode-pill .material-symbols-rounded{
+  font-size: 18px;
+  color: #bf6f00;
+}
+
 .actions{
   display: inline-flex;
   align-items: center;
@@ -139,7 +160,8 @@
     flex-wrap: wrap;
   }
 
-  .topbar__cta{
+  .topbar__cta,
+  .topbar__mode-pill{
     width: 100%;
     justify-content: center;
   }

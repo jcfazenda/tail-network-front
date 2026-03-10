@@ -19,6 +19,11 @@
       <span>Voltar</span>
     </a>
 
+    <div *ngIf="isRecruiterEcosystem" class="topbar__mode-pill" aria-label="Modo Recruiter">
+      <span class="material-symbols-rounded" aria-hidden="true">business_center</span>
+      <span>Você está no modo Recruiter</span>
+    </div>
+
     <a *ngIf="!isCandidateMode" class="topbar__cta" routerLink="/vagas/cadastro" aria-label="Abrir vaga">
       <span class="material-symbols-rounded" aria-hidden="true">add</span>
       <span>Abrir Vaga</span>
@@ -27,7 +32,8 @@
     <a
       *ngIf="isCandidateMode && !isCandidateEcosystem"
       class="topbar__cta topbar__cta--ecosystem"
-      routerLink="/usuario/ecossistema"
+      href="/usuario/ecossistema"
+      (click)="openCandidateEcosystem($event)"
       aria-label="Ir para Ecossistema"
     >
       <span class="material-symbols-rounded" aria-hidden="true">hub</span>
