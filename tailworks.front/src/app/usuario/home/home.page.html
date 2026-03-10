@@ -71,6 +71,11 @@
       </div>
     </div>
 
+    <div class="eco-spotlight__job-head">
+      <div class="eco-spotlight__job-title">{{ spotlightJobTitle }}</div>
+      <div class="eco-spotlight__job-location">{{ spotlightJobLocation }}</div>
+    </div>
+
     <div class="eco-spotlight__stack-box">
       <div class="eco-spotlight__stack">
         <div class="eco-spotlight__stack-item" *ngFor="let item of spotlightItems">
@@ -83,11 +88,16 @@
       </div>
     </div>
 
-    <div class="eco-spotlight__meta">Remoto - CLT - Beneficios</div>
+    <div class="eco-spotlight__headline-score">
+      <span class="eco-spotlight__headline-score-value">91</span>
+      <span class="eco-spotlight__headline-score-percent">%</span>
+      <span class="eco-spotlight__headline-score-copy">compatível</span>
+    </div>
+
+    <div class="eco-spotlight__meta">Remoto • CLT + Beneficios</div>
 
     <a href="#" class="eco-spotlight__cta" (click)="$event.preventDefault()">
       <span>Ver vaga</span>
-      <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
     </a>
   </article>
 </section>

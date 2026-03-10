@@ -119,4 +119,12 @@ export class HomePage {
       { label: 'Docker', score: 22 },
     ];
   }
+
+  protected get spotlightJobTitle(): string {
+    return this.latestJob?.title || 'Backend .NET Sênior';
+  }
+
+  protected get spotlightJobLocation(): string {
+    return this.latestJob?.location || 'Rio de Janeiro - RJ';
+  }
 }
