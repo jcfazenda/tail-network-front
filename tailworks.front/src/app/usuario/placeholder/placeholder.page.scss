@@ -13,6 +13,7 @@
   align-content: start;
   gap: 26px;
   padding: 12px 0 20px;
+  margin: 0 auto 0 0;
 }
 
 .candidate-placeholder__eyebrow{
@@ -850,11 +851,9 @@
 .candidate-job-panel__company{
   display: grid;
   gap: 10px;
-  padding: 14px;
-  border-radius: 16px;
-  background: var(--surface-gradient);
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.04);
+  margin-top: 12px;
+  padding: 0 0 16px;
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
 }
 
 .candidate-job-panel__company-brand{
@@ -972,9 +971,24 @@
   display: none;
 }
 
+.candidate-job-panel__page--benefits{
+  display: flex;
+  flex-direction: column;
+}
+
+.candidate-job-panel__page--benefits > .summary-card__sections{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .candidate-job-panel__section{
   display: grid;
   gap: 12px;
+}
+
+.candidate-job-panel__section--about{
+  gap: 10px;
 }
 
 .candidate-job-panel__section-title{
@@ -1022,8 +1036,117 @@
   color: rgba(15, 23, 42, 0.64);
 }
 
+.candidate-job-panel__stack-block{
+  margin-top: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
+  display: grid;
+  gap: 12px;
+}
+
+.candidate-job-panel__section--about + .candidate-job-panel__stack-block{
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.14);
+}
+
+.candidate-job-panel__stack-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.candidate-job-panel__stack-title{
+  margin: 0;
+  padding-left: 4px;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #263142;
+}
+
+.candidate-job-panel__stack{
+  margin-top: 4px;
+  display: grid;
+  gap: 10px;
+}
+
 .candidate-job-panel__about--status{
   margin-top: -4px;
+}
+
+.stack-card__list{
+  display: grid;
+  gap: 6px;
+}
+
+.stack-item{
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(140px, 210px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.stack-item__meta{
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stack-item__drag{
+  font-family: 'Material Symbols Rounded';
+  font-size: 15px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.3);
+}
+
+.stack-item__name{
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.stack-item__progress{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stack-item__track{
+  position: relative;
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.1);
+}
+
+.stack-item__fill{
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.stack-item__thumb{
+  display: none;
+}
+
+.stack-item__value{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.72);
 }
 
 .candidate-job-panel__stack-list,
@@ -1032,8 +1155,7 @@
   gap: 8px;
 }
 
-.candidate-job-panel__stack-item,
-.candidate-job-panel__benefit{
+.candidate-job-panel__stack-item{
   display: grid;
   gap: 8px;
   padding: 12px;
@@ -1081,28 +1203,6 @@
   background: linear-gradient(90deg, var(--primary), var(--primary-2));
 }
 
-.candidate-job-panel__benefit-copy{
-  display: grid;
-  gap: 4px;
-}
-
-.candidate-job-panel__benefit-description{
-  font-size: 12px;
-  line-height: 1.5;
-  color: rgba(15, 23, 42, 0.6);
-}
-
-.candidate-job-panel__benefit-side{
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(var(--primary-rgb), 0.12);
-  color: var(--primary-ink);
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
-}
-
 .candidate-job-panel__offer-card{
   display: flex;
   align-items: center;
@@ -1135,6 +1235,365 @@
   font-size: 12px;
   line-height: 1.5;
   color: rgba(15, 23, 42, 0.56);
+}
+
+.summary-card__sections{
+  display: grid;
+  gap: 0;
+}
+
+.summary-card__section{
+  display: grid;
+  gap: 14px;
+}
+
+.summary-card__section--about{
+  gap: 10px;
+}
+
+.summary-card__section--contract-info{
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.summary-card__section + .summary-card__section{
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.14);
+}
+
+.summary-card__section--contract-footer{
+  margin-top: auto;
+  flex: 1 1 auto;
+}
+
+.summary-card__section-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.summary-card__section-title{
+  margin: 0;
+  padding-left: 4px;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 800;
+  color: #263142;
+}
+
+.summary-card__about-text{
+  margin: 0;
+  padding-left: 4px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.68);
+}
+
+.summary-card__about-text--empty{
+  color: rgba(15, 23, 42, 0.42);
+  font-style: italic;
+}
+
+.summary-card__items{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.summary-card__item{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.summary-card__item-marker{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+}
+
+.summary-card__item-text{
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.summary-card__contract-panel{
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.summary-card__facts{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+  flex: 1 1 auto;
+}
+
+.summary-card__fact{
+  display: grid;
+  gap: 7px;
+}
+
+.summary-card__fact-label{
+  padding-left: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.summary-card__fact-value{
+  padding-left: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #263142;
+}
+
+.summary-card__fact-card{
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  display: grid;
+  gap: 8px;
+}
+
+.summary-card__fact-card--candidate-suggestion{
+  padding-left: 0;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+.summary-card__fact-money{
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(var(--primary-rgb), 0.18), rgba(255, 255, 255, 0.84)),
+    rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 8px 18px rgba(15, 23, 42, 0.04);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.02;
+  color: #263142;
+  letter-spacing: -0.04em;
+}
+
+.summary-card__fact-money--empty{
+  padding-left: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: rgba(15, 23, 42, 0.48);
+  letter-spacing: 0;
+  font-style: italic;
+}
+
+.summary-card__fact--benefits{
+  gap: 14px;
+}
+
+.summary-card__section--contract-info .summary-card__fact--benefits{
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.summary-card__fact--documents{
+  margin-top: 12px;
+  padding-top: 24px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.14);
+  gap: 14px;
+}
+
+.summary-card__benefits-list{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.summary-card__benefit-option{
+  min-height: 34px;
+  position: relative;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  display: grid;
+  gap: 5px;
+}
+
+.summary-card__benefit-option:not(:last-child)::after{
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 18px;
+  bottom: -10px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(242, 179, 26, 0.62), rgba(242, 179, 26, 0.2));
+}
+
+.summary-card__benefit-option-head{
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.summary-card__benefit-option-head::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 0;
+  border-top: 1px solid rgba(15, 23, 42, 0.14);
+}
+
+.summary-card__benefit-option-copy{
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.summary-card__benefit-option-check{
+  width: 10px;
+  height: 10px;
+  margin: 4px 4px 0;
+  border-radius: 50%;
+  background: #5ea97b;
+  box-shadow: 0 0 0 3px rgba(94, 169, 123, 0.16);
+  flex: 0 0 auto;
+}
+
+.summary-card__benefit-option-label{
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.summary-card__benefit-option-side{
+  margin-top: 3px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(var(--primary-rgb), 0.12);
+  color: var(--primary-ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.summary-card__benefit-option-description{
+  display: block;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: rgba(15, 23, 42, 0.58);
+}
+
+.summary-card__fact-empty{
+  padding-left: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(15, 23, 42, 0.42);
+  font-style: italic;
+}
+
+.summary-card__contract-footer-main{
+  margin-top: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  display: grid;
+  gap: 12px;
+}
+
+.summary-card__contract-offer{
+  padding: 14px 14px 12px;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(252, 248, 241, 0.84)),
+    rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 10px 22px rgba(15, 23, 42, 0.04);
+  display: grid;
+  gap: 10px;
+}
+
+.summary-card__contract-offer-head{
+  display: block;
+}
+
+.summary-card__contract-offer-label{
+  padding-left: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: rgba(15, 23, 42, 0.46);
+}
+
+.summary-card__contract-offer-body{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.summary-card__contract-switch-chip{
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: var(--btn-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--control-choice-border);
+  background: var(--control-choice-bg);
+  color: var(--control-text);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  box-shadow: var(--btn-secondary-shadow);
+}
+
+.summary-card__contract-switch-chip--active{
+  border-color: var(--control-choice-active-border);
+  background: var(--control-choice-active-bg);
+  color: var(--control-text-strong);
+  box-shadow: var(--btn-secondary-shadow-hover);
 }
 
 .candidate-job-panel__bullet-list{
@@ -1380,6 +1839,17 @@
 
   .candidate-job-panel__fact-grid{
     grid-template-columns: 1fr;
+  }
+
+  .stack-item{
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .summary-card__contract-offer-body{
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .job-card__surface{

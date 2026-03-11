@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
-import { MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
+import { JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 
 type CandidateView = 'applications' | 'radar';
@@ -213,6 +213,61 @@ export class PlaceholderPage implements OnInit {
     return job.responsibilitySections.filter((section) => section.pageId === 'front');
   }
 
+  get selectedJobBackResponsibilitySections(): JobResponsibilitySection[] {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return [];
+    }
+
+    const backSections = job.responsibilitySections.filter((section) => section.pageId === 'back');
+    if (backSections.length) {
+      return backSections;
+    }
+
+    if (!job.differentials.length) {
+      return [];
+    }
+
+    return [
+      {
+        id: 'candidate-back-fallback',
+        pageId: 'back',
+        title: 'Diferenciais e pontos de atenção:',
+        items: [...job.differentials],
+      },
+    ];
+  }
+
+  get selectedJobContractDescription(): string {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return 'Não há descrição';
+    }
+
+    const parts = [
+      `Contratação ${job.contractType} para atuação ${job.workModel.toLowerCase()} em ${job.location}.`,
+    ];
+
+    const salary = this.jobSalaryDisplay(job);
+    if (salary !== 'Não informada') {
+      parts.push(`Proposta base ${salary}.`);
+    }
+
+    if (job.allowCandidateSalarySuggestion) {
+      parts.push('A empresa permite que o candidato sugira um valor durante a candidatura.');
+    }
+
+    if (job.benefits.length) {
+      parts.push(`Pacote com ${job.benefits.length} benefícios vinculados a esta oportunidade.`);
+    }
+
+    return parts.join(' ').trim() || 'Não há descrição';
+  }
+
+  get selectedJobHiringDocuments(): string[] {
+    return [];
+  }
+
   get selectedJobStatusCurrentLabel(): string {
     const job = this.selectedJobPanel;
     if (!job) {
@@ -249,6 +304,12 @@ export class PlaceholderPage implements OnInit {
   get canApplySelectedJob(): boolean {
     const job = this.selectedJobPanel;
     return !!job && !job.talentDecision;
+  }
+
+  get candidateSalarySuggestionDisplay(): string {
+    return this.selectedJobPanel?.allowCandidateSalarySuggestion
+      ? 'Candidato pode sugerir um valor'
+      : 'Candidato nao pode sugerir valor';
   }
 
   applyToJob(jobId: string): void {

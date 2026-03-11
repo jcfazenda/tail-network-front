@@ -235,7 +235,7 @@ export class VagasMockService {
       .filter((item): item is Partial<JobResponsibilitySection> => !!item && typeof item === 'object')
       .map((item, index) => ({
         id: item.id?.trim() || `summary-section-${index + 1}`,
-        pageId: item.pageId === 'back' ? 'back' : 'front',
+        pageId: (item.pageId === 'back' ? 'back' : 'front') as JobResponsibilitySection['pageId'],
         title: item.title?.trim() || 'Requisitos e habilidades que buscamos:',
         items: Array.isArray(item.items)
           ? item.items.map((value) => `${value ?? ''}`.trim()).filter(Boolean)

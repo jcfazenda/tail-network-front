@@ -198,28 +198,6 @@
         </div>
       </div>
 
-      <div class="candidate-job-panel__company">
-        <div class="candidate-job-panel__company-brand">
-          <span
-            class="candidate-job-panel__company-logo"
-            [class.candidate-job-panel__company-logo--image]="!!selectedJobCompanyProfile.logoUrl"
-            [style.backgroundImage]="selectedJobCompanyProfile.logoUrl ? 'url(' + selectedJobCompanyProfile.logoUrl + ')' : null"
-            aria-hidden="true"
-          >{{ selectedJobCompanyProfile.logoUrl ? '' : selectedJobCompanyProfile.logoLabel }}</span>
-
-          <div class="candidate-job-panel__company-copy">
-            <strong>{{ selectedJobCompanyProfile.name }}</strong>
-            <span>{{ selectedJobCompanyProfile.followers }}</span>
-          </div>
-        </div>
-
-        <p class="candidate-job-panel__company-description">
-          <span>{{ selectedJobCompanyProfile.description }}</span>
-          <span class="candidate-job-panel__company-dot" aria-hidden="true"></span>
-          <span>{{ panel.location }}</span>
-        </p>
-      </div>
-
       <div class="candidate-job-panel__tabs" role="tablist" aria-label="Tabs da vaga">
         <button
           class="candidate-job-panel__tab"
@@ -247,6 +225,28 @@
         </button>
       </div>
 
+      <div class="candidate-job-panel__company">
+        <div class="candidate-job-panel__company-brand">
+          <span
+            class="candidate-job-panel__company-logo"
+            [class.candidate-job-panel__company-logo--image]="!!selectedJobCompanyProfile.logoUrl"
+            [style.backgroundImage]="selectedJobCompanyProfile.logoUrl ? 'url(' + selectedJobCompanyProfile.logoUrl + ')' : null"
+            aria-hidden="true"
+          >{{ selectedJobCompanyProfile.logoUrl ? '' : selectedJobCompanyProfile.logoLabel }}</span>
+
+          <div class="candidate-job-panel__company-copy">
+            <strong>{{ selectedJobCompanyProfile.name }}</strong>
+            <span>{{ selectedJobCompanyProfile.followers }}</span>
+          </div>
+        </div>
+
+        <p class="candidate-job-panel__company-description">
+          <span>{{ selectedJobCompanyProfile.description }}</span>
+          <span class="candidate-job-panel__company-dot" aria-hidden="true"></span>
+          <span>{{ panel.location }}</span>
+        </p>
+      </div>
+
       <div class="candidate-job-panel__body">
         <ng-container [ngSwitch]="activeCandidatePanelView">
           <div class="candidate-job-panel__page" *ngSwitchCase="'details'">
@@ -269,23 +269,32 @@
               </div>
             </div>
 
-            <section class="candidate-job-panel__section">
+            <section class="candidate-job-panel__section candidate-job-panel__section--about">
               <h4 class="candidate-job-panel__section-title">Sobre a vaga</h4>
               <p class="candidate-job-panel__about">{{ panel.summary || 'Não há descrição para esta vaga.' }}</p>
             </section>
 
-            <section class="candidate-job-panel__section">
-              <h4 class="candidate-job-panel__section-title">Percentual de Conhecimentos mínimos</h4>
+            <section class="candidate-job-panel__stack-block">
+              <div class="candidate-job-panel__stack-head">
+                <h4 class="candidate-job-panel__stack-title">Percentual de Conhecimentos mínimos</h4>
+              </div>
 
-              <div class="candidate-job-panel__stack-list" *ngIf="panel.techStack.length; else emptyTechStack">
-                <div class="candidate-job-panel__stack-item" *ngFor="let item of panel.techStack">
-                  <div class="candidate-job-panel__stack-meta">
-                    <span class="candidate-job-panel__stack-name">{{ item.name }}</span>
-                    <span class="candidate-job-panel__stack-value">{{ item.match }}%</span>
+              <div class="candidate-job-panel__stack">
+                <div class="stack-card__list" *ngIf="panel.techStack.length; else emptyTechStack">
+                  <div class="stack-item" *ngFor="let item of panel.techStack">
+                    <div class="stack-item__meta">
+                      <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                      <span class="stack-item__name">{{ item.name }}</span>
+                    </div>
+
+                    <div class="stack-item__progress">
+                      <span class="stack-item__track" aria-hidden="true">
+                        <span class="stack-item__fill" [style.width.%]="item.match"></span>
+                        <span class="stack-item__thumb" [style.left.%]="item.match"></span>
+                      </span>
+                      <span class="stack-item__value">{{ item.match }}%</span>
+                    </div>
                   </div>
-                  <span class="candidate-job-panel__stack-bar" aria-hidden="true">
-                    <span class="candidate-job-panel__stack-bar-fill" [style.width.%]="item.match"></span>
-                  </span>
                 </div>
               </div>
 
@@ -294,55 +303,113 @@
               </ng-template>
             </section>
 
-            <section class="candidate-job-panel__section">
-              <h4 class="candidate-job-panel__section-title">Diferenciais</h4>
+            <section class="candidate-job-panel__section" *ngFor="let section of selectedJobFrontResponsibilitySections">
+              <h4 class="candidate-job-panel__section-title">{{ section.title }}</h4>
 
-              <ul class="candidate-job-panel__bullet-list" *ngIf="panel.differentials.length; else emptyDifferentials">
-                <li class="candidate-job-panel__bullet-item" *ngFor="let item of panel.differentials">
+              <ul class="candidate-job-panel__bullet-list">
+                <li class="candidate-job-panel__bullet-item" *ngFor="let item of section.items">
                   <span class="candidate-job-panel__bullet-marker" aria-hidden="true"></span>
                   <span>{{ item }}</span>
                 </li>
               </ul>
+            </section>
 
-              <ng-template #emptyDifferentials>
-                <span class="candidate-job-panel__empty">Nenhum diferencial informado.</span>
-              </ng-template>
+            <section class="candidate-job-panel__section" *ngIf="!selectedJobFrontResponsibilitySections.length">
+              <h4 class="candidate-job-panel__section-title">Requisitos e habilidades que buscamos:</h4>
+              <span class="candidate-job-panel__empty">Nenhum requisito informado.</span>
             </section>
           </div>
 
-          <div class="candidate-job-panel__page" *ngSwitchCase="'benefits'">
-            <section class="candidate-job-panel__section">
-              <h4 class="candidate-job-panel__section-title">Benefícios</h4>
+          <div class="candidate-job-panel__page candidate-job-panel__page--benefits" *ngSwitchCase="'benefits'">
+            <div class="summary-card__sections">
+              <section class="summary-card__section summary-card__section--about">
+                <div class="summary-card__section-header">
+                  <h4 class="summary-card__section-title">Sobre a contratação</h4>
+                </div>
 
-              <div class="candidate-job-panel__benefits" *ngIf="panel.benefits.length; else emptyBenefits">
-                <div class="candidate-job-panel__benefit" *ngFor="let item of panel.benefits">
-                  <div class="candidate-job-panel__benefit-head">
-                    <div class="candidate-job-panel__benefit-copy">
-                      <span class="candidate-job-panel__benefit-title">{{ item.title }}</span>
-                      <span class="candidate-job-panel__benefit-description" *ngIf="item.description">{{ item.description }}</span>
+                <p class="summary-card__about-text" [class.summary-card__about-text--empty]="selectedJobContractDescription === 'Não há descrição'">
+                  {{ selectedJobContractDescription }}
+                </p>
+              </section>
+
+              <section class="summary-card__section" *ngFor="let section of selectedJobBackResponsibilitySections">
+                <div class="summary-card__section-header">
+                  <h4 class="summary-card__section-title">{{ section.title }}</h4>
+                </div>
+
+                <ul class="summary-card__items">
+                  <li class="summary-card__item" *ngFor="let item of section.items">
+                    <span class="summary-card__item-marker" aria-hidden="true"></span>
+                    <span class="summary-card__item-text">{{ item }}</span>
+                  </li>
+                </ul>
+              </section>
+
+              <section class="summary-card__section summary-card__section--contract-info summary-card__section--contract-footer">
+                <div class="summary-card__contract-panel">
+                  <div class="summary-card__facts">
+                    <div class="summary-card__fact summary-card__fact--benefits">
+                      <span class="summary-card__fact-label">Benefícios</span>
+
+                      <div class="summary-card__benefits-list" *ngIf="panel.benefits.length; else emptyBenefits">
+                        <div class="summary-card__benefit-option" *ngFor="let item of panel.benefits">
+                          <div class="summary-card__benefit-option-head">
+                            <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
+                            <div class="summary-card__benefit-option-copy">
+                              <span class="summary-card__benefit-option-label">{{ item.title }}</span>
+                              <span class="summary-card__benefit-option-description" *ngIf="item.description">{{ item.description }}</span>
+                            </div>
+                            <span class="summary-card__benefit-option-side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <ng-template #emptyBenefits>
+                        <span class="summary-card__fact-empty">Nenhum benefício informado</span>
+                      </ng-template>
                     </div>
-                    <span class="candidate-job-panel__benefit-side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+
+                    <div class="summary-card__fact summary-card__fact--documents">
+                      <span class="summary-card__fact-label">Documentos para validação de contratação.</span>
+
+                      <div class="summary-card__benefits-list" *ngIf="selectedJobHiringDocuments.length; else emptyHiringDocuments">
+                        <div class="summary-card__benefit-option" *ngFor="let item of selectedJobHiringDocuments">
+                          <div class="summary-card__benefit-option-head">
+                            <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
+                            <div class="summary-card__benefit-option-copy">
+                              <span class="summary-card__benefit-option-label">{{ item }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <ng-template #emptyHiringDocuments>
+                        <span class="summary-card__fact-empty">Nenhum documento informado</span>
+                      </ng-template>
+                    </div>
+
+                    <div class="summary-card__contract-footer-main">
+                      <div class="summary-card__contract-offer" *ngIf="panel.showSalaryRangeInCard">
+                        <div class="summary-card__contract-offer-head">
+                          <span class="summary-card__contract-offer-label">Proposta da Empresa</span>
+                        </div>
+                        <div class="summary-card__contract-offer-body">
+                          <span class="summary-card__fact-money" [class.summary-card__fact-money--empty]="jobSalaryDisplay(panel) === 'Não informada'">{{ jobSalaryDisplay(panel) }}</span>
+                          <span class="summary-card__contract-switch-chip summary-card__contract-switch-chip--active">
+                            {{ panel.contractType }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="summary-card__fact-card summary-card__fact-card--candidate-suggestion" *ngIf="panel.allowCandidateSalarySuggestion">
+                        <span class="summary-card__fact-label">Sugestão do candidato</span>
+                        <span class="summary-card__fact-value">{{ candidateSalarySuggestionDisplay }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <ng-template #emptyBenefits>
-                <span class="candidate-job-panel__empty">Nenhum benefício informado.</span>
-              </ng-template>
-            </section>
-
-            <section class="candidate-job-panel__section">
-              <h4 class="candidate-job-panel__section-title">Proposta da empresa</h4>
-
-              <div class="candidate-job-panel__offer-card">
-                <strong>{{ jobSalaryDisplay(panel) }}</strong>
-                <span>{{ panel.contractType }}</span>
-              </div>
-
-              <div class="candidate-job-panel__offer-note" *ngIf="panel.allowCandidateSalarySuggestion">
-                Candidato pode sugerir um valor ao avançar no processo.
-              </div>
-            </section>
+              </section>
+            </div>
           </div>
 
           <div class="candidate-job-panel__page" *ngSwitchCase="'status'">

@@ -624,6 +624,14 @@ export class HomePage implements AfterViewInit {
       benefits: seed.benefitsLabel ? [{ title: seed.benefitsLabel }] : [],
       techStack,
       differentials: [],
+      responsibilitySections: [
+        {
+          id: 'summary-section-1',
+          pageId: 'front',
+          title: 'Requisitos e habilidades que buscamos:',
+          items: techStack.map((item) => item.name),
+        },
+      ],
       priority: seed.location.toUpperCase(),
       match: seed.match,
       talents: 18,
