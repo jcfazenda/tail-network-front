@@ -3,19 +3,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
-import { ContractType, JobBenefitItem, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
+import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
 import { MatStepperModule } from '@angular/material/stepper';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
 type SummaryView = 'status' | 'benefits' | 'details';
-type ResponsibilitySection = {
-  id: string;
-  pageId: SummaryPageId;
-  title: string;
-  items: string[];
-};
+type ResponsibilitySection = JobResponsibilitySection;
 
 type CompanySummaryProfile = {
   name: string;
@@ -1179,6 +1174,10 @@ export class CadastroPage {
     this.selectedBenefits = job.benefits.map((item) => ({ ...item }));
     this.selectedTechStackItems = job.techStack.map((item) => ({ ...item }));
     this.selectedRefinementOptions = [...job.differentials];
+    this.responsibilitySections = job.responsibilitySections.map((section) => ({
+      ...section,
+      items: [...section.items],
+    }));
   }
 
   private buildDraftPayload(): MockJobDraft {
@@ -1192,6 +1191,10 @@ export class CadastroPage {
       benefits: this.selectedBenefits.map((item) => ({ ...item })),
       techStack: this.selectedTechStackItems.map((item) => ({ ...item })),
       differentials: [...this.selectedRefinementOptions],
+      responsibilitySections: this.responsibilitySections.map((section) => ({
+        ...section,
+        items: [...section.items],
+      })),
     };
   }
 

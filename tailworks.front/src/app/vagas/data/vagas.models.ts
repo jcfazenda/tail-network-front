@@ -22,6 +22,15 @@ export interface JobBenefitItem {
   description?: string;
 }
 
+export type ResponsibilityPageId = 'front' | 'back';
+
+export interface JobResponsibilitySection {
+  id: string;
+  pageId: ResponsibilityPageId;
+  title: string;
+  items: string[];
+}
+
 export interface VagaPanelDraft {
   title: string;
   company: string;
@@ -41,6 +50,7 @@ export interface MockJobDraft extends VagaPanelDraft {
   benefits: JobBenefitItem[];
   techStack: TechStackItem[];
   differentials: string[];
+  responsibilitySections: JobResponsibilitySection[];
 }
 
 export interface MockJobCandidate {

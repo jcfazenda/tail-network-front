@@ -1,4 +1,4 @@
-import { JobBenefitItem, MockJobRecord } from './vagas.models';
+import { JobBenefitItem, JobResponsibilitySection, MockJobRecord } from './vagas.models';
 
 const avatar = '/assets/avatars/avatar-rafael.png';
 const now = '2026-03-07T00:00:00.000Z';
@@ -17,6 +17,17 @@ function benefit(title: string, sideLabel?: string, description?: string): JobBe
 
 function benefitList(...items: Array<string | JobBenefitItem>): JobBenefitItem[] {
   return items.map((item) => (typeof item === 'string' ? benefit(item) : item));
+}
+
+function responsibilitySections(...items: string[]): JobResponsibilitySection[] {
+  return [
+    {
+      id: 'summary-section-1',
+      pageId: 'front',
+      title: 'Requisitos e habilidades que buscamos:',
+      items: [...items],
+    },
+  ];
 }
 
 export const VAGAS_MOCK_SEED: MockJobRecord[] = [
@@ -52,6 +63,12 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
       'Teste Unitário e Integrado',
       'Viajar a Trabalho',
     ],
+    responsibilitySections: responsibilitySections(
+      'Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;',
+      'Experiência sólida em desenvolvimento com .NET / C# e APIs REST;',
+      'Conhecimento em SQL Server, Entity Framework e Azure;',
+      'Habilidade em criar e executar testes de integração e unitários;',
+    ),
     match: 89,
     talents: 23,
     radarCount: 23,
@@ -95,6 +112,11 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
       { name: 'Research', match: 73 },
     ],
     differentials: ['Trabalho em Equipe', 'Viajar a Trabalho'],
+    responsibilitySections: responsibilitySections(
+      'Experiência com discovery, prototipação e evolução de jornadas digitais;',
+      'Vivência com Design System, Research e colaboração com produto;',
+      'Capacidade de transformar dados e contexto em decisões de design;',
+    ),
     match: 94,
     talents: 15,
     radarCount: 6,
@@ -128,6 +150,10 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
       { name: 'Python', match: 61 },
     ],
     differentials: ['Trabalho em Equipe'],
+    responsibilitySections: responsibilitySections(
+      'Experiência com SQL, Power BI e construção de dashboards;',
+      'Capacidade de apoiar o negócio com análises operacionais e estratégicas;',
+    ),
     match: 76,
     talents: 9,
     radarCount: 4,
@@ -160,6 +186,11 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
       { name: 'Terraform', match: 71 },
     ],
     differentials: ['Experiência com Azure ou Aws', 'Viajar a Trabalho'],
+    responsibilitySections: responsibilitySections(
+      'Experiência com cloud, observabilidade e automação de infraestrutura;',
+      'Conhecimento em AWS, Kubernetes e Terraform;',
+      'Vivência com práticas DevOps e melhoria contínua de pipelines;',
+    ),
     match: 82,
     talents: 18,
     radarCount: 12,
@@ -192,6 +223,10 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
       { name: 'CI/CD', match: 64 },
     ],
     differentials: ['Teste Unitário e Integrado'],
+    responsibilitySections: responsibilitySections(
+      'Experiência com automação de testes e cobertura de cenários críticos;',
+      'Conhecimento em testes de API, CI/CD e qualidade contínua;',
+    ),
     match: 74,
     talents: 11,
     radarCount: 7,
@@ -224,6 +259,10 @@ export const VAGAS_MOCK_SEED: MockJobRecord[] = [
       { name: 'Roadmap', match: 71 },
     ],
     differentials: ['Trabalho em Equipe', 'Viajar a Trabalho'],
+    responsibilitySections: responsibilitySections(
+      'Experiência com product discovery, roadmap e alinhamento entre times;',
+      'Capacidade de usar analytics para apoiar priorização e execução;',
+    ),
     match: 68,
     talents: 8,
     radarCount: 3,

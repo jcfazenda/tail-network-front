@@ -7,10 +7,24 @@ import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 
 type CandidateView = 'applications' | 'radar';
 type WorkModelFilter = 'all' | WorkModel;
+type CandidatePanelView = 'details' | 'benefits' | 'status';
 type CandidateStack = {
   name: string;
   knowledge: number;
   description: string;
+};
+type CandidateStatusPreview = {
+  label: string;
+  completed: boolean;
+  timeLabel?: string;
+};
+type CompanySummaryProfile = {
+  name: string;
+  followers: string;
+  description: string;
+  linkedinCount: string;
+  logoLabel: string;
+  logoUrl?: string;
 };
 
 type CandidateBasicProfile = {
@@ -35,18 +49,43 @@ export class PlaceholderPage implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly talentCandidateName = 'Rafael Oliveira';
 
-  readonly jobGaugeRadius = 42;
-  readonly jobGaugeCircumference = 2 * Math.PI * this.jobGaugeRadius;
   readonly recruiterName = 'Rafael Souza';
   readonly recruiterRole = 'Talent Acquisition';
   readonly recruiterAvatar = '/assets/avatars/avatar-rafael.png';
+  readonly companyProfiles: Record<string, CompanySummaryProfile> = {
+    'Banco Itaú': {
+      name: 'Banco Itaú',
+      followers: '5.248.921 seguidores',
+      description: 'Banco e serviços financeiros',
+      linkedinCount: '5.248.921 no LinkedIn',
+      logoLabel: 'it',
+      logoUrl: '/assets/images/logo-itau.png',
+    },
+    Nubank: {
+      name: 'Nubank',
+      followers: '2.304.114 seguidores',
+      description: 'Tecnologia financeira e meios de pagamento',
+      linkedinCount: '2.304.114 no LinkedIn',
+      logoLabel: 'nu',
+    },
+    Stone: {
+      name: 'Stone',
+      followers: '1.128.440 seguidores',
+      description: 'Serviços financeiros e tecnologia para negocios',
+      linkedinCount: '1.128.440 no LinkedIn',
+      logoLabel: 'st',
+    },
+  };
 
   activeView: CandidateView = this.hasAppliedJobs ? 'applications' : 'radar';
   workModelFilter: WorkModelFilter = 'all';
+  activeCandidatePanelView: CandidatePanelView = 'details';
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
   talentName = 'Rafael';
+  selectedJobId: string | null = null;
 
   ngOnInit(): void {
     this.restoreTalentDraft();
@@ -127,12 +166,121 @@ export class PlaceholderPage implements OnInit {
       : `Nenhuma vaga em ${this.workModelLabel(this.workModelFilter)} no seu radar.`;
   }
 
+  get selectedJobPanel(): MockJobRecord | null {
+    if (!this.selectedJobId) {
+      return null;
+    }
+
+    return this.vagasMockService.getJobById(this.selectedJobId) ?? null;
+  }
+
+  get selectedJobCompanyProfile(): CompanySummaryProfile {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return {
+        name: '',
+        followers: '',
+        description: '',
+        linkedinCount: '',
+        logoLabel: '',
+      };
+    }
+
+    return this.companyProfiles[job.company] ?? {
+      name: job.company,
+      followers: '120.000 seguidores',
+      description: 'Empresa em crescimento',
+      linkedinCount: '120.000 no LinkedIn',
+      logoLabel: job.company.slice(0, 2).toLowerCase(),
+    };
+  }
+
+  get selectedJobStatusPreview(): CandidateStatusPreview[] {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return [];
+    }
+
+    return this.buildCandidateStatusPreview(job);
+  }
+
+  get selectedJobFrontResponsibilitySections() {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return [];
+    }
+
+    return job.responsibilitySections.filter((section) => section.pageId === 'front');
+  }
+
+  get selectedJobStatusCurrentLabel(): string {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return '';
+    }
+
+    return this.selectedJobStatusPreview[this.getTalentStatusStageIndex(job)]?.label ?? 'Talento no radar';
+  }
+
+  get selectedJobStatusCurrentDescription(): string {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return '';
+    }
+
+    if (job.talentDecision === 'hidden') {
+      return 'Essa vaga foi escondida por você e não participa mais do seu radar principal.';
+    }
+
+    switch (this.selectedJobStatusCurrentLabel) {
+      case 'Talento no radar':
+        return 'O sistema encontrou essa vaga com aderência ao seu perfil e ela está disponível para avaliação.';
+      case 'Candidatura enviada':
+        return 'Sua candidatura foi enviada e o recrutador já consegue ver você nessa vaga.';
+      case 'Em processo':
+        return 'Seu perfil está em análise e seguindo nas próximas etapas da vaga.';
+      case 'Contratação Solicitada':
+        return 'A vaga avançou para uma etapa final de contratação ou documentação.';
+      default:
+        return '';
+    }
+  }
+
+  get canApplySelectedJob(): boolean {
+    const job = this.selectedJobPanel;
+    return !!job && !job.talentDecision;
+  }
+
   applyToJob(jobId: string): void {
     this.vagasMockService.applyAsTalent(jobId);
+    this.activeView = 'applications';
   }
 
   hideJob(jobId: string): void {
     this.vagasMockService.hideFromTalent(jobId);
+  }
+
+  openJobPanel(jobId: string): void {
+    this.selectedJobId = jobId;
+    this.activeCandidatePanelView = 'details';
+  }
+
+  closeJobPanel(): void {
+    this.selectedJobId = null;
+  }
+
+  selectCandidatePanelView(view: CandidatePanelView): void {
+    this.activeCandidatePanelView = view;
+  }
+
+  applyToSelectedJob(): void {
+    if (!this.selectedJobId) {
+      return;
+    }
+
+    this.vagasMockService.applyAsTalent(this.selectedJobId);
+    this.activeView = 'applications';
+    this.activeCandidatePanelView = 'status';
   }
 
   setView(view: CandidateView): void {
@@ -170,9 +318,12 @@ export class PlaceholderPage implements OnInit {
     return line;
   }
 
-  jobGaugeOffset(score: number): number {
-    const safeScore = Math.min(100, Math.max(0, score));
-    return this.jobGaugeCircumference * (1 - safeScore / 100);
+  jobSalaryDisplay(job: MockJobRecord): string {
+    if (job.showSalaryRangeInCard === false) {
+      return 'Não informada';
+    }
+
+    return this.formatJobSalary(job.salaryRange) ?? 'Não informada';
   }
 
   private formatJobSalary(value?: string): string | null {
@@ -187,6 +338,46 @@ export class PlaceholderPage implements OnInit {
   private get hasAppliedJobs(): boolean {
     return this.vagasMockService.getJobs()
       .some((job) => job.status === 'ativas' && job.talentDecision === 'applied');
+  }
+
+  private buildCandidateStatusPreview(job: MockJobRecord): CandidateStatusPreview[] {
+    const activeIndex = this.getTalentStatusStageIndex(job);
+    const statuses: Array<Pick<CandidateStatusPreview, 'label' | 'timeLabel'>> = [
+      { label: 'Talento no radar', timeLabel: 'Agora' },
+      { label: 'Candidatura enviada', timeLabel: 'Agora' },
+      { label: 'Em processo', timeLabel: 'Em atualização' },
+      { label: 'Contratação Solicitada', timeLabel: 'Em atualização' },
+    ];
+
+    return statuses.map((item, index) => ({
+      ...item,
+      completed: index <= activeIndex,
+      timeLabel: index <= activeIndex ? item.timeLabel : undefined,
+    }));
+  }
+
+  private getTalentStatusStageIndex(job: MockJobRecord): number {
+    if (job.talentDecision === 'hidden') {
+      return 0;
+    }
+
+    const candidate = job.candidates.find((item) => item.name === this.talentCandidateName);
+    const stage = candidate?.stage;
+
+    switch (stage) {
+      case 'candidatura':
+        return 1;
+      case 'processo':
+      case 'tecnica':
+        return 2;
+      case 'aguardando':
+      case 'documentacao':
+        return 3;
+      case 'cancelado':
+        return 0;
+      default:
+        return 0;
+    }
   }
 
   private restoreTalentDraft(): void {

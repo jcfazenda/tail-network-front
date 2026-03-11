@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { JobBenefitItem, SaveMockJobCommand, MockJobCandidate, MockJobRecord } from './vagas.models';
+import { JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord } from './vagas.models';
 
 @Injectable({ providedIn: 'root' })
 export class VagasMockService {
@@ -179,6 +179,10 @@ export class VagasMockService {
       benefits: command.draft.benefits.map((item) => ({ ...item })),
       techStack: command.draft.techStack.map((item) => ({ ...item })),
       differentials: [...command.draft.differentials],
+      responsibilitySections: command.draft.responsibilitySections.map((section) => ({
+        ...section,
+        items: [...section.items],
+      })),
     };
   }
 
@@ -190,6 +194,7 @@ export class VagasMockService {
       benefits: this.normalizeBenefits(record.benefits),
       techStack: record.techStack.map((item) => ({ ...item })),
       differentials: [...record.differentials],
+      responsibilitySections: this.normalizeResponsibilitySections(record.responsibilitySections, record.differentials),
       candidates: record.candidates.map((candidate) => ({ ...candidate })),
       avatars: [...record.avatars],
     })).map((record) => this.decorateTalentVisibility(record));
@@ -216,6 +221,42 @@ export class VagasMockService {
 
       return { title: 'Benefício' };
     });
+  }
+
+  private normalizeResponsibilitySections(
+    sections: unknown,
+    differentials: string[],
+  ): JobResponsibilitySection[] {
+    if (!Array.isArray(sections) || sections.length === 0) {
+      return this.buildFallbackResponsibilitySections(differentials);
+    }
+
+    const normalized = sections
+      .filter((item): item is Partial<JobResponsibilitySection> => !!item && typeof item === 'object')
+      .map((item, index) => ({
+        id: item.id?.trim() || `summary-section-${index + 1}`,
+        pageId: item.pageId === 'back' ? 'back' : 'front',
+        title: item.title?.trim() || 'Requisitos e habilidades que buscamos:',
+        items: Array.isArray(item.items)
+          ? item.items.map((value) => `${value ?? ''}`.trim()).filter(Boolean)
+          : [],
+      }))
+      .filter((section) => section.items.length > 0);
+
+    return normalized.length ? normalized : this.buildFallbackResponsibilitySections(differentials);
+  }
+
+  private buildFallbackResponsibilitySections(differentials: string[]): JobResponsibilitySection[] {
+    return [
+      {
+        id: 'summary-section-1',
+        pageId: 'front',
+        title: 'Requisitos e habilidades que buscamos:',
+        items: differentials.length
+          ? [...differentials]
+          : ['Trabalho em Equipe', 'Teste Unitário e Integrado'],
+      },
+    ];
   }
 
   private createId(): string {
