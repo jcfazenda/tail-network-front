@@ -113,21 +113,23 @@
 }
 
 .job-create__hero-progress{
-  min-width: 142px;
+  width: min(100%, 420px);
   display: grid;
-  gap: 6px;
+  gap: 12px;
 }
 
 .job-create__hero-progress-label{
-  font-size: 11px;
+  display: block;
+  font-size: 13px;
   font-weight: 700;
   color: rgba(15, 23, 42, 0.62);
+  text-align: left;
 }
 
 .job-create__hero-progress-track{
   display: block;
   width: 100%;
-  height: 3px;
+  height: 12px;
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.12);
   overflow: hidden;
