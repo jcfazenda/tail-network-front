@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { JobBenefitItem, SaveMockJobCommand, MockJobRecord } from './vagas.models';
+import { JobBenefitItem, SaveMockJobCommand, MockJobCandidate, MockJobRecord } from './vagas.models';
 
 @Injectable({ providedIn: 'root' })
 export class VagasMockService {
   private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
+  private readonly talentAvatar = '/assets/avatars/avatar-rafael.png';
   private cache: MockJobRecord[] | null = null;
 
   getJobs(): MockJobRecord[] {
@@ -58,6 +59,55 @@ export class VagasMockService {
     const jobs = this.loadJobs();
     this.cache = jobs.filter((job) => job.id !== id);
     this.persist();
+  }
+
+  applyAsTalent(jobId: string): MockJobRecord | undefined {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === jobId);
+
+    if (!existing) {
+      return undefined;
+    }
+
+    const appliedCandidate = this.buildTalentCandidate(existing);
+    const hasCandidate = existing.candidates.some((candidate) => candidate.name === appliedCandidate.name);
+    const nextCandidates: MockJobCandidate[] = hasCandidate
+      ? existing.candidates.map((candidate) =>
+          candidate.name === appliedCandidate.name
+            ? { ...candidate, ...appliedCandidate, stage: 'candidatura' as const, radarOnly: false }
+            : { ...candidate },
+        )
+      : [appliedCandidate, ...existing.candidates.map((candidate) => ({ ...candidate }))];
+
+    const updatedJob: MockJobRecord = this.decorateTalentVisibility({
+      ...existing,
+      talentDecision: 'applied' as const,
+      candidates: nextCandidates,
+      updatedAt: new Date().toISOString(),
+    });
+
+    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    this.persist();
+    return updatedJob;
+  }
+
+  hideFromTalent(jobId: string): MockJobRecord | undefined {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === jobId);
+
+    if (!existing) {
+      return undefined;
+    }
+
+    const updatedJob: MockJobRecord = {
+      ...existing,
+      talentDecision: 'hidden',
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    this.persist();
+    return updatedJob;
   }
 
   private loadJobs(): MockJobRecord[] {
@@ -121,6 +171,7 @@ export class VagasMockService {
       avatars: [...command.previewAvatars],
       extraCount: command.previewAvatarExtraCount,
       status: command.status,
+      talentDecision: existing?.talentDecision,
       candidates: existing?.candidates.map((candidate) => ({ ...candidate })) ?? [],
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
@@ -135,12 +186,13 @@ export class VagasMockService {
     return records.map((record) => ({
       ...record,
       showSalaryRangeInCard: record.showSalaryRangeInCard ?? true,
+      talentDecision: record.talentDecision,
       benefits: this.normalizeBenefits(record.benefits),
       techStack: record.techStack.map((item) => ({ ...item })),
       differentials: [...record.differentials],
       candidates: record.candidates.map((candidate) => ({ ...candidate })),
       avatars: [...record.avatars],
-    }));
+    })).map((record) => this.decorateTalentVisibility(record));
   }
 
   private normalizeBenefits(benefits: unknown): JobBenefitItem[] {
@@ -172,5 +224,34 @@ export class VagasMockService {
     }
 
     return `vaga-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+  }
+
+  private buildTalentCandidate(job: MockJobRecord): MockJobCandidate {
+    return {
+      name: 'Rafael Oliveira',
+      role: `${job.seniority} ${job.title}`.trim(),
+      match: Math.max(72, Math.min(98, job.match)),
+      minutesAgo: 1,
+      status: 'online',
+      avatar: this.talentAvatar,
+      stage: 'candidatura',
+      availabilityLabel: 'Disponibilidade imediata',
+      radarOnly: false,
+    };
+  }
+
+  private decorateTalentVisibility(job: MockJobRecord): MockJobRecord {
+    const highlightedAvatars = job.talentDecision === 'applied'
+      ? [this.talentAvatar, ...job.avatars.filter((avatar) => avatar !== this.talentAvatar)]
+      : [...job.avatars];
+
+    return {
+      ...job,
+      avatars: highlightedAvatars.slice(0, 3),
+      extraCount: Math.max(
+        job.extraCount,
+        highlightedAvatars.length > 3 ? highlightedAvatars.length - 3 : job.extraCount,
+      ),
+    };
   }
 }

@@ -1,5 +1,214 @@
-<section class="candidate-placeholder">
-  <span class="candidate-placeholder__eyebrow">Talento</span>
-  <h1>{{ title }}</h1>
-  <p>Essa área ficou preparada para continuarmos a jornada do candidato no próximo passo.</p>
+<section class="candidate-placeholder" [class.candidate-placeholder--applications]="isApplicationsPage">
+  <ng-container *ngIf="isApplicationsPage; else defaultPlaceholder">
+    <div class="candidate-applications__intro">
+      <h1>Olá, {{ talentName }} 👋</h1>
+      <p>Pronto para dar o próximo passo rumo à sua próxima oportunidade?</p>
+      <span>Aqui está o resumo das suas oportunidades.</span>
+    </div>
+
+    <section class="candidate-stack-summary" *ngIf="talentStacks.length">
+      <div class="candidate-stack-summary__card">
+        <div class="candidate-stack-summary__body">
+          <div class="candidate-stack-summary__radar">
+            <app-alcance-radar
+              title="Seu alcance no Ecossistema."
+              [score]="talentStackScore"
+              [showGaugeLabel]="false"
+              [items]="talentStackRadarItems"
+            />
+          </div>
+
+          <div class="candidate-stack-summary__stack-box">
+            <p>Stacks mapeadas no seu cadastro.</p>
+
+            <div class="candidate-stack-summary__stack-list">
+              <div class="candidate-stack-summary__stack-item" *ngFor="let stack of talentStacks; let index = index">
+                <div class="candidate-stack-summary__stack-meta">
+                  <span class="candidate-stack-summary__stack-name">{{ stack.name }}</span>
+                  <button
+                    *ngIf="stack.description"
+                    class="candidate-stack-summary__stack-info"
+                    type="button"
+                    (click)="toggleStackDescription(index)"
+                    [class.candidate-stack-summary__stack-info--active]="expandedStackDescriptionIndex === index"
+                    [attr.aria-label]="(expandedStackDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
+                  >
+                    <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                  </button>
+                </div>
+
+                <div class="candidate-stack-summary__stack-progress">
+                  <div class="candidate-stack-summary__stack-slider">
+                    <span class="candidate-stack-summary__stack-bar" aria-hidden="true">
+                      <span class="candidate-stack-summary__stack-bar-fill" [style.width.%]="stack.knowledge"></span>
+                    </span>
+                  </div>
+                  <span class="candidate-stack-summary__stack-value">{{ stack.knowledge }}%</span>
+                </div>
+
+                <div
+                  class="candidate-stack-summary__stack-description"
+                  *ngIf="expandedStackDescriptionIndex === index && stack.description"
+                  [innerHTML]="stack.description"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="candidate-applications__toolbar">
+      <div class="candidate-applications__views" role="tablist" aria-label="Visualizações">
+        <button
+          class="candidate-applications__view"
+          type="button"
+          role="tab"
+          [class.active]="activeView === 'applications'"
+          [attr.aria-selected]="activeView === 'applications'"
+          (click)="setView('applications')"
+        >
+          Candidaturas ({{ applicationsCount }})
+        </button>
+        <button
+          class="candidate-applications__view"
+          type="button"
+          role="tab"
+          [class.active]="activeView === 'radar'"
+          [attr.aria-selected]="activeView === 'radar'"
+          (click)="setView('radar')"
+        >
+          No meu Radar ({{ radarCount }})
+        </button>
+      </div>
+
+      <label class="candidate-applications__filter">
+        <span>Filtrar</span>
+        <select [value]="workModelFilter" (change)="setWorkModelFilter($any($event.target).value)">
+          <option value="all">Todos</option>
+          <option value="Remoto">Remoto</option>
+          <option value="Hibrido">Híbrido</option>
+          <option value="Presencial">Presencial</option>
+        </select>
+      </label>
+    </div>
+
+    <ng-container *ngIf="displayedJobs.length; else emptyApplications">
+      <div class="candidate-applications__list">
+        <article class="job-card" *ngFor="let job of displayedJobs">
+          <div class="job-card__surface">
+            <div class="job-card__main">
+              <div class="job-card__title-row">
+                <h3 class="job-card__title">{{ job.title }}</h3>
+                <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
+              </div>
+
+              <div class="job-card__meta">
+                <span>{{ job.company }}</span>
+                <span class="job-card__meta-dot" aria-hidden="true"></span>
+                <span>{{ job.location }}</span>
+              </div>
+
+              <div class="job-card__offer">
+                <span>{{ jobCardOfferLine(job) }}</span>
+              </div>
+
+              <div class="job-card__footer">
+                <div class="job-card__fit">
+                  <span class="job-card__fit-label">Compatíveis</span>
+                  <span class="job-card__fit-bar" aria-hidden="true">
+                    <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
+                  </span>
+                  <span class="job-card__fit-value">{{ job.match }}%</span>
+                </div>
+
+                <div class="job-card__avatars">
+                  <div class="job-card__avatars-stack">
+                    <ng-container *ngFor="let avatar of job.avatars; let i = index">
+                      <span
+                        class="job-card__avatar"
+                        [style.zIndex]="i + 1"
+                        [style.marginLeft.px]="i === 0 ? 0 : -12"
+                        [style.backgroundImage]="'url(' + avatar + ')'"
+                        aria-hidden="true"
+                      ></span>
+                    </ng-container>
+                    <span class="job-card__avatar job-card__avatar--extra">+{{ job.extraCount }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="candidate-application-card__actions">
+                <span class="candidate-application-card__status" *ngIf="job.talentDecision === 'applied'">
+                  Candidatura enviada
+                </span>
+                <span class="candidate-application-card__status candidate-application-card__status--hidden" *ngIf="job.talentDecision === 'hidden'">
+                  Escondido
+                </span>
+
+                <div class="candidate-application-card__controls" *ngIf="!job.talentDecision">
+                  <button class="candidate-application-card__action candidate-application-card__action--primary" type="button" (click)="applyToJob(job.id)">
+                    Visualizar
+                  </button>
+                  <button
+                    class="candidate-application-card__action candidate-application-card__action--ghost candidate-application-card__action--dismiss"
+                    type="button"
+                    (click)="hideJob(job.id)"
+                    aria-label="Não quero ver"
+                    title="Não quero ver"
+                  >
+                    x
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="job-card__side job-card__side--creator">
+              <div class="job-card__gauge-wrap" aria-hidden="true">
+                <svg class="job-card__gauge-svg" viewBox="0 0 112 112">
+                  <circle class="job-card__gauge-orbit" cx="56" cy="56" r="50"></circle>
+                  <circle class="job-card__gauge-track" cx="56" cy="56" [attr.r]="jobGaugeRadius"></circle>
+                  <circle
+                    class="job-card__gauge-progress"
+                    cx="56"
+                    cy="56"
+                    [attr.r]="jobGaugeRadius"
+                    [attr.stroke-dasharray]="jobGaugeCircumference"
+                    [attr.stroke-dashoffset]="jobGaugeOffset(job.match)"
+                  ></circle>
+                </svg>
+
+                <span class="job-card__gauge-core">
+                  <strong>{{ job.match }}%</strong>
+                </span>
+              </div>
+
+              <div class="job-card__creator">
+                <span
+                  class="job-card__creator-avatar"
+                  [style.backgroundImage]="'url(' + recruiterAvatar + ')'"
+                  aria-hidden="true"
+                ></span>
+
+                <div class="job-card__creator-copy">
+                  <strong>{{ recruiterName }}</strong>
+                  <span>{{ recruiterRole }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #defaultPlaceholder>
+    <span class="candidate-placeholder__eyebrow">Talento</span>
+    <h1>{{ title }}</h1>
+    <p>Essa área ficou preparada para continuarmos a jornada do candidato no próximo passo.</p>
+  </ng-template>
+
+  <ng-template #emptyApplications>
+    <div class="empty">{{ emptyStateMessage }}</div>
+  </ng-template>
 </section>

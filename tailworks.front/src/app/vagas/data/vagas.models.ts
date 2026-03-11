@@ -1,6 +1,7 @@
 export type JobStatus = 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas';
 export type WorkModel = 'Presencial' | 'Hibrido' | 'Remoto';
 export type ContractType = 'CLT' | 'PJ' | 'Freelancer';
+export type TalentJobDecision = 'applied' | 'hidden';
 export type CandidateStage =
   | 'radar'
   | 'aguardando'
@@ -65,6 +66,7 @@ export interface MockJobRecord extends MockJobDraft {
   avatars: string[];
   extraCount: number;
   status: JobStatus;
+  talentDecision?: TalentJobDecision;
   candidates: MockJobCandidate[];
   createdAt: string;
   updatedAt: string;

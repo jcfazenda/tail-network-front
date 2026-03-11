@@ -119,6 +119,8 @@ export class StubPage {
         return 'Em Processo';
       case 'tecnica':
         return 'Em Entrevista Técnica';
+      case 'candidatura':
+        return 'Candidatura';
       case 'cancelado':
         return 'Cancelado';
       default:

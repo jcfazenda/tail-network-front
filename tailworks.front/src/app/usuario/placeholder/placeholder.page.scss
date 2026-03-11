@@ -8,6 +8,13 @@
   margin: 0 auto;
 }
 
+.candidate-placeholder--applications{
+  min-height: auto;
+  align-content: start;
+  gap: 26px;
+  padding: 12px 0 20px;
+}
+
 .candidate-placeholder__eyebrow{
   display: inline-flex;
   align-items: center;
@@ -35,4 +42,949 @@
   color: rgba(15, 23, 42, 0.64);
   font-size: 17px;
   line-height: 1.6;
+}
+
+.candidate-applications__summary{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+}
+
+.candidate-applications__brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.candidate-applications__brand-mark{
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(226, 231, 236, 0.94), rgba(206, 212, 220, 0.92));
+  color: rgba(33, 41, 54, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.candidate-applications__brand-mark .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+}
+
+.candidate-applications__brand-copy{
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.candidate-applications__brand-copy strong{
+  font-size: 16px;
+  line-height: 1.1;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.candidate-applications__brand-copy span{
+  font-size: 10px;
+  line-height: 1.3;
+  color: rgba(15, 23, 42, 0.48);
+}
+
+.candidate-applications__metrics{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.candidate-applications__metric{
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.candidate-applications__metric strong{
+  font-size: 24px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.candidate-applications__metric span{
+  font-size: 11px;
+  line-height: 1.3;
+  color: rgba(15, 23, 42, 0.54);
+}
+
+.candidate-applications__profile{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
+}
+
+.candidate-applications__avatar{
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(228, 232, 238, 0.96), rgba(203, 209, 217, 0.92));
+  color: rgba(15, 23, 42, 0.74);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  position: relative;
+}
+
+.candidate-applications__avatar::after{
+  content: '';
+  position: absolute;
+  right: 1px;
+  bottom: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #87bb96;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.92);
+}
+
+.candidate-applications__profile-copy{
+  display: grid;
+  gap: 1px;
+}
+
+.candidate-applications__profile-copy strong{
+  font-size: 14px;
+  line-height: 1.1;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.candidate-applications__profile-copy span{
+  font-size: 10px;
+  line-height: 1.2;
+  color: rgba(15, 23, 42, 0.48);
+}
+
+.candidate-applications__profile-bell{
+  font-size: 18px;
+  color: rgba(204, 159, 35, 0.88);
+  line-height: 1;
+}
+
+.candidate-applications__intro{
+  display: grid;
+  gap: 8px;
+  padding: 2px 2px 0;
+}
+
+.candidate-applications__intro h1{
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.05;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.candidate-applications__intro p{
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.candidate-applications__intro span{
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(15, 23, 42, 0.56);
+}
+
+.candidate-stack-summary{
+  display: grid;
+  gap: 16px;
+}
+
+.candidate-stack-summary__card{
+  display: grid;
+  gap: 0;
+}
+
+.candidate-stack-summary__body{
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: var(--card-strong);
+  box-shadow: var(--shadow-inset);
+}
+
+.candidate-stack-summary__radar{
+  min-width: 0;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.64);
+}
+
+.candidate-stack-summary__radar ::ng-deep app-alcance-radar{
+  display: block;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview{
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 14px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__content{
+  gap: 14px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__legend-list{
+  gap: 6px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__kicker{
+  font-size: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__label{
+  font-size: 12px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__detail{
+  font-size: 10px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__percent,
+.candidate-stack-summary__radar ::ng-deep .radar-overview__count{
+  font-size: 11px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-wrap{
+  width: 150px;
+  height: 150px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-core{
+  width: 108px;
+  height: 108px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-core strong{
+  font-size: 28px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-core span{
+  font-size: 8px;
+}
+
+.candidate-stack-summary__stack-box{
+  display: grid;
+  gap: 12px;
+  padding: 18px 18px 16px;
+  border-radius: 22px;
+  border: 1px dashed rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.candidate-stack-summary__stack-box p{
+  margin: 0;
+  color: rgba(15, 23, 42, 0.56);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.candidate-stack-summary__stack-list{
+  display: grid;
+  gap: 6px;
+}
+
+.candidate-stack-summary__stack-item{
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.46);
+  color: rgba(15, 23, 42, 0.82);
+  border: 0;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.candidate-stack-summary__stack-meta{
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.candidate-stack-summary__stack-name{
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.candidate-stack-summary__stack-info{
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  color: var(--info);
+  cursor: pointer;
+}
+
+.candidate-stack-summary__stack-info .material-symbols-rounded{
+  font-size: 20px;
+}
+
+.candidate-stack-summary__stack-info--active{
+  color: var(--info);
+}
+
+.candidate-stack-summary__stack-progress{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.candidate-stack-summary__stack-slider{
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.candidate-stack-summary__stack-bar{
+  width: 100%;
+  position: relative;
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.1);
+}
+
+.candidate-stack-summary__stack-bar-fill{
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.candidate-stack-summary__stack-value{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.candidate-stack-summary__stack-description{
+  grid-column: 1 / -1;
+  margin: 8px 0 10px;
+  padding-left: 0;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  color: rgba(15, 23, 42, 0.56);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.candidate-stack-summary__stack-description :where(p, ul, ol){
+  margin: 0 0 8px;
+}
+
+.candidate-stack-summary__stack-description :where(ul, ol){
+  padding-left: 18px;
+}
+
+.candidate-applications__toolbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.candidate-applications__views{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: rgba(240, 241, 244, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.candidate-applications__view{
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: rgba(15, 23, 42, 0.58);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.candidate-applications__view.active{
+  background: rgba(255, 255, 255, 0.96);
+  color: rgba(15, 23, 42, 0.82);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.candidate-applications__filter{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.candidate-applications__filter span{
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.56);
+}
+
+.candidate-applications__filter select{
+  min-width: 132px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: rgba(15, 23, 42, 0.82);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.candidate-applications__list{
+  display: grid;
+  gap: 30px;
+  padding-top: 12px;
+}
+
+.job-card{
+  position: relative;
+  overflow: visible;
+  padding-top: 12px;
+}
+
+.job-card__surface{
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.92fr);
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+  text-align: left;
+}
+
+.job-card__main{
+  min-width: 0;
+  max-width: 560px;
+  display: grid;
+  gap: 10px;
+  padding-right: 120px;
+}
+
+.job-card__title-row{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.job-card__title{
+  margin: 0;
+  min-width: 0;
+  flex: 1 1 auto;
+  font-size: 25px;
+  line-height: 1.05;
+  color: #253041;
+}
+
+.job-card__chip{
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(63, 173, 113, 0.14);
+  color: #2d8b59;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.job-card__meta,
+.job-card__offer{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.job-card__meta-dot{
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c84f27;
+}
+
+.job-card__offer{
+  gap: 6px;
+  font-size: 12px;
+}
+
+.job-card__footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 2px;
+}
+
+.candidate-application-card__actions{
+  position: absolute;
+  top: -1px;
+  right:-5px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 260px;
+}
+
+.candidate-application-card__controls{
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.candidate-application-card__action{
+  min-height: 38px;
+  padding: 0 18px;
+  border-radius: var(--btn-radius-pill);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.candidate-application-card__action--dismiss{
+  display: inline-flex;
+  align-items: center;
+  min-width: 38px;
+  padding: 0;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.candidate-application-card__action--ghost{
+  border: 1px solid var(--btn-secondary-border);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  box-shadow: var(--btn-secondary-shadow);
+}
+
+.candidate-application-card__action--ghost:hover{
+  border-color: rgba(16, 18, 21, 0.16);
+  background: var(--btn-secondary-bg-hover);
+  box-shadow: var(--btn-secondary-shadow-hover);
+}
+
+.candidate-application-card__action--primary{
+  border: 1px solid var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: var(--btn-primary-shadow);
+}
+
+.candidate-application-card__action--primary:hover{
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--btn-primary-shadow-hover);
+}
+
+.candidate-application-card__status{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: var(--btn-radius-pill);
+  background: rgba(133, 177, 149, 0.12);
+  color: #406b4d;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.candidate-application-card__status--hidden{
+  background: rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.job-card__fit{
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.job-card__fit-label{
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.5);
+  text-transform: uppercase;
+}
+
+.job-card__fit-bar{
+  position: relative;
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.1);
+}
+
+.job-card__fit-bar-fill{
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.job-card__fit-value{
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-strong);
+}
+
+.job-card__avatars{
+  display: flex;
+  align-items: center;
+}
+
+.job-card__avatars-stack{
+  display: inline-flex;
+  align-items: center;
+}
+
+.job-card__avatar{
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: center / cover no-repeat, #d9dce6;
+  border: 2px solid #fff;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+  flex: 0 0 auto;
+}
+
+.job-card__avatar--extra{
+  width: 42px;
+  height: 42px;
+  margin-left: -10px;
+  display: grid;
+  place-items: center;
+  background: rgb(108, 111, 117);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.job-card__side{
+  min-width: 0;
+  width: 100%;
+}
+
+.job-card__side--creator{
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 16px;
+  padding-left: 18px;
+  border-left: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.job-card__gauge-wrap{
+  position: relative;
+  width: 124px;
+  height: 124px;
+  display: grid;
+  place-items: center;
+}
+
+.job-card__gauge-svg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.job-card__gauge-orbit,
+.job-card__gauge-track,
+.job-card__gauge-progress{
+  fill: none;
+  stroke-linecap: round;
+}
+
+.job-card__gauge-orbit{
+  stroke: rgba(var(--primary-rgb), 0.3);
+  stroke-width: 2.25;
+  stroke-dasharray: 3.5 5.5;
+}
+
+.job-card__gauge-track{
+  stroke: rgba(15, 23, 42, 0.14);
+  stroke-width: 9.5;
+}
+
+.job-card__gauge-progress{
+  stroke: var(--primary-2);
+  stroke-width: 9.5;
+  filter:
+    drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.16))
+    drop-shadow(0 5px 10px rgba(var(--primary-rgb), 0.22));
+}
+
+.job-card__gauge-core{
+  position: relative;
+  z-index: 1;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.96), rgba(247, 247, 244, 0.94)),
+    rgba(255, 255, 255, 0.92);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    inset 0 10px 18px rgba(255, 255, 255, 0.52);
+}
+
+.job-card__gauge-core strong{
+  display: block;
+  font-size: 22px;
+  line-height: 0.95;
+  color: var(--text-strong);
+}
+
+.job-card__creator{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.job-card__creator-avatar{
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background:
+    center / cover no-repeat,
+    var(--avatar-gradient);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.72),
+    0 10px 18px rgba(15, 23, 42, 0.08);
+}
+
+.job-card__creator-copy{
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.job-card__creator-copy strong{
+  color: rgba(15, 23, 42, 0.88);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.job-card__creator-copy span{
+  color: rgba(15, 23, 42, 0.52);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.empty{
+  margin-top: 8px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px dashed rgba(15, 23, 42, 0.12);
+  color: rgba(15, 23, 42, 0.55);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 960px){
+  .candidate-applications__summary{
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .candidate-applications__metrics{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .candidate-applications__profile{
+    justify-self: start;
+  }
+
+  .candidate-applications__intro h1{
+    font-size: 28px;
+  }
+
+  .candidate-applications__intro p{
+    font-size: 17px;
+  }
+
+  .candidate-stack-summary__body{
+    padding: 18px;
+  }
+
+  .candidate-applications__toolbar{
+    align-items: stretch;
+  }
+
+  .job-card__surface{
+    grid-template-columns: 1fr;
+  }
+
+  .job-card__main{
+    max-width: none;
+    padding-right: 0;
+  }
+
+  .job-card__side--creator{
+    border-left: 0;
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    padding-left: 0;
+    padding-top: 16px;
+    justify-items: start;
+  }
+}
+
+@media (max-width: 760px){
+  .candidate-stack-summary__card{
+    gap: 0;
+  }
+
+  .candidate-stack-summary__body{
+    padding: 16px;
+  }
+
+  .candidate-stack-summary__radar{
+    padding: 16px;
+  }
+
+  .candidate-stack-summary__radar ::ng-deep .radar-overview{
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-stack-summary__stack-item{
+    grid-template-columns: 1fr;
+    padding: 10px 12px;
+  }
+
+  .candidate-stack-summary__stack-progress{
+    width: 100%;
+  }
+
+  .candidate-applications__views{
+    width: 100%;
+  }
+
+  .candidate-applications__view{
+    flex: 1 1 0;
+    padding: 0 12px;
+  }
+
+  .candidate-applications__filter{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .job-card__surface{
+    padding: 14px;
+    gap: 16px;
+  }
+
+  .job-card{
+    padding-top: 0;
+  }
+
+  .job-card__title{
+    font-size: 21px;
+  }
+
+  .job-card__footer{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .job-card__fit{
+    width: 100%;
+  }
+
+  .candidate-application-card__actions{
+    position: static;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-width: none;
+    padding-top: 6px;
+  }
+
+  .candidate-application-card__controls{
+    width: 100%;
+    min-width: 0;
+  }
 }
