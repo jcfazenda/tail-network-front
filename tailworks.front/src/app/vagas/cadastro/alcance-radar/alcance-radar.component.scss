@@ -103,15 +103,15 @@
 }
 
 .radar-overview__legend-item--high {
-  color: #f2a900;
+  color: var(--primary-2);
 }
 
 .radar-overview__legend-item--medium {
-  color: #41af7d;
+  color: var(--success);
 }
 
 .radar-overview__legend-item--potential {
-  color: #5d8fe8;
+  color: var(--info);
 }
 
 .radar-overview__gauge-wrap {
@@ -145,7 +145,7 @@
   height: 124px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.96), rgba(252, 249, 243, 0.94)),
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.96), rgba(247, 247, 244, 0.94)),
     rgba(255, 255, 255, 0.92);
   display: flex;
   flex-direction: column;
@@ -159,7 +159,7 @@
 }
 
 .radar-overview__gauge-orbit {
-  stroke: rgba(242, 169, 0, 0.3);
+  stroke: rgba(var(--primary-rgb), 0.3);
   stroke-width: 2.25;
   stroke-dasharray: 3.5 5.5;
 }
@@ -170,18 +170,18 @@
 }
 
 .radar-overview__gauge-progress {
-  stroke: #f2a900;
+  stroke: var(--primary-2);
   stroke-width: 9.5;
   filter:
-    drop-shadow(0 0 10px rgba(242, 169, 0, 0.16))
-    drop-shadow(0 5px 10px rgba(242, 169, 0, 0.22));
+    drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.16))
+    drop-shadow(0 5px 10px rgba(var(--primary-rgb), 0.22));
 }
 
 .radar-overview__gauge-core strong {
   display: block;
   font-size: 31px;
   line-height: 0.95;
-  color: #253041;
+  color: var(--text-strong);
 }
 
 .radar-overview__gauge-core span {

@@ -170,7 +170,7 @@ export class CadastroPage {
 
   get candidateStatusPreview(): CandidateStatusPreview[] {
     const baseStatuses: CandidateStatusPreview[] = [
-      { label: 'No radar', timeLabel: 'Semana passada' },
+      { label: 'Talento no radar', timeLabel: 'Semana passada' },
       { label: 'Candidatura enviada', timeLabel: '5 dias atras' },
       { label: 'Em processo', timeLabel: 'Ontem' },
       { label: 'Contratação Solicitada', timeLabel: 'Há 20 min.' },
@@ -267,7 +267,7 @@ export class CadastroPage {
       return 'Proposta aceita';
     }
 
-    return this.candidateStatusPreview[this.statusStageIndex]?.label ?? 'No radar';
+    return this.candidateStatusPreview[this.statusStageIndex]?.label ?? 'Talento no radar';
   }
 
   get statusCurrentTone(): string {
@@ -288,7 +288,7 @@ export class CadastroPage {
 
   get statusCurrentDescription(): string {
     switch (this.statusCurrentLabel) {
-      case 'No radar':
+      case 'Talento no radar':
         return 'O sistema encontrou esse candidato no radar da vaga';
       case 'Candidatura enviada':
         return 'Candidatura recebida e aguardando triagem';
@@ -469,7 +469,6 @@ export class CadastroPage {
   contractSummary = '';
   salaryRange = '';
   allowCandidateSalarySuggestion = true;
-  hybridOnsiteDaysDescription = '2 dias presenciais por semana';
   showSalaryRangeInCard = true;
   selectedBenefits = this.initialSelectedBenefits.map((item) => ({ ...item }));
   selectedRefinementOptions = [...this.initialSelectedRefinementOptions];
@@ -478,7 +477,7 @@ export class CadastroPage {
     Nubank: false,
     Stone: false,
   };
-  activeSummaryView: SummaryView = 'status';
+  activeSummaryView: SummaryView = 'details';
   activeFrontResponsibilityIndex = 0;
   editingSummaryDescriptionPageId: SummaryPageId | null = null;
   isBenefitModalOpen = false;
@@ -644,14 +643,6 @@ export class CadastroPage {
     return this.allowCandidateSalarySuggestion
       ? 'Candidato pode sugerir um valor'
       : 'Candidato nao pode sugerir valor';
-  }
-
-  get hybridWorkModelDetail(): string | null {
-    if (this.jobDraft.workModel !== 'Hibrido') {
-      return null;
-    }
-
-    return `Hibrido · ${this.hybridOnsiteDaysDescription}`;
   }
 
   get summaryDescriptionModalTitle(): string {
@@ -1185,7 +1176,6 @@ export class CadastroPage {
     this.salaryRange = job.salaryRange ?? '';
     this.showSalaryRangeInCard = job.showSalaryRangeInCard ?? true;
     this.allowCandidateSalarySuggestion = job.allowCandidateSalarySuggestion ?? true;
-    this.hybridOnsiteDaysDescription = job.hybridOnsiteDaysDescription?.trim() || '2 dias presenciais por semana';
     this.selectedBenefits = job.benefits.map((item) => ({ ...item }));
     this.selectedTechStackItems = job.techStack.map((item) => ({ ...item }));
     this.selectedRefinementOptions = [...job.differentials];
@@ -1199,7 +1189,6 @@ export class CadastroPage {
       salaryRange: this.salaryRange.trim(),
       showSalaryRangeInCard: this.showSalaryRangeInCard,
       allowCandidateSalarySuggestion: this.allowCandidateSalarySuggestion,
-      hybridOnsiteDaysDescription: this.hybridOnsiteDaysDescription.trim(),
       benefits: this.selectedBenefits.map((item) => ({ ...item })),
       techStack: this.selectedTechStackItems.map((item) => ({ ...item })),
       differentials: [...this.selectedRefinementOptions],

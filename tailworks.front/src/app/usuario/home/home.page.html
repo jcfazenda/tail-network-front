@@ -2,134 +2,176 @@
   <div class="candidate-home__stage">
     <div
       #viewportElement
-      class="ecosystem-viewport"
-      [class.ecosystem-viewport--panning]="isPanning"
+      class="galaxy-viewport"
+      [class.galaxy-viewport--panning]="isPanning"
       (wheel)="onViewportWheel($event)"
       (pointerdown)="onViewportPointerDown($event)"
       (pointermove)="onViewportPointerMove($event)"
       (pointerup)="onViewportPointerUp($event)"
       (pointercancel)="onViewportPointerUp($event)"
     >
-      <div class="ecosystem-world-wrap">
+      <div class="galaxy-world-wrap">
         <div
-          class="ecosystem-world"
-          [class.ecosystem-world--panning]="isPanning"
+          class="galaxy-world"
+          [class.galaxy-world--panning]="isPanning"
           [style.width.px]="worldWidth"
           [style.height.px]="worldHeight"
           [style.transform]="worldTransform"
         >
-          <div class="ecosystem-world__aurora" aria-hidden="true"></div>
-          <div class="ecosystem-world__rings" aria-hidden="true"></div>
+          <div class="galaxy-background" aria-hidden="true">
+            <div
+              *ngFor="let nebula of galaxyNebulae; trackBy: trackByNebulaId"
+              class="galaxy-nebula"
+              [class.galaxy-nebula--labelled]="showNebulaLabels"
+              [style.left.px]="nebula.x"
+              [style.top.px]="nebula.y"
+              [style.width.px]="nebula.width"
+              [style.height.px]="nebula.height"
+              [style.transform]="'translate(-50%, -50%) rotate(' + nebula.rotation + 'deg)'"
+              [style.--nebula-primary]="nebula.colors[0]"
+              [style.--nebula-secondary]="nebula.colors[1]"
+              [style.--nebula-opacity]="nebula.opacity"
+              [style.--nebula-blur]="nebula.blur + 'px'"
+            ></div>
 
-          <button
-            *ngFor="let node of ecosystemJobNodes; trackBy: trackByNodeId"
-            type="button"
-            class="ecosystem-job-node"
-            [class.ecosystem-job-node--active]="selectedJobId === node.id"
-            [style.left.px]="node.x"
-            [style.top.px]="node.y"
-            [style.--node-accent]="node.accent"
-            data-ecosystem-stop-pan="true"
-            (click)="selectJob(node.id)"
-          >
-            <span class="ecosystem-job-node__pulse" aria-hidden="true"></span>
+            <div class="galaxy-stardust galaxy-stardust--one"></div>
+            <div class="galaxy-stardust galaxy-stardust--two"></div>
+          </div>
 
-            <div class="ecosystem-job-node__content">
-              <div class="ecosystem-job-node__header">
-                <div class="ecosystem-job-node__company">{{ node.record.company }}</div>
-                <div class="ecosystem-job-node__match">{{ node.record.match }}%</div>
-              </div>
+          <div class="galaxy-systems" aria-hidden="true">
+            <div
+              *ngFor="let orbit of orbitBands; trackBy: trackByOrbitKey"
+              class="galaxy-orbit"
+              [class.galaxy-orbit--outside]="orbit.key === 'outside'"
+              [style.width.px]="orbit.radiusX * 2"
+              [style.height.px]="orbit.radiusY * 2"
+              [style.left.px]="talentCore.x"
+              [style.top.px]="talentCore.y"
+              [style.--orbit-accent]="orbit.accent"
+            ></div>
+          </div>
 
-              <div class="ecosystem-job-node__title">{{ node.record.title }}</div>
-              <div class="ecosystem-job-node__location">{{ node.record.location }}</div>
+          <div *ngIf="showClusterLayer" class="galaxy-clusters" aria-hidden="true">
+            <div
+              *ngFor="let cluster of galaxyClusters; trackBy: trackByClusterId"
+              class="galaxy-cluster"
+              [style.left.px]="cluster.x"
+              [style.top.px]="cluster.y"
+              [style.width.px]="cluster.size"
+              [style.height.px]="cluster.size"
+              [style.--cluster-accent]="cluster.accent"
+              [style.--cluster-glow]="cluster.glow"
+            ></div>
+          </div>
 
-              <div class="ecosystem-job-node__stacks" *ngIf="node.previewStacks.length">
-                <span *ngFor="let item of node.previewStacks">{{ item.label }}</span>
-              </div>
-            </div>
-          </button>
+          <div class="galaxy-content">
+            <button
+              type="button"
+              class="galaxy-talent-core"
+              [style.left.px]="talentCore.x"
+              [style.top.px]="talentCore.y"
+              data-galaxy-stop-pan="true"
+              (click)="focusTalentCore()"
+            >
+              <span class="galaxy-talent-core__pulse"></span>
+              <span class="galaxy-talent-core__ring galaxy-talent-core__ring--outer"></span>
+              <span class="galaxy-talent-core__ring galaxy-talent-core__ring--mid"></span>
+              <span class="galaxy-talent-core__ring galaxy-talent-core__ring--inner"></span>
+
+              <span class="galaxy-talent-core__body">
+                <span class="galaxy-talent-core__score">{{ talentCore.radarScore }}%</span>
+                <span class="galaxy-talent-core__label">Radar Profissional</span>
+                <span class="galaxy-talent-core__name">{{ talentCore.name }}</span>
+              </span>
+            </button>
+
+            <ng-container *ngIf="showPlanetLayer">
+              <button
+                *ngFor="let node of galaxyJobNodes; trackBy: trackByNodeId"
+                type="button"
+                class="galaxy-planet"
+                [class.galaxy-planet--active]="selectedJobId === node.id"
+                [class.galaxy-planet--high]="node.orbitBand === 'high'"
+                [class.galaxy-planet--good]="node.orbitBand === 'good'"
+                [class.galaxy-planet--potential]="node.orbitBand === 'potential'"
+                [class.galaxy-planet--outside]="node.orbitBand === 'outside'"
+                [style.left.px]="node.x"
+                [style.top.px]="node.y"
+                [style.width.px]="node.size"
+                [style.height.px]="node.size"
+                [style.--planet-accent]="node.accent"
+                [style.--planet-glow]="node.glow"
+                data-galaxy-stop-pan="true"
+                (click)="focusPlanet(node.id)"
+              >
+                <span class="galaxy-planet__halo"></span>
+                <span class="galaxy-planet__body"></span>
+                <span class="galaxy-planet__core"></span>
+              </button>
+            </ng-container>
+          </div>
         </div>
       </div>
 
-      <div class="ecosystem-viewport__controls" data-ecosystem-stop-pan="true">
-        <button type="button" class="ecosystem-viewport__control" (click)="zoomOut()">
+      <div class="galaxy-viewport__controls" data-galaxy-stop-pan="true">
+        <button type="button" class="galaxy-viewport__control" (click)="zoomOut()">
           <span class="material-symbols-rounded" aria-hidden="true">remove</span>
         </button>
-        <span class="ecosystem-viewport__zoom">{{ zoomLabel }}</span>
-        <button type="button" class="ecosystem-viewport__control" (click)="zoomIn()">
+        <span class="galaxy-viewport__zoom">{{ zoomLabel }}</span>
+        <button type="button" class="galaxy-viewport__control" (click)="zoomIn()">
           <span class="material-symbols-rounded" aria-hidden="true">add</span>
         </button>
-        <button type="button" class="ecosystem-viewport__control ecosystem-viewport__control--wide" (click)="recenterWorld()">
+        <button type="button" class="galaxy-viewport__control galaxy-viewport__control--wide" (click)="recenterGalaxy()">
           <span class="material-symbols-rounded" aria-hidden="true">center_focus_strong</span>
           <span>Centralizar</span>
         </button>
       </div>
-    </div>
 
-    <app-radar-floating-card
-      *ngIf="selectedJobNode"
-      class="ecosystem-preview-widget"
-      [resizable]="false"
-      [centerOnFirstRender]="true"
-      [initialWidth]="388"
-      [initialHeight]="608"
-      [maxHeight]="760"
-      [storageKey]="'tailworks:ecosystem-preview-widget:v2'"
-      [dragHandleSelector]="'.eco-spotlight__company-logo'"
-    >
-      <article class="eco-spotlight ecosystem-preview" aria-label="Preview da vaga selecionada">
-        <div class="eco-spotlight__header">
-          <div class="eco-spotlight__top">
-            <div class="eco-spotlight__company-brand">
-              <span
-                class="eco-spotlight__company-logo radar-floating-card__drag-handle"
-                [class.eco-spotlight__company-logo--image]="!!spotlightCompanyProfile.logoUrl"
-                [style.backgroundImage]="spotlightCompanyProfile.logoUrl ? 'url(' + spotlightCompanyProfile.logoUrl + ')' : null"
-                aria-hidden="true"
-              >{{ spotlightCompanyProfile.logoUrl ? '' : spotlightCompanyProfile.logoLabel }}</span>
+      <aside *ngIf="previewJob" class="galaxy-preview" data-galaxy-stop-pan="true">
+        <header class="galaxy-preview__header">
+          <div class="galaxy-preview__company">
+            <span
+              class="galaxy-preview__logo"
+              [class.galaxy-preview__logo--image]="!!previewCompanyProfile.logoUrl"
+              [style.backgroundImage]="previewCompanyProfile.logoUrl ? 'url(' + previewCompanyProfile.logoUrl + ')' : null"
+              aria-hidden="true"
+            >{{ previewCompanyProfile.logoUrl ? '' : previewCompanyProfile.logoLabel }}</span>
 
-              <div class="eco-spotlight__company-meta">
-                <div class="eco-spotlight__company-name-row">
-                  <div class="eco-spotlight__company-name">{{ spotlightCompanyProfile.name }}</div>
-                  <span class="eco-spotlight__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
-                </div>
-                <div class="eco-spotlight__company-followers">{{ spotlightCompanyProfile.followers }}</div>
+            <div class="galaxy-preview__company-meta">
+              <div class="galaxy-preview__company-row">
+                <strong>{{ previewCompanyProfile.name }}</strong>
+                <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
               </div>
+              <span>{{ previewCompanyProfile.followers }}</span>
             </div>
           </div>
 
-          <div class="eco-spotlight__job-head">
-            <div class="eco-spotlight__job-title">{{ spotlightJobTitle }}</div>
-            <div class="eco-spotlight__job-location">{{ spotlightJobLocation }}</div>
+          <div class="galaxy-preview__job">
+            <strong>{{ previewJob.record.title }}</strong>
+            <span>{{ previewJob.record.location }}</span>
+          </div>
+        </header>
+
+        <div class="galaxy-preview__stack-box">
+          <div class="galaxy-preview__stack" *ngFor="let item of previewStacks">
+            <span class="galaxy-preview__stack-label">{{ item.label }}</span>
+            <span class="galaxy-preview__stack-bar">
+              <span [style.width.%]="item.score"></span>
+            </span>
+            <span class="galaxy-preview__stack-value">{{ item.score }}%</span>
           </div>
         </div>
 
-        <div class="eco-spotlight__stack-box">
-          <div class="eco-spotlight__stack">
-            <div class="eco-spotlight__stack-item" *ngFor="let item of spotlightItems">
-              <span class="eco-spotlight__stack-label">{{ item.label }}</span>
-              <span class="eco-spotlight__bar" aria-hidden="true">
-                <span [style.width.%]="item.score"></span>
-              </span>
-              <span class="eco-spotlight__stack-value">{{ item.score }}%</span>
-            </div>
+        <footer class="galaxy-preview__footer">
+          <div class="galaxy-preview__score">
+            <span class="galaxy-preview__score-value">{{ previewMatchScore }}</span>
+            <span class="galaxy-preview__score-percent">%</span>
+            <span class="galaxy-preview__score-copy">compatível</span>
           </div>
-        </div>
-
-        <div class="eco-spotlight__footer">
-          <div class="eco-spotlight__headline-score">
-            <span class="eco-spotlight__headline-score-value">{{ spotlightMatchScore }}</span>
-            <span class="eco-spotlight__headline-score-percent">%</span>
-            <span class="eco-spotlight__headline-score-copy">compatível</span>
-          </div>
-
-          <div class="eco-spotlight__meta">{{ spotlightMeta }}</div>
-
-          <a href="#" class="eco-spotlight__cta" (click)="$event.preventDefault()">
-            <span>Ver vaga</span>
-          </a>
-        </div>
-      </article>
-    </app-radar-floating-card>
+          <div class="galaxy-preview__meta">{{ previewMeta }}</div>
+          <button type="button" class="galaxy-preview__cta">Ver vaga</button>
+        </footer>
+      </aside>
+    </div>
   </div>
 </section>

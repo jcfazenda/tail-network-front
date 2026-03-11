@@ -5,11 +5,11 @@
   text-align: right;
 
   &__topcard {
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(15, 23, 42, 0.05);
+    background: var(--surface-gradient);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 12px;
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--shadow-sm);
     display: grid;
     gap: 12px;
     position: relative;
@@ -28,7 +28,7 @@
     border-radius: 50%;
     background:
       center / cover no-repeat url('/assets/avatars/avatar-rafael.png'),
-      linear-gradient(135deg, #f5b300, #f59e0b);
+      var(--avatar-gradient);
     border: 2px solid #fff;
     box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
   }
@@ -39,7 +39,7 @@
 
   &__profile-name {
     font-weight: 800;
-    color: #1f1f1f;
+    color: var(--text-strong);
     font-size: 14px;
     line-height: 1.1;
   }
@@ -89,7 +89,7 @@
     font-size: 22px;
     line-height: 1.15;
     font-weight: 800;
-    color: #1f1f1f;
+    color: var(--text-strong);
   }
 
   &__meta {
@@ -130,7 +130,7 @@
   top: 8px;
   right: 8px;
   border: none;
-  background: rgba(15, 23, 42, 0.06);
+  background: rgba(16, 18, 21, 0.05);
   border-radius: 50%;
   width: 28px;
   height: 28px;
@@ -249,8 +249,8 @@
   align-items: center;
   padding: 5px 10px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #f9f2df 0%, #f3e6c8 100%);
-  color: #6b5110;
+  background: var(--accent-gradient-soft);
+  color: var(--primary-ink);
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
   font-size: 11px;
   font-weight: 800;
@@ -258,33 +258,33 @@
 }
 
 .stage-separator__label.stage-radar {
-  background: linear-gradient(180deg, rgba(233, 243, 255, 0.95) 0%, rgba(210, 229, 255, 0.9) 100%);
-  color: #295b9a;
+  background: var(--info-soft);
+  color: var(--info);
 }
 
 .stage-separator__label.stage-aguardando {
-  background: linear-gradient(180deg, rgba(230, 240, 255, 0.82) 0%, rgba(213, 229, 255, 0.78) 100%);
-  color: #245d9b;
+  background: var(--info-soft);
+  color: var(--info);
 }
 
 .stage-separator__label.stage-processo {
-  background: linear-gradient(180deg, rgba(230, 248, 245, 0.82) 0%, rgba(209, 241, 234, 0.78) 100%);
-  color: #0c7f73;
+  background: var(--success-soft);
+  color: var(--success);
 }
 
 .stage-separator__label.stage-tecnica {
-  background: linear-gradient(180deg, rgba(255, 243, 204, 0.82) 0%, rgba(255, 233, 163, 0.78) 100%);
-  color: #a06700;
+  background: var(--warning-soft);
+  color: var(--warning);
 }
 
 .stage-separator__label.stage-documentacao {
-  background: linear-gradient(180deg, rgba(243, 236, 255, 0.82) 0%, rgba(228, 217, 255, 0.78) 100%);
-  color: #5c2faf;
+  background: rgba(var(--primary-rgb), 0.12);
+  color: var(--accent-strong);
 }
 
 .stage-separator__label.stage-candidatura {
-  background: linear-gradient(180deg, rgba(255, 245, 227, 0.82) 0%, rgba(255, 233, 199, 0.78) 100%);
-  color: #b86a00;
+  background: rgba(var(--primary-rgb), 0.1);
+  color: var(--accent-strong);
 }
 
 .stage-separator__label.stage-cancelado {
@@ -301,9 +301,9 @@
   gap: 8px;
   padding: 6px;
   border-radius: 10px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbf8f2 100%);
-  border: 1px solid rgba(15, 23, 42, 0.05);
-  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.06);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
@@ -312,8 +312,8 @@
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
-    background: linear-gradient(180deg, #fffefc 0%, #fbf7f0 100%);
+    box-shadow: var(--shadow-md);
+    background: var(--surface-gradient);
   }
 }
 
@@ -424,8 +424,8 @@
   justify-content: center;
   padding: 5px 10px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #f9f2df 0%, #f3e6c8 100%);
-  color: #6b5110;
+  background: var(--accent-gradient-soft);
+  color: var(--primary-ink);
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
   font-size: 11px;
   font-weight: 700;
@@ -436,27 +436,27 @@
 
 .cand-status-chip.stage-aguardando {
   background: linear-gradient(180deg, rgba(230, 240, 255, 0.82) 0%, rgba(213, 229, 255, 0.78) 100%);
-  color: #245d9b;
+  color: var(--info);
 }
 
 .cand-status-chip.stage-processo {
   background: linear-gradient(180deg, rgba(230, 248, 245, 0.82) 0%, rgba(209, 241, 234, 0.78) 100%);
-  color: #0c7f73;
+  color: var(--success);
 }
 
 .cand-status-chip.stage-tecnica {
   background: linear-gradient(180deg, rgba(255, 243, 204, 0.82) 0%, rgba(255, 233, 163, 0.78) 100%);
-  color: #a06700;
+  color: var(--warning);
 }
 
 .cand-status-chip.stage-documentacao {
   background: linear-gradient(180deg, rgba(243, 236, 255, 0.82) 0%, rgba(228, 217, 255, 0.78) 100%);
-  color: #5c2faf;
+  color: var(--accent-strong);
 }
 
 .cand-status-chip.stage-candidatura {
   background: linear-gradient(180deg, rgba(255, 245, 227, 0.82) 0%, rgba(255, 233, 199, 0.78) 100%);
-  color: #b86a00;
+  color: var(--warning);
 }
 
 .cand-status-chip.stage-cancelado {
@@ -493,7 +493,7 @@
   padding: 5px 10px;
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(230, 248, 245, 0.92) 0%, rgba(209, 241, 234, 0.86) 100%);
-  color: #0c7f73;
+  color: var(--success);
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
   font-size: 11px;
   font-weight: 700;
@@ -556,7 +556,7 @@
   inset: 0 auto 0 0;
   width: 0;
   border-radius: inherit;
-  background: linear-gradient(180deg, #f6c64f 0%, #efb429 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 82%, white) 0%, var(--primary-2) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.05);
@@ -571,7 +571,7 @@
 }
 
 .cand-bar-fill.stage-tecnica {
-  background: linear-gradient(180deg, #f6c64f 0%, #efb429 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 82%, white) 0%, var(--primary-2) 100%);
 }
 
 .cand-bar-fill.stage-documentacao {
@@ -579,7 +579,7 @@
 }
 
 .cand-bar-fill.stage-candidatura {
-  background: linear-gradient(180deg, #f6c64f 0%, #efb429 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 82%, white) 0%, var(--primary-2) 100%);
 }
 
 .cand-bar-fill.stage-cancelado {
@@ -588,7 +588,7 @@
 
 .cand-bar-val {
   font-weight: 800;
-  color: #2b2b2b;
+  color: var(--text-strong);
   font-size: 14px;
   white-space: nowrap;
 }

@@ -1,52 +1,49 @@
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
-  effect,
   HostListener,
   ViewChild,
+  effect,
   inject,
 } from '@angular/core';
 import { MockJobRecord, TechStackItem } from '../../vagas/data/vagas.models';
 import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 import { EcosystemEntryService } from './ecosystem-entry.service';
-import { RadarFloatingCardComponent } from './radar-floating-card/radar-floating-card.component';
 import {
   ECOSYSTEM_FALLBACK_COMPATIBLE_JOBS,
-  ECOSYSTEM_JOB_COORDINATE_PRESETS,
-  ECOSYSTEM_TALENT_CORE_POSITION,
-  ECOSYSTEM_WORLD_HEIGHT,
-  ECOSYSTEM_WORLD_WIDTH,
+  GALAXY_NEBULAE,
+  GALAXY_ORBIT_BANDS,
+  GALAXY_TALENT_CORE,
+  GALAXY_WORLD_HEIGHT,
+  GALAXY_WORLD_WIDTH,
   EcosystemCompanyProfile,
   EcosystemCompatibleJobSeed,
-  EcosystemMapJobNode,
   EcosystemSpotlightItem,
+  GalaxyClusterNode,
+  GalaxyJobNode,
+  GalaxyNebula,
+  GalaxyOrbitBandKey,
+  GalaxyOrbitBandMeta,
 } from './ecosystem.models';
-
-type EcosystemNavItem = {
-  label: string;
-  icon: string;
-  active?: boolean;
-};
-
-type EcosystemLevelItem = {
-  label: string;
-  range: string;
-  tone: 'high' | 'mid' | 'potentials' | 'outside';
-};
 
 type ViewportSize = {
   width: number;
   height: number;
 };
 
+type PointerSnapshot = {
+  x: number;
+  y: number;
+};
+
 @Component({
   standalone: true,
   selector: 'app-home-page',
-  imports: [CommonModule, RadarFloatingCardComponent],
+  imports: [CommonModule],
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,33 +56,23 @@ export class HomePage implements AfterViewInit {
   @ViewChild('viewportElement', { static: true })
   private viewportElement!: ElementRef<HTMLElement>;
 
-  readonly worldWidth = ECOSYSTEM_WORLD_WIDTH;
-  readonly worldHeight = ECOSYSTEM_WORLD_HEIGHT;
-  readonly minZoom = 0.72;
-  readonly maxZoom = 1.68;
+  readonly worldWidth = GALAXY_WORLD_WIDTH;
+  readonly worldHeight = GALAXY_WORLD_HEIGHT;
+  readonly minZoom = 0.46;
+  readonly maxZoom = 2.35;
 
-  protected zoom = 1;
-  protected panX = 0;
-  protected panY = 0;
+  protected readonly galaxyNebulae = GALAXY_NEBULAE;
+  protected readonly orbitBands = GALAXY_ORBIT_BANDS;
+  protected readonly talentCore = GALAXY_TALENT_CORE;
+
+  protected zoomLevel = 0.86;
+  protected cameraX = 0;
+  protected cameraY = 0;
   protected isPanning = false;
-  protected ecosystemJobNodes: EcosystemMapJobNode[] = [];
+  protected isPinching = false;
   protected selectedJobId = '';
-
-  protected readonly ecosystemItems: EcosystemNavItem[] = [
-    { label: 'Radar', icon: 'radar' },
-    { label: 'Oportunidades', icon: 'travel_explore', active: true },
-    { label: 'Empresas', icon: 'domain' },
-    { label: 'Evolução', icon: 'monitoring' },
-    { label: 'Cursos', icon: 'school' },
-    { label: 'Conquistas', icon: 'workspace_premium' },
-  ];
-
-  protected readonly levelItems: EcosystemLevelItem[] = [
-    { label: 'Alta', range: '(85-100%)', tone: 'high' },
-    { label: 'Boa', range: '(65-84%)', tone: 'mid' },
-    { label: 'Potencial', range: '(55-64%)', tone: 'potentials' },
-    { label: 'Fora do Radar', range: '(<55%)', tone: 'outside' },
-  ];
+  protected galaxyJobNodes: GalaxyJobNode[] = [];
+  protected galaxyClusters: GalaxyClusterNode[] = [];
 
   private readonly companyProfiles: Record<string, EcosystemCompanyProfile> = {
     'Banco Itaú': {
@@ -104,7 +91,7 @@ export class HomePage implements AfterViewInit {
     Stone: {
       name: 'Stone',
       followers: '1.128.440 seguidores',
-      description: 'Serviços financeiros e tecnologia para negocios',
+      description: 'Serviços financeiros e tecnologia para negócios',
       logoLabel: 'st',
     },
     'NTT Data': {
@@ -115,74 +102,75 @@ export class HomePage implements AfterViewInit {
     },
   };
 
+  private activePointers = new Map<number, PointerSnapshot>();
   private panPointerId: number | null = null;
   private panStartX = 0;
   private panStartY = 0;
   private panOriginX = 0;
   private panOriginY = 0;
-  private hasViewportInteraction = false;
+  private pinchStartDistance = 0;
+  private pinchStartZoom = 1;
+  private pinchWorldX = 0;
+  private pinchWorldY = 0;
   private viewportInitialized = false;
+  private userMovedCamera = false;
 
   protected get ecosystemEntryMode(): 'recruiter' | 'talent' {
     return this.ecosystemEntryService.mode();
   }
 
-  protected get levelValue(): number {
-    if (this.ecosystemEntryMode === 'recruiter') {
-      return this.selectedJobNode?.record.match ?? 84;
-    }
-
-    return this.selectedJobNode?.record.match ?? 84;
-  }
-
-  protected get selectedJobNode(): EcosystemMapJobNode | undefined {
-    return this.ecosystemJobNodes.find((node) => node.id === this.selectedJobId);
-  }
-
   protected get worldTransform(): string {
-    return `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
+    return `translate(${this.cameraX}px, ${this.cameraY}px) scale(${this.zoomLevel})`;
   }
 
   protected get zoomLabel(): string {
-    return `${Math.round(this.zoom * 100)}%`;
+    return `${Math.round(this.zoomLevel * 100)}%`;
   }
 
-  protected get spotlightCompanyProfile(): EcosystemCompanyProfile {
-    return this.companyProfileFor(this.selectedJobNode?.record.company);
+  protected get showPlanetLayer(): boolean {
+    return this.zoomLevel >= 0.66;
   }
 
-  protected get spotlightItems(): EcosystemSpotlightItem[] {
-    const techStack = this.selectedJobNode?.record.techStack ?? [];
+  protected get showClusterLayer(): boolean {
+    return this.zoomLevel <= 0.92;
+  }
 
-    if (techStack.length) {
-      return techStack.map((item) => ({
+  protected get showNebulaLabels(): boolean {
+    return this.zoomLevel <= 0.96;
+  }
+
+  protected get previewJob(): GalaxyJobNode | undefined {
+    return this.galaxyJobNodes.find((node) => node.id === this.selectedJobId);
+  }
+
+  protected get previewCompanyProfile(): EcosystemCompanyProfile {
+    return this.companyProfileFor(this.previewJob?.record.company);
+  }
+
+  protected get previewMatchScore(): number {
+    return this.previewJob?.record.match ?? this.talentCore.radarScore;
+  }
+
+  protected get previewStacks(): EcosystemSpotlightItem[] {
+    const stack = this.previewJob?.record.techStack ?? [];
+
+    if (stack.length) {
+      return stack.map((item) => ({
         label: item.name,
         score: item.match,
       }));
     }
 
     return [
-      { label: '.NET', score: 95 },
-      { label: 'SQL Server', score: 76 },
-      { label: 'Azure', score: 90 },
-      { label: 'Docker', score: 22 },
+      { label: '.NET / C#', score: 80 },
+      { label: 'Entity Framework', score: 65 },
+      { label: 'REST API', score: 75 },
+      { label: 'SQL Server', score: 70 },
     ];
   }
 
-  protected get spotlightJobTitle(): string {
-    return this.selectedJobNode?.record.title ?? 'Backend .NET Sênior';
-  }
-
-  protected get spotlightJobLocation(): string {
-    return this.selectedJobNode?.record.location ?? 'Rio de Janeiro - RJ';
-  }
-
-  protected get spotlightMatchScore(): number {
-    return this.selectedJobNode?.record.match ?? 91;
-  }
-
-  protected get spotlightMeta(): string {
-    const record = this.selectedJobNode?.record;
+  protected get previewMeta(): string {
+    const record = this.previewJob?.record;
 
     if (!record) {
       return 'Remoto • CLT + Beneficios';
@@ -194,20 +182,27 @@ export class HomePage implements AfterViewInit {
       : `${record.workModel} • ${record.contractType}`;
   }
 
-  protected readonly trackByNodeId = (_index: number, node: EcosystemMapJobNode): string => node.id;
+  protected readonly trackByNodeId = (_index: number, node: GalaxyJobNode): string => node.id;
+  protected readonly trackByClusterId = (_index: number, cluster: GalaxyClusterNode): string => cluster.id;
+  protected readonly trackByOrbitKey = (_index: number, band: GalaxyOrbitBandMeta): string => band.key;
+  protected readonly trackByNebulaId = (_index: number, nebula: GalaxyNebula): string => nebula.id;
 
   constructor() {
     effect(() => {
       this.ecosystemEntryService.mode();
-      this.buildJobNodes();
+      this.buildGalaxyNodes();
       this.cdr.markForCheck();
+
+      if (this.viewportInitialized && !this.userMovedCamera) {
+        requestAnimationFrame(() => this.centerOnTalentCore());
+      }
     });
   }
 
   ngAfterViewInit(): void {
     requestAnimationFrame(() => {
       this.viewportInitialized = true;
-      this.centerInitialFocus();
+      this.centerOnTalentCore();
     });
   }
 
@@ -218,135 +213,226 @@ export class HomePage implements AfterViewInit {
     }
 
     requestAnimationFrame(() => {
-      if (!this.hasViewportInteraction) {
-        this.centerInitialFocus();
+      if (!this.userMovedCamera) {
+        this.centerOnTalentCore();
         return;
       }
 
-      const clamped = this.clampPan(this.panX, this.panY, this.zoom);
-      this.panX = clamped.x;
-      this.panY = clamped.y;
+      const clamped = this.clampPan(this.cameraX, this.cameraY, this.zoomLevel);
+      this.cameraX = clamped.x;
+      this.cameraY = clamped.y;
+      this.cdr.markForCheck();
     });
   }
 
   protected onViewportWheel(event: WheelEvent): void {
     event.preventDefault();
-    this.hasViewportInteraction = true;
 
-    const viewport = this.viewportElement.nativeElement;
-    const rect = viewport.getBoundingClientRect();
+    const rect = this.viewportElement.nativeElement.getBoundingClientRect();
     const pointerX = event.clientX - rect.left;
     const pointerY = event.clientY - rect.top;
-    const factor = event.deltaY < 0 ? 1.12 : 0.88;
+    const nextZoom = event.deltaY < 0 ? this.zoomLevel * 1.12 : this.zoomLevel * 0.88;
 
-    this.applyZoom(this.zoom * factor, pointerX, pointerY);
+    this.userMovedCamera = true;
+    this.applyZoom(nextZoom, pointerX, pointerY);
   }
 
   protected onViewportPointerDown(event: PointerEvent): void {
-    if (event.button !== 0) {
+    if (event.pointerType === 'mouse' && event.button !== 0) {
       return;
     }
 
     const target = event.target as HTMLElement | null;
-    if (target?.closest('[data-ecosystem-stop-pan="true"]')) {
+    if (target?.closest('[data-galaxy-stop-pan="true"]')) {
       return;
     }
 
-    this.hasViewportInteraction = true;
-    this.isPanning = true;
-    this.panPointerId = event.pointerId;
-    this.panStartX = event.clientX;
-    this.panStartY = event.clientY;
-    this.panOriginX = this.panX;
-    this.panOriginY = this.panY;
-
     this.viewportElement.nativeElement.setPointerCapture(event.pointerId);
+    this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    this.userMovedCamera = true;
+
+    if (this.activePointers.size === 1) {
+      this.beginPan(event.pointerId, event.clientX, event.clientY);
+      return;
+    }
+
+    if (this.activePointers.size === 2) {
+      this.beginPinch();
+    }
   }
 
   protected onViewportPointerMove(event: PointerEvent): void {
-    if (!this.isPanning || this.panPointerId !== event.pointerId) {
+    if (!this.activePointers.has(event.pointerId)) {
       return;
     }
 
-    const nextX = this.panOriginX + (event.clientX - this.panStartX);
-    const nextY = this.panOriginY + (event.clientY - this.panStartY);
-    const clamped = this.clampPan(nextX, nextY, this.zoom);
-    this.panX = clamped.x;
-    this.panY = clamped.y;
+    this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (this.activePointers.size >= 2) {
+      this.updatePinch();
+      return;
+    }
+
+    if (this.isPanning && this.panPointerId === event.pointerId) {
+      const nextX = this.panOriginX + (event.clientX - this.panStartX);
+      const nextY = this.panOriginY + (event.clientY - this.panStartY);
+      const clamped = this.clampPan(nextX, nextY, this.zoomLevel);
+      this.cameraX = clamped.x;
+      this.cameraY = clamped.y;
+    }
   }
 
   protected onViewportPointerUp(event: PointerEvent): void {
-    if (!this.isPanning || this.panPointerId !== event.pointerId) {
+    this.activePointers.delete(event.pointerId);
+
+    if (this.viewportElement.nativeElement.hasPointerCapture(event.pointerId)) {
+      this.viewportElement.nativeElement.releasePointerCapture(event.pointerId);
+    }
+
+    if (this.activePointers.size < 2) {
+      this.isPinching = false;
+      this.pinchStartDistance = 0;
+    }
+
+    if (this.panPointerId === event.pointerId) {
+      this.isPanning = false;
+      this.panPointerId = null;
+    }
+
+    if (this.activePointers.size === 1) {
+      const [pointerId, point] = [...this.activePointers.entries()][0];
+      this.beginPan(pointerId, point.x, point.y);
       return;
     }
 
-    this.isPanning = false;
-    this.viewportElement.nativeElement.releasePointerCapture(event.pointerId);
-    this.panPointerId = null;
+    if (this.activePointers.size === 0) {
+      this.isPanning = false;
+      this.panPointerId = null;
+    }
   }
 
   protected zoomIn(): void {
     const viewport = this.getViewportSize();
-    this.hasViewportInteraction = true;
-    this.applyZoom(this.zoom * 1.12, viewport.width / 2, viewport.height / 2);
+    this.userMovedCamera = true;
+    this.applyZoom(this.zoomLevel * 1.12, viewport.width / 2, viewport.height / 2);
   }
 
   protected zoomOut(): void {
     const viewport = this.getViewportSize();
-    this.hasViewportInteraction = true;
-    this.applyZoom(this.zoom * 0.88, viewport.width / 2, viewport.height / 2);
+    this.userMovedCamera = true;
+    this.applyZoom(this.zoomLevel * 0.88, viewport.width / 2, viewport.height / 2);
   }
 
-  protected recenterWorld(): void {
-    this.hasViewportInteraction = false;
-    this.centerInitialFocus();
+  protected recenterGalaxy(): void {
+    this.userMovedCamera = false;
+    this.centerOnTalentCore();
   }
 
-  protected selectJob(nodeId: string): void {
-    this.selectedJobId = nodeId;
-  }
-
-  private centerInitialFocus(): void {
-    const focus = this.primaryFocusCoordinates();
-    this.centerOnWorldPoint(focus.x, focus.y);
-  }
-
-  private primaryFocusCoordinates(): { x: number; y: number } {
-    const node = this.selectedJobNode ?? this.ecosystemJobNodes[0];
-
+  protected focusPlanet(nodeId: string): void {
+    const node = this.galaxyJobNodes.find((item) => item.id === nodeId);
     if (!node) {
-      return ECOSYSTEM_TALENT_CORE_POSITION;
+      return;
     }
 
-    return { x: node.x, y: node.y };
+    this.selectedJobId = nodeId;
+    this.userMovedCamera = true;
+    this.centerOnWorldPoint(node.x, node.y, Math.max(this.zoomLevel, 1.02));
   }
 
-  private centerOnWorldPoint(worldX: number, worldY: number): void {
-    const viewport = this.getViewportSize();
-    const nextX = viewport.width / 2 - worldX * this.zoom;
-    const nextY = viewport.height / 2 - worldY * this.zoom;
-    const clamped = this.clampPan(nextX, nextY, this.zoom);
+  protected focusCluster(cluster: GalaxyClusterNode): void {
+    this.userMovedCamera = true;
+    this.centerOnWorldPoint(cluster.x, cluster.y, Math.max(this.zoomLevel, 0.92));
+  }
 
-    this.panX = clamped.x;
-    this.panY = clamped.y;
+  protected focusTalentCore(): void {
+    this.userMovedCamera = false;
+    this.centerOnTalentCore();
+  }
+
+  private beginPan(pointerId: number, clientX: number, clientY: number): void {
+    this.isPinching = false;
+    this.isPanning = true;
+    this.panPointerId = pointerId;
+    this.panStartX = clientX;
+    this.panStartY = clientY;
+    this.panOriginX = this.cameraX;
+    this.panOriginY = this.cameraY;
+  }
+
+  private beginPinch(): void {
+    const [a, b] = [...this.activePointers.values()];
+    if (!a || !b) {
+      return;
+    }
+
+    const rect = this.viewportElement.nativeElement.getBoundingClientRect();
+    const centerX = (a.x + b.x) / 2 - rect.left;
+    const centerY = (a.y + b.y) / 2 - rect.top;
+
+    this.isPanning = false;
+    this.panPointerId = null;
+    this.isPinching = true;
+    this.pinchStartDistance = this.distanceBetween(a, b);
+    this.pinchStartZoom = this.zoomLevel;
+    this.pinchWorldX = (centerX - this.cameraX) / this.zoomLevel;
+    this.pinchWorldY = (centerY - this.cameraY) / this.zoomLevel;
+  }
+
+  private updatePinch(): void {
+    const [a, b] = [...this.activePointers.values()];
+    if (!a || !b || !this.pinchStartDistance) {
+      return;
+    }
+
+    const rect = this.viewportElement.nativeElement.getBoundingClientRect();
+    const centerX = (a.x + b.x) / 2 - rect.left;
+    const centerY = (a.y + b.y) / 2 - rect.top;
+    const nextZoom = this.clamp(
+      this.pinchStartZoom * (this.distanceBetween(a, b) / this.pinchStartDistance),
+      this.minZoom,
+      this.maxZoom,
+    );
+
+    const nextCameraX = centerX - this.pinchWorldX * nextZoom;
+    const nextCameraY = centerY - this.pinchWorldY * nextZoom;
+    const clamped = this.clampPan(nextCameraX, nextCameraY, nextZoom);
+
+    this.zoomLevel = nextZoom;
+    this.cameraX = clamped.x;
+    this.cameraY = clamped.y;
   }
 
   private applyZoom(nextZoom: number, pointerX: number, pointerY: number): void {
     const zoom = this.clamp(nextZoom, this.minZoom, this.maxZoom);
 
-    if (Math.abs(zoom - this.zoom) < 0.001) {
+    if (Math.abs(zoom - this.zoomLevel) < 0.001) {
       return;
     }
 
-    const worldX = (pointerX - this.panX) / this.zoom;
-    const worldY = (pointerY - this.panY) / this.zoom;
-    const nextPanX = pointerX - worldX * zoom;
-    const nextPanY = pointerY - worldY * zoom;
-    const clamped = this.clampPan(nextPanX, nextPanY, zoom);
+    const worldX = (pointerX - this.cameraX) / this.zoomLevel;
+    const worldY = (pointerY - this.cameraY) / this.zoomLevel;
+    const nextCameraX = pointerX - worldX * zoom;
+    const nextCameraY = pointerY - worldY * zoom;
+    const clamped = this.clampPan(nextCameraX, nextCameraY, zoom);
 
-    this.zoom = zoom;
-    this.panX = clamped.x;
-    this.panY = clamped.y;
+    this.zoomLevel = zoom;
+    this.cameraX = clamped.x;
+    this.cameraY = clamped.y;
+  }
+
+  private centerOnTalentCore(): void {
+    this.centerOnWorldPoint(this.talentCore.x, this.talentCore.y, this.zoomLevel);
+  }
+
+  private centerOnWorldPoint(worldX: number, worldY: number, zoom = this.zoomLevel): void {
+    const viewport = this.getViewportSize();
+    const nextX = viewport.width / 2 - worldX * zoom;
+    const nextY = viewport.height / 2 - worldY * zoom;
+    const clamped = this.clampPan(nextX, nextY, zoom);
+
+    this.zoomLevel = zoom;
+    this.cameraX = clamped.x;
+    this.cameraY = clamped.y;
   }
 
   private clampPan(nextX: number, nextY: number, zoom: number): { x: number; y: number } {
@@ -373,21 +459,33 @@ export class HomePage implements AfterViewInit {
   }
 
   private getViewportSize(): ViewportSize {
-    const element = this.viewportElement?.nativeElement;
-
+    const viewport = this.viewportElement?.nativeElement;
     return {
-      width: Math.max(1, element?.clientWidth ?? 1),
-      height: Math.max(1, element?.clientHeight ?? 1),
+      width: Math.max(1, viewport?.clientWidth ?? 1),
+      height: Math.max(1, viewport?.clientHeight ?? 1),
     };
   }
 
-  private buildJobNodes(): void {
-    const sourceJobs = this.resolveCompatibleJobs();
+  private buildGalaxyNodes(): void {
+    const jobs = this.resolveCompatibleJobs();
+    const grouped = new Map<GalaxyOrbitBandKey, MockJobRecord[]>();
 
-    this.ecosystemJobNodes = sourceJobs.map((record, index) => this.createJobNode(record, index));
+    GALAXY_ORBIT_BANDS.forEach((band) => grouped.set(band.key, []));
 
-    if (!this.ecosystemJobNodes.some((node) => node.id === this.selectedJobId)) {
-      this.selectedJobId = this.ecosystemJobNodes[0]?.id ?? '';
+    jobs.forEach((job) => {
+      grouped.get(this.resolveOrbitBand(job.match))?.push(job);
+    });
+
+    this.galaxyJobNodes = GALAXY_ORBIT_BANDS.flatMap((band) =>
+      (grouped.get(band.key) ?? []).map((job, index, collection) =>
+        this.createJobNode(job, band, index, collection.length),
+      ),
+    );
+
+    this.galaxyClusters = this.buildClusters(grouped);
+
+    if (!this.galaxyJobNodes.some((node) => node.id === this.selectedJobId)) {
+      this.selectedJobId = this.galaxyJobNodes[0]?.id ?? '';
     }
   }
 
@@ -403,40 +501,103 @@ export class HomePage implements AfterViewInit {
     }
 
     const activeJobs = jobs.filter((job) => job.status === 'ativas');
-    const compatibleSource = activeJobs.length ? activeJobs : jobs;
+    const source = activeJobs.length ? activeJobs : jobs;
 
-    if (compatibleSource.length) {
-      return compatibleSource.slice(0, ECOSYSTEM_JOB_COORDINATE_PRESETS.length);
+    if (source.length) {
+      return source.slice(0, 10);
     }
 
     return ECOSYSTEM_FALLBACK_COMPATIBLE_JOBS.map((seed, index) => this.buildFallbackRecord(seed, index));
   }
 
-  private createJobNode(record: MockJobRecord, index: number): EcosystemMapJobNode {
-    const preset = ECOSYSTEM_JOB_COORDINATE_PRESETS[index] ?? this.createFallbackCoordinate(index);
+  private resolveOrbitBand(match: number): GalaxyOrbitBandKey {
+    const band = GALAXY_ORBIT_BANDS.find((item) => match >= item.minMatch && match <= item.maxMatch);
+    return band?.key ?? 'outside';
+  }
+
+  private createJobNode(
+    record: MockJobRecord,
+    band: GalaxyOrbitBandMeta,
+    index: number,
+    totalInBand: number,
+  ): GalaxyJobNode {
+    const profile = this.companyProfileFor(record.company);
+    const angle = this.computeOrbitAngle(band.key, index, totalInBand);
+    const jitterX = ((index % 3) - 1) * 30;
+    const jitterY = ((index % 4) - 1.5) * 28;
+    const x = this.talentCore.x + Math.cos(angle) * band.radiusX + jitterX;
+    const y = this.talentCore.y + Math.sin(angle) * band.radiusY + jitterY;
 
     return {
       id: record.id,
-      x: preset.x,
-      y: preset.y,
-      accent: preset.accent,
+      x,
+      y,
+      size: this.nodeSizeForBand(band.key),
+      orbitBand: band.key,
+      accent: band.accent,
+      glow: band.glow,
+      logoLabel: profile.logoLabel,
+      logoUrl: profile.logoUrl,
       record,
-      previewStacks: (record.techStack ?? []).slice(0, 3).map((item) => ({
-        label: item.name,
-        score: item.match,
-      })),
     };
   }
 
-  private createFallbackCoordinate(index: number): { x: number; y: number; accent: string } {
-    const radius = 380 + index * 38;
-    const angle = (index / Math.max(1, ECOSYSTEM_JOB_COORDINATE_PRESETS.length)) * Math.PI * 2;
+  private buildClusters(grouped: Map<GalaxyOrbitBandKey, MockJobRecord[]>): GalaxyClusterNode[] {
+    return GALAXY_ORBIT_BANDS.flatMap((band) => {
+      const jobs = grouped.get(band.key) ?? [];
+      if (jobs.length < 2) {
+        return [];
+      }
 
-    return {
-      x: ECOSYSTEM_TALENT_CORE_POSITION.x + Math.cos(angle) * radius,
-      y: ECOSYSTEM_TALENT_CORE_POSITION.y + Math.sin(angle) * radius,
-      accent: '#f59e0b',
-    };
+      const angle = this.clusterAngleForBand(band.key);
+      return [
+        {
+          id: `cluster-${band.key}`,
+          x: this.talentCore.x + Math.cos(angle) * (band.radiusX * 0.92),
+          y: this.talentCore.y + Math.sin(angle) * (band.radiusY * 0.92),
+          size: 144 + jobs.length * 14,
+          orbitBand: band.key,
+          accent: band.accent,
+          glow: band.glow,
+        },
+      ];
+    });
+  }
+
+  private computeOrbitAngle(band: GalaxyOrbitBandKey, index: number, totalInBand: number): number {
+    const base = this.clusterAngleForBand(band);
+    const spread = Math.PI / 2.1;
+    const count = Math.max(totalInBand, 1);
+    const offset = count === 1 ? 0 : (index / (count - 1) - 0.5) * spread;
+    return base + offset;
+  }
+
+  private clusterAngleForBand(band: GalaxyOrbitBandKey): number {
+    switch (band) {
+      case 'high':
+        return -Math.PI / 4.6;
+      case 'good':
+        return Math.PI / 7.2;
+      case 'potential':
+        return Math.PI * 0.7;
+      case 'outside':
+      default:
+        return Math.PI * 1.14;
+    }
+  }
+
+  private nodeSizeForBand(band: GalaxyOrbitBandKey): number {
+    switch (band) {
+      case 'high':
+        return 82;
+      case 'good':
+        return 74;
+      case 'potential':
+        return 66;
+      case 'outside':
+      default:
+        return 58;
+    }
   }
 
   private buildFallbackRecord(seed: EcosystemCompatibleJobSeed, index: number): MockJobRecord {
@@ -493,6 +654,10 @@ export class HomePage implements AfterViewInit {
     }
 
     return this.companyProfiles['Banco Itaú'];
+  }
+
+  private distanceBetween(a: PointerSnapshot, b: PointerSnapshot): number {
+    return Math.hypot(b.x - a.x, b.y - a.y);
   }
 
   private clamp(value: number, min: number, max: number): number {

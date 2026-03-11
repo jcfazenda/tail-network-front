@@ -24,6 +24,6 @@ export class HomePage {
   protected enterAsTalent(event: Event): void {
     event.preventDefault();
     this.ecosystemEntryService.setMode('talent');
-    void this.router.navigateByUrl('/usuario/ecossistema');
+    void this.router.navigateByUrl('/usuario/dados-cadastrais');
   }
 }

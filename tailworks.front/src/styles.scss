@@ -3,13 +3,118 @@
 
 :root{
   --bg: transparent;
-  --bg-sidebar: #f7f0e5;
-  --text: #0f172a;
-  --muted: #5b6475;
-  --primary: #f5b300;
-  --primary-2: #f59e0b;
+  --bg-sidebar: #f4f3ef;
+  --text: #17191d;
+  --text-strong: #101215;
+  --muted: #6d727a;
+  --muted-soft: #90959d;
+  --primary: #97a0ab;
+  --primary-2: #7a838f;
+  --primary-rgb: 151, 160, 171;
+  --primary-ink: #222933;
   --card: rgba(255,255,255,0.9);
-  --border: rgba(15,23,42,0.08);
+  --card-strong: rgba(255,255,255,0.96);
+  --card-soft: rgba(247,247,244,0.92);
+  --card-muted: rgba(241,241,236,0.92);
+  --border: rgba(16,18,21,0.08);
+  --border-strong: rgba(16,18,21,0.12);
+  --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,246,243,0.9));
+  --surface-gradient-soft: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(243,243,239,0.88));
+  --surface-raised: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,245,241,0.92));
+  --shell-gradient: linear-gradient(125deg, rgba(250,250,248,0.94) 0%, rgba(243,243,239,0.88) 48%, rgba(236,236,231,0.84) 100%);
+  --shell-gradient-soft: linear-gradient(120deg, rgba(251,251,249,0.9) 0%, rgba(243,243,239,0.82) 42%, rgba(237,237,232,0.78) 100%);
+  --accent: var(--primary);
+  --accent-strong: var(--primary-2);
+  --accent-soft: rgba(var(--primary-rgb), 0.12);
+  --accent-soft-strong: rgba(var(--primary-rgb), 0.18);
+  --accent-faint: rgba(var(--primary-rgb), 0.06);
+  --accent-gradient: linear-gradient(180deg, #a8b0ba, #7d8691);
+  --accent-gradient-soft: linear-gradient(180deg, rgba(168,176,186,0.22), rgba(125,134,145,0.12));
+  --shadow-sm: 0 10px 20px rgba(16,18,21,0.04);
+  --shadow-md: 0 18px 32px rgba(16,18,21,0.06);
+  --shadow-lg: 0 26px 44px rgba(16,18,21,0.08);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.72);
+  --avatar-gradient: linear-gradient(180deg, rgba(245,246,248,0.98), rgba(222,226,233,0.94));
+  --avatar-icon: rgba(16,18,21,0.58);
+  --success: #7a9380;
+  --success-soft: rgba(122,147,128,0.14);
+  --info: #8392a8;
+  --info-soft: rgba(131,146,168,0.14);
+  --warning: #a08f77;
+  --warning-soft: rgba(160,143,119,0.16);
+  --danger: #b18c80;
+  --danger-soft: rgba(177,140,128,0.16);
+  --orbit-high: #939ba5;
+  --orbit-good: #a9afb8;
+  --orbit-potential: #bbc1c9;
+  --orbit-outside: #d0d5db;
+  --btn-radius-sm: 999px;
+  --btn-radius-md: 999px;
+  --btn-radius-lg: 999px;
+  --btn-radius-pill: 999px;
+  --btn-font-weight: 400;
+  --btn-font-size: 13.5px;
+  --btn-font-size-compact: 12.5px;
+  --btn-line-height: 1;
+  --btn-padding-inline: 24px;
+  --btn-padding-inline-compact: 20px;
+  --btn-primary-bg: linear-gradient(180deg, #7f7f7f 0%, #6f6f6f 100%);
+  --btn-primary-bg-hover: linear-gradient(180deg, #898989 0%, #777777 100%);
+  --btn-primary-border: rgba(111,111,111,0.14);
+  --btn-primary-text: #fafafa;
+  --btn-primary-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  --btn-primary-shadow-hover:
+    0 10px 22px rgba(0, 0, 0, 0.16),
+    0 3px 8px rgba(0, 0, 0, 0.1);
+  --btn-secondary-bg: #efefef;
+  --btn-secondary-bg-hover: #e6e6e6;
+  --btn-secondary-border: rgba(122,122,122,0.14);
+  --btn-secondary-text: #5e5e5e;
+  --btn-secondary-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  --btn-secondary-shadow-hover: 0 3px 8px rgba(0,0,0,0.08);
+  --btn-icon-bg: #f5f5f5;
+  --btn-icon-border: rgba(122,122,122,0.12);
+  --btn-icon-text: rgba(94,94,94,0.88);
+  --btn-icon-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  --btn-danger-bg: #f2e6e2;
+  --btn-danger-border: rgba(177,140,128,0.18);
+  --btn-danger-text: #82594f;
+  --btn-danger-shadow: 0 1px 2px rgba(16,18,21,0.05);
+  --control-track-bg: #e3e3e3;
+  --control-track-border: rgba(122,122,122,0.1);
+  --control-track-active: #d7d7d7;
+  --control-track-active-border: rgba(122,122,122,0.12);
+  --control-track-shadow: inset 0 1px 2px rgba(15,23,42,0.06);
+  --control-thumb-bg: #ffffff;
+  --control-thumb-border: rgba(122,122,122,0.12);
+  --control-thumb-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  --control-text: rgba(94,94,94,0.78);
+  --control-text-strong: #1b2027;
+  --control-choice-bg: #f5f5f5;
+  --control-choice-bg-hover: #ededed;
+  --control-choice-border: rgba(122,122,122,0.12);
+  --control-choice-active-bg: #e2e2e2;
+  --control-choice-active-border: rgba(122,122,122,0.16);
+  --control-check-bg: #767676;
+  --control-check-text: #ffffff;
+  --control-check-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  --toggle-width: 48px;
+  --toggle-height: 28px;
+  --toggle-thumb-size: 22px;
+  --toggle-thumb-offset: 2px;
+  --toggle-thumb-translate: 22px;
+  --tab-shell-bg: #e2e2e2;
+  --tab-shell-border: rgba(0,0,0,0.08);
+  --tab-item-bg: transparent;
+  --tab-item-bg-hover: #e8e8e8;
+  --tab-item-bg-active: #d6d6d6;
+  --tab-text: #676767;
+  --tab-text-active: #2d2d2d;
+  --tab-radius: 8px;
+  --btn-focus-ring:
+    0 0 0 4px rgba(16,18,21,0.12);
 }
 
 *,
@@ -37,9 +142,11 @@ body::before{
   content: '';
   position: fixed;
   inset: 0;
-  background: url('/assets/images/fundo-tela.png') center/cover no-repeat;
-  opacity: 0.62;
-  filter: none;
+  background:
+    linear-gradient(140deg, rgba(255,255,255,0.82), rgba(241,241,236,0.52)),
+    url('/assets/images/fundo-tela.png') center/cover no-repeat;
+  opacity: 0.12;
+  filter: grayscale(1) saturate(0) contrast(0.94);
   z-index: 0;
   pointer-events: none;
 }
@@ -54,6 +161,155 @@ a{
   text-decoration: none;
 }
 
-button, input{
+button, input, select, textarea{
   font: inherit;
+}
+
+button{
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    filter 0.18s ease;
+}
+
+input,
+select,
+textarea{
+  transition:
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+input[type='checkbox'],
+input[type='radio']{
+  accent-color: var(--primary-2);
+}
+
+:where(
+  button,
+  .login-page__button,
+  .topbar__cta,
+  .topbar__mode-pill,
+  .iconBtn,
+  .eco-btn,
+  .cta,
+  .job-create__nav-item,
+  .job-create__hero-button,
+  .description-card__add,
+  .benefits-card__add,
+  .stack-card__add,
+  .summary-modal__add,
+  .summary-card__tab,
+  .summary-card__add,
+  .summary-card__flip,
+  .summary-card__edit,
+  .summary-card__contract-switch-chip,
+  .summary-card__section-edit,
+  .summary-card__carousel-button,
+  .summary-card__status-action,
+  .summary-modal__close,
+  .summary-modal__item-remove,
+  .summary-modal__button,
+  .tech-radar__add,
+  .job-card__ghost,
+  .job-card__primary,
+  .tab,
+  .job-card__edit,
+  .galaxy-viewport__control,
+  .galaxy-preview__cta,
+  .btn-advance,
+  .candidate-profile__upload-button,
+  .candidate-profile__cta,
+  .candidate-stacks__add-button,
+  .candidate-stacks__cta,
+  .candidate-stacks__modal-close,
+  .candidate-stacks__editor-tool,
+  .candidate-stacks__modal-button,
+  .candidate-experience__add-button,
+  .candidate-experience__cta,
+  .candidate-experience__modal-close,
+  .candidate-experience__editor-tool,
+  .candidate-experience__modal-button,
+  .candidate-experience__toggle,
+  .candidate-experience__checkbox,
+  .candidate-experience__option,
+  .candidate-formation__formation-edit,
+  .candidate-formation__modal-close,
+  .candidate-formation__modal-cancel,
+  .candidate-formation__modal-submit,
+  .candidate-formation__option,
+  .visibility-toggle,
+  .contract-chip,
+  .benefit-option,
+  .option-card
+){
+  font-weight: var(--btn-font-weight) !important;
+}
+
+:where(
+  .option-card__label,
+  .contract-chip__label,
+  .benefit-option__label,
+  .visibility-toggle__text,
+  .candidate-experience__toggle-text
+){
+  font-weight: inherit !important;
+}
+
+:where(
+  .topbar__cta,
+  .login-page__button,
+  .eco-btn,
+  .cta,
+  .job-create__hero-button,
+  .galaxy-preview__cta,
+  .btn-advance,
+  .candidate-profile__cta,
+  .candidate-stacks__cta,
+  .candidate-experience__cta,
+  .candidate-formation__modal-cancel,
+  .candidate-formation__modal-submit
+){
+  font-size: var(--btn-font-size) !important;
+  line-height: var(--btn-line-height) !important;
+  text-align: center;
+  padding-inline: var(--btn-padding-inline) !important;
+}
+
+:where(
+  .topbar__mode-pill,
+  .job-create__nav-item,
+  .description-card__add,
+  .benefits-card__add,
+  .stack-card__add,
+  .summary-modal__add,
+  .summary-card__tab,
+  .summary-card__flip,
+  .summary-card__edit,
+  .summary-card__contract-switch-chip,
+  .summary-card__status-action,
+  .summary-modal__button,
+  .tech-radar__add,
+  .job-card__ghost,
+  .job-card__primary,
+  .tab,
+  .job-card__edit,
+  .candidate-stacks__modal-button,
+  .candidate-experience__modal-button,
+  .contract-chip,
+  .benefit-option,
+  .option-card,
+  .candidate-experience__option,
+  .candidate-experience__checkbox,
+  .candidate-formation__option
+){
+  font-size: var(--btn-font-size-compact) !important;
+  line-height: var(--btn-line-height) !important;
+  text-align: center;
+  padding-inline: var(--btn-padding-inline-compact) !important;
 }

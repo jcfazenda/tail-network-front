@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: grid;
   grid-template-columns: 300px 1fr;
-  background: linear-gradient(120deg, rgba(253, 249, 242, 0.34) 0%, rgba(248, 242, 233, 0.28) 32%, rgba(245, 243, 238, 0.24) 58%, rgba(243, 245, 251, 0.26) 100%);
+  background: var(--shell-gradient);
   overflow-x: hidden;
 }
 
@@ -14,7 +14,7 @@
   min-width: 0;
   display: grid;
   grid-template-rows: 120px 1fr;
-  background: linear-gradient(115deg, rgba(238, 235, 229, 0.14) 0%, rgba(247, 241, 233, 0.18) 30%, rgba(244, 242, 238, 0.14) 56%, rgba(246, 246, 246, 0.12) 100%);
+  background: var(--shell-gradient-soft);
   min-height: 100vh;
 }
 
@@ -24,16 +24,18 @@
 
 .shell__main--candidate{
   background:
-    linear-gradient(115deg, rgba(255, 251, 245, 0.56) 0%, rgba(248, 242, 233, 0.54) 32%, rgba(244, 242, 238, 0.52) 58%, rgba(246, 246, 246, 0.48) 100%),
+    linear-gradient(140deg, rgba(251, 251, 249, 0.92) 0%, rgba(244, 244, 240, 0.86) 48%, rgba(237, 237, 232, 0.76) 100%),
     url('/assets/images/_fundo-tela.png') center / cover no-repeat;
+  background-blend-mode: normal, luminosity;
 }
 
 .shell__main--ecosystem{
   grid-template-rows: 96px minmax(0, 1fr);
   height: 100vh;
   background:
-    linear-gradient(115deg, rgba(255, 251, 245, 0.04) 0%, rgba(248, 242, 233, 0.03) 32%, rgba(244, 242, 238, 0.02) 58%, rgba(246, 246, 246, 0.02) 100%),
+    linear-gradient(140deg, rgba(251, 251, 249, 0.9) 0%, rgba(244, 244, 240, 0.82) 52%, rgba(236, 236, 231, 0.72) 100%),
     url('/assets/images/ecossistema-fundo.png') center / cover no-repeat;
+  background-blend-mode: normal, luminosity;
 }
 
 .shell__content{

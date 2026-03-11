@@ -5,7 +5,7 @@
   align-items: center;
   gap: 8px;
   padding: 0 16px;
-  background: linear-gradient(120deg, #fdf9f2 0%, #f8f2e9 36%, #f6f3ee 64%, #f3f5fb 100%);
+  background: var(--surface-gradient);
   border-bottom: none;
   box-shadow: none;
 }
@@ -21,8 +21,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #ffffff;
-  border: 1px solid rgba(15,23,42,0.05);
+  background: var(--card-strong);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 13px 18px;
   box-shadow: none;
@@ -37,22 +37,22 @@
   outline: none;
   flex: 1;
   font-size: 14px;
-  color: rgba(15,23,42,0.65);
+  color: var(--muted);
 }
 
 .search input::placeholder{
-  color: rgba(15,23,42,0.45);
+  color: var(--muted-soft);
 }
 
 .search .material-symbols-rounded{
   font-size: 20px;
-  color: rgba(15,23,42,0.45);
+  color: var(--muted-soft);
 }
 
 .topbar__cta{
-  border: none;
-  background: linear-gradient(135deg, #f7bf18, #f2a900);
-  color: #2a2000;
+  border: 1px solid var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   border-radius: 999px;
   min-height: 48px;
   padding: 0 18px;
@@ -63,7 +63,7 @@
   font-weight: 800;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(242, 169, 0, 0.22);
+  box-shadow: var(--btn-primary-shadow);
   white-space: nowrap;
   text-decoration: none;
 }
@@ -72,21 +72,35 @@
   font-size: 20px;
 }
 
+.topbar__cta:hover{
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--btn-primary-shadow-hover);
+}
+
 .topbar__cta--clear{
-  background: linear-gradient(135deg, #df8d17, #bf6f00);
-  color: #fff9ef;
-  box-shadow: 0 12px 24px rgba(191, 111, 0, 0.22);
+  border-color: var(--btn-secondary-border);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  box-shadow: var(--btn-secondary-shadow);
+}
+
+.topbar__cta--clear:hover,
+.topbar__cta--back:hover{
+  border-color: rgba(16, 18, 21, 0.16);
+  background: var(--btn-secondary-bg-hover);
+  box-shadow: var(--btn-secondary-shadow-hover);
 }
 
 .topbar__cta--ecosystem{
-  background: linear-gradient(135deg, #f7bf18, #f2a900);
-  color: #2a2000;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
 }
 
 .topbar__cta--back{
-  background: linear-gradient(180deg, #fffefb, #f4ecdf);
-  color: rgba(15, 23, 42, 0.82);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  border-color: var(--btn-secondary-border);
+  background: var(--btn-secondary-bg);
+  color: rgba(16, 18, 21, 0.82);
+  box-shadow: var(--btn-secondary-shadow);
 }
 
 .topbar__mode-pill{
@@ -96,18 +110,18 @@
   gap: 8px;
   padding: 0 16px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 248, 234, 0.96), rgba(245, 233, 208, 0.94));
-  border: 1px solid rgba(191, 111, 0, 0.12);
-  color: rgba(96, 56, 6, 0.92);
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: rgba(16, 18, 21, 0.76);
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 10px 18px rgba(140, 82, 8, 0.08);
+  box-shadow: var(--btn-secondary-shadow);
   white-space: nowrap;
 }
 
 .topbar__mode-pill .material-symbols-rounded{
   font-size: 18px;
-  color: #bf6f00;
+  color: var(--accent-strong);
 }
 
 .actions{
@@ -118,28 +132,35 @@
 }
 
 .iconBtn{
-  border: 1px solid rgba(15,23,42,0.08);
-  background: linear-gradient(180deg, #ffffff, #f6efe4);
+  border: 1px solid var(--btn-icon-border);
+  background: var(--btn-icon-bg);
   border-radius: 14px;
   padding: 9px 12px;
   cursor: pointer;
-  box-shadow: 0 10px 18px rgba(15,23,42,0.08);
+  box-shadow: var(--btn-icon-shadow);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: rgba(15,23,42,0.7);
+  color: var(--btn-icon-text);
+}
+
+.iconBtn:hover{
+  border-color: rgba(16, 18, 21, 0.16);
+  background: var(--btn-secondary-bg-hover);
+  color: var(--btn-secondary-text);
+  box-shadow: var(--btn-secondary-shadow-hover);
 }
 
 .avatar{
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png'), linear-gradient(135deg, #f5b300, #f59e0b);
+  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png'), var(--avatar-gradient);
   color: #fff;
   font-weight: 700;
   display: grid;
   place-items: center;
-  box-shadow: 0 12px 22px rgba(245,179,0,0.26);
+  box-shadow: var(--shadow-sm);
   border: 2px solid #fff;
 }
 

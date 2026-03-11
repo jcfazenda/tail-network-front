@@ -176,15 +176,15 @@
   min-height: 30px;
   padding: 0 12px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #f9f2df 0%, #f3e6c8 100%);
-  color: #6b5110;
+  background: var(--accent-gradient-soft);
+  color: var(--primary-ink);
   font-size: 12px;
   font-weight: 800;
 }
 
 .job-preview-sheet__chip--soft{
   background: linear-gradient(180deg, rgba(230, 248, 245, 0.82) 0%, rgba(209, 241, 234, 0.78) 100%);
-  color: #0c7f73;
+  color: var(--success);
 }
 
 @media (max-width: 960px){

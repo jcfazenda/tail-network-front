@@ -20,8 +20,11 @@
   content: '';
   position: fixed;
   inset: 0;
-  background: url('/assets/images/fundo-tela.png') center/cover no-repeat;
-  opacity: 0.18;
+  background:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.82), rgba(241, 241, 236, 0.48)),
+    url('/assets/images/fundo-tela.png') center/cover no-repeat;
+  opacity: 0.12;
+  filter: grayscale(1) saturate(0) contrast(0.94);
   pointer-events: none;
   z-index: -1;
 }
@@ -68,11 +71,11 @@ p {
   margin: 22px 0 0;
   padding: 20px 22px 24px;
   background:
-    radial-gradient(160% 140% at 10% 0%, rgba(245, 179, 0, 0.04), rgba(255, 255, 255, 0)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(249, 246, 241, 0.64) 100%);
+    radial-gradient(160% 140% at 10% 0%, rgba(var(--primary-rgb), 0.05), rgba(255, 255, 255, 0)),
+    var(--surface-gradient-soft);
   border-radius: 22px;
-  border: 1px solid rgba(15, 23, 42, 0.04);
-  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .radar-card h2 {
@@ -122,10 +125,10 @@ p {
   align-items: center;
   gap: 18px;
   padding: 20px 24px;
-  background: rgba(255,255,255,0.82);
-  border: 1px solid rgba(15,23,42,0.05);
+  background: var(--card-strong);
+  border: 1px solid var(--border);
   border-radius: 24px;
-  box-shadow: 0 22px 40px rgba(15,23,42,0.09);
+  box-shadow: var(--shadow-md);
   backdrop-filter: blur(3px);
   margin-bottom: 32px;
 }
@@ -136,14 +139,14 @@ p {
   align-items: center;
   gap: 16px;
   padding-right: 20px;
-  border-right: 1px solid rgba(15,23,42,0.08);
+  border-right: 1px solid var(--border);
   justify-self: start;
 }
 .metric-chip__icon{
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: #f5b300;
+  background: var(--accent-gradient);
   padding: 10px;
 }
 .metric-chip__text{
@@ -236,7 +239,7 @@ p {
 .fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #f5b300, #f59e0b);
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
   width: 0;
   animation: radarFill 0.9s ease forwards;
   animation-delay: var(--delay, 0ms);
@@ -299,12 +302,16 @@ p {
 }
 
 .tabs {
-  background: rgba(15, 23, 42, 0.06);
-  border-radius: 16px;
+  background: var(--tab-shell-bg);
+  border: 1px solid var(--tab-shell-border);
+  border-radius: 12px;
   padding: 4px;
-  display: inline-flex;
-  gap: 6px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 1px;
   margin-left: 8px;
+  width: min(100%, 470px);
 }
 
 .jobs__grid{
@@ -316,19 +323,27 @@ p {
 }
 
 .tab {
-  border: none;
-  background: transparent;
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-weight: 600;
-  color: rgba(15, 23, 42, 0.55);
+  border: 0;
+  background: var(--tab-item-bg);
+  padding: 0 16px;
+  min-height: 38px;
+  border-radius: var(--tab-radius);
+  font-weight: 400;
+  color: var(--tab-text);
   cursor: pointer;
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: var(--tab-item-bg-hover);
+  color: var(--tab-text-active);
 }
 
 .tab.active {
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-  color: rgba(15, 23, 42, 0.9);
+  background: var(--tab-item-bg-active);
+  box-shadow: none;
+  color: var(--tab-text-active);
 }
 
 .job-card {
@@ -361,15 +376,15 @@ p {
   gap: 6px;
   min-height: 36px;
   padding: 0 14px;
-  border: 1px solid rgba(242, 169, 0, 0.18);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 249, 237, 0.98), rgba(250, 239, 206, 0.94));
-  color: #7b5600;
+  border: 1px solid var(--btn-secondary-border);
+  border-radius: var(--btn-radius-pill);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 12px 20px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--btn-secondary-shadow);
 }
 
 .job-card__edit .material-symbols-rounded{
@@ -377,8 +392,14 @@ p {
 }
 
 .job-card__edit:hover{
-  border-color: rgba(242, 169, 0, 0.28);
-  background: linear-gradient(180deg, rgba(255, 252, 245, 1), rgba(251, 234, 186, 0.98));
+  border-color: rgba(16, 18, 21, 0.16);
+  background: var(--btn-secondary-bg-hover);
+  box-shadow: var(--btn-secondary-shadow-hover);
+}
+
+.job-card__edit:focus-visible{
+  outline: none;
+  box-shadow: var(--btn-focus-ring), var(--btn-secondary-shadow-hover);
 }
 
 .job-card__main{
@@ -475,13 +496,13 @@ p {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #f7bf18, #f2a900);
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
 }
 
 .job-card__fit-value{
   font-size: 18px;
   font-weight: 900;
-  color: #2b2b2b;
+  color: var(--text-strong);
 }
 
 .job-card__avatars{

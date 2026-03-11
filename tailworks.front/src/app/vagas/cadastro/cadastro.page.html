@@ -106,12 +106,12 @@
               <span class="field__label field__label--soft">Tipo de trabalho</span>
               <div class="work-model-list">
                 <label
-                  class="option-card"
+                  class="option-card option-card--work-model"
                   *ngFor="let item of workModels"
                   [class.option-card--active]="item === jobDraft.workModel"
                 >
                   <input class="option-card__input" type="radio" name="workModel" [value]="item" [(ngModel)]="jobDraft.workModel" />
-                  <span class="option-card__check material-symbols-rounded" aria-hidden="true">check</span>
+                  <span class="option-card__vee" aria-hidden="true"></span>
                   <span class="option-card__label">{{ item }}</span>
                 </label>
               </div>
@@ -141,8 +141,11 @@
 
             <div class="field field--full">
               <div class="contract-settings">
-                <div class="contract-settings__group">
-                  <span class="field__label field__label--soft">Valor da vaga</span>
+                <div class="contract-settings__group contract-settings__group--compensation">
+                  <div class="contract-settings__head">
+                    <span class="field__label field__label--soft">Valor da vaga</span>
+                  </div>
+
                   <label class="salary-shell">
                     <span class="salary-shell__prefix">R$</span>
                     <input
@@ -157,25 +160,23 @@
                     />
                   </label>
 
-                  <label class="visibility-toggle">
+                  <label class="visibility-toggle visibility-toggle--compensation">
                     <input type="checkbox" name="showSalaryRangeInCard" [(ngModel)]="showSalaryRangeInCard" />
                     <span class="visibility-toggle__track" aria-hidden="true">
                       <span class="visibility-toggle__thumb"></span>
                     </span>
                     <span class="visibility-toggle__text">Mostrar no card</span>
                   </label>
-                </div>
 
-                <div class="contract-settings__group">
                   <div class="contract-type-list">
                     <label
-                      class="contract-chip"
+                      class="option-card option-card--contract-type"
                       *ngFor="let item of contractTypes"
-                      [class.contract-chip--active]="item === contractType"
+                      [class.option-card--active]="item === contractType"
                     >
-                      <input class="contract-chip__input" type="radio" name="contractType" [value]="item" [(ngModel)]="contractType" />
-                      <span class="contract-chip__check material-symbols-rounded" aria-hidden="true">check</span>
-                      <span class="contract-chip__label">{{ item }}</span>
+                      <input class="option-card__input" type="radio" name="contractType" [value]="item" [(ngModel)]="contractType" />
+                      <span class="option-card__vee" aria-hidden="true"></span>
+                      <span class="option-card__label">{{ item }}</span>
                     </label>
                   </div>
                 </div>
@@ -204,15 +205,6 @@
               </div>
             </div>
 
-            <label class="field field--full" *ngIf="jobDraft.workModel === 'Hibrido'">
-              <span class="field__label field__label--soft">Dias presenciais</span>
-              <input
-                type="text"
-                name="hybridOnsiteDaysDescription"
-                placeholder="Ex: 2 dias presenciais por semana"
-                [(ngModel)]="hybridOnsiteDaysDescription"
-              />
-            </label>
           </div>
         </div>
         </section>
@@ -287,14 +279,6 @@
             <button
               class="summary-card__tab"
               type="button"
-              [class.summary-card__tab--active]="activeSummaryView === 'benefits'"
-              (click)="selectSummaryView('benefits')"
-            >
-              Beneficios
-            </button>
-            <button
-              class="summary-card__tab"
-              type="button"
               [class.summary-card__tab--active]="activeSummaryView === 'details'"
               (click)="selectSummaryView('details')"
             >
@@ -303,10 +287,18 @@
             <button
               class="summary-card__tab"
               type="button"
+              [class.summary-card__tab--active]="activeSummaryView === 'benefits'"
+              (click)="selectSummaryView('benefits')"
+            >
+              Beneficios
+            </button>
+            <button
+              class="summary-card__tab"
+              type="button"
               [class.summary-card__tab--active]="activeSummaryView === 'status'"
               (click)="selectSummaryView('status')"
             >
-              Status da Vaga
+              Status
             </button>
           </div>
         </div>
@@ -379,7 +371,7 @@
                           class="summary-card__status-step-indicator"
                           [ngClass]="candidateStatusPreview[index]?.completed ? 'summary-card__status-step-indicator--done' : 'summary-card__status-step-indicator--pending'"
                           aria-hidden="true"
-                        >{{ candidateStatusPreview[index]?.completed ? 'check' : '' }}</span>
+                        >sports_baseball</span>
                       </ng-template>
 
                       <ng-template matStepperIcon="done" let-index="index">
@@ -387,7 +379,7 @@
                           class="summary-card__status-step-indicator"
                           [ngClass]="candidateStatusPreview[index]?.completed ? 'summary-card__status-step-indicator--done' : 'summary-card__status-step-indicator--pending'"
                           aria-hidden="true"
-                        >{{ candidateStatusPreview[index]?.completed ? 'check' : '' }}</span>
+                        >sports_baseball</span>
                       </ng-template>
 
                       <ng-template matStepperIcon="edit" let-index="index">
@@ -395,7 +387,7 @@
                           class="summary-card__status-step-indicator"
                           [ngClass]="candidateStatusPreview[index]?.completed ? 'summary-card__status-step-indicator--done' : 'summary-card__status-step-indicator--pending'"
                           aria-hidden="true"
-                        >{{ candidateStatusPreview[index]?.completed ? 'check' : '' }}</span>
+                        >sports_baseball</span>
                       </ng-template>
 
                       <mat-step
@@ -648,10 +640,6 @@
                           <span class="summary-card__fact-value">{{ candidateSalarySuggestionDisplay }}</span>
                         </div>
 
-                        <div class="summary-card__fact-note" *ngIf="hybridWorkModelDetail as hybridDetail">
-                          <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
-                          <span>{{ hybridDetail }}</span>
-                        </div>
                       </div>
                     </div>
                   </div>

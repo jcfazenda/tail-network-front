@@ -31,10 +31,10 @@ export class StubPage {
   readonly radarDelta = 12;
 
   readonly radarCategories: RadarCategory[] = [
-    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, #f5b300, #f59e0b)' },
-    { label: 'Frontend', value: 81, color: 'linear-gradient(90deg, #f6c340, #f5b300)' },
-    { label: 'Cloud', value: 66, color: '#d5d9e6' },
-    { label: 'DevOps', value: 55, color: '#cacedc' },
+    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, var(--primary), var(--primary-2))' },
+    { label: 'Frontend', value: 81, color: 'linear-gradient(90deg, color-mix(in srgb, var(--primary) 76%, white), var(--primary))' },
+    { label: 'Cloud', value: 66, color: 'rgba(176, 184, 194, 0.9)' },
+    { label: 'DevOps', value: 55, color: 'rgba(198, 203, 211, 0.9)' },
   ];
 
   readonly stageLabels = [
