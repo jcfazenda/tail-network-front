@@ -1,7 +1,18 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule, UpperCasePipe, NgClass } from '@angular/common';
 
-export type CandidateStage = 'radar' | 'processo' | 'aguardando' | 'tecnica' | 'cancelado' | undefined;
+export type CandidateStage =
+  | 'radar'
+  | 'candidatura'
+  | 'processo'
+  | 'tecnica'
+  | 'aguardando'
+  | 'aceito'
+  | 'documentacao'
+  | 'contratado'
+  | 'proxima'
+  | 'cancelado'
+  | undefined;
 
 interface PanelCandidate {
   name: string;

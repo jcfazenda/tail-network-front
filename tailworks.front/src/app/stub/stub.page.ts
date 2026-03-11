@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
 import { JobStatus, MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { AlcanceRadarComponent, RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
+import { Subscription } from 'rxjs';
 
 interface RadarCategory {
   label: string;
@@ -22,10 +23,12 @@ interface RadarCategory {
   styleUrls: ['./stub.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StubPage {
+export class StubPage implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly subscriptions = new Subscription();
 
   readonly radarTotal = 87;
   readonly radarDelta = 12;
@@ -38,11 +41,13 @@ export class StubPage {
   ];
 
   readonly stageLabels = [
+    'Contratado',
+    'Validando documentos',
+    'Proposta aceita',
     'Contratação Solicitada',
-    'Em Entrevista Técnica',
     'Em Processo',
-    'Documentação recebida',
     'Candidatura',
+    'Continua no Radar',
     'Cancelado',
   ];
 
@@ -50,7 +55,21 @@ export class StubPage {
 
   selectedJobPanel: ChatJob | null = null;
   selectedChatJob: ChatJob | null = null;
+  selectedCandidateName: string | null = null;
   chatStartIndex = 0;
+
+  constructor() {
+    this.subscriptions.add(
+      this.vagasMockService.jobsChanged$.subscribe(() => {
+        this.refreshOpenedPanels();
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
 
   setTab(tab: JobStatus) {
     this.activeTab = tab;
@@ -65,17 +84,9 @@ export class StubPage {
   }
 
   openPanel(job: MockJobRecord) {
-    const asChatJob: ChatJob = {
-      id: job.id,
-      title: job.title,
-      company: job.company,
-      location: job.location,
-      workModel: job.workModel,
-      candidates: job.candidates,
-    };
-
-    this.selectedJobPanel = asChatJob;
+    this.selectedJobPanel = this.asChatJob(job);
     this.selectedChatJob = null;
+    this.selectedCandidateName = null;
     this.chatStartIndex = 0;
   }
 
@@ -87,15 +98,11 @@ export class StubPage {
   }
 
   openCandidate(job: MockJobRecord, index: number) {
-    const asChatJob: ChatJob = {
-      id: job.id,
-      title: job.title,
-      company: job.company,
-      location: job.location,
-      workModel: job.workModel,
-      candidates: this.sortedCandidatesFor(job),
-    };
+    const sortedCandidates = this.sortedCandidatesFor(job);
+    const selectedCandidate = sortedCandidates[index];
+    const asChatJob = this.asChatJob(job);
 
+    this.selectedCandidateName = selectedCandidate?.name ?? null;
     this.selectedJobPanel = asChatJob;
     this.selectedChatJob = asChatJob;
     this.chatStartIndex = index;
@@ -113,12 +120,20 @@ export class StubPage {
     switch (stage) {
       case 'radar':
         return 'No Radar';
+      case 'contratado':
+        return 'Contratado';
       case 'aguardando':
         return 'Contratação Solicitada';
       case 'processo':
         return 'Em Processo';
       case 'tecnica':
         return 'Em Entrevista Técnica';
+      case 'aceito':
+        return 'Proposta aceita';
+      case 'proxima':
+        return 'Continua no Radar';
+      case 'documentacao':
+        return 'Validando documentos';
       case 'candidatura':
         return 'Candidatura';
       case 'cancelado':
@@ -130,15 +145,17 @@ export class StubPage {
 
   closeChat() {
     this.selectedChatJob = null;
+    this.selectedCandidateName = null;
   }
 
   closePanel() {
     this.selectedChatJob = null;
     this.selectedJobPanel = null;
+    this.selectedCandidateName = null;
   }
 
   sortedCandidatesFor(job: MockJobRecord | ChatJob): MockJobCandidate[] {
-    const order = ['radar', 'aguardando', 'tecnica', 'processo', 'documentacao', 'candidatura', 'cancelado'];
+    const order = ['radar', 'candidatura', 'tecnica', 'processo', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
     return [...job.candidates as MockJobCandidate[]].sort((left, right) => {
       const stageLeft = left.radarOnly ? 'radar' : (left.stage ?? 'processo');
       const stageRight = right.radarOnly ? 'radar' : (right.stage ?? 'processo');
@@ -199,5 +216,48 @@ export class StubPage {
     }
 
     return normalized.startsWith('R$') ? normalized : `R$ ${normalized}`;
+  }
+
+  private asChatJob(job: MockJobRecord): ChatJob {
+    return {
+      id: job.id,
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      workModel: job.workModel,
+      candidates: this.sortedCandidatesFor(job),
+    };
+  }
+
+  private refreshOpenedPanels(): void {
+    if (!this.selectedJobPanel) {
+      return;
+    }
+
+    const latestJob = this.vagasMockService.getJobById(this.selectedJobPanel.id);
+    if (!latestJob) {
+      this.closePanel();
+      return;
+    }
+
+    this.selectedJobPanel = this.asChatJob(latestJob);
+
+    if (!this.selectedChatJob) {
+      return;
+    }
+
+    this.selectedChatJob = this.asChatJob(latestJob);
+
+    if (!this.selectedCandidateName) {
+      return;
+    }
+
+    const nextIndex = this.selectedChatJob.candidates.findIndex(
+      (candidate) => candidate.name === this.selectedCandidateName,
+    );
+
+    if (nextIndex >= 0) {
+      this.chatStartIndex = nextIndex;
+    }
   }
 }

@@ -64,6 +64,16 @@
           class="candidate-applications__view"
           type="button"
           role="tab"
+          [class.active]="activeView === 'radar'"
+          [attr.aria-selected]="activeView === 'radar'"
+          (click)="setView('radar')"
+        >
+          No meu Radar ({{ radarCount }})
+        </button>
+        <button
+          class="candidate-applications__view"
+          type="button"
+          role="tab"
           [class.active]="activeView === 'applications'"
           [attr.aria-selected]="activeView === 'applications'"
           (click)="setView('applications')"
@@ -74,11 +84,11 @@
           class="candidate-applications__view"
           type="button"
           role="tab"
-          [class.active]="activeView === 'radar'"
-          [attr.aria-selected]="activeView === 'radar'"
-          (click)="setView('radar')"
+          [class.active]="activeView === 'declined'"
+          [attr.aria-selected]="activeView === 'declined'"
+          (click)="setView('declined')"
         >
-          No meu Radar ({{ radarCount }})
+          Declinei ({{ declinedCount }})
         </button>
       </div>
 
@@ -126,18 +136,16 @@
               </div>
 
               <div class="candidate-application-card__actions">
-                <span class="candidate-application-card__status" *ngIf="job.talentDecision === 'applied'">
-                  Candidatura enviada
-                </span>
                 <span class="candidate-application-card__status candidate-application-card__status--hidden" *ngIf="job.talentDecision === 'hidden'">
                   Escondido
                 </span>
 
-                <div class="candidate-application-card__controls" *ngIf="!job.talentDecision">
+                <div class="candidate-application-card__controls" *ngIf="job.talentDecision !== 'hidden'">
                   <button class="candidate-application-card__action candidate-application-card__action--primary" type="button" (click)="openJobPanel(job.id)">
                     Visualizar
                   </button>
                   <button
+                    *ngIf="!job.talentDecision"
                     class="candidate-application-card__action candidate-application-card__action--ghost candidate-application-card__action--dismiss"
                     type="button"
                     (click)="hideJob(job.id)"
@@ -163,6 +171,10 @@
                   <span>{{ recruiterRole }}</span>
                 </div>
               </div>
+
+              <span class="job-card__creator-status" *ngIf="shouldShowJobStatus(job)">
+                Status: {{ jobStatusLabel(job) }}
+              </span>
             </div>
           </div>
         </article>
@@ -186,16 +198,26 @@
     <section class="candidate-job-panel__shell">
       <button class="candidate-job-panel__close" type="button" (click)="closeJobPanel()">close</button>
 
-      <div class="candidate-job-panel__profile">
-        <span
-          class="candidate-job-panel__profile-avatar"
-          [style.backgroundImage]="'url(' + recruiterAvatar + ')'"
-          aria-hidden="true"
-        ></span>
-        <div class="candidate-job-panel__profile-copy">
-          <strong>{{ recruiterName }}</strong>
-          <span>{{ recruiterRole }}</span>
+      <div class="candidate-job-panel__company">
+        <div class="candidate-job-panel__company-brand">
+          <span
+            class="candidate-job-panel__company-logo"
+            [class.candidate-job-panel__company-logo--image]="!!selectedJobCompanyProfile.logoUrl"
+            [style.backgroundImage]="selectedJobCompanyProfile.logoUrl ? 'url(' + selectedJobCompanyProfile.logoUrl + ')' : null"
+            aria-hidden="true"
+          >{{ selectedJobCompanyProfile.logoUrl ? '' : selectedJobCompanyProfile.logoLabel }}</span>
+
+          <div class="candidate-job-panel__company-copy">
+            <strong>{{ selectedJobCompanyProfile.name }}</strong>
+            <span>{{ selectedJobCompanyProfile.followers }}</span>
+          </div>
         </div>
+
+        <p class="candidate-job-panel__company-description">
+          <span>{{ selectedJobCompanyProfile.description }}</span>
+          <span class="candidate-job-panel__company-dot" aria-hidden="true"></span>
+          <span>{{ panel.location }}</span>
+        </p>
       </div>
 
       <div class="candidate-job-panel__tabs" role="tablist" aria-label="Tabs da vaga">
@@ -223,28 +245,6 @@
         >
           Status
         </button>
-      </div>
-
-      <div class="candidate-job-panel__company">
-        <div class="candidate-job-panel__company-brand">
-          <span
-            class="candidate-job-panel__company-logo"
-            [class.candidate-job-panel__company-logo--image]="!!selectedJobCompanyProfile.logoUrl"
-            [style.backgroundImage]="selectedJobCompanyProfile.logoUrl ? 'url(' + selectedJobCompanyProfile.logoUrl + ')' : null"
-            aria-hidden="true"
-          >{{ selectedJobCompanyProfile.logoUrl ? '' : selectedJobCompanyProfile.logoLabel }}</span>
-
-          <div class="candidate-job-panel__company-copy">
-            <strong>{{ selectedJobCompanyProfile.name }}</strong>
-            <span>{{ selectedJobCompanyProfile.followers }}</span>
-          </div>
-        </div>
-
-        <p class="candidate-job-panel__company-description">
-          <span>{{ selectedJobCompanyProfile.description }}</span>
-          <span class="candidate-job-panel__company-dot" aria-hidden="true"></span>
-          <span>{{ panel.location }}</span>
-        </p>
       </div>
 
       <div class="candidate-job-panel__body">
@@ -421,41 +421,81 @@
                 <div class="candidate-job-panel__status-step" *ngFor="let item of selectedJobStatusPreview">
                   <span
                     class="candidate-job-panel__status-indicator"
+                    [class.candidate-job-panel__status-indicator--active]="item.active"
                     [class.candidate-job-panel__status-indicator--done]="item.completed"
                     [class.candidate-job-panel__status-indicator--pending]="!item.completed"
                     aria-hidden="true"
                   >sports_baseball</span>
 
                   <div class="candidate-job-panel__status-copy">
-                    <span class="candidate-job-panel__status-name" [class.candidate-job-panel__status-name--muted]="!item.completed">
+                    <span
+                      class="candidate-job-panel__status-name"
+                      [class.candidate-job-panel__status-name--active]="item.active"
+                      [class.candidate-job-panel__status-name--muted]="!item.completed"
+                    >
                       {{ item.label }}
                     </span>
                     <span class="candidate-job-panel__status-time" *ngIf="item.timeLabel && item.completed">{{ item.timeLabel }}</span>
+                    <span class="candidate-job-panel__status-description">{{ item.description }}</span>
+                    <span class="candidate-job-panel__status-owner">{{ item.ownerText }}</span>
                   </div>
                 </div>
               </div>
             </section>
 
             <div class="candidate-job-panel__status-footer">
-              <button
-                *ngIf="canApplySelectedJob"
-                class="candidate-job-panel__status-action candidate-job-panel__status-action--primary"
-                type="button"
-                (click)="applyToSelectedJob()"
-              >
-                Me candidatar
-              </button>
-
-              <p class="candidate-job-panel__status-note" *ngIf="panel.talentDecision === 'applied'">
-                Sua candidatura foi enviada e o recrutador já consegue acompanhar esse status.
-              </p>
-
               <p class="candidate-job-panel__status-note candidate-job-panel__status-note--muted" *ngIf="panel.talentDecision === 'hidden'">
                 Essa vaga está escondida da sua lista principal, mas o histórico continua disponível aqui.
               </p>
             </div>
           </div>
         </ng-container>
+      </div>
+
+      <div class="candidate-job-panel__footer" *ngIf="activeCandidatePanelView === 'status' && (canApplySelectedJob || canCancelSelectedJob || canRespondToProposalSelectedJob)">
+        <p class="candidate-job-panel__footer-note" *ngIf="canCancelSelectedJob">
+          Sua candidatura foi enviada e o recrutador já consegue acompanhar esse status.
+        </p>
+
+        <p class="candidate-job-panel__footer-note" *ngIf="canRespondToProposalSelectedJob">
+          O recruiter avançou para contratação e agora precisa da sua resposta para seguir.
+        </p>
+
+        <button
+          *ngIf="canApplySelectedJob"
+          class="candidate-job-panel__status-action candidate-job-panel__status-action--primary"
+          type="button"
+          (click)="applyToSelectedJob()"
+        >
+          Me candidatar
+        </button>
+
+        <button
+          *ngIf="canCancelSelectedJob"
+          class="candidate-job-panel__status-action candidate-job-panel__status-action--ghost"
+          type="button"
+          (click)="cancelSelectedJobApplication()"
+        >
+          Cancelar candidatura
+        </button>
+
+        <div class="candidate-job-panel__status-actions" *ngIf="canRespondToProposalSelectedJob">
+          <button
+            class="candidate-job-panel__status-action candidate-job-panel__status-action--primary"
+            type="button"
+            (click)="acceptSelectedJobProposal()"
+          >
+            Aceitar
+          </button>
+
+          <button
+            class="candidate-job-panel__status-action candidate-job-panel__status-action--ghost"
+            type="button"
+            (click)="keepSelectedJobForNextOpportunity()"
+          >
+            Fica para Proxima
+          </button>
+        </div>
       </div>
     </section>
   </aside>

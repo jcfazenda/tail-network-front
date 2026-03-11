@@ -6,6 +6,23 @@
   border-left: 1px solid rgba(15, 23, 42, 0.12);
 }
 
+:host(.radar-overview-host--embedded) {
+  height: 100%;
+  padding-left: 0;
+  border-left: 0;
+}
+
+:host(.radar-overview-host--embedded) .radar-overview {
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 26px;
+  justify-items: stretch;
+}
+
+:host(.radar-overview-host--embedded) .radar-overview__content {
+  padding-left: 18px;
+  box-sizing: border-box;
+}
+
 .radar-overview {
   height: 100%;
   display: grid;

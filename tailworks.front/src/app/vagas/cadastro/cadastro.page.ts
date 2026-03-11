@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
-import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
+import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
-import { MatStepperModule } from '@angular/material/stepper';
+import { Subscription } from 'rxjs';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
@@ -24,7 +24,10 @@ type CompanySummaryProfile = {
 type CandidateStatusPreview = {
   label: string;
   completed: boolean;
-  timeLabel: string;
+  active: boolean;
+  timeLabel?: string;
+  description: string;
+  ownerText: string;
 };
 
 type ContractDecision = 'accepted' | 'next' | null;
@@ -42,16 +45,18 @@ type ConfettiPiece = {
 @Component({
   standalone: true,
   selector: 'app-cadastro-page',
-  imports: [CommonModule, FormsModule, AlcanceRadarComponent, MatStepperModule],
+  imports: [CommonModule, FormsModule, AlcanceRadarComponent],
   templateUrl: './cadastro.page.html',
   styleUrls: ['./cadastro.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CadastroPage {
+export class CadastroPage implements OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly talentCandidateName = 'Rafael Oliveira';
+  private readonly subscriptions = new Subscription();
   private summarySectionCounter = 3;
   private readonly brlNumberFormatter = new Intl.NumberFormat('pt-BR', {
     minimumFractionDigits: 2,
@@ -130,6 +135,26 @@ export class CadastroPage {
 
   constructor() {
     this.loadEditingJobIfPresent();
+    this.subscriptions.add(
+      this.vagasMockService.jobsChanged$.subscribe(() => {
+        if (!this.editingJobId) {
+          this.cdr.markForCheck();
+          return;
+        }
+
+        const job = this.vagasMockService.getJobById(this.editingJobId);
+        if (!job) {
+          return;
+        }
+
+        this.hydrateStatusFromJob(job);
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
   readonly companyProfiles: Record<string, CompanySummaryProfile> = {
     'Banco Itaú': {
@@ -156,6 +181,8 @@ export class CadastroPage {
     },
   };
   statusStageIndex = 0;
+  summaryPanelOpen = true;
+  previewCardFlipped = false;
   contractDecision: ContractDecision = null;
   documentsSent = false;
   statusEmailUpdatesEnabled = true;
@@ -164,41 +191,94 @@ export class CadastroPage {
   confettiActive = false;
 
   get candidateStatusPreview(): CandidateStatusPreview[] {
-    const baseStatuses: CandidateStatusPreview[] = [
-      { label: 'Talento no radar', timeLabel: 'Semana passada' },
-      { label: 'Candidatura enviada', timeLabel: '5 dias atras' },
-      { label: 'Em processo', timeLabel: 'Ontem' },
-      { label: 'Contratação Solicitada', timeLabel: 'Há 20 min.' },
-    ].map((item, index) => ({
-      ...item,
-      completed: index <= this.statusStageIndex,
-    }));
+    const activeIndex = this.currentStatusPreviewIndex;
+    const statuses: Array<Pick<CandidateStatusPreview, 'label' | 'timeLabel' | 'description' | 'ownerText'>> = [
+      {
+        label: 'Talento no radar',
+        timeLabel: 'Semana passada',
+        description: 'O sistema encontrou esse talento no radar da vaga e ele ainda não iniciou candidatura.',
+        ownerText: 'Movido pelo sistema',
+      },
+      {
+        label: 'Candidatura enviada',
+        timeLabel: 'Agora',
+        description: 'O talento demonstrou interesse e a candidatura já entrou no seu funil.',
+        ownerText: 'Ação do talento',
+      },
+      {
+        label: 'Em processo',
+        timeLabel: 'Em atualização',
+        description: 'Você avançou o perfil para análise, conversa e próximas etapas do processo.',
+        ownerText: 'Ação do recruiter',
+      },
+      {
+        label: 'Contratação Solicitada',
+        timeLabel: 'Em atualização',
+        description: 'A proposta ou solicitação final foi enviada e agora depende do retorno do talento.',
+        ownerText: 'Ação do recruiter',
+      },
+      {
+        label:
+          this.contractDecision === 'accepted'
+            ? 'Aceitou proposta'
+            : this.contractDecision === 'next'
+              ? 'Ficou pra próxima'
+              : 'Aceito / Ficou pra próxima',
+        timeLabel: 'Em atualização',
+        description:
+          this.contractDecision === 'accepted'
+            ? 'O talento aceitou a proposta e o processo pode avançar para a etapa documental.'
+            : this.contractDecision === 'next'
+              ? 'O talento preferiu não seguir nesta vaga agora, mas pode continuar elegível para próximas oportunidades.'
+              : 'Aqui o talento responde se aceita a proposta ou se prefere ficar para uma próxima oportunidade.',
+        ownerText: 'Ação do talento',
+      },
+      {
+        label: 'Validando documentos',
+        timeLabel: 'Em atualização',
+        description: 'Os documentos enviados pelo talento estão em revisão final para conclusão da contratação.',
+        ownerText: 'Ação do recruiter',
+      },
+      {
+        label:
+          this.contractDecision === 'next'
+            ? 'Não foi desta vez (ou Continua no Radar)'
+            : this.documentsSent
+              ? 'Contratado'
+              : 'Contratado / Não foi desta vez (ou Continua no Radar)',
+        timeLabel: 'Em atualização',
+        description:
+          this.contractDecision === 'next'
+            ? 'Esse ciclo foi encerrado para esta vaga e o talento pode continuar elegível para novas oportunidades.'
+            : this.documentsSent
+              ? 'Contratação concluída e fluxo encerrado com sucesso.'
+              : 'Ao final da validação, você encerra o ciclo contratando o talento ou mantendo o perfil elegível para futuras vagas.',
+        ownerText: 'Ação do recruiter',
+      },
+    ];
 
+    return statuses.map((item, index) => ({
+      ...item,
+      completed: this.isStatusPreviewStepCompleted(index),
+      active: index === activeIndex,
+      timeLabel: this.isStatusPreviewStepCompleted(index) ? item.timeLabel : undefined,
+    }));
+  }
+
+  get currentStatusPreviewIndex(): number {
     if (this.contractDecision === 'next') {
-      return [
-        ...baseStatuses,
-        { label: 'Ficou para a proxima', completed: true, timeLabel: 'Há 20 min.' },
-        { label: 'Encerrado', completed: true, timeLabel: 'Há 20 min.' },
-      ];
+      return 6;
+    }
+
+    if (this.contractDecision === 'accepted' && this.documentsSent) {
+      return 6;
     }
 
     if (this.contractDecision === 'accepted') {
-      return [
-        ...baseStatuses,
-        { label: 'Proposta aceita', completed: true, timeLabel: 'Há 20 min.' },
-        this.documentsSent
-          ? { label: 'Documentos recebidos', completed: true, timeLabel: 'Há 5 min.' }
-          : { label: 'Validando documentos', completed: false, timeLabel: 'Há 20 min.' },
-        { label: 'Contratado', completed: this.documentsSent, timeLabel: 'Há 5 min.' },
-      ];
+      return 4;
     }
 
-    return [
-      ...baseStatuses,
-      { label: 'Aceito / Ficou pra próxima', completed: false, timeLabel: 'Há 20 min.' },
-      { label: 'Validando documentos', completed: false, timeLabel: 'Há 20 min.' },
-      { label: 'Contratado', completed: false, timeLabel: 'Há 5 min.' },
-    ];
+    return Math.min(this.statusStageIndex, 3);
   }
 
   get hasRequestedContractStatus(): boolean {
@@ -206,8 +286,7 @@ export class CadastroPage {
   }
 
   get statusSelectedIndex(): number {
-    const currentIndex = this.candidateStatusPreview.findIndex(item => item.label === this.statusCurrentLabel);
-    return currentIndex >= 0 ? currentIndex : 0;
+    return this.currentStatusPreviewIndex;
   }
 
   get showStatusDecisionActions(): boolean {
@@ -250,19 +329,7 @@ export class CadastroPage {
   }
 
   get statusCurrentLabel(): string {
-    if (this.contractDecision === 'next') {
-      return 'Ficou para a proxima';
-    }
-
-    if (this.contractDecision === 'accepted' && this.documentsSent) {
-      return 'Contratado';
-    }
-
-    if (this.contractDecision === 'accepted') {
-      return 'Proposta aceita';
-    }
-
-    return this.candidateStatusPreview[this.statusStageIndex]?.label ?? 'Talento no radar';
+    return this.candidateStatusPreview[this.currentStatusPreviewIndex]?.label ?? 'Talento no radar';
   }
 
   get statusCurrentTone(): string {
@@ -282,28 +349,23 @@ export class CadastroPage {
   }
 
   get statusCurrentDescription(): string {
-    switch (this.statusCurrentLabel) {
-      case 'Talento no radar':
-        return 'O sistema encontrou esse candidato no radar da vaga';
-      case 'Candidatura enviada':
-        return 'Candidatura recebida e aguardando triagem';
-      case 'Em processo':
-        return 'Analisando perfil dos candidatos';
-      case 'Contratação Solicitada':
-        return 'Etapa final aguardando resposta do candidato';
-      case 'Proposta aceita':
-        return 'Proposta aceita e pronta para seguir';
-      case 'Ficou para a proxima':
-        return 'Perfil mantido no radar para novas oportunidades';
-      case 'Validando documentos':
-        return 'Aguardando envio e validacao dos documentos';
-      case 'Contratado':
-        return 'Processo concluido com sucesso';
-      case 'Encerrado':
-        return 'Fluxo encerrado para esta oportunidade';
-      default:
-        return '';
+    return this.candidateStatusPreview[this.currentStatusPreviewIndex]?.description ?? '';
+  }
+
+  private isStatusPreviewStepCompleted(index: number): boolean {
+    if (this.contractDecision === 'next') {
+      return index <= 4 || index === 6;
     }
+
+    if (this.contractDecision === 'accepted' && this.documentsSent) {
+      return index <= 6;
+    }
+
+    if (this.contractDecision === 'accepted') {
+      return index <= 4;
+    }
+
+    return index <= Math.min(this.statusStageIndex, 3);
   }
 
   get statusInsightTitle(): string {
@@ -357,6 +419,7 @@ export class CadastroPage {
     this.contractDecision = null;
     this.documentsSent = false;
     this.statusDocumentsConsentAccepted = false;
+    this.syncRecruiterStatusStage(this.mapRecruiterStepIndexToStage(index));
   }
 
   selectAcceptedContractDecision(): void {
@@ -364,6 +427,7 @@ export class CadastroPage {
     this.contractDecision = 'accepted';
     this.documentsSent = false;
     this.statusDocumentsConsentAccepted = false;
+    this.syncRecruiterStatusStage('aceito');
   }
 
   selectNextContractDecision(): void {
@@ -371,11 +435,25 @@ export class CadastroPage {
     this.contractDecision = 'next';
     this.documentsSent = false;
     this.statusDocumentsConsentAccepted = false;
+    this.syncRecruiterStatusStage('proxima', undefined);
   }
 
   sendStatusDocuments(): void {
     this.documentsSent = true;
+    this.syncRecruiterStatusStage('contratado');
     this.triggerConfetti();
+  }
+
+  closeSummaryPanel(): void {
+    this.summaryPanelOpen = false;
+  }
+
+  openSummaryPanel(): void {
+    this.summaryPanelOpen = true;
+  }
+
+  togglePreviewCardFace(): void {
+    this.previewCardFlipped = !this.previewCardFlipped;
   }
 
   advanceStatusStage(): void {
@@ -387,6 +465,7 @@ export class CadastroPage {
     this.contractDecision = null;
     this.documentsSent = false;
     this.statusDocumentsConsentAccepted = false;
+    this.syncRecruiterStatusStage(this.mapRecruiterStepIndexToStage(this.statusStageIndex));
   }
 
   private buildConfetti(): void {
@@ -1178,6 +1257,76 @@ export class CadastroPage {
       ...section,
       items: [...section.items],
     }));
+    this.hydrateStatusFromJob(job);
+  }
+
+  private hydrateStatusFromJob(job: MockJobRecord): void {
+    const candidate = job.candidates.find((item) => item.name === this.talentCandidateName);
+
+    this.contractDecision = null;
+    this.documentsSent = false;
+    this.statusDocumentsConsentAccepted = false;
+
+    if (job.talentDecision === 'hidden' || candidate?.stage === 'cancelado') {
+      this.statusStageIndex = 0;
+      return;
+    }
+
+    switch (candidate?.stage) {
+      case 'candidatura':
+        this.statusStageIndex = 1;
+        return;
+      case 'processo':
+      case 'tecnica':
+        this.statusStageIndex = 2;
+        return;
+      case 'aguardando':
+        this.statusStageIndex = 3;
+        return;
+      case 'aceito':
+        this.statusStageIndex = 3;
+        this.contractDecision = 'accepted';
+        return;
+      case 'proxima':
+        this.statusStageIndex = 3;
+        this.contractDecision = 'next';
+        return;
+      case 'documentacao':
+        this.statusStageIndex = 3;
+        this.contractDecision = 'accepted';
+        return;
+      case 'contratado':
+        this.statusStageIndex = 3;
+        this.contractDecision = 'accepted';
+        this.documentsSent = true;
+        return;
+      default:
+        this.statusStageIndex = 0;
+    }
+  }
+
+  private mapRecruiterStepIndexToStage(index: number): MockJobCandidate['stage'] {
+    switch (index) {
+      case 1:
+        return 'candidatura';
+      case 2:
+        return 'processo';
+      case 3:
+        return 'aguardando';
+      default:
+        return 'radar';
+    }
+  }
+
+  private syncRecruiterStatusStage(
+    stage: MockJobCandidate['stage'],
+    talentDecision?: 'applied' | undefined,
+  ): void {
+    if (!this.editingJobId) {
+      return;
+    }
+
+    this.vagasMockService.updateRecruiterTalentStage(this.editingJobId, stage, talentDecision);
   }
 
   private buildDraftPayload(): MockJobDraft {

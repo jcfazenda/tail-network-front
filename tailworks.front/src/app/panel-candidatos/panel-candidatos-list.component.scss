@@ -282,6 +282,21 @@
   color: var(--accent-strong);
 }
 
+.stage-separator__label.stage-aceito {
+  background: rgba(111, 216, 202, 0.18);
+  color: var(--success);
+}
+
+.stage-separator__label.stage-contratado {
+  background: rgba(111, 216, 202, 0.24);
+  color: var(--success);
+}
+
+.stage-separator__label.stage-proxima {
+  background: rgba(176, 184, 194, 0.18);
+  color: rgba(38, 44, 58, 0.72);
+}
+
 .stage-separator__label.stage-candidatura {
   background: rgba(var(--primary-rgb), 0.1);
   color: var(--accent-strong);
@@ -454,6 +469,21 @@
   color: var(--accent-strong);
 }
 
+.cand-status-chip.stage-aceito {
+  background: linear-gradient(180deg, rgba(230, 248, 245, 0.92) 0%, rgba(209, 241, 234, 0.86) 100%);
+  color: var(--success);
+}
+
+.cand-status-chip.stage-contratado {
+  background: linear-gradient(180deg, rgba(219, 244, 238, 0.96) 0%, rgba(187, 231, 220, 0.9) 100%);
+  color: var(--success);
+}
+
+.cand-status-chip.stage-proxima {
+  background: linear-gradient(180deg, rgba(239, 241, 244, 0.96) 0%, rgba(227, 230, 235, 0.9) 100%);
+  color: rgba(38, 44, 58, 0.72);
+}
+
 .cand-status-chip.stage-candidatura {
   background: linear-gradient(180deg, rgba(255, 245, 227, 0.82) 0%, rgba(255, 233, 199, 0.78) 100%);
   color: var(--warning);
@@ -543,6 +573,18 @@
   background: linear-gradient(180deg, #f3ecff 0%, #e4d9ff 100%);
 }
 
+.cand-bar.stage-aceito {
+  background: linear-gradient(180deg, #e6f8f5 0%, #d1f1ea 100%);
+}
+
+.cand-bar.stage-contratado {
+  background: linear-gradient(180deg, #daf2ed 0%, #c1e7dd 100%);
+}
+
+.cand-bar.stage-proxima {
+  background: linear-gradient(180deg, #eef0f3 0%, #e2e6eb 100%);
+}
+
 .cand-bar.stage-candidatura {
   background: linear-gradient(180deg, #fff5e3 0%, #ffe9c7 100%);
 }
@@ -576,6 +618,18 @@
 
 .cand-bar-fill.stage-documentacao {
   background: linear-gradient(180deg, #c9b5ff 0%, #a98dff 100%);
+}
+
+.cand-bar-fill.stage-aceito {
+  background: linear-gradient(180deg, #6fd8ca 0%, #41b7a8 100%);
+}
+
+.cand-bar-fill.stage-contratado {
+  background: linear-gradient(180deg, #56c5ad 0%, #2d9d82 100%);
+}
+
+.cand-bar-fill.stage-proxima {
+  background: linear-gradient(180deg, #bfc6cf 0%, #a8b0ba 100%);
 }
 
 .cand-bar-fill.stage-candidatura {

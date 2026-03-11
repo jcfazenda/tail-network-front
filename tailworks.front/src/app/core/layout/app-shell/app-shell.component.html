@@ -1,11 +1,16 @@
-<div class="shell" [class.shell--plain]="isHomeEntry" [class.shell--candidate]="isCandidateArea">
+<div
+  class="shell"
+  [class.shell--plain]="isHomeEntry"
+  [class.shell--candidate]="isCandidateArea"
+  [class.shell--sidebar-hidden]="hasSidebar && !isSidebarOpen"
+>
   <ng-container *ngIf="!isHomeEntry">
-    <app-sidebar *ngIf="!isCandidateEcosystem"></app-sidebar>
+    <app-sidebar *ngIf="hasSidebar && isSidebarOpen"></app-sidebar>
 
     <div
       class="shell__main"
       [class.shell__main--candidate]="isCandidateArea"
-      [class.shell__main--full]="isCandidateEcosystem"
+      [class.shell__main--full]="isCandidateEcosystem || (hasSidebar && !isSidebarOpen)"
       [class.shell__main--ecosystem]="isCandidateEcosystem"
     >
       <app-topbar></app-topbar>

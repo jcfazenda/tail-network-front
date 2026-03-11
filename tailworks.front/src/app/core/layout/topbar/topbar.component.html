@@ -1,5 +1,17 @@
 <header class="topbar">
   <div class="topbar__primary" *ngIf="!isSelectionMode; else selectionTopbar">
+    <button
+      *ngIf="canToggleSidebar"
+      class="iconBtn topbar__sidebar-toggle"
+      type="button"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="isSidebarOpen ? 'Esconder sidebar' : 'Mostrar sidebar'"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">
+        {{ isSidebarOpen ? 'left_panel_close' : 'left_panel_open' }}
+      </span>
+    </button>
+
     <div class="search">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
       <input

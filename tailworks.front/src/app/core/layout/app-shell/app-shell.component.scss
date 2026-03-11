@@ -4,10 +4,15 @@
   grid-template-columns: 300px 1fr;
   background: var(--shell-gradient);
   overflow-x: hidden;
+  transition: grid-template-columns .18s ease;
 }
 
 .shell--plain{
   display: block;
+}
+
+.shell--sidebar-hidden{
+  grid-template-columns: 1fr;
 }
 
 .shell__main{

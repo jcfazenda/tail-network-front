@@ -9,6 +9,9 @@ export type CandidateStage =
   | 'tecnica'
   | 'documentacao'
   | 'candidatura'
+  | 'aceito'
+  | 'proxima'
+  | 'contratado'
   | 'cancelado';
 
 export interface TechStackItem {

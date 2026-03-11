@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 @Component({
@@ -16,6 +17,7 @@ import { TopbarComponent } from '../topbar/topbar.component';
 })
 export class AppShellComponent {
   private readonly router = inject(Router);
+  private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -36,5 +38,13 @@ export class AppShellComponent {
 
   get isCandidateEcosystem(): boolean {
     return this.currentUrl() === '/usuario/ecossistema';
+  }
+
+  get hasSidebar(): boolean {
+    return !this.isHomeEntry && !this.isCandidateEcosystem;
+  }
+
+  get isSidebarOpen(): boolean {
+    return this.sidebarVisibilityService.isOpen();
   }
 }

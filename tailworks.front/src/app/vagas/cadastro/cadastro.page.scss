@@ -1,15 +1,13 @@
 .job-create-shell{
-  --summary-panel-width: 510px;
+  --summary-panel-width: 560px;
   --summary-panel-gap: 32px;
   --summary-panel-offset: 0px;
-  max-width: 1810px;
-  margin: 28px auto 48px;
-  padding: 0 20px 0 4px;
+  max-width: 1640px;
+  margin: 28px 0 48px;
+  padding: 0 4px 0 4px;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--summary-panel-width);
-  gap: var(--summary-panel-gap);
-  align-items: start;
+  display: block;
+  position: relative;
 }
 
 .job-create{
@@ -30,6 +28,7 @@
 }
 
 .job-create__main{
+  width: min(100%, 999px);
   display: grid;
   gap: 14px;
   min-width: 0;
@@ -69,11 +68,14 @@
 }
 
 .job-create__hero{
+  width: min(100%, 999px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 6px 4px 2px;
+  padding: 6px 4px 18px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.16);
 }
 
 .job-create__hero-copy{
@@ -108,14 +110,22 @@
 
 .job-create__panel-progress{
   display: flex;
-  justify-content: flex-end;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
   margin: -2px 0 10px;
 }
 
 .job-create__hero-progress{
+  flex: 0 1 420px;
   width: min(100%, 420px);
   display: grid;
   gap: 12px;
+}
+
+.job-create__panel-progress-action{
+  flex: 0 0 auto;
+  margin-right: 16px;
 }
 
 .job-create__hero-progress-label{
@@ -196,20 +206,108 @@
 }
 
 .job-preview-banner{
+  position: relative;
+  width: min(100%, 999px);
+  perspective: 1800px;
+}
+
+.job-preview-banner__flip-stage{
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(500px, 1fr);
-  gap: 22px;
-  align-items: center;
-  padding: 16px 18px;
+  transform-style: preserve-3d;
+  transition: transform .58s ease;
+}
+
+.job-preview-banner--flipped .job-preview-banner__flip-stage{
+  transform: rotateY(180deg);
+}
+
+.job-preview-banner__action{
+  min-height: 38px;
+  padding: 0 18px;
+  border-radius: var(--btn-radius-pill);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.job-preview-banner__action--primary{
+  border: 1px solid var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: var(--btn-primary-shadow);
+}
+
+.job-preview-banner__action--primary:hover{
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--btn-primary-shadow-hover);
+}
+
+.job-preview-banner__flip-toggle{
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 4;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--btn-secondary-border);
+  border-radius: 999px;
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--btn-secondary-shadow);
+}
+
+.job-preview-banner__flip-toggle:hover{
+  border-color: rgba(16, 18, 21, 0.16);
+  background: var(--btn-secondary-bg-hover);
+  box-shadow: var(--btn-secondary-shadow-hover);
+}
+
+.job-preview-banner__flip-toggle .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+}
+
+.job-preview-banner__face{
+  grid-area: 1 / 1;
+  min-width: 0;
+  min-height: 232px;
+  padding: 18px 68px 18px 20px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.job-preview-banner__face--front{
+  display: grid;
+  align-content: center;
+}
+
+.job-preview-banner__face--back{
+  display: flex;
+  align-items: stretch;
+  transform: rotateY(180deg);
+}
+
+.job-preview-banner__face--active{
+  pointer-events: auto;
+}
+
+.job-preview-banner__face:not(.job-preview-banner__face--active){
+  pointer-events: none;
 }
 
 .job-preview-banner__main{
   min-width: 0;
-  max-width: 560px;
+  max-width: none;
   display: grid;
   gap: 10px;
 }
@@ -347,7 +445,7 @@
   font-weight: 700;
 }
 
-.job-preview-banner__side{
+.job-preview-banner__radar{
   min-width: 0;
   width: 100%;
 }
@@ -673,16 +771,16 @@
 }
 
 .job-create__summary-panel{
-  --summary-panel-fixed-height: 1500px;
-  position: sticky;
-  top: 22px;
-  margin-top: var(--summary-panel-offset);
-  width: 100%;
+  --summary-panel-fixed-height: calc(100vh - 48px);
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-top: 24px;
+  width: min(var(--summary-panel-width), calc(100vw - 32px));
+  height: var(--summary-panel-fixed-height);
   min-width: 0;
-  z-index: 4;
-  display: grid;
-  align-content: start;
-  gap: 12px;
+  z-index: 50;
+  display: flex;
 }
 
 .benefits-card{
@@ -793,7 +891,39 @@
 .summary-card--side{
   height: var(--summary-panel-fixed-height);
   max-height: var(--summary-panel-fixed-height);
+  min-height: 0;
   overflow: hidden;
+  padding: 18px 18px 16px;
+  width: 100%;
+  border-radius: 0;
+  background: rgba(247, 244, 238, 0.98);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+  position: relative;
+}
+
+.summary-card__close{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(16, 18, 21, 0.05);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+}
+
+.summary-card__close .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+}
+
+.summary-card__close:hover{
+  background: rgba(16, 18, 21, 0.09);
 }
 
 .summary-card__header{
@@ -1238,6 +1368,12 @@
   gap: 6px;
 }
 
+.summary-card--side .summary-card__body{
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
 .summary-card__body--flip{
   overflow: hidden;
   min-height: 0;
@@ -1248,10 +1384,14 @@
 .summary-card__body--tabs{
   min-height: 0;
   height: 100%;
-  padding: 12px 0 0;
+  padding: 0;
   gap: 0;
   display: flex;
   flex-direction: column;
+}
+
+.summary-card--side .summary-card__body--tabs{
+  gap: 16px;
 }
 
 .summary-card__tab-content{
@@ -1262,6 +1402,10 @@
   display: block;
 }
 
+.summary-card--side .summary-card__tab-content{
+  padding: 4px 2px 0;
+}
+
 .summary-card__tab-page{
   min-height: 0;
   height: 100%;
@@ -1269,6 +1413,10 @@
   display: block;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+}
+
+.summary-card--side .summary-card__tab-page{
+  padding-right: 4px;
 }
 
 .summary-card__tab-page::-webkit-scrollbar{
@@ -1934,133 +2082,101 @@
   gap: 14px;
 }
 
-.summary-card__status-stepper{
-  background: transparent;
+.summary-card__status-list{
+  display: grid;
+  gap: 4px;
 }
 
-.summary-card__status-step-label{
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.summary-card__status-step{
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding-bottom: 22px;
 }
 
-.summary-card__status-step-name{
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.35;
-  color: rgba(15, 23, 42, 0.76);
+.summary-card__status-step:not(:last-child)::after{
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 30px;
+  bottom: 6px;
+  width: 1px;
+  background: rgba(15, 23, 42, 0.12);
 }
 
-.summary-card__status-step-name--muted{
-  color: rgba(15, 23, 42, 0.46);
-  font-weight: 600;
-}
-
-.summary-card__status-step-time{
-  flex: 0 0 auto;
-  font-size: 10px;
-  line-height: 1.2;
-  font-weight: 500;
-  color: rgba(15, 23, 42, 0.34);
-  white-space: nowrap;
-}
-
-.summary-card__status-step-content{
-  padding: 0 0 12px 8px;
-  font-size: 11px;
-  line-height: 1.45;
-  color: rgba(15, 23, 42, 0.66);
-}
-
-.summary-card__status-step-indicator{
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+.summary-card__status-indicator{
+  width: 24px;
+  height: 24px;
   display: inline-grid;
   place-items: center;
   font-family: 'Material Symbols Rounded';
   font-size: 22px;
   line-height: 1;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 40;
 }
 
-.summary-card__status-step-indicator--pending{
-  background: rgba(242, 169, 0, 0.08);
-  box-shadow: 0 0 0 3px rgba(242, 169, 0, 0.06);
-  color: rgba(193, 122, 12, 0.42);
+.summary-card__status-indicator--done{
+  color: #e18d2d;
 }
 
-.summary-card__status-step-indicator--done{
-  background: rgba(242, 169, 0, 0.14);
-  box-shadow: 0 0 0 3px rgba(242, 169, 0, 0.12);
-  color: #c17a0c;
+.summary-card__status-indicator--active{
+  color: #c97714;
+  transform: scale(1.04);
 }
 
-.summary-card__status-step-indicator--active{
-  background: rgba(242, 169, 0, 0.18);
-  box-shadow: 0 0 0 4px rgba(242, 169, 0, 0.16);
-  color: #b86f05;
+.summary-card__status-indicator--pending{
+  color: rgba(15, 23, 42, 0.26);
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-stepper-vertical{
-  background: transparent;
+.summary-card__status-copy{
+  display: grid;
+  gap: 6px;
+  padding-top: 2px;
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-step-header{
-  min-height: 52px;
-  padding: 4px 0;
-  cursor: default;
-  pointer-events: none;
+.summary-card__status-name{
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: rgba(15, 23, 42, 0.82);
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-step-header:hover:not([aria-disabled]),
-:host ::ng-deep .summary-card__status-stepper .mat-step-header.cdk-program-focused,
-:host ::ng-deep .summary-card__status-stepper .mat-step-header.cdk-keyboard-focused{
-  background: transparent;
+.summary-card__status-name--active{
+  color: #263142;
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-step-label{
-  width: 100%;
+.summary-card__status-name--muted{
+  color: rgba(15, 23, 42, 0.46);
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-step-icon{
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  min-height: 30px;
-  margin-right: 12px;
-  background: transparent;
-  color: transparent;
-  overflow: visible;
+.summary-card__status-time{
+  font-size: 11px;
+  line-height: 1.3;
+  color: rgba(15, 23, 42, 0.48);
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-step-icon .mat-step-icon-content{
-  display: contents;
+.summary-card__status-description{
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: rgba(15, 23, 42, 0.62);
 }
 
-:host ::ng-deep .summary-card__status-stepper .mat-vertical-content-container{
-  margin-left: 13px;
-  border-left: 1px dashed rgba(63, 145, 112, 0.24);
-}
-
-:host ::ng-deep .summary-card__status-stepper .mat-stepper-vertical-line::before{
-  border-left-style: dashed;
-  border-left-color: rgba(63, 145, 112, 0.24);
-}
-
-:host ::ng-deep .summary-card__status-stepper .mat-vertical-content{
-  padding: 0 0 0 21px;
-}
-
-:host ::ng-deep .summary-card__status-stepper .mat-vertical-stepper-content{
-  visibility: visible;
+.summary-card__status-owner{
+  width: fit-content;
+  min-height: 27px;
+  margin-top: 12px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.58);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 .summary-card__benefits-list{
@@ -2697,6 +2813,82 @@
   border-top: 0;
   margin-bottom: 18px;
   border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
+}
+
+.summary-card--side .summary-card__actions{
+  margin: 0;
+}
+
+.summary-card--side .summary-card__tabs{
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: rgba(240, 241, 244, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.summary-card--side .summary-card__tab{
+  min-height: 38px;
+  border-radius: 11px;
+  background: transparent;
+  color: rgba(15, 23, 42, 0.58);
+  font-size: 12px !important;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.summary-card--side .summary-card__tab--active{
+  background: rgba(255, 255, 255, 0.96);
+  color: rgba(15, 23, 42, 0.82);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.summary-card--side .summary-card__company--top{
+  padding: 0 0 16px;
+  margin-bottom: 0;
+}
+
+.summary-card--side .summary-card__company-top{
+  gap: 12px;
+}
+
+.summary-card--side .summary-card__company-brand{
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.summary-card--side .summary-card__company-logo{
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(226, 231, 236, 0.94), rgba(206, 212, 220, 0.92));
+  color: rgba(33, 41, 54, 0.72);
+  font-size: 18px;
+  box-shadow: none;
+}
+
+.summary-card--side .summary-card__company-logo--image{
+  background:
+    center / cover no-repeat,
+    rgba(255, 255, 255, 0.92);
+  color: transparent;
+}
+
+.summary-card--side .summary-card__company-name{
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.summary-card--side .summary-card__company-followers{
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.summary-card--side .summary-card__company-description{
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(15, 23, 42, 0.58);
 }
 
 .summary-card__company-title{
@@ -3533,8 +3725,8 @@
 
 .contract-settings__group--compensation{
   grid-column: 1 / -1;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 16px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .contract-settings__head{
@@ -3544,18 +3736,6 @@
   justify-content: flex-start;
   gap: 12px;
   flex-wrap: wrap;
-}
-
-.contract-settings__group--compensation .salary-shell{
-  grid-column: 1 / 2;
-}
-
-.contract-settings__group--compensation .visibility-toggle--compensation{
-  grid-column: 2 / 3;
-  margin-top: 0;
-  padding-left: 0;
-  justify-self: start;
-  align-self: center;
 }
 
 .contract-settings__group--compensation .contract-type-list{
@@ -3619,6 +3799,21 @@
   cursor: pointer;
 }
 
+.salary-shell--toggle-card{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  cursor: default;
+}
+
+.salary-shell__toggle-head{
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
 .salary-shell__prefix--toggle{
   width: 34px;
   height: 34px;
@@ -3649,6 +3844,24 @@
   color: rgba(15, 23, 42, 0.54);
 }
 
+.salary-shell__embedded{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+.salary-shell__embedded-label{
+  grid-column: 1 / -1;
+  padding-left: 0;
+}
+
+.salary-shell--embedded{
+  grid-column: 1 / 2;
+}
+
 .visibility-toggle{
   display: inline-flex;
   align-items: center;
@@ -3663,6 +3876,14 @@
   margin-top: 0;
   padding-left: 0;
   justify-self: end;
+  align-self: center;
+}
+
+.visibility-toggle--embedded{
+  grid-column: 2 / 3;
+  margin-top: 0;
+  padding-left: 0;
+  justify-self: start;
   align-self: center;
 }
 
@@ -3995,7 +4216,7 @@
 
 @media (max-width: 960px){
   .job-create-shell{
-    grid-template-columns: 1fr;
+    display: block;
     padding: 0 16px;
   }
 
@@ -4018,10 +4239,15 @@
   }
 
   .job-preview-banner{
-    grid-template-columns: 1fr;
+    perspective: none;
   }
 
-  .job-preview-banner__side{
+  .job-preview-banner__face{
+    min-height: 0;
+    padding: 18px 58px 18px 16px;
+  }
+
+  .job-preview-banner__radar{
     width: 100%;
   }
 
@@ -4037,7 +4263,11 @@
     grid-template-columns: 1fr;
   }
 
-  .contract-settings__group--compensation .visibility-toggle--compensation{
+  .salary-shell__embedded{
+    grid-template-columns: 1fr;
+  }
+
+  .visibility-toggle--embedded{
     grid-column: 1 / -1;
     justify-self: start;
   }
@@ -4058,8 +4288,20 @@
   .job-create__summary-panel{
     position: static;
     width: auto;
+    height: auto;
+    right: auto;
     margin-top: 0;
     margin: 0 0 48px;
+  }
+
+  .job-create__panel-progress{
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .job-create__panel-progress-action{
+    margin-left: auto;
+    margin-right: 0;
   }
 
   .summary-card--inline,
@@ -4150,8 +4392,11 @@
   }
 
   .job-preview-banner{
-    padding: 18px 16px;
-    gap: 20px;
+    perspective: none;
+  }
+
+  .job-preview-banner__face{
+    padding: 18px 54px 18px 16px;
   }
 
   .job-preview-banner__title{

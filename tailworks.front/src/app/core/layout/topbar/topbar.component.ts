@@ -5,6 +5,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.service';
+import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
 
 @Component({
   standalone: true,
@@ -17,6 +18,7 @@ import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.ser
 export class TopbarComponent {
   private readonly vagasMockService = inject(VagasMockService);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
+  private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -61,6 +63,14 @@ export class TopbarComponent {
     return this.isCandidateEcosystem && this.ecosystemEntryService.mode() === 'recruiter';
   }
 
+  get canToggleSidebar(): boolean {
+    return !this.isSelectionMode && !this.isCandidateEcosystem;
+  }
+
+  get isSidebarOpen(): boolean {
+    return this.sidebarVisibilityService.isOpen();
+  }
+
   clearPublishedJobsForTesting(): void {
     this.vagasMockService.clearJobs();
   }
@@ -69,5 +79,9 @@ export class TopbarComponent {
     event.preventDefault();
     this.ecosystemEntryService.setMode('talent');
     void this.router.navigateByUrl('/usuario/ecossistema');
+  }
+
+  toggleSidebar(): void {
+    this.sidebarVisibilityService.toggle();
   }
 }

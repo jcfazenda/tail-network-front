@@ -1,11 +1,32 @@
-import { Injectable } from '@angular/core';
-import { JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord } from './vagas.models';
+import { Injectable, NgZone, inject } from '@angular/core';
+import { Subject } from 'rxjs';
+import { JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, TalentJobDecision } from './vagas.models';
 
 @Injectable({ providedIn: 'root' })
 export class VagasMockService {
   private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
+  private readonly syncChannelName = 'tailworks.front.mock-vagas.sync';
   private readonly talentAvatar = '/assets/avatars/avatar-rafael.png';
+  private readonly talentCandidateName = 'Rafael Oliveira';
+  private readonly zone = inject(NgZone);
+  private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
+  private broadcastChannel: BroadcastChannel | null = null;
+
+  readonly jobsChanged$ = this.jobsChangedSubject.asObservable();
+
+  constructor() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.addEventListener('storage', this.handleStorageSync);
+
+    if ('BroadcastChannel' in window) {
+      this.broadcastChannel = new BroadcastChannel(this.syncChannelName);
+      this.broadcastChannel.addEventListener('message', this.handleBroadcastSync);
+    }
+  }
 
   getJobs(): MockJobRecord[] {
     return [...this.loadJobs()].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
@@ -49,10 +70,13 @@ export class VagasMockService {
 
     const storage = this.getStorage();
     if (!storage) {
+      this.emitJobsChanged();
       return;
     }
 
     storage.removeItem(this.storageKey);
+    this.broadcastSync();
+    this.emitJobsChanged();
   }
 
   deleteJob(id: string): void {
@@ -62,33 +86,31 @@ export class VagasMockService {
   }
 
   applyAsTalent(jobId: string): MockJobRecord | undefined {
-    const jobs = this.loadJobs();
-    const existing = jobs.find((job) => job.id === jobId);
+    return this.updateTalentStage(jobId, 'candidatura', 'applied');
+  }
 
-    if (!existing) {
-      return undefined;
-    }
+  acceptOfferAsTalent(jobId: string): MockJobRecord | undefined {
+    return this.updateTalentStage(jobId, 'aceito', 'applied');
+  }
 
-    const appliedCandidate = this.buildTalentCandidate(existing);
-    const hasCandidate = existing.candidates.some((candidate) => candidate.name === appliedCandidate.name);
-    const nextCandidates: MockJobCandidate[] = hasCandidate
-      ? existing.candidates.map((candidate) =>
-          candidate.name === appliedCandidate.name
-            ? { ...candidate, ...appliedCandidate, stage: 'candidatura' as const, radarOnly: false }
-            : { ...candidate },
-        )
-      : [appliedCandidate, ...existing.candidates.map((candidate) => ({ ...candidate }))];
+  keepJobForNextOpportunity(jobId: string): MockJobRecord | undefined {
+    return this.updateTalentStage(jobId, 'proxima', undefined);
+  }
 
-    const updatedJob: MockJobRecord = this.decorateTalentVisibility({
-      ...existing,
-      talentDecision: 'applied' as const,
-      candidates: nextCandidates,
-      updatedAt: new Date().toISOString(),
-    });
+  cancelTalentApplication(jobId: string): MockJobRecord | undefined {
+    return this.updateTalentStage(jobId, 'cancelado', undefined);
+  }
 
-    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
-    this.persist();
-    return updatedJob;
+  updateRecruiterTalentStage(
+    jobId: string,
+    stage: MockJobCandidate['stage'],
+    talentDecision?: TalentJobDecision,
+  ): MockJobRecord | undefined {
+    return this.updateTalentStage(
+      jobId,
+      stage,
+      talentDecision ?? (stage === 'radar' || stage === 'cancelado' ? undefined : 'applied'),
+    );
   }
 
   hideFromTalent(jobId: string): MockJobRecord | undefined {
@@ -122,17 +144,7 @@ export class VagasMockService {
     }
 
     const raw = storage.getItem(this.storageKey);
-    if (!raw) {
-      this.cache = [];
-      return this.cache;
-    }
-
-    try {
-      const parsed = JSON.parse(raw) as MockJobRecord[];
-      this.cache = Array.isArray(parsed) && parsed.length ? this.normalizeJobs(parsed) : [];
-    } catch {
-      this.cache = [];
-    }
+    this.cache = this.parseJobs(raw);
 
     return this.cache;
   }
@@ -144,6 +156,85 @@ export class VagasMockService {
     }
 
     storage.setItem(this.storageKey, JSON.stringify(this.cache));
+    this.broadcastSync();
+    this.emitJobsChanged();
+  }
+
+  private updateTalentStage(
+    jobId: string,
+    stage: MockJobCandidate['stage'],
+    talentDecision?: TalentJobDecision,
+  ): MockJobRecord | undefined {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === jobId);
+
+    if (!existing) {
+      return undefined;
+    }
+
+    const appliedCandidate = this.buildTalentCandidate(existing);
+    const hasCandidate = existing.candidates.some((candidate) => candidate.name === appliedCandidate.name);
+    const nextCandidates: MockJobCandidate[] =
+      stage === 'radar'
+        ? existing.candidates.map((candidate) =>
+            candidate.name === this.talentCandidateName
+              ? { ...candidate, ...appliedCandidate, stage: 'radar' as const, radarOnly: true }
+              : { ...candidate },
+          )
+        : hasCandidate
+          ? existing.candidates.map((candidate) =>
+              candidate.name === appliedCandidate.name
+                ? { ...candidate, ...appliedCandidate, stage, radarOnly: false }
+                : { ...candidate },
+            )
+          : [{ ...appliedCandidate, stage, radarOnly: false }, ...existing.candidates.map((candidate) => ({ ...candidate }))];
+
+    const updatedJob: MockJobRecord = this.decorateTalentVisibility({
+      ...existing,
+      talentDecision,
+      candidates: nextCandidates,
+      updatedAt: new Date().toISOString(),
+    });
+
+    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    this.persist();
+    return updatedJob;
+  }
+
+  private parseJobs(raw: string | null): MockJobRecord[] {
+    if (!raw) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as MockJobRecord[];
+      return Array.isArray(parsed) && parsed.length ? this.normalizeJobs(parsed) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private handleStorageSync = (event: StorageEvent): void => {
+    if (event.key !== this.storageKey) {
+      return;
+    }
+
+    this.cache = this.parseJobs(event.newValue);
+    this.emitJobsChanged();
+  };
+
+  private handleBroadcastSync = (): void => {
+    const storage = this.getStorage();
+    this.cache = this.parseJobs(storage?.getItem(this.storageKey) ?? null);
+    this.emitJobsChanged();
+  };
+
+  private broadcastSync(): void {
+    this.broadcastChannel?.postMessage({ key: this.storageKey, updatedAt: Date.now() });
+  }
+
+  private emitJobsChanged(): void {
+    this.zone.run(() => this.jobsChangedSubject.next());
   }
 
   private getStorage(): Storage | null {
@@ -269,7 +360,7 @@ export class VagasMockService {
 
   private buildTalentCandidate(job: MockJobRecord): MockJobCandidate {
     return {
-      name: 'Rafael Oliveira',
+      name: this.talentCandidateName,
       role: `${job.seniority} ${job.title}`.trim(),
       match: Math.max(72, Math.min(98, job.match)),
       minutesAgo: 1,

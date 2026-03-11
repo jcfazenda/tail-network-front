@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
-import { JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
+import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 
-type CandidateView = 'applications' | 'radar';
+type CandidateView = 'applications' | 'radar' | 'declined';
 type WorkModelFilter = 'all' | WorkModel;
 type CandidatePanelView = 'details' | 'benefits' | 'status';
 type CandidateStack = {
@@ -16,7 +17,10 @@ type CandidateStack = {
 type CandidateStatusPreview = {
   label: string;
   completed: boolean;
+  active: boolean;
   timeLabel?: string;
+  description: string;
+  ownerText: string;
 };
 type CompanySummaryProfile = {
   name: string;
@@ -43,13 +47,15 @@ type CandidateBasicDraft = {
   styleUrls: ['./placeholder.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlaceholderPage implements OnInit {
+export class PlaceholderPage implements OnInit, OnDestroy {
   private static readonly stacksStorageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
 
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly talentCandidateName = 'Rafael Oliveira';
+  private readonly subscriptions = new Subscription();
 
   readonly recruiterName = 'Rafael Souza';
   readonly recruiterRole = 'Talent Acquisition';
@@ -79,7 +85,7 @@ export class PlaceholderPage implements OnInit {
     },
   };
 
-  activeView: CandidateView = this.hasAppliedJobs ? 'applications' : 'radar';
+  activeView: CandidateView = 'radar';
   workModelFilter: WorkModelFilter = 'all';
   activeCandidatePanelView: CandidatePanelView = 'details';
   talentStacks: CandidateStack[] = [];
@@ -90,6 +96,15 @@ export class PlaceholderPage implements OnInit {
   ngOnInit(): void {
     this.restoreTalentDraft();
     this.restoreTalentStacks();
+    this.subscriptions.add(
+      this.vagasMockService.jobsChanged$.subscribe(() => {
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   get title(): string {
@@ -135,17 +150,24 @@ export class PlaceholderPage implements OnInit {
   }
 
   get applicationsCount(): number {
-    return this.activeTalentJobs.filter((job) => job.talentDecision === 'applied').length;
+    return this.activeTalentJobs.filter((job) => this.isApplicationsJob(job)).length;
   }
 
   get radarCount(): number {
-    return this.activeTalentJobs.filter((job) => job.talentDecision !== 'applied').length;
+    return this.activeTalentJobs.filter((job) => this.isRadarJob(job)).length;
+  }
+
+  get declinedCount(): number {
+    return this.activeTalentJobs.filter((job) => this.isDeclinedJob(job)).length;
   }
 
   get displayedJobs(): MockJobRecord[] {
-    const baseJobs = this.activeView === 'applications'
-      ? this.activeTalentJobs.filter((job) => job.talentDecision === 'applied')
-      : this.activeTalentJobs.filter((job) => job.talentDecision !== 'applied');
+    const baseJobs =
+      this.activeView === 'applications'
+        ? this.activeTalentJobs.filter((job) => this.isApplicationsJob(job))
+        : this.activeView === 'declined'
+          ? this.activeTalentJobs.filter((job) => this.isDeclinedJob(job))
+          : this.activeTalentJobs.filter((job) => this.isRadarJob(job));
 
     if (this.workModelFilter === 'all') {
       return baseJobs;
@@ -159,6 +181,12 @@ export class PlaceholderPage implements OnInit {
       return this.workModelFilter === 'all'
         ? 'Você ainda não se candidatou a nenhuma vaga.'
         : `Nenhuma candidatura encontrada em ${this.workModelLabel(this.workModelFilter)}.`;
+    }
+
+    if (this.activeView === 'declined') {
+      return this.workModelFilter === 'all'
+        ? 'Você ainda não declinou nenhuma proposta.'
+        : `Nenhuma vaga declinada encontrada em ${this.workModelLabel(this.workModelFilter)}.`;
     }
 
     return this.workModelFilter === 'all'
@@ -287,23 +315,20 @@ export class PlaceholderPage implements OnInit {
       return 'Essa vaga foi escondida por você e não participa mais do seu radar principal.';
     }
 
-    switch (this.selectedJobStatusCurrentLabel) {
-      case 'Talento no radar':
-        return 'O sistema encontrou essa vaga com aderência ao seu perfil e ela está disponível para avaliação.';
-      case 'Candidatura enviada':
-        return 'Sua candidatura foi enviada e o recrutador já consegue ver você nessa vaga.';
-      case 'Em processo':
-        return 'Seu perfil está em análise e seguindo nas próximas etapas da vaga.';
-      case 'Contratação Solicitada':
-        return 'A vaga avançou para uma etapa final de contratação ou documentação.';
-      default:
-        return '';
-    }
+    return this.selectedJobStatusPreview[this.getTalentStatusStageIndex(job)]?.description ?? '';
   }
 
   get canApplySelectedJob(): boolean {
     const job = this.selectedJobPanel;
-    return !!job && !job.talentDecision;
+    return !!job && !job.talentDecision && this.selectedJobTalentStage !== 'proxima' && this.selectedJobTalentStage !== 'cancelado';
+  }
+
+  get canCancelSelectedJob(): boolean {
+    return this.selectedJobPanel?.talentDecision === 'applied' && !this.canRespondToProposalSelectedJob;
+  }
+
+  get canRespondToProposalSelectedJob(): boolean {
+    return this.selectedJobPanel?.talentDecision === 'applied' && this.selectedJobTalentStage === 'aguardando';
   }
 
   get candidateSalarySuggestionDisplay(): string {
@@ -312,9 +337,44 @@ export class PlaceholderPage implements OnInit {
       : 'Candidato nao pode sugerir valor';
   }
 
+  shouldShowJobStatus(job: MockJobRecord): boolean {
+    if (job.talentDecision === 'hidden') {
+      return true;
+    }
+
+    return this.getTalentStatusStageIndex(job) > 0;
+  }
+
+  jobStatusLabel(job: MockJobRecord): string {
+    if (job.talentDecision === 'hidden') {
+      return 'Escondido';
+    }
+
+    switch (this.getTalentStage(job)) {
+      case 'candidatura':
+        return 'Candidatura enviada';
+      case 'processo':
+      case 'tecnica':
+        return 'Em processo';
+      case 'aguardando':
+        return 'Contratação solicitada';
+      case 'aceito':
+        return 'Aceitou proposta';
+      case 'proxima':
+        return 'Ficou pra próxima';
+      case 'documentacao':
+        return 'Validando documentos';
+      case 'contratado':
+        return 'Contratado';
+      case 'cancelado':
+        return 'Candidatura cancelada';
+      default:
+        return 'Talento no radar';
+    }
+  }
+
   applyToJob(jobId: string): void {
     this.vagasMockService.applyAsTalent(jobId);
-    this.activeView = 'applications';
   }
 
   hideJob(jobId: string): void {
@@ -340,7 +400,33 @@ export class PlaceholderPage implements OnInit {
     }
 
     this.vagasMockService.applyAsTalent(this.selectedJobId);
-    this.activeView = 'applications';
+    this.activeCandidatePanelView = 'status';
+  }
+
+  acceptSelectedJobProposal(): void {
+    if (!this.selectedJobId) {
+      return;
+    }
+
+    this.vagasMockService.acceptOfferAsTalent(this.selectedJobId);
+    this.activeCandidatePanelView = 'status';
+  }
+
+  keepSelectedJobForNextOpportunity(): void {
+    if (!this.selectedJobId) {
+      return;
+    }
+
+    this.vagasMockService.keepJobForNextOpportunity(this.selectedJobId);
+    this.activeCandidatePanelView = 'status';
+  }
+
+  cancelSelectedJobApplication(): void {
+    if (!this.selectedJobId) {
+      return;
+    }
+
+    this.vagasMockService.cancelTalentApplication(this.selectedJobId);
     this.activeCandidatePanelView = 'status';
   }
 
@@ -402,18 +488,74 @@ export class PlaceholderPage implements OnInit {
   }
 
   private buildCandidateStatusPreview(job: MockJobRecord): CandidateStatusPreview[] {
+    const stage = this.getTalentStage(job);
     const activeIndex = this.getTalentStatusStageIndex(job);
-    const statuses: Array<Pick<CandidateStatusPreview, 'label' | 'timeLabel'>> = [
-      { label: 'Talento no radar', timeLabel: 'Agora' },
-      { label: 'Candidatura enviada', timeLabel: 'Agora' },
-      { label: 'Em processo', timeLabel: 'Em atualização' },
-      { label: 'Contratação Solicitada', timeLabel: 'Em atualização' },
+    const statuses: Array<Pick<CandidateStatusPreview, 'label' | 'timeLabel' | 'description' | 'ownerText'>> = [
+      {
+        label: 'Talento no radar',
+        timeLabel: 'Semana passada',
+        description: 'O sistema encontrou esse candidato no radar da vaga.',
+        ownerText: 'Movido pelo sistema',
+      },
+      {
+        label: 'Candidatura enviada',
+        timeLabel: 'Agora',
+        description: 'A candidatura foi enviada pelo talento e já aparece para o recruiter.',
+        ownerText: 'Ação do talento',
+      },
+      {
+        label: 'Em processo',
+        timeLabel: 'Em atualização',
+        description: 'O recruiter avançou o perfil para as próximas análises do processo.',
+        ownerText: 'Ação do recruiter',
+      },
+      {
+        label: 'Contratação Solicitada',
+        timeLabel: 'Em atualização',
+        description: 'O recruiter sinalizou avanço para a etapa final de contratação.',
+        ownerText: 'Ação do recruiter',
+      },
+      {
+        label:
+          stage === 'aceito'
+            ? 'Aceitou proposta'
+            : stage === 'proxima'
+              ? 'Ficou pra próxima'
+              : 'Aceito / Ficou pra próxima',
+        timeLabel: 'Em atualização',
+        description:
+          stage === 'aceito'
+            ? 'O talento aceitou a proposta e o fluxo segue para a etapa documental.'
+            : stage === 'proxima'
+              ? 'O talento preferiu não seguir agora e pediu para continuar disponível para próximas oportunidades.'
+              : 'Aqui o talento avalia a proposta e decide se aceita ou se prefere ficar para a próxima.',
+        ownerText: 'Ação do talento',
+      },
+      {
+        label: 'Validando documentos',
+        timeLabel: 'Em atualização',
+        description: 'Depois do envio dos documentos pelo talento, o recruiter revisa tudo e dá o ok para seguir.',
+        ownerText: 'Ação do recruiter',
+      },
+      {
+        label:
+          stage === 'proxima'
+            ? 'Não foi desta vez (ou Continua no Radar)'
+            : 'Contratado / Não foi desta vez (ou Continua no Radar)',
+        timeLabel: 'Em atualização',
+        description:
+          stage === 'proxima'
+            ? 'O ciclo desta vaga foi encerrado para você, mas o recruiter ainda pode te reencontrar no radar para novas oportunidades.'
+            : 'Com a validação concluída, o recruiter encerra o ciclo confirmando a contratação ou devolvendo o talento ao radar para próximas oportunidades.',
+        ownerText: 'Ação do recruiter',
+      },
     ];
 
     return statuses.map((item, index) => ({
       ...item,
-      completed: index <= activeIndex,
-      timeLabel: index <= activeIndex ? item.timeLabel : undefined,
+      completed: this.isTalentStatusStepCompleted(index, stage),
+      active: index === activeIndex,
+      timeLabel: this.isTalentStatusStepCompleted(index, stage) ? item.timeLabel : undefined,
     }));
   }
 
@@ -422,8 +564,7 @@ export class PlaceholderPage implements OnInit {
       return 0;
     }
 
-    const candidate = job.candidates.find((item) => item.name === this.talentCandidateName);
-    const stage = candidate?.stage;
+    const stage = this.getTalentStage(job);
 
     switch (stage) {
       case 'candidatura':
@@ -432,12 +573,68 @@ export class PlaceholderPage implements OnInit {
       case 'tecnica':
         return 2;
       case 'aguardando':
-      case 'documentacao':
         return 3;
+      case 'aceito':
+        return 4;
+      case 'proxima':
+        return 6;
+      case 'documentacao':
+        return 5;
+      case 'contratado':
       case 'cancelado':
-        return 0;
+        return 6;
       default:
         return 0;
+    }
+  }
+
+  private get selectedJobTalentStage(): CandidateStage | undefined {
+    const job = this.selectedJobPanel;
+    if (!job) {
+      return undefined;
+    }
+
+    return this.getTalentStage(job);
+  }
+
+  private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
+    return job.candidates.find((item) => item.name === this.talentCandidateName)?.stage;
+  }
+
+  private isApplicationsJob(job: MockJobRecord): boolean {
+    return job.talentDecision === 'applied' && !this.isDeclinedJob(job);
+  }
+
+  private isRadarJob(job: MockJobRecord): boolean {
+    return !this.isApplicationsJob(job) && !this.isDeclinedJob(job);
+  }
+
+  private isDeclinedJob(job: MockJobRecord): boolean {
+    return this.getTalentStage(job) === 'proxima';
+  }
+
+  private isTalentStatusStepCompleted(index: number, stage: CandidateStage | undefined): boolean {
+    if (stage === 'proxima') {
+      return index <= 4 || index === 6;
+    }
+
+    switch (stage) {
+      case 'candidatura':
+        return index <= 1;
+      case 'processo':
+      case 'tecnica':
+        return index <= 2;
+      case 'aguardando':
+        return index <= 3;
+      case 'aceito':
+        return index <= 4;
+      case 'documentacao':
+        return index <= 5;
+      case 'contratado':
+      case 'cancelado':
+        return index <= 6;
+      default:
+        return index === 0;
     }
   }
 
