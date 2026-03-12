@@ -71,7 +71,6 @@
           <div class="job-preview-banner__main">
             <div class="job-preview-banner__title-row">
               <h2 class="job-preview-banner__title">{{ jobDraft.title }}</h2>
-              <span class="job-preview-banner__chip">{{ jobDraft.workModel | uppercase }}</span>
             </div>
 
             <div class="job-preview-banner__meta">
@@ -83,6 +82,8 @@
             <div class="job-preview-banner__benefits">
               <span>{{ previewCardOfferLine }}</span>
             </div>
+
+            <span class="job-preview-banner__chip">{{ jobDraft.workModel | uppercase }}</span>
 
             <div class="job-preview-banner__footer">
               <div class="job-preview-banner__fit">
@@ -149,8 +150,16 @@
                   class="option-card option-card--work-model"
                   *ngFor="let item of workModels"
                   [class.option-card--active]="item === jobDraft.workModel"
+                  (click)="selectWorkModel(item)"
                 >
-                  <input class="option-card__input" type="radio" name="workModel" [value]="item" [(ngModel)]="jobDraft.workModel" />
+                  <input
+                    class="option-card__input"
+                    type="radio"
+                    name="workModel"
+                    [value]="item"
+                    [(ngModel)]="jobDraft.workModel"
+                    (ngModelChange)="selectWorkModel($event)"
+                  />
                   <span class="option-card__vee" aria-hidden="true"></span>
                   <span class="option-card__label">{{ item }}</span>
                 </label>
@@ -391,22 +400,16 @@
 
         <div class="summary-card__tab-content">
           <ng-container [ngSwitch]="activeSummaryView">
-            <div class="summary-card__tab-page summary-card__tab-page--status" *ngSwitchCase="'status'">
+            <div
+              class="summary-card__tab-page summary-card__tab-page--status"
+              *ngSwitchCase="'status'"
+              (pointerdown)="startSummaryPanelDrag($event)"
+              (pointermove)="onSummaryPanelDrag($event)"
+              (pointerup)="endSummaryPanelDrag($event)"
+              (pointercancel)="endSummaryPanelDrag($event)"
+              (lostpointercapture)="endSummaryPanelDrag($event)"
+            >
               <div class="summary-card__sections">
-                <label class="summary-card__status-updates">
-                  <span class="summary-card__status-updates-copy">
-                    <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
-                    <span>Receber atualizações por e-mail</span>
-                  </span>
-
-                  <span class="summary-card__status-switch">
-                    <input type="checkbox" name="statusEmailUpdatesEnabled" [(ngModel)]="statusEmailUpdatesEnabled" />
-                    <span class="summary-card__status-switch-track" aria-hidden="true">
-                      <span class="summary-card__status-switch-thumb"></span>
-                    </span>
-                  </span>
-                </label>
-
                 <section class="summary-card__section summary-card__section--status-panel">
                   <div class="summary-card__fact summary-card__fact--status">
                     <div class="summary-card__status-head">
@@ -414,7 +417,11 @@
                     </div>
 
                     <div class="summary-card__status-list">
-                      <div class="summary-card__status-step" *ngFor="let item of candidateStatusPreview">
+                      <div
+                        class="summary-card__status-step"
+                        *ngFor="let item of candidateStatusPreview; let i = index"
+                        [class.summary-card__status-step--expanded]="isStatusPreviewExpanded(i)"
+                      >
                         <span
                           class="summary-card__status-indicator"
                           [class.summary-card__status-indicator--active]="item.active"
@@ -423,7 +430,13 @@
                           aria-hidden="true"
                         >sports_baseball</span>
 
-                        <div class="summary-card__status-copy">
+                        <button
+                          class="summary-card__status-copy"
+                          [class.summary-card__status-copy--expanded]="isStatusPreviewExpanded(i)"
+                          type="button"
+                          [attr.aria-expanded]="isStatusPreviewExpanded(i)"
+                          (click)="toggleStatusPreviewDetails(i)"
+                        >
                           <span
                             class="summary-card__status-name"
                             [class.summary-card__status-name--active]="item.active"
@@ -434,33 +447,36 @@
                           <span class="summary-card__status-time" *ngIf="item.timeLabel && item.completed">{{ item.timeLabel }}</span>
                           <span class="summary-card__status-description">{{ item.description }}</span>
                           <span class="summary-card__status-owner">{{ item.ownerText }}</span>
-                        </div>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </section>
 
                 <section class="summary-card__section summary-card__section--status-documents" *ngIf="showStatusDocumentsPreview">
-                  <div class="summary-card__fact summary-card__fact--documents-preview">
-                    <div class="summary-card__status-documents-head">
-                      <div class="summary-card__status-documents-head-top">
-                        <span class="material-symbols-rounded summary-card__status-documents-head-icon" aria-hidden="true">description</span>
-                        <span class="summary-card__status-documents-head-title">Documentos para validação de contratação.</span>
-                      </div>
-                      <div class="summary-card__status-documents-head-copy">
-                        <span class="summary-card__status-documents-head-note">
-                          Esses documentos sao os mesmos que vc anexou no seu cadastro, se quiser revise la e depois volte aqui.
-                        </span>
-                      </div>
-                    </div>
+                  <h4 class="summary-card__section-title">Documentos para validação de contratação.</h4>
 
-                    <div class="summary-card__benefits-list" *ngIf="selectedDocuments.length; else emptyStatusDocuments">
-                      <div class="summary-card__benefit-option" *ngFor="let item of selectedDocuments">
-                        <div class="summary-card__benefit-option-head">
-                          <span class="summary-card__benefit-option-check" aria-hidden="true"></span>
-                          <div class="summary-card__benefit-option-copy">
-                            <span class="summary-card__benefit-option-label">{{ item }}</span>
-                          </div>
+                  <p class="summary-card__about-text summary-card__about-text--documents-status">
+                    {{ isAwaitingTalentDocuments
+                      ? 'Aguardando o talento marcar e enviar os documentos solicitados para esta vaga.'
+                      : 'O talento enviou os documentos marcados abaixo e o aceite LGPD já foi registrado.' }}
+                  </p>
+
+                  <div class="summary-card__fact summary-card__fact--documents summary-card__fact--documents-preview">
+                    <div class="summary-card__status-documents-list" *ngIf="selectedDocuments.length; else emptyStatusDocuments">
+                      <div
+                        class="summary-card__status-documents-item"
+                        *ngFor="let item of selectedDocuments"
+                        [class.summary-card__status-documents-item--checked]="isSubmittedHiringDocument(item)"
+                        [class.summary-card__status-documents-item--pending]="!isSubmittedHiringDocument(item)"
+                      >
+                        <span class="summary-card__status-documents-item-check" aria-hidden="true"></span>
+                        <span class="summary-card__status-documents-item-dot" aria-hidden="true"></span>
+                        <div class="summary-card__status-documents-item-copy">
+                          <span class="summary-card__status-documents-item-label">{{ item }}</span>
+                          <span class="summary-card__status-documents-item-description">
+                            {{ isSubmittedHiringDocument(item) ? 'Marcado e enviado pelo talento' : 'Aguardando envio do talento' }}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -469,31 +485,32 @@
                       <span class="summary-card__fact-empty">Nenhum documento informado</span>
                     </ng-template>
 
-                    <label class="summary-card__status-documents-consent">
-                      <span class="summary-card__status-documents-consent-control">
-                        <input
-                          type="checkbox"
-                          name="statusDocumentsConsentAccepted"
-                          [(ngModel)]="statusDocumentsConsentAccepted"
-                        />
-                        <span class="summary-card__status-documents-consent-check material-symbols-rounded" aria-hidden="true">check</span>
+                    <div class="summary-card__status-document-consent">
+                      <span class="summary-card__status-document-consent-control">
+                        <span
+                          class="summary-card__status-document-consent-check material-symbols-rounded"
+                          [class.summary-card__status-document-consent-check--checked]="talentDocumentsConsentAccepted"
+                          aria-hidden="true"
+                        >check</span>
                       </span>
-                      <span class="summary-card__status-documents-consent-text">
-                        Autorizo o uso, compartilhamento e verificação dos meus documentos para fins de validação do processo de contratação, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+                      <span class="summary-card__status-document-consent-text">
+                        {{ talentDocumentsConsentAccepted
+                          ? 'LGPD aceita pelo talento para compartilhamento e validação dos documentos.'
+                          : 'Aceite LGPD ainda não enviado pelo talento.' }}
                       </span>
-                    </label>
+                    </div>
                   </div>
                 </section>
 
                 <div class="summary-card__status-footer">
-                  <ng-container *ngIf="showStatusApplyAction; else statusFooterAdvanceOrDecision">
+                  <ng-container *ngIf="showStatusCancelJobAction; else statusFooterAdvanceOrDecision">
                     <button
-                      class="summary-card__status-action summary-card__status-action--primary"
+                      class="summary-card__status-action summary-card__status-action--secondary"
                       type="button"
-                      (click)="advanceStatusStage()"
+                      (click)="cancelJobFromStatus()"
                     >
-                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">person_add</span>
-                      Me candidatar
+                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">cancel</span>
+                      Cancelar vaga
                     </button>
                   </ng-container>
 
@@ -511,36 +528,20 @@
                   </ng-template>
 
                   <ng-template #statusFooterDecisionOrResolved>
-                  <ng-container *ngIf="showStatusDecisionActions; else statusFooterResolved">
-                    <button
-                      class="summary-card__status-action summary-card__status-action--primary"
-                      type="button"
-                      (click)="selectAcceptedContractDecision()"
-                    >
-                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">task_alt</span>
-                      Aceitar
-                    </button>
-                    <button
-                      class="summary-card__status-action summary-card__status-action--secondary"
-                      type="button"
-                      (click)="selectNextContractDecision()"
-                    >
-                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">schedule</span>
-                      Fica para Proxima
-                    </button>
-                  </ng-container>
+                  <p class="summary-card__status-note" *ngIf="showAwaitingTalentDecisionMessage; else statusFooterResolved">
+                    Aguardando a resposta do talento sobre a proposta enviada.
+                  </p>
                   </ng-template>
 
                   <ng-template #statusFooterResolved>
                     <button
-                      *ngIf="showSendDocumentsAction"
+                      *ngIf="showValidateDocumentsAction"
                       class="summary-card__status-action summary-card__status-action--primary summary-card__status-action--documents"
                       type="button"
-                      [disabled]="!statusDocumentsConsentAccepted"
                       (click)="sendStatusDocuments()"
                     >
                       <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
-                      Enviar Documentos
+                      Concluir validação
                     </button>
 
                     <p class="summary-card__status-note" *ngIf="showRadarStatusMessage">
@@ -555,7 +556,15 @@
               </div>
             </div>
 
-            <div class="summary-card__tab-page summary-card__tab-page--benefits" *ngSwitchCase="'benefits'">
+            <div
+              class="summary-card__tab-page summary-card__tab-page--benefits"
+              *ngSwitchCase="'benefits'"
+              (pointerdown)="startSummaryPanelDrag($event)"
+              (pointermove)="onSummaryPanelDrag($event)"
+              (pointerup)="endSummaryPanelDrag($event)"
+              (pointercancel)="endSummaryPanelDrag($event)"
+              (lostpointercapture)="endSummaryPanelDrag($event)"
+            >
               <div class="summary-card__sections">
                 <section class="summary-card__section summary-card__section--about">
                   <div class="summary-card__section-header">
@@ -674,7 +683,15 @@
               </div>
             </div>
 
-            <div class="summary-card__tab-page summary-card__tab-page--details" *ngSwitchCase="'details'">
+            <div
+              class="summary-card__tab-page summary-card__tab-page--details"
+              *ngSwitchCase="'details'"
+              (pointerdown)="startSummaryPanelDrag($event)"
+              (pointermove)="onSummaryPanelDrag($event)"
+              (pointerup)="endSummaryPanelDrag($event)"
+              (pointercancel)="endSummaryPanelDrag($event)"
+              (lostpointercapture)="endSummaryPanelDrag($event)"
+            >
               <div class="summary-card__sections">
                 <section class="summary-card__section summary-card__section--about">
                   <div class="summary-card__section-header">

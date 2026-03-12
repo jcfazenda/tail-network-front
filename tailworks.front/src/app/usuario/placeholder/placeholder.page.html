@@ -1,9 +1,34 @@
 <section class="candidate-placeholder" [class.candidate-placeholder--applications]="isApplicationsPage">
   <ng-container *ngIf="isApplicationsPage; else defaultPlaceholder">
     <div class="candidate-applications__intro">
-      <h1>Olá, {{ talentName }} 👋</h1>
-      <p>Pronto para dar o próximo passo rumo à sua próxima oportunidade?</p>
-      <span>Aqui está o resumo das suas oportunidades.</span>
+      <div class="candidate-applications__intro-avatar" aria-hidden="true">
+        <img
+          *ngIf="talentAvatarUrl; else defaultTalentAvatar"
+          [src]="talentAvatarUrl"
+          alt=""
+          class="candidate-applications__intro-avatar-image"
+        />
+
+        <ng-template #defaultTalentAvatar>
+          <span class="material-symbols-rounded">person</span>
+        </ng-template>
+      </div>
+
+      <div class="candidate-applications__intro-copy">
+        <div class="candidate-applications__intro-name">
+          <strong>{{ talentName }}</strong>
+          <span
+            class="candidate-applications__intro-verified material-symbols-rounded"
+            aria-label="Validado no sistema"
+            title="Validado no sistema"
+          >
+            verified
+          </span>
+        </div>
+
+        <strong class="candidate-applications__intro-degree">{{ talentGraduation }}</strong>
+        <span class="candidate-applications__intro-specialization">{{ talentSpecialization }}</span>
+      </div>
     </div>
 
     <section class="candidate-stack-summary" *ngIf="talentStacks.length">
@@ -92,15 +117,87 @@
         </button>
       </div>
 
-      <label class="candidate-applications__filter">
-        <span>Filtrar</span>
-        <select [value]="workModelFilter" (change)="setWorkModelFilter($any($event.target).value)">
-          <option value="all">Todos</option>
-          <option value="Remoto">Remoto</option>
-          <option value="Hibrido">Híbrido</option>
-          <option value="Presencial">Presencial</option>
-        </select>
-      </label>
+      <div class="candidate-applications__filter-anchor">
+        <button
+          class="candidate-applications__filter-button"
+          type="button"
+          [class.candidate-applications__filter-button--active]="workModelFilter !== 'all' || advancedFilterOpen"
+          [attr.aria-expanded]="advancedFilterOpen"
+          aria-label="Abrir filtro avançado"
+          (click)="toggleAdvancedFilter()"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">settings</span>
+        </button>
+
+        <span class="candidate-applications__filter-summary" *ngIf="workModelFilter !== 'all'">
+          {{ workModelFilterLabel }}
+        </span>
+
+        <div class="candidate-applications__filter-popover" *ngIf="advancedFilterOpen">
+          <div class="candidate-applications__filter-popover-head">
+            <div class="candidate-applications__filter-popover-copy">
+              <span>Filtro avançado</span>
+              <strong>{{ workModelFilterLabel }}</strong>
+            </div>
+
+            <button
+              class="candidate-applications__filter-popover-close"
+              type="button"
+              aria-label="Fechar filtro"
+              (click)="closeAdvancedFilter()"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">close</span>
+            </button>
+          </div>
+
+          <div class="candidate-applications__filter-popover-group">
+            <span class="candidate-applications__filter-popover-label">Modelo de trabalho</span>
+
+            <div class="candidate-applications__filter-options" role="group" aria-label="Modelos de trabalho">
+              <button
+                class="candidate-applications__filter-chip"
+                type="button"
+                [class.candidate-applications__filter-chip--active]="workModelFilter === 'all'"
+                (click)="selectAdvancedWorkModelFilter('all')"
+              >
+                Todos
+              </button>
+              <button
+                class="candidate-applications__filter-chip"
+                type="button"
+                [class.candidate-applications__filter-chip--active]="workModelFilter === 'Remoto'"
+                (click)="selectAdvancedWorkModelFilter('Remoto')"
+              >
+                Remoto
+              </button>
+              <button
+                class="candidate-applications__filter-chip"
+                type="button"
+                [class.candidate-applications__filter-chip--active]="workModelFilter === 'Hibrido'"
+                (click)="selectAdvancedWorkModelFilter('Hibrido')"
+              >
+                Híbrido
+              </button>
+              <button
+                class="candidate-applications__filter-chip"
+                type="button"
+                [class.candidate-applications__filter-chip--active]="workModelFilter === 'Presencial'"
+                (click)="selectAdvancedWorkModelFilter('Presencial')"
+              >
+                Presencial
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="candidate-applications__filter-reset"
+            type="button"
+            (click)="selectAdvancedWorkModelFilter('all')"
+          >
+            Limpar filtros
+          </button>
+        </div>
+      </div>
     </div>
 
     <ng-container *ngIf="displayedJobs.length; else emptyApplications">
@@ -110,7 +207,6 @@
             <div class="job-card__main">
               <div class="job-card__title-row">
                 <h3 class="job-card__title">{{ job.title }}</h3>
-                <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
               </div>
 
               <div class="job-card__meta">
@@ -122,6 +218,8 @@
               <div class="job-card__offer">
                 <span>{{ jobCardOfferLine(job) }}</span>
               </div>
+
+              <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
 
               <div class="job-card__footer">
                 <div class="job-card__fit">
@@ -136,23 +234,15 @@
               </div>
 
               <div class="candidate-application-card__actions">
-                <span class="candidate-application-card__status candidate-application-card__status--hidden" *ngIf="job.talentDecision === 'hidden'">
-                  Escondido
-                </span>
-
-                <div class="candidate-application-card__controls" *ngIf="job.talentDecision !== 'hidden'">
-                  <button class="candidate-application-card__action candidate-application-card__action--primary" type="button" (click)="openJobPanel(job.id)">
-                    Visualizar
-                  </button>
+                <div class="candidate-application-card__controls" *ngIf="!job.talentDecision">
                   <button
-                    *ngIf="!job.talentDecision"
-                    class="candidate-application-card__action candidate-application-card__action--ghost candidate-application-card__action--dismiss"
+                    class="candidate-application-card__dismiss"
                     type="button"
                     (click)="hideJob(job.id)"
                     aria-label="Não quero ver"
                     title="Não quero ver"
                   >
-                    x
+                    <span class="material-symbols-outlined" aria-hidden="true">cancel</span>
                   </button>
                 </div>
               </div>
@@ -167,13 +257,32 @@
                 ></span>
 
                 <div class="job-card__creator-copy">
-                  <strong>{{ recruiterName }}</strong>
+                  <div class="job-card__creator-name">
+                    <strong>{{ recruiterName }}</strong>
+                    <span
+                      class="job-card__creator-verified material-symbols-rounded"
+                      aria-label="Perfil verificado"
+                      title="Perfil verificado"
+                    >
+                      verified
+                    </span>
+                  </div>
                   <span>{{ recruiterRole }}</span>
                 </div>
               </div>
 
-              <span class="job-card__creator-status" *ngIf="shouldShowJobStatus(job)">
-                Status: {{ jobStatusLabel(job) }}
+              <button
+                *ngIf="job.talentDecision !== 'hidden'"
+                class="candidate-application-card__action candidate-application-card__action--primary job-card__creator-action"
+                type="button"
+                (click)="openJobPanel(job.id)"
+                [title]="jobCardPrimaryActionLabel(job)"
+              >
+                {{ jobCardPrimaryActionLabel(job) }}
+              </button>
+
+              <span class="candidate-application-card__status candidate-application-card__status--hidden job-card__creator-hidden" *ngIf="job.talentDecision === 'hidden'">
+                Escondido
               </span>
             </div>
           </div>
@@ -193,9 +302,33 @@
   </ng-template>
 </section>
 
+<button
+  *ngIf="advancedFilterOpen"
+  class="candidate-applications__filter-backdrop"
+  type="button"
+  aria-label="Fechar filtro avançado"
+  (click)="closeAdvancedFilter()"
+></button>
+
 <ng-container *ngIf="selectedJobPanel as panel">
   <aside class="candidate-job-panel" aria-label="Painel da vaga do talento">
     <section class="candidate-job-panel__shell">
+      <div class="candidate-job-panel__confetti" *ngIf="candidateConfettiActive">
+        <span
+          class="candidate-job-panel__confetti-piece"
+          *ngFor="let piece of candidateConfettiPieces"
+          [ngStyle]="{
+            left: piece.left + '%',
+            top: piece.top + '%',
+            '--dx': piece.offsetX + 'px',
+            '--dy': piece.offsetY + 'px',
+            background: piece.color,
+            animationDuration: piece.duration + 'ms',
+            animationDelay: piece.delay + 'ms'
+          }"
+        ></span>
+      </div>
+
       <button class="candidate-job-panel__close" type="button" (click)="closeJobPanel()">close</button>
 
       <div class="candidate-job-panel__company">
@@ -443,6 +576,70 @@
               </div>
             </section>
 
+            <section class="candidate-job-panel__section candidate-job-panel__section--documents" *ngIf="showSelectedJobDocumentsSection">
+              <h4 class="candidate-job-panel__section-title">Documentos para validação de contratação.</h4>
+
+              <p class="candidate-job-panel__about candidate-job-panel__about--status" *ngIf="showSelectedJobDocumentsSubmission">
+                Marque os documentos que você está enviando para o recruiter e confirme a LGPD antes de finalizar.
+              </p>
+
+              <p class="candidate-job-panel__about candidate-job-panel__about--status" *ngIf="showSelectedJobDocumentsSubmittedState">
+                Seus documentos já foram enviados e agora estão em validação pelo recruiter.
+              </p>
+
+              <div class="summary-card__fact summary-card__fact--documents candidate-job-panel__documents-fact">
+                <div class="summary-card__benefits-list" *ngIf="selectedJobHiringDocuments.length; else emptyCandidateHiringDocuments">
+                  <label
+                    class="summary-card__benefit-option summary-card__benefit-option--selectable"
+                    *ngFor="let item of selectedJobHiringDocuments"
+                    [class.summary-card__benefit-option--checked]="isSelectedJobHiringDocumentChecked(item)"
+                    [class.summary-card__benefit-option--readonly]="!showSelectedJobDocumentsSubmission"
+                  >
+                    <span class="summary-card__benefit-option-head">
+                      <ng-container *ngIf="showSelectedJobDocumentsSubmission; else readonlyCandidateDocumentCheck">
+                        <input
+                          class="candidate-job-panel__document-checkbox"
+                          type="checkbox"
+                          [checked]="isSelectedJobHiringDocumentChecked(item)"
+                          (change)="toggleSelectedJobHiringDocument(item, $event)"
+                        />
+                      </ng-container>
+
+                      <ng-template #readonlyCandidateDocumentCheck>
+                        <span class="candidate-job-panel__document-checkbox candidate-job-panel__document-checkbox--readonly" aria-hidden="true"></span>
+                      </ng-template>
+
+                      <span class="summary-card__benefit-option-check summary-card__benefit-option-check--document" aria-hidden="true"></span>
+                      <div class="summary-card__benefit-option-copy">
+                        <span class="summary-card__benefit-option-label">{{ item }}</span>
+                        <span class="summary-card__benefit-option-description">
+                          {{ isSelectedJobHiringDocumentChecked(item) ? 'Marcado para validação' : 'Pendente de envio' }}
+                        </span>
+                      </div>
+                    </span>
+                  </label>
+                </div>
+
+                <ng-template #emptyCandidateHiringDocuments>
+                  <span class="summary-card__fact-empty">Nenhum documento informado</span>
+                </ng-template>
+
+                <label class="candidate-job-panel__document-consent" *ngIf="showSelectedJobDocumentsSubmission">
+                  <span class="candidate-job-panel__document-consent-control">
+                    <input
+                      type="checkbox"
+                      [checked]="selectedJobDocumentsConsentAccepted"
+                      (change)="toggleSelectedJobDocumentsConsent($event)"
+                    />
+                    <span class="candidate-job-panel__document-consent-check material-symbols-rounded" aria-hidden="true">check</span>
+                  </span>
+                  <span class="candidate-job-panel__document-consent-text">
+                    Autorizo o uso, compartilhamento e verificação dos meus documentos para fins de validação do processo de contratação, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+                  </span>
+                </label>
+              </div>
+            </section>
+
             <div class="candidate-job-panel__status-footer">
               <p class="candidate-job-panel__status-note candidate-job-panel__status-note--muted" *ngIf="panel.talentDecision === 'hidden'">
                 Essa vaga está escondida da sua lista principal, mas o histórico continua disponível aqui.
@@ -452,13 +649,21 @@
         </ng-container>
       </div>
 
-      <div class="candidate-job-panel__footer" *ngIf="activeCandidatePanelView === 'status' && (canApplySelectedJob || canCancelSelectedJob || canRespondToProposalSelectedJob)">
+      <div class="candidate-job-panel__footer" *ngIf="activeCandidatePanelView === 'status' && (canApplySelectedJob || canCancelSelectedJob || canRespondToProposalSelectedJob || showSelectedJobDocumentsSubmission || showContractedWelcomeMessage)">
         <p class="candidate-job-panel__footer-note" *ngIf="canCancelSelectedJob">
           Sua candidatura foi enviada e o recrutador já consegue acompanhar esse status.
         </p>
 
         <p class="candidate-job-panel__footer-note" *ngIf="canRespondToProposalSelectedJob">
           O recruiter avançou para contratação e agora precisa da sua resposta para seguir.
+        </p>
+
+        <p class="candidate-job-panel__footer-note" *ngIf="showContractedWelcomeMessage">
+          Parabéns Bem vindo ao time
+        </p>
+
+        <p class="candidate-job-panel__footer-note" *ngIf="showSelectedJobDocumentsSubmission">
+          Marque os documentos exigidos, confirme a LGPD e envie para o recruiter validar.
         </p>
 
         <button
@@ -496,6 +701,16 @@
             Fica para Proxima
           </button>
         </div>
+
+        <button
+          *ngIf="showSelectedJobDocumentsSubmission"
+          class="candidate-job-panel__status-action candidate-job-panel__status-action--primary"
+          type="button"
+          [disabled]="!canSubmitSelectedJobDocuments"
+          (click)="submitSelectedJobDocuments()"
+        >
+          Enviar documentos
+        </button>
       </div>
     </section>
   </aside>

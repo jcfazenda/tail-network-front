@@ -93,6 +93,19 @@ export class VagasMockService {
     return this.updateTalentStage(jobId, 'aceito', 'applied');
   }
 
+  submitTalentDocuments(
+    jobId: string,
+    checkedDocuments: string[],
+    consentAccepted: boolean,
+  ): MockJobRecord | undefined {
+    const normalizedDocuments = checkedDocuments.map((item) => item.trim()).filter(Boolean);
+
+    return this.updateTalentStage(jobId, 'documentacao', 'applied', {
+      talentSubmittedDocuments: normalizedDocuments,
+      talentDocumentsConsentAccepted: consentAccepted,
+    });
+  }
+
   keepJobForNextOpportunity(jobId: string): MockJobRecord | undefined {
     return this.updateTalentStage(jobId, 'proxima', undefined);
   }
@@ -164,6 +177,10 @@ export class VagasMockService {
     jobId: string,
     stage: MockJobCandidate['stage'],
     talentDecision?: TalentJobDecision,
+    options?: {
+      talentSubmittedDocuments?: string[];
+      talentDocumentsConsentAccepted?: boolean;
+    },
   ): MockJobRecord | undefined {
     const jobs = this.loadJobs();
     const existing = jobs.find((job) => job.id === jobId);
@@ -188,10 +205,25 @@ export class VagasMockService {
                 : { ...candidate },
             )
           : [{ ...appliedCandidate, stage, radarOnly: false }, ...existing.candidates.map((candidate) => ({ ...candidate }))];
+    const shouldPreserveSubmittedDocuments = stage === 'documentacao' || stage === 'contratado';
+    const nextSubmittedDocuments =
+      options?.talentSubmittedDocuments !== undefined
+        ? options.talentSubmittedDocuments
+        : shouldPreserveSubmittedDocuments
+          ? [...(existing.talentSubmittedDocuments ?? [])]
+          : [];
+    const nextConsentAccepted =
+      options?.talentDocumentsConsentAccepted !== undefined
+        ? options.talentDocumentsConsentAccepted
+        : shouldPreserveSubmittedDocuments
+          ? existing.talentDocumentsConsentAccepted ?? false
+          : false;
 
     const updatedJob: MockJobRecord = this.decorateTalentVisibility({
       ...existing,
       talentDecision,
+      talentSubmittedDocuments: nextSubmittedDocuments,
+      talentDocumentsConsentAccepted: nextConsentAccepted,
       candidates: nextCandidates,
       updatedAt: new Date().toISOString(),
     });
@@ -263,11 +295,17 @@ export class VagasMockService {
       extraCount: command.previewAvatarExtraCount,
       status: command.status,
       talentDecision: existing?.talentDecision,
+      talentSubmittedDocuments:
+        existing?.talentSubmittedDocuments
+          ?.filter((item) => command.draft.hiringDocuments.includes(item))
+          ?? [],
+      talentDocumentsConsentAccepted: existing?.talentDocumentsConsentAccepted ?? false,
       candidates: existing?.candidates.map((candidate) => ({ ...candidate })) ?? [],
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       ...command.draft,
       benefits: command.draft.benefits.map((item) => ({ ...item })),
+      hiringDocuments: [...command.draft.hiringDocuments],
       techStack: command.draft.techStack.map((item) => ({ ...item })),
       differentials: [...command.draft.differentials],
       responsibilitySections: command.draft.responsibilitySections.map((section) => ({
@@ -283,6 +321,10 @@ export class VagasMockService {
       showSalaryRangeInCard: record.showSalaryRangeInCard ?? true,
       talentDecision: record.talentDecision,
       benefits: this.normalizeBenefits(record.benefits),
+      hiringDocuments: this.normalizeHiringDocuments(record.hiringDocuments),
+      talentSubmittedDocuments: this.normalizeHiringDocuments(record.talentSubmittedDocuments)
+        .filter((item) => this.normalizeHiringDocuments(record.hiringDocuments).includes(item)),
+      talentDocumentsConsentAccepted: record.talentDocumentsConsentAccepted ?? false,
       techStack: record.techStack.map((item) => ({ ...item })),
       differentials: [...record.differentials],
       responsibilitySections: this.normalizeResponsibilitySections(record.responsibilitySections, record.differentials),
@@ -312,6 +354,16 @@ export class VagasMockService {
 
       return { title: 'Benefício' };
     });
+  }
+
+  private normalizeHiringDocuments(documents: unknown): string[] {
+    if (!Array.isArray(documents)) {
+      return [];
+    }
+
+    return documents
+      .map((item) => `${item ?? ''}`.trim())
+      .filter(Boolean);
   }
 
   private normalizeResponsibilitySections(

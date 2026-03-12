@@ -3,9 +3,15 @@ import { JobBenefitItem, JobResponsibilitySection, MockJobRecord } from './vagas
 const avatar = '/assets/avatars/avatar-rafael.png';
 const now = '2026-03-07T00:00:00.000Z';
 
-function seedJob(job: Omit<MockJobRecord, 'createdAt' | 'updatedAt'>): MockJobRecord {
+function seedJob(
+  job: Omit<MockJobRecord, 'createdAt' | 'updatedAt' | 'hiringDocuments' | 'talentSubmittedDocuments' | 'talentDocumentsConsentAccepted'>
+    & Partial<Pick<MockJobRecord, 'hiringDocuments' | 'talentSubmittedDocuments' | 'talentDocumentsConsentAccepted'>>,
+): MockJobRecord {
   return {
     ...job,
+    hiringDocuments: [...(job.hiringDocuments ?? [])],
+    talentSubmittedDocuments: [...(job.talentSubmittedDocuments ?? [])],
+    talentDocumentsConsentAccepted: job.talentDocumentsConsentAccepted ?? false,
     createdAt: now,
     updatedAt: now,
   };

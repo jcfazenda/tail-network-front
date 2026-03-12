@@ -1,7 +1,12 @@
 .sidebar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 350;
   width: 300px;
   min-height: 100vh;
-  background: var(--surface-gradient);
+  background: linear-gradient(180deg, rgba(255,255,255,0.985), rgba(246,246,243,0.955));
   border-right: none;
   padding: 18px 16px 24px;
   display: grid;
@@ -9,7 +14,8 @@
   gap: 18px;
   box-shadow: 2px 0 18px rgba(16,18,21,0.04);
   box-sizing: border-box;
-  overflow: visible;
+  overflow-x: visible;
+  overflow-y: auto;
 }
 
 .brand{
@@ -26,14 +32,14 @@
 
 .menu{
   display: grid;
-  gap: 8px;
+  gap: 10px;
   grid-auto-rows: max-content;
   align-content: start;
   margin-top: 62px;
 }
 
 .menu--candidate{
-  gap: 8px;
+  gap: 10px;
   border-top: none;
 }
 
@@ -43,14 +49,33 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  color: rgba(16,18,21,0.78);
+  gap: 12px;
+  padding: 12px 16px 12px 18px;
+  border-radius: 16px;
+  color: rgba(16,18,21,0.76);
   text-decoration: none;
-  border: 1px solid transparent;
-  transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
-  min-height: 46px;
+  border: 1px solid rgba(15, 23, 42, 0.03);
+  background: rgba(255,255,255,0.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.34);
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease;
+  min-height: 52px;
+  overflow: hidden;
+}
+
+.menuItem::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 180% at 0% 0%, rgba(242, 179, 26, 0.12), rgba(255, 255, 255, 0) 58%);
+  opacity: 0;
+  transition: opacity .18s ease;
+  pointer-events: none;
 }
 
 .menuItem .activeBar{
@@ -58,37 +83,76 @@
   left: 4px;
   top: 6px;
   bottom: 6px;
-  width: 3px;
+  width: 4px;
   border-radius: 6px;
   background: transparent;
+  transition: background .18s ease, box-shadow .18s ease;
 }
 
 .menuItem .icon{
+  position: relative;
   font-family: 'Material Symbols Rounded';
   font-size: 20px;
-  opacity: 0.8;
+  opacity: 0.88;
   flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(243,244,247,0.72));
+  color: rgba(55, 65, 81, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+}
+
+.menuItem .label{
+  position: relative;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  color: inherit;
 }
 
 .menuItem:hover{
-  background: rgba(255,255,255,0.72);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, rgba(255, 249, 236, 0.82), rgba(255,255,255,0.86));
+  border-color: rgba(232, 146, 43, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.78),
+    0 10px 18px rgba(15, 23, 42, 0.05);
+  color: rgba(16,18,21,0.84);
+  transform: translateX(2px);
+}
+
+.menuItem:hover::before{
+  opacity: 1;
 }
 
 .menuItem.active{
-  background: var(--surface-raised);
+  background: linear-gradient(135deg, rgba(255, 247, 229, 0.96), rgba(255,255,255,0.94));
   color: var(--text-strong);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--border-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.86),
+    0 14px 24px rgba(226, 153, 49, 0.12);
+  border-color: rgba(232, 146, 43, 0.14);
+  transform: translateX(3px);
+}
+
+.menuItem.active::before{
+  opacity: 1;
 }
 
 .menuItem.active .icon{
   opacity: 1;
+  background: linear-gradient(135deg, rgba(242, 179, 26, 0.94), rgba(255, 238, 199, 0.98));
+  color: rgba(34, 41, 52, 0.86);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.74),
+    0 10px 18px rgba(226, 153, 49, 0.14);
 }
 
 .menuItem.active .activeBar{
-  background: var(--accent-strong);
+  background: linear-gradient(180deg, rgba(225, 138, 39, 0.96), rgba(242, 179, 26, 0.88));
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.42);
 }
 
 .sidebar{
@@ -103,20 +167,9 @@
   padding: 0 2px;
   margin-bottom: 12px;
 }
-.eco-illustration{
-  width: 210%;
-  max-width: none;
-  display: block;
-  margin: 0 -150px 28px;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 12px 18px rgba(15,23,42,0.14))
-    contrast(1.05)
-    brightness(1.04);
-  mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.85) 70%, #000 100%);
-  -webkit-mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.85) 70%, #000 100%);
-}
 .eco-btn{
+  position: relative;
+  isolation: isolate;
   width: min(100%, 228px);
   min-height: 58px;
   margin: 0 auto;
@@ -125,20 +178,43 @@
   justify-content: center;
   border-radius: var(--btn-radius-lg);
   padding: 0 22px;
-  border: 1px solid var(--btn-primary-border);
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
+  border: 1px solid rgba(232, 146, 43, 0.14);
+  background: linear-gradient(135deg, rgba(255, 247, 229, 0.96), rgba(255,255,255,0.94));
+  color: rgba(28, 35, 43, 0.88);
   text-decoration: none;
-  box-shadow: var(--btn-primary-shadow);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.86),
+    0 14px 24px rgba(226, 153, 49, 0.12);
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.01em;
   text-align: center;
+  overflow: hidden;
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease;
+}
+
+.eco-btn::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 180% at 0% 0%, rgba(242, 179, 26, 0.14), rgba(255, 255, 255, 0) 58%);
+  pointer-events: none;
 }
 
 .eco-btn:hover{
-  background: var(--btn-primary-bg-hover);
-  box-shadow: var(--btn-primary-shadow-hover);
+  background: linear-gradient(135deg, rgba(255, 249, 236, 0.82), rgba(255,255,255,0.86));
+  border-color: rgba(232, 146, 43, 0.12);
+  color: rgba(16,18,21,0.84);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.78),
+    0 10px 18px rgba(15, 23, 42, 0.05);
+  transform: translateX(2px);
 }
 .divider{
   height: 1px;

@@ -13,7 +13,9 @@
       [class.shell__main--full]="isCandidateEcosystem || (hasSidebar && !isSidebarOpen)"
       [class.shell__main--ecosystem]="isCandidateEcosystem"
     >
-      <app-topbar></app-topbar>
+      <div class="shell__topbar">
+        <app-topbar></app-topbar>
+      </div>
       <section
         class="shell__content"
         [class.shell__content--candidate]="isCandidateArea"

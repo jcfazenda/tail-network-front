@@ -22,6 +22,16 @@ type CandidateStatusPreview = {
   description: string;
   ownerText: string;
 };
+
+type ConfettiPiece = {
+  left: number;
+  top: number;
+  offsetX: number;
+  offsetY: number;
+  color: string;
+  delay: number;
+  duration: number;
+};
 type CompanySummaryProfile = {
   name: string;
   followers: string;
@@ -37,6 +47,12 @@ type CandidateBasicProfile = {
 
 type CandidateBasicDraft = {
   profile?: Partial<CandidateBasicProfile>;
+  photoPreviewUrl?: string;
+};
+
+type CandidateFormationCopyDraft = {
+  graduation: string;
+  specialization: string;
 };
 
 @Component({
@@ -50,12 +66,15 @@ type CandidateBasicDraft = {
 export class PlaceholderPage implements OnInit, OnDestroy {
   private static readonly stacksStorageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
 
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly talentCandidateName = 'Rafael Oliveira';
   private readonly subscriptions = new Subscription();
+  private selectedJobObservedStage: CandidateStage | null = null;
+  private candidateCelebrationTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly recruiterName = 'Rafael Souza';
   readonly recruiterRole = 'Talent Acquisition';
@@ -87,23 +106,43 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   activeView: CandidateView = 'radar';
   workModelFilter: WorkModelFilter = 'all';
+  advancedFilterOpen = false;
   activeCandidatePanelView: CandidatePanelView = 'details';
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
-  talentName = 'Rafael';
+  talentName = 'Julio Fazenda';
+  talentAvatarUrl = '';
+  talentGraduation = 'Bacharelado em Sistemas de Informação';
+  talentSpecialization = 'Especialização em Arquitetura de Software';
   selectedJobId: string | null = null;
+  selectedJobCheckedDocuments: string[] = [];
+  selectedJobDocumentsConsentAccepted = false;
+  candidateConfettiPieces: ConfettiPiece[] = [];
+  candidateConfettiActive = false;
 
   ngOnInit(): void {
     this.restoreTalentDraft();
+    this.restoreTalentFormationCopy();
     this.restoreTalentStacks();
     this.subscriptions.add(
       this.vagasMockService.jobsChanged$.subscribe(() => {
+        const previousStage = this.selectedJobObservedStage;
+        this.syncSelectedJobDocumentState();
+        const nextStage = this.selectedJobTalentStage ?? null;
+
+        if (this.selectedJobId && previousStage !== 'contratado' && nextStage === 'contratado') {
+          this.activeCandidatePanelView = 'status';
+          this.triggerCandidateCelebration();
+        }
+
+        this.selectedJobObservedStage = nextStage;
         this.cdr.markForCheck();
       }),
     );
   }
 
   ngOnDestroy(): void {
+    this.clearCandidateCelebrationTimer();
     this.subscriptions.unsubscribe();
   }
 
@@ -293,7 +332,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get selectedJobHiringDocuments(): string[] {
-    return [];
+    return this.selectedJobPanel?.hiringDocuments ?? [];
+  }
+
+  get selectedJobSubmittedDocuments(): string[] {
+    return this.selectedJobPanel?.talentSubmittedDocuments ?? [];
   }
 
   get selectedJobStatusCurrentLabel(): string {
@@ -324,11 +367,35 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get canCancelSelectedJob(): boolean {
-    return this.selectedJobPanel?.talentDecision === 'applied' && !this.canRespondToProposalSelectedJob;
+    return this.selectedJobPanel?.talentDecision === 'applied'
+      && ['candidatura', 'processo', 'tecnica'].includes(this.selectedJobTalentStage ?? '');
   }
 
   get canRespondToProposalSelectedJob(): boolean {
     return this.selectedJobPanel?.talentDecision === 'applied' && this.selectedJobTalentStage === 'aguardando';
+  }
+
+  get showSelectedJobDocumentsSection(): boolean {
+    return this.selectedJobTalentStage === 'aceito';
+  }
+
+  get showSelectedJobDocumentsSubmission(): boolean {
+    return this.selectedJobTalentStage === 'aceito';
+  }
+
+  get showSelectedJobDocumentsSubmittedState(): boolean {
+    return false;
+  }
+
+  get canSubmitSelectedJobDocuments(): boolean {
+    return this.showSelectedJobDocumentsSubmission
+      && this.selectedJobHiringDocuments.length > 0
+      && this.selectedJobCheckedDocuments.length > 0
+      && this.selectedJobDocumentsConsentAccepted;
+  }
+
+  get showContractedWelcomeMessage(): boolean {
+    return this.selectedJobTalentStage === 'contratado';
   }
 
   get candidateSalarySuggestionDisplay(): string {
@@ -373,6 +440,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     }
   }
 
+  jobCardPrimaryActionLabel(job: MockJobRecord): string {
+    const status = this.jobStatusLabel(job);
+    return status === 'Talento no radar' ? 'Candidatar-se' : status;
+  }
+
   applyToJob(jobId: string): void {
     this.vagasMockService.applyAsTalent(jobId);
   }
@@ -384,10 +456,17 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   openJobPanel(jobId: string): void {
     this.selectedJobId = jobId;
     this.activeCandidatePanelView = 'details';
+    this.syncSelectedJobDocumentState();
+    this.selectedJobObservedStage = this.selectedJobTalentStage ?? null;
   }
 
   closeJobPanel(): void {
     this.selectedJobId = null;
+    this.selectedJobCheckedDocuments = [];
+    this.selectedJobDocumentsConsentAccepted = false;
+    this.selectedJobObservedStage = null;
+    this.candidateConfettiActive = false;
+    this.clearCandidateCelebrationTimer();
   }
 
   selectCandidatePanelView(view: CandidatePanelView): void {
@@ -410,6 +489,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
     this.vagasMockService.acceptOfferAsTalent(this.selectedJobId);
     this.activeCandidatePanelView = 'status';
+    this.syncSelectedJobDocumentState();
   }
 
   keepSelectedJobForNextOpportunity(): void {
@@ -430,12 +510,62 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.activeCandidatePanelView = 'status';
   }
 
+  toggleSelectedJobHiringDocument(label: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    this.selectedJobCheckedDocuments = checked
+      ? Array.from(new Set([...this.selectedJobCheckedDocuments, label]))
+      : this.selectedJobCheckedDocuments.filter((item) => item !== label);
+  }
+
+  toggleSelectedJobDocumentsConsent(event: Event): void {
+    this.selectedJobDocumentsConsentAccepted = (event.target as HTMLInputElement).checked;
+  }
+
+  isSelectedJobHiringDocumentChecked(label: string): boolean {
+    if (this.showSelectedJobDocumentsSubmission) {
+      return this.selectedJobCheckedDocuments.includes(label);
+    }
+
+    return this.selectedJobSubmittedDocuments.includes(label);
+  }
+
+  submitSelectedJobDocuments(): void {
+    if (!this.selectedJobId || !this.canSubmitSelectedJobDocuments) {
+      return;
+    }
+
+    this.vagasMockService.submitTalentDocuments(
+      this.selectedJobId,
+      this.selectedJobCheckedDocuments,
+      this.selectedJobDocumentsConsentAccepted,
+    );
+    this.activeCandidatePanelView = 'status';
+  }
+
   setView(view: CandidateView): void {
     this.activeView = view;
   }
 
   setWorkModelFilter(value: string): void {
     this.workModelFilter = this.isWorkModel(value) ? value : 'all';
+  }
+
+  selectAdvancedWorkModelFilter(value: string): void {
+    this.setWorkModelFilter(value);
+    this.advancedFilterOpen = false;
+  }
+
+  toggleAdvancedFilter(): void {
+    this.advancedFilterOpen = !this.advancedFilterOpen;
+  }
+
+  closeAdvancedFilter(): void {
+    this.advancedFilterOpen = false;
+  }
+
+  get workModelFilterLabel(): string {
+    return this.workModelFilter === 'all' ? 'Todos os formatos' : this.workModelLabel(this.workModelFilter);
   }
 
   toggleStackDescription(index: number): void {
@@ -494,25 +624,25 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       {
         label: 'Talento no radar',
         timeLabel: 'Semana passada',
-        description: 'O sistema encontrou esse candidato no radar da vaga.',
+        description: 'Fui encontrado pelo sistema no radar desta vaga.',
         ownerText: 'Movido pelo sistema',
       },
       {
         label: 'Candidatura enviada',
         timeLabel: 'Agora',
-        description: 'A candidatura foi enviada pelo talento e já aparece para o recruiter.',
+        description: 'Enviei minha candidatura e ela já aparece para o recruiter.',
         ownerText: 'Ação do talento',
       },
       {
         label: 'Em processo',
         timeLabel: 'Em atualização',
-        description: 'O recruiter avançou o perfil para as próximas análises do processo.',
+        description: 'Meu perfil avançou para as próximas análises do processo.',
         ownerText: 'Ação do recruiter',
       },
       {
         label: 'Contratação Solicitada',
         timeLabel: 'Em atualização',
-        description: 'O recruiter sinalizou avanço para a etapa final de contratação.',
+        description: 'Recebi o avanço para a etapa final de contratação.',
         ownerText: 'Ação do recruiter',
       },
       {
@@ -525,28 +655,32 @@ export class PlaceholderPage implements OnInit, OnDestroy {
         timeLabel: 'Em atualização',
         description:
           stage === 'aceito'
-            ? 'O talento aceitou a proposta e o fluxo segue para a etapa documental.'
+            ? 'Aceitei a proposta e o fluxo segue para a etapa documental.'
             : stage === 'proxima'
-              ? 'O talento preferiu não seguir agora e pediu para continuar disponível para próximas oportunidades.'
-              : 'Aqui o talento avalia a proposta e decide se aceita ou se prefere ficar para a próxima.',
+              ? 'Preferi não seguir agora e pedi para continuar disponível para próximas oportunidades.'
+              : 'Aqui eu avalio a proposta e decido se aceito ou se prefiro ficar para a próxima.',
         ownerText: 'Ação do talento',
       },
       {
         label: 'Validando documentos',
         timeLabel: 'Em atualização',
-        description: 'Depois do envio dos documentos pelo talento, o recruiter revisa tudo e dá o ok para seguir.',
+        description: 'Depois que enviei meus documentos, o recruiter revisa tudo e dá o ok para seguir.',
         ownerText: 'Ação do recruiter',
       },
       {
         label:
           stage === 'proxima'
             ? 'Não foi desta vez (ou Continua no Radar)'
-            : 'Contratado / Não foi desta vez (ou Continua no Radar)',
+            : stage === 'contratado'
+              ? 'Parabéns Contratado'
+              : 'Contratado / Não foi desta vez (ou Continua no Radar)',
         timeLabel: 'Em atualização',
         description:
           stage === 'proxima'
-            ? 'O ciclo desta vaga foi encerrado para você, mas o recruiter ainda pode te reencontrar no radar para novas oportunidades.'
-            : 'Com a validação concluída, o recruiter encerra o ciclo confirmando a contratação ou devolvendo o talento ao radar para próximas oportunidades.',
+            ? 'Meu ciclo nesta vaga foi encerrado, mas ainda posso ser reencontrado no radar para novas oportunidades.'
+            : stage === 'contratado'
+              ? 'Minha contratação foi confirmada e o processo foi concluído com sucesso.'
+              : 'Com a validação concluída, minha contratação pode ser confirmada ou eu posso voltar ao radar para próximas oportunidades.',
         ownerText: 'Ação do recruiter',
       },
     ];
@@ -601,6 +735,60 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return job.candidates.find((item) => item.name === this.talentCandidateName)?.stage;
   }
 
+  private syncSelectedJobDocumentState(): void {
+    const job = this.selectedJobPanel;
+
+    if (!job) {
+      this.selectedJobCheckedDocuments = [];
+      this.selectedJobDocumentsConsentAccepted = false;
+      return;
+    }
+
+    const allowedDocuments = job.hiringDocuments ?? [];
+    const submittedDocuments = (job.talentSubmittedDocuments ?? [])
+      .filter((item) => allowedDocuments.includes(item));
+
+    this.selectedJobCheckedDocuments = [...submittedDocuments];
+    this.selectedJobDocumentsConsentAccepted = job.talentDocumentsConsentAccepted ?? false;
+  }
+
+  private buildCandidateCelebration(): void {
+    const colors = ['#f2b31a', '#f8c73c', '#ffd66b', '#3f9170', '#62b290', '#8ecfb4'];
+    this.candidateConfettiPieces = Array.from({ length: 420 }, (): ConfettiPiece => {
+      const dx = -320 + Math.random() * 640;
+      const dy = 360 + Math.random() * 620;
+
+      return {
+        left: Math.random() * 100,
+        top: -4 + Math.random() * 18,
+        offsetX: dx,
+        offsetY: dy,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        delay: Math.random() * 520,
+        duration: 2200 + Math.random() * 1400,
+      };
+    });
+  }
+
+  private triggerCandidateCelebration(): void {
+    this.clearCandidateCelebrationTimer();
+    this.buildCandidateCelebration();
+    this.candidateConfettiActive = true;
+    this.cdr.markForCheck();
+    this.candidateCelebrationTimer = setTimeout(() => {
+      this.candidateConfettiActive = false;
+      this.cdr.markForCheck();
+      this.candidateCelebrationTimer = null;
+    }, 2600);
+  }
+
+  private clearCandidateCelebrationTimer(): void {
+    if (this.candidateCelebrationTimer !== null) {
+      clearTimeout(this.candidateCelebrationTimer);
+      this.candidateCelebrationTimer = null;
+    }
+  }
+
   private isApplicationsJob(job: MockJobRecord): boolean {
     return job.talentDecision === 'applied' && !this.isDeclinedJob(job);
   }
@@ -648,8 +836,25 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     try {
       const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
       this.talentName = draft.profile?.name?.trim() || this.talentName;
+      this.talentAvatarUrl = draft.photoPreviewUrl ?? '';
     } catch {
       localStorage.removeItem(PlaceholderPage.basicDraftStorageKey);
+    }
+  }
+
+  private restoreTalentFormationCopy(): void {
+    const rawDraft = localStorage.getItem(PlaceholderPage.formationCopyStorageKey);
+
+    if (!rawDraft) {
+      return;
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as Partial<CandidateFormationCopyDraft>;
+      this.talentGraduation = draft.graduation?.trim() || this.talentGraduation;
+      this.talentSpecialization = draft.specialization?.trim() || this.talentSpecialization;
+    } catch {
+      localStorage.removeItem(PlaceholderPage.formationCopyStorageKey);
     }
   }
 

@@ -121,81 +121,160 @@ p {
 /* METRIC BAR (acima do Olá, Rafael) */
 .metric-bar{
   display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  align-items: stretch;
   gap: 18px;
-  padding: 20px 24px;
-  background: var(--card-strong);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(3px);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
   margin-bottom: 32px;
 }
 
-.metric-chip{
+.metric-hero{
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: 16px;
-  padding-right: 20px;
-  border-right: 1px solid var(--border);
-  justify-self: start;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 160% at 0% 0%, rgba(242, 179, 26, 0.2), rgba(255, 255, 255, 0) 58%),
+    linear-gradient(180deg, rgba(255, 248, 233, 0.96), rgba(255, 255, 255, 0.82));
+  border: 1px solid rgba(232, 146, 43, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 12px 24px rgba(15, 23, 42, 0.045);
 }
-.metric-chip__icon{
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  background: var(--accent-gradient);
-  padding: 10px;
-}
-.metric-chip__text{
+
+.metric-hero__icon{
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
   display: grid;
-  gap: 3px;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(242, 179, 26, 0.96), rgba(255, 239, 206, 0.98));
+  color: rgba(34, 41, 52, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 14px 24px rgba(226, 153, 49, 0.18);
 }
-.metric-chip__title{
-  font-size: 17px;
+
+.metric-hero__icon .material-symbols-rounded{
+  font-size: 30px;
+  line-height: 1;
+}
+
+.metric-hero__copy{
+  display: grid;
+  gap: 5px;
+}
+
+.metric-hero__eyebrow{
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(226, 153, 49, 0.78);
+}
+
+.metric-hero__title{
+  font-size: 18px;
   font-weight: 800;
-  color: rgba(15,23,42,0.82);
+  color: rgba(15,23,42,0.86);
 }
-.metric-chip__subtitle{
-  font-size: 13px;
-  color: rgba(15,23,42,0.55);
-}
-.metric-right{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 98px;
-  flex-wrap: wrap;
-}
-.metric-pill{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  background: transparent;
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-}
-.metric-pill__icon{
-  width: 40px;
-  height: 40px;
-}
-.metric-pill__value{
-  font-size: 20px;
-  font-weight: 800;
-  color: rgba(15,23,42,0.9);
-}
-.metric-pill__text{
+
+.metric-hero__meta{
   display: grid;
   gap: 2px;
 }
-.metric-pill__sub{
+
+.metric-hero__meta strong{
+  font-size: 26px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.94);
+}
+
+.metric-hero__meta span{
   font-size: 12px;
-  color: rgba(15,23,42,0.6);
+  color: rgba(15, 23, 42, 0.56);
+  line-height: 1.4;
+}
+
+.metric-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metric-stat{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 12px 24px rgba(15, 23, 42, 0.042);
+}
+
+.metric-stat__icon{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(255, 248, 233, 0.96), rgba(244, 233, 206, 0.88));
+  color: rgba(67, 75, 89, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.metric-stat__icon .material-symbols-rounded{
+  font-size: 22px;
+  line-height: 1;
+}
+
+.metric-stat__copy{
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.metric-stat__copy strong{
+  font-size: 22px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.metric-stat__copy span{
+  font-size: 13px;
+  line-height: 1.25;
   font-weight: 700;
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.metric-stat__copy small{
+  font-size: 11px;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.metric-stat--jobs .metric-stat__icon{
+  background: linear-gradient(135deg, rgba(255, 247, 228, 0.98), rgba(247, 236, 207, 0.9));
+}
+
+.metric-stat--companies .metric-stat__icon{
+  background: linear-gradient(135deg, rgba(244, 245, 248, 0.98), rgba(227, 232, 239, 0.9));
+}
+
+.metric-stat--hiring .metric-stat__icon{
+  background: linear-gradient(135deg, rgba(255, 248, 229, 0.98), rgba(243, 229, 191, 0.9));
 }
 
 /* METRIC CARDS (acima do Olá, Rafael) */
@@ -576,6 +655,14 @@ p {
 }
 
 @media (max-width: 1180px) {
+  .metric-bar{
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .job-card__surface{
     grid-template-columns: 1fr;
   }
@@ -586,6 +673,27 @@ p {
 }
 
 @media (max-width: 760px) {
+  .metric-bar{
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .metric-hero{
+    padding: 16px;
+  }
+
+  .metric-hero__meta strong{
+    font-size: 22px;
+  }
+
+  .metric-grid{
+    grid-template-columns: 1fr;
+  }
+
+  .metric-stat{
+    padding: 14px;
+  }
+
   .job-card__surface{
     padding: 14px;
     gap: 16px;

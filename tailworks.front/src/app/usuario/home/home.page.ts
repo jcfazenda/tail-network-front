@@ -622,6 +622,7 @@ export class HomePage implements AfterViewInit {
       allowCandidateSalarySuggestion: false,
       hybridOnsiteDaysDescription: '',
       benefits: seed.benefitsLabel ? [{ title: seed.benefitsLabel }] : [],
+      hiringDocuments: [],
       techStack,
       differentials: [],
       responsibilitySections: [

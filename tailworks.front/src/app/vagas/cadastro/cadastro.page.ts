@@ -57,6 +57,13 @@ export class CadastroPage implements OnDestroy {
   private readonly vagasMockService = inject(VagasMockService);
   private readonly talentCandidateName = 'Rafael Oliveira';
   private readonly subscriptions = new Subscription();
+  private summaryPanelDragState: {
+    pointerId: number;
+    startY: number;
+    startScrollTop: number;
+    dragging: boolean;
+    element: HTMLElement;
+  } | null = null;
   private summarySectionCounter = 3;
   private readonly brlNumberFormatter = new Intl.NumberFormat('pt-BR', {
     minimumFractionDigits: 2,
@@ -181,11 +188,14 @@ export class CadastroPage implements OnDestroy {
     },
   };
   statusStageIndex = 0;
+  expandedStatusPreviewIndex = 0;
   summaryPanelOpen = true;
   previewCardFlipped = false;
   contractDecision: ContractDecision = null;
+  documentsSubmittedByTalent = false;
   documentsSent = false;
-  statusEmailUpdatesEnabled = true;
+  submittedHiringDocuments: string[] = [];
+  talentDocumentsConsentAccepted = false;
   statusDocumentsConsentAccepted = false;
   confettiPieces: ConfettiPiece[] = [];
   confettiActive = false;
@@ -274,6 +284,10 @@ export class CadastroPage implements OnDestroy {
       return 6;
     }
 
+    if (this.contractDecision === 'accepted' && this.documentsSubmittedByTalent) {
+      return 5;
+    }
+
     if (this.contractDecision === 'accepted') {
       return 4;
     }
@@ -282,19 +296,22 @@ export class CadastroPage implements OnDestroy {
   }
 
   get hasRequestedContractStatus(): boolean {
-    return this.statusStageIndex >= 3 || this.contractDecision !== null || this.documentsSent;
+    return this.statusStageIndex >= 3 || this.contractDecision !== null || this.documentsSubmittedByTalent || this.documentsSent;
   }
 
   get statusSelectedIndex(): number {
     return this.currentStatusPreviewIndex;
   }
 
-  get showStatusDecisionActions(): boolean {
+  get showAwaitingTalentDecisionMessage(): boolean {
     return this.contractDecision === null && this.statusStageIndex >= 3;
   }
 
-  get showStatusApplyAction(): boolean {
-    return this.contractDecision === null && this.statusStageIndex === 0;
+  get showStatusCancelJobAction(): boolean {
+    return this.isEditingJob
+      && this.editingJobStatus !== 'encerradas'
+      && this.contractDecision === null
+      && this.statusStageIndex === 0;
   }
 
   get showStatusAdvanceAction(): boolean {
@@ -312,12 +329,12 @@ export class CadastroPage implements OnDestroy {
     }
   }
 
-  get showSendDocumentsAction(): boolean {
-    return this.contractDecision === 'accepted' && !this.documentsSent;
+  get showValidateDocumentsAction(): boolean {
+    return this.contractDecision === 'accepted' && this.documentsSubmittedByTalent && !this.documentsSent;
   }
 
   get showStatusDocumentsPreview(): boolean {
-    return this.contractDecision === 'accepted' && !this.documentsSent;
+    return this.contractDecision === 'accepted';
   }
 
   get showRadarStatusMessage(): boolean {
@@ -326,6 +343,10 @@ export class CadastroPage implements OnDestroy {
 
   get showWelcomeStatusMessage(): boolean {
     return this.contractDecision === 'accepted' && this.documentsSent;
+  }
+
+  get isAwaitingTalentDocuments(): boolean {
+    return this.contractDecision === 'accepted' && !this.documentsSubmittedByTalent && !this.documentsSent;
   }
 
   get statusCurrentLabel(): string {
@@ -361,6 +382,10 @@ export class CadastroPage implements OnDestroy {
       return index <= 6;
     }
 
+    if (this.contractDecision === 'accepted' && this.documentsSubmittedByTalent) {
+      return index <= 5;
+    }
+
     if (this.contractDecision === 'accepted') {
       return index <= 4;
     }
@@ -373,12 +398,16 @@ export class CadastroPage implements OnDestroy {
       return 'Parabens, vaga concluida com sucesso!';
     }
 
-    if (this.showRadarStatusMessage) {
-      return 'Perfil mantido no radar';
+    if (this.showValidateDocumentsAction) {
+      return 'Documentos recebidos';
     }
 
-    if (this.showSendDocumentsAction) {
-      return 'Etapa final liberada';
+    if (this.isAwaitingTalentDocuments) {
+      return 'Aguardando documentos';
+    }
+
+    if (this.showRadarStatusMessage) {
+      return 'Perfil mantido no radar';
     }
 
     return 'Parabens, vaga quase contratada!';
@@ -389,12 +418,16 @@ export class CadastroPage implements OnDestroy {
       return 'Acompanhamento finalizado e contratacao registrada em tempo real.';
     }
 
-    if (this.showRadarStatusMessage) {
-      return 'Mesmo sem seguir agora, o candidato permanece elegivel para novas vagas.';
+    if (this.showValidateDocumentsAction) {
+      return 'Revise os documentos marcados pelo talento e conclua a validação para finalizar a contratação.';
     }
 
-    if (this.showSendDocumentsAction) {
-      return 'Envie os documentos para concluir a validacao e avancar a contratacao.';
+    if (this.isAwaitingTalentDocuments) {
+      return 'O talento ainda precisa marcar os documentos exigidos e aceitar a LGPD para seguir.';
+    }
+
+    if (this.showRadarStatusMessage) {
+      return 'Mesmo sem seguir agora, o candidato permanece elegivel para novas vagas.';
     }
 
     return 'Acompanhe o andamento do funil e os proximos passos do candidato.';
@@ -417,31 +450,73 @@ export class CadastroPage implements OnDestroy {
 
     this.statusStageIndex = index;
     this.contractDecision = null;
+    this.documentsSubmittedByTalent = false;
     this.documentsSent = false;
+    this.submittedHiringDocuments = [];
+    this.talentDocumentsConsentAccepted = false;
     this.statusDocumentsConsentAccepted = false;
+    this.expandCurrentStatusPreview();
     this.syncRecruiterStatusStage(this.mapRecruiterStepIndexToStage(index));
   }
 
   selectAcceptedContractDecision(): void {
     this.statusStageIndex = 3;
     this.contractDecision = 'accepted';
+    this.documentsSubmittedByTalent = false;
     this.documentsSent = false;
+    this.submittedHiringDocuments = [];
+    this.talentDocumentsConsentAccepted = false;
     this.statusDocumentsConsentAccepted = false;
+    this.expandCurrentStatusPreview();
     this.syncRecruiterStatusStage('aceito');
   }
 
   selectNextContractDecision(): void {
     this.statusStageIndex = 3;
     this.contractDecision = 'next';
+    this.documentsSubmittedByTalent = false;
     this.documentsSent = false;
+    this.submittedHiringDocuments = [];
+    this.talentDocumentsConsentAccepted = false;
     this.statusDocumentsConsentAccepted = false;
+    this.expandCurrentStatusPreview();
     this.syncRecruiterStatusStage('proxima', undefined);
   }
 
   sendStatusDocuments(): void {
     this.documentsSent = true;
+    this.expandCurrentStatusPreview();
     this.syncRecruiterStatusStage('contratado');
     this.triggerConfetti();
+  }
+
+  isStatusPreviewExpanded(index: number): boolean {
+    return this.expandedStatusPreviewIndex === index;
+  }
+
+  toggleStatusPreviewDetails(index: number): void {
+    this.expandedStatusPreviewIndex = this.expandedStatusPreviewIndex === index ? -1 : index;
+  }
+
+  cancelJobFromStatus(): void {
+    if (!this.editingJobId) {
+      return;
+    }
+
+    const confirmed = window.confirm('Deseja cancelar esta vaga?');
+    if (!confirmed) {
+      return;
+    }
+
+    this.editingJobStatus = 'encerradas';
+    this.editingJobStatusReason = this.editingJobStatusReason.trim() || 'Vaga cancelada pelo recruiter.';
+    const savedJob = this.persistJob('encerradas');
+    this.hydrateFromJob(savedJob);
+    this.cdr.markForCheck();
+  }
+
+  isSubmittedHiringDocument(label: string): boolean {
+    return this.submittedHiringDocuments.includes(label);
   }
 
   closeSummaryPanel(): void {
@@ -456,6 +531,62 @@ export class CadastroPage implements OnDestroy {
     this.previewCardFlipped = !this.previewCardFlipped;
   }
 
+  startSummaryPanelDrag(event: PointerEvent): void {
+    if (event.pointerType && event.pointerType !== 'mouse') {
+      return;
+    }
+
+    const page = event.currentTarget as HTMLElement | null;
+    const target = event.target as HTMLElement | null;
+    if (!page || this.isSummaryPanelInteractiveTarget(target)) {
+      return;
+    }
+
+    this.summaryPanelDragState = {
+      pointerId: event.pointerId,
+      startY: event.clientY,
+      startScrollTop: page.scrollTop,
+      dragging: false,
+      element: page,
+    };
+
+    page.setPointerCapture(event.pointerId);
+  }
+
+  onSummaryPanelDrag(event: PointerEvent): void {
+    const state = this.summaryPanelDragState;
+    if (!state || state.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaY = event.clientY - state.startY;
+    if (!state.dragging && Math.abs(deltaY) > 3) {
+      state.dragging = true;
+      state.element.classList.add('summary-card__tab-page--dragging');
+    }
+
+    if (!state.dragging) {
+      return;
+    }
+
+    state.element.scrollTop = state.startScrollTop - deltaY;
+    event.preventDefault();
+  }
+
+  endSummaryPanelDrag(event: PointerEvent): void {
+    const state = this.summaryPanelDragState;
+    if (!state || state.pointerId !== event.pointerId) {
+      return;
+    }
+
+    state.element.classList.remove('summary-card__tab-page--dragging');
+    if (state.element.hasPointerCapture(event.pointerId)) {
+      state.element.releasePointerCapture(event.pointerId);
+    }
+
+    this.summaryPanelDragState = null;
+  }
+
   advanceStatusStage(): void {
     if (this.statusStageIndex >= 3) {
       return;
@@ -463,8 +594,12 @@ export class CadastroPage implements OnDestroy {
 
     this.statusStageIndex += 1;
     this.contractDecision = null;
+    this.documentsSubmittedByTalent = false;
     this.documentsSent = false;
+    this.submittedHiringDocuments = [];
+    this.talentDocumentsConsentAccepted = false;
     this.statusDocumentsConsentAccepted = false;
+    this.expandCurrentStatusPreview();
     this.syncRecruiterStatusStage(this.mapRecruiterStepIndexToStage(this.statusStageIndex));
   }
 
@@ -486,6 +621,14 @@ export class CadastroPage implements OnDestroy {
         duration: 4800 + Math.random() * 3200,
       };
     });
+  }
+
+  private isSummaryPanelInteractiveTarget(target: HTMLElement | null): boolean {
+    return !!target?.closest('button, a, input, label, select, textarea, option, [role="button"], [role="link"]');
+  }
+
+  private expandCurrentStatusPreview(): void {
+    this.expandedStatusPreviewIndex = this.currentStatusPreviewIndex;
   }
 
   private triggerConfetti(): void {
@@ -766,6 +909,10 @@ export class CadastroPage implements OnDestroy {
 
   onSalaryRangeChange(value: string): void {
     this.salaryRange = this.formatSalaryRange(value);
+  }
+
+  selectWorkModel(workModel: WorkModel): void {
+    this.jobDraft.workModel = workModel;
   }
 
   openBenefitModal(): void {
@@ -1251,6 +1398,7 @@ export class CadastroPage implements OnDestroy {
     this.showSalaryRangeInCard = job.showSalaryRangeInCard ?? true;
     this.allowCandidateSalarySuggestion = job.allowCandidateSalarySuggestion ?? true;
     this.selectedBenefits = job.benefits.map((item) => ({ ...item }));
+    this.selectedDocuments = [...job.hiringDocuments];
     this.selectedTechStackItems = job.techStack.map((item) => ({ ...item }));
     this.selectedRefinementOptions = [...job.differentials];
     this.responsibilitySections = job.responsibilitySections.map((section) => ({
@@ -1264,44 +1412,62 @@ export class CadastroPage implements OnDestroy {
     const candidate = job.candidates.find((item) => item.name === this.talentCandidateName);
 
     this.contractDecision = null;
+    this.documentsSubmittedByTalent = false;
     this.documentsSent = false;
+    this.submittedHiringDocuments = [];
+    this.talentDocumentsConsentAccepted = false;
     this.statusDocumentsConsentAccepted = false;
 
     if (job.talentDecision === 'hidden' || candidate?.stage === 'cancelado') {
       this.statusStageIndex = 0;
+      this.expandCurrentStatusPreview();
       return;
     }
 
     switch (candidate?.stage) {
       case 'candidatura':
         this.statusStageIndex = 1;
+        this.expandCurrentStatusPreview();
         return;
       case 'processo':
       case 'tecnica':
         this.statusStageIndex = 2;
+        this.expandCurrentStatusPreview();
         return;
       case 'aguardando':
         this.statusStageIndex = 3;
+        this.expandCurrentStatusPreview();
         return;
       case 'aceito':
         this.statusStageIndex = 3;
         this.contractDecision = 'accepted';
+        this.expandCurrentStatusPreview();
         return;
       case 'proxima':
         this.statusStageIndex = 3;
         this.contractDecision = 'next';
+        this.expandCurrentStatusPreview();
         return;
       case 'documentacao':
         this.statusStageIndex = 3;
         this.contractDecision = 'accepted';
+        this.documentsSubmittedByTalent = true;
+        this.submittedHiringDocuments = [...(job.talentSubmittedDocuments ?? [])];
+        this.talentDocumentsConsentAccepted = job.talentDocumentsConsentAccepted ?? false;
+        this.expandCurrentStatusPreview();
         return;
       case 'contratado':
         this.statusStageIndex = 3;
         this.contractDecision = 'accepted';
+        this.documentsSubmittedByTalent = true;
         this.documentsSent = true;
+        this.submittedHiringDocuments = [...(job.talentSubmittedDocuments ?? [])];
+        this.talentDocumentsConsentAccepted = job.talentDocumentsConsentAccepted ?? false;
+        this.expandCurrentStatusPreview();
         return;
       default:
         this.statusStageIndex = 0;
+        this.expandCurrentStatusPreview();
     }
   }
 
@@ -1338,6 +1504,7 @@ export class CadastroPage implements OnDestroy {
       showSalaryRangeInCard: this.showSalaryRangeInCard,
       allowCandidateSalarySuggestion: this.allowCandidateSalarySuggestion,
       benefits: this.selectedBenefits.map((item) => ({ ...item })),
+      hiringDocuments: [...this.selectedDocuments],
       techStack: this.selectedTechStackItems.map((item) => ({ ...item })),
       differentials: [...this.selectedRefinementOptions],
       responsibilitySections: this.responsibilitySections.map((section) => ({

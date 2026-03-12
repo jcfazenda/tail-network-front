@@ -51,6 +51,7 @@ export interface MockJobDraft extends VagaPanelDraft {
   allowCandidateSalarySuggestion?: boolean;
   hybridOnsiteDaysDescription?: string;
   benefits: JobBenefitItem[];
+  hiringDocuments: string[];
   techStack: TechStackItem[];
   differentials: string[];
   responsibilitySections: JobResponsibilitySection[];
@@ -80,6 +81,8 @@ export interface MockJobRecord extends MockJobDraft {
   extraCount: number;
   status: JobStatus;
   talentDecision?: TalentJobDecision;
+  talentSubmittedDocuments?: string[];
+  talentDocumentsConsentAccepted?: boolean;
   candidates: MockJobCandidate[];
   createdAt: string;
   updatedAt: string;
