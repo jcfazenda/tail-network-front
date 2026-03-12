@@ -603,6 +603,8 @@
     padding: 8px 20px 10px;
     border-bottom: 1px solid #e9e2d6;
     background: var(--card-strong);
+    display: grid;
+    gap: 12px;
   }
 
   &__topcard {
@@ -783,6 +785,35 @@
     text-align: right;
   }
 
+  &__stack-block{
+    margin-top: 2px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.14);
+    display: grid;
+    gap: 12px;
+  }
+
+  &__stack-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__stack-title{
+    margin: 0;
+    padding-left: 4px;
+    font-size: 13px;
+    line-height: 1.2;
+    color: #263142;
+  }
+
+  &__stack{
+    margin-top: 2px;
+    display: grid;
+    gap: 10px;
+  }
+
   &__stages{
     display: grid;
     gap: 12px;
@@ -844,6 +875,79 @@
       }
     }
   }
+}
+
+.stack-card__list{
+  display: grid;
+  gap: 6px;
+}
+
+.stack-item{
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(140px, 210px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.stack-item__meta{
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stack-item__drag{
+  font-family: 'Material Symbols Rounded';
+  font-size: 15px;
+  line-height: 1;
+  color: rgba(15, 23, 42, 0.3);
+}
+
+.stack-item__name{
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.stack-item__progress{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stack-item__track{
+  position: relative;
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(236, 214, 175, 0.34), rgba(247, 240, 228, 0.72));
+}
+
+.stack-item__fill{
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(225, 138, 39, 0.98), rgba(242, 179, 26, 0.92) 46%, rgba(252, 237, 204, 0.98));
+}
+
+.stack-item__thumb{
+  display: none;
+}
+
+.stack-item__value{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.72);
 }
 
 .message-row {
@@ -990,6 +1094,12 @@
         padding: 0 16px;
       }
     }
+  }
+
+  .stack-item{
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px 10px;
   }
 
   .message-bubble{

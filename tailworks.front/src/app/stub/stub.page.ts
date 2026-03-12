@@ -239,6 +239,10 @@ export class StubPage implements OnDestroy {
       company: job.company,
       location: job.location,
       workModel: job.workModel,
+      techStack: job.techStack.map((item) => ({
+        name: item.name,
+        match: item.match,
+      })),
       candidates: this.sortedCandidatesFor(job),
     };
   }

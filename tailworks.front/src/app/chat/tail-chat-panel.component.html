@@ -144,6 +144,31 @@
             </div>
           </div>
         </div>
+
+        <section class="chat-active__stack-block" *ngIf="jobTechStack.length">
+          <div class="chat-active__stack-head">
+            <h4 class="chat-active__stack-title">Percentual de Conhecimentos mínimos</h4>
+          </div>
+
+          <div class="chat-active__stack">
+            <div class="stack-card__list">
+              <div class="stack-item" *ngFor="let item of jobTechStack">
+                <div class="stack-item__meta">
+                  <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                  <span class="stack-item__name">{{ item.name }}</span>
+                </div>
+
+                <div class="stack-item__progress">
+                  <span class="stack-item__track" aria-hidden="true">
+                    <span class="stack-item__fill" [style.width.%]="item.match"></span>
+                    <span class="stack-item__thumb" [style.left.%]="item.match"></span>
+                  </span>
+                  <span class="stack-item__value">{{ item.match }}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <ng-container *ngIf="showHiringFlow">

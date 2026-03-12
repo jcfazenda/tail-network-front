@@ -17,12 +17,18 @@ export interface ChatCandidate {
   radarOnly?: boolean;
 }
 
+export interface ChatTechStackItem {
+  name: string;
+  match: number;
+}
+
 export interface ChatJob {
   id: string;
   title: string;
   company: string;
   location: string;
   workModel?: string;
+  techStack: ChatTechStackItem[];
   candidates: ChatCandidate[];
 }
 
@@ -104,6 +110,10 @@ export class TailChatPanelComponent implements OnChanges {
 
   get selectedRoleLabel(): string {
     return this.selectedConversation?.stack || this.selectedConversation?.role || '';
+  }
+
+  get jobTechStack(): ChatTechStackItem[] {
+    return this.job?.techStack ?? [];
   }
 
   get showHiringFlow(): boolean {
