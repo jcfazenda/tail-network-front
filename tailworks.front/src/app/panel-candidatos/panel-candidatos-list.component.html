@@ -1,10 +1,16 @@
 <!-- Painel completo: topo da vaga + lista de candidatos -->
 <ng-container *ngIf="selectedJobPanel; else funnelEmpty">
-  <div class="job-sheet">
+  <div class="job-sheet" *ngIf="!embedded">
     <div class="job-sheet__topcard">
       <button class="panel-close-btn" type="button" (click)="closePanel()">close</button>
       <div class="job-sheet__profile">
-        <div class="job-sheet__avatar"></div>
+        <div class="job-sheet__avatar-wrap">
+          <img
+            src="/assets/avatars/avatar-rafael.png"
+            alt="Rafael Souza"
+            class="job-sheet__avatar"
+          />
+        </div>
         <div class="job-sheet__profile-text">
           <div class="job-sheet__profile-name">Rafael Souza</div>
           <div class="job-sheet__profile-role">Talent Acquisition</div>
@@ -27,7 +33,7 @@
       </div>
     </div>
   </div>
-  <div class="cand-list">
+  <div class="cand-list" [class.cand-list--embedded]="embedded">
     <div class="candidate-divider">
       <span>Lista de possiveis contratados</span>
       <div class="candidate-divider__legend" *ngIf="hasRadarProfiles">

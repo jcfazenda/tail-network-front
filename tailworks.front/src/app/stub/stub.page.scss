@@ -435,6 +435,16 @@ p {
   position: relative;
 }
 
+.job-card__actions{
+  position: absolute;
+  top: -12px;
+  right: 18px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .job-card__surface{
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.92fr);
@@ -451,11 +461,8 @@ p {
   border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
+.job-card__chat,
 .job-card__edit{
-  position: absolute;
-  top: -12px;
-  right: 18px;
-  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -472,19 +479,28 @@ p {
   box-shadow: var(--btn-secondary-shadow);
 }
 
+.job-card__chat .material-symbols-rounded,
 .job-card__edit .material-symbols-rounded{
   font-size: 16px;
 }
 
+.job-card__chat:hover,
 .job-card__edit:hover{
   border-color: rgba(16, 18, 21, 0.16);
   background: var(--btn-secondary-bg-hover);
   box-shadow: var(--btn-secondary-shadow-hover);
 }
 
+.job-card__chat:focus-visible,
 .job-card__edit:focus-visible{
   outline: none;
   box-shadow: var(--btn-focus-ring), var(--btn-secondary-shadow-hover);
+}
+
+.job-card__edit{
+  min-width: 36px;
+  padding: 0;
+  justify-content: center;
 }
 
 .job-card__main{
@@ -712,7 +728,7 @@ p {
     width: 100%;
   }
 
-  .job-card__edit{
+  .job-card__actions{
     top: -10px;
     right: 12px;
   }
@@ -748,12 +764,12 @@ p {
   }
 }
 
-.panel-candidatos-right {
+.job-side-panel {
   position: fixed;
-  top: 0;
+  top: 113px;
   right: 0;
-  height: calc(100vh - 200px);
-  margin-top: 32px; // espaço para topbar
+  height: calc(100vh - 150px);
+  margin-top: 0;
   width: 600px;
   min-width: 560px;
   max-width: 100vw;
@@ -766,13 +782,162 @@ p {
   flex-direction: column;
   transition: transform 0.25s cubic-bezier(.4,0,.2,1);
   will-change: transform;
+  overflow: hidden;
+}
+
+.job-side-panel__topcard{
+  margin: 10px 14px 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 12px;
+  box-shadow: none;
+  display: grid;
+  gap: 12px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.job-side-panel__profile{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.job-side-panel__avatar-wrap{
+  position: relative;
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.job-side-panel__avatar{
+  display: block;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.job-side-panel__profile-text{
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  text-align: left;
+}
+
+.job-side-panel__profile-name{
+  font-weight: 800;
+  color: #1f1f1f;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.job-side-panel__profile-role{
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.62);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.job-side-panel__title-row{
+  display: block;
+}
+
+.job-side-panel__title{
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+
+.job-side-panel__meta{
+  display: grid;
+  gap: 4px;
+  color: rgba(38, 44, 58, 0.68);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.job-side-panel__meta-left{
+  text-align: left;
+  white-space: nowrap;
+}
+
+.job-side-panel__meta-bottom{
+  text-align: left;
+  color: rgba(38, 44, 58, 0.65);
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.job-side-panel__close{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: rgba(16, 18, 21, 0.05);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+
+  .material-symbols-rounded{
+    font-family: 'Material Symbols Rounded';
+    font-size: 18px;
+    line-height: 1;
+  }
+}
+
+.job-side-panel__content{
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.job-side-panel__content > app-panel-candidatos-list,
+.job-side-panel__content > app-tail-chat-panel{
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 @media (max-width: 600px) {
-  .panel-candidatos-right {
+  .job-side-panel {
+    top: 12px;
     width: 100vw;
     min-width: 0;
     max-width: 100vw;
-    height: calc(100vh - 32px);
-    margin-top: 16px;
+    height: calc(100vh - 24px);
+    margin-top: 0;
+  }
+
+  .job-side-panel__topcard{
+    margin: 10px 10px 0;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .job-side-panel__avatar-wrap{
+    width: 52px;
+    height: 52px;
+  }
+
+  .job-side-panel__avatar{
+    width: 52px;
+    height: 52px;
+  }
+
+  .job-side-panel__title{
+    font-size: 1.02rem;
   }
 }

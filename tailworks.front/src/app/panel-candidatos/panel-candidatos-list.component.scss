@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  min-height: 0;
+  height: 100%;
+}
+
 .job-sheet {
   padding: 10px 14px 18px;
   display: grid;
@@ -16,38 +22,48 @@
   }
 
   &__profile {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: flex;
     gap: 10px;
     align-items: center;
   }
 
+  &__avatar-wrap {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+  }
+
   &__avatar {
-    width: 54px;
-    height: 54px;
+    display: block;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
-    background:
-      center / cover no-repeat url('/assets/avatars/avatar-rafael.png'),
-      var(--avatar-gradient);
+    object-fit: cover;
     border: 2px solid #fff;
-    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   }
 
   &__profile-text {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 3px;
     text-align: left;
   }
 
   &__profile-name {
     font-weight: 800;
-    color: var(--text-strong);
-    font-size: 14px;
+    color: #1f1f1f;
+    font-size: 1rem;
     line-height: 1.1;
   }
 
   &__profile-role {
-    font-size: 12px;
+    font-size: 0.82rem;
     color: rgba(15, 23, 42, 0.62);
     font-weight: 600;
+    line-height: 1.2;
   }
 
   &__title-row {
@@ -214,6 +230,12 @@
   min-height: 0;
   align-content: start;
   box-sizing: border-box;
+}
+
+.cand-list--embedded{
+  margin-top: 0;
+  padding-top: 10px;
+  height: 100%;
 }
 
 .cand-list::-webkit-scrollbar {

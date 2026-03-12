@@ -71,7 +71,6 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly talentCandidateName = 'Rafael Oliveira';
   private readonly subscriptions = new Subscription();
   private selectedJobObservedStage: CandidateStage | null = null;
   private candidateCelebrationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -732,7 +731,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
-    return job.candidates.find((item) => item.name === this.talentCandidateName)?.stage;
+    return this.vagasMockService.findTalentCandidate(job)?.stage;
   }
 
   private syncSelectedJobDocumentState(): void {

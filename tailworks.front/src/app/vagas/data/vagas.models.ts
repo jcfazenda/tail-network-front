@@ -67,6 +67,8 @@ export interface MockJobCandidate {
   stage?: CandidateStage;
   availabilityLabel?: string;
   radarOnly?: boolean;
+  source?: 'seed' | 'system';
+  hasProfileAvatar?: boolean;
 }
 
 export interface MockJobRecord extends MockJobDraft {

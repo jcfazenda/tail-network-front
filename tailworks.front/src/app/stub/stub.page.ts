@@ -97,6 +97,11 @@ export class StubPage implements OnDestroy {
     });
   }
 
+  openJobChat(job: MockJobRecord, event: Event): void {
+    event.stopPropagation();
+    this.openPanel(job);
+  }
+
   openCandidate(job: MockJobRecord, index: number) {
     const sortedCandidates = this.sortedCandidatesFor(job);
     const selectedCandidate = sortedCandidates[index];
@@ -146,6 +151,15 @@ export class StubPage implements OnDestroy {
   closeChat() {
     this.selectedChatJob = null;
     this.selectedCandidateName = null;
+  }
+
+  handleSidePanelAction(): void {
+    if (this.selectedChatJob) {
+      this.closeChat();
+      return;
+    }
+
+    this.closePanel();
   }
 
   closePanel() {

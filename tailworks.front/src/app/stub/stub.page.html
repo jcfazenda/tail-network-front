@@ -105,10 +105,16 @@
         <ng-container *ngIf="filteredJobs.length; else emptyState">
           <div class="jobs__grid">
             <article class="job-card" *ngFor="let job of filteredJobs">
-              <button class="job-card__edit" type="button" (click)="editJob(job, $event)">
-                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                <span>Editar</span>
-              </button>
+              <div class="job-card__actions">
+                <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
+                  <span class="material-symbols-rounded" aria-hidden="true">forum</span>
+                  <span>Chat</span>
+                </button>
+
+                <button class="job-card__edit" type="button" (click)="editJob(job, $event)" aria-label="Editar vaga" title="Editar vaga">
+                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                </button>
+              </div>
 
               <button class="job-card__surface" type="button" (click)="openPanel(job)">
                 <div class="job-card__main">
@@ -136,7 +142,7 @@
                       <span class="job-card__fit-value">{{ job.match }}%</span>
                     </div>
 
-                    <div class="job-card__avatars">
+                    <div class="job-card__avatars" *ngIf="job.avatars.length || job.extraCount">
                       <div class="job-card__avatars-stack">
                         <ng-container *ngFor="let avatar of job.avatars; let i = index">
                           <span
@@ -147,7 +153,7 @@
                             aria-hidden="true"
                           ></span>
                         </ng-container>
-                        <span class="job-card__avatar job-card__avatar--extra">+{{ job.extraCount }}</span>
+                        <span class="job-card__avatar job-card__avatar--extra" *ngIf="job.extraCount > 0">+{{ job.extraCount }}</span>
                       </div>
                     </div>
                   </div>
@@ -172,23 +178,64 @@
       </section>
     </div>
 
-    <app-panel-candidatos-list
-      *ngIf="selectedJobPanel"
-      class="panel-candidatos-right"
-      [selectedJobPanel]="selectedJobPanel"
-      [sortedCandidatesFor]="sortedCandidatesFor"
-      [stageLabel]="stageLabel"
-      (closePanelEvent)="closePanel()"
-      (openChat)="openCandidate(findJobById(selectedJobPanel!.id), $event)"
-    ></app-panel-candidatos-list>
+    <aside class="job-side-panel" *ngIf="selectedJobPanel">
+      <div class="job-side-panel__topcard">
+        <button class="job-side-panel__close" type="button" (click)="handleSidePanelAction()">
+          <span class="material-symbols-rounded" aria-hidden="true">
+            {{ selectedChatJob ? 'arrow_back' : 'close' }}
+          </span>
+        </button>
+
+        <div class="job-side-panel__profile">
+          <div class="job-side-panel__avatar-wrap">
+            <img
+              src="/assets/avatars/avatar-rafael.png"
+              alt="Rafael Souza"
+              class="job-side-panel__avatar"
+            />
+          </div>
+          <div class="job-side-panel__profile-text">
+            <div class="job-side-panel__profile-name">Rafael Souza</div>
+            <div class="job-side-panel__profile-role">Talent Acquisition</div>
+          </div>
+        </div>
+
+        <div class="job-side-panel__title-row">
+          <div class="job-side-panel__title">{{ selectedJobPanel.title }}</div>
+        </div>
+
+        <div class="job-side-panel__meta">
+        <div class="job-side-panel__meta-left">
+          <span class="job-side-panel__item">{{ selectedJobPanel.company }}</span>
+        </div>
+        <div class="job-side-panel__meta-bottom">
+          <span class="job-side-panel__item">{{ selectedJobPanel.location }} 📍</span>
+        </div>
+      </div>
+      </div>
+
+      <div class="job-side-panel__content">
+        <app-panel-candidatos-list
+          *ngIf="!selectedChatJob"
+          [embedded]="true"
+          [selectedJobPanel]="selectedJobPanel"
+          [sortedCandidatesFor]="sortedCandidatesFor"
+          [stageLabel]="stageLabel"
+          (closePanelEvent)="closePanel()"
+          (openChat)="openCandidate(findJobById(selectedJobPanel!.id), $event)"
+        ></app-panel-candidatos-list>
+
+        <app-tail-chat-panel
+          *ngIf="selectedChatJob"
+          [embedded]="true"
+          [job]="selectedChatJob"
+          [startIndex]="chatStartIndex"
+          [showConversationList]="false"
+          (close)="closeChat()">
+        </app-tail-chat-panel>
+      </div>
+    </aside>
 
     <div class="panel-backdrop" *ngIf="selectedJobPanel" (click)="closePanel()"></div>
   </div>
-
-  <app-tail-chat-panel
-    *ngIf="selectedChatJob"
-    [job]="selectedChatJob"
-    [startIndex]="chatStartIndex"
-    (close)="closeChat()">
-  </app-tail-chat-panel>
 </div>

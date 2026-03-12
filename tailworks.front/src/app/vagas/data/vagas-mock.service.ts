@@ -2,12 +2,28 @@ import { Injectable, NgZone, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, TalentJobDecision } from './vagas.models';
 
+type CandidateBasicProfile = {
+  name: string;
+};
+
+type CandidateBasicDraft = {
+  profile?: Partial<CandidateBasicProfile>;
+  photoPreviewUrl?: string;
+};
+
+type TalentIdentity = {
+  name: string;
+  avatar: string;
+  hasProfileAvatar: boolean;
+};
+
 @Injectable({ providedIn: 'root' })
 export class VagasMockService {
   private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
   private readonly syncChannelName = 'tailworks.front.mock-vagas.sync';
-  private readonly talentAvatar = '/assets/avatars/avatar-rafael.png';
-  private readonly talentCandidateName = 'Rafael Oliveira';
+  private readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private readonly fallbackTalentAvatar = '/assets/avatars/avatar-rafael.png';
+  private readonly fallbackTalentCandidateName = 'Rafael Oliveira';
   private readonly zone = inject(NgZone);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
@@ -34,6 +50,15 @@ export class VagasMockService {
 
   getJobById(id: string): MockJobRecord | undefined {
     return this.loadJobs().find((job) => job.id === id);
+  }
+
+  getTalentCandidateIdentity(): TalentIdentity {
+    return this.readTalentIdentity();
+  }
+
+  findTalentCandidate(job: Pick<MockJobRecord, 'candidates'>): MockJobCandidate | undefined {
+    const identity = this.readTalentIdentity();
+    return job.candidates.find((candidate) => this.isTalentCandidate(candidate, identity));
   }
 
   saveJob(command: SaveMockJobCommand): MockJobRecord {
@@ -140,9 +165,9 @@ export class VagasMockService {
       updatedAt: new Date().toISOString(),
     };
 
-    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    this.cache = jobs.map((job) => (job.id === jobId ? this.decorateTalentVisibility(updatedJob) : job));
     this.persist();
-    return updatedJob;
+    return this.cache.find((job) => job.id === jobId);
   }
 
   private loadJobs(): MockJobRecord[] {
@@ -190,17 +215,19 @@ export class VagasMockService {
     }
 
     const appliedCandidate = this.buildTalentCandidate(existing);
-    const hasCandidate = existing.candidates.some((candidate) => candidate.name === appliedCandidate.name);
+    const hasCandidate = existing.candidates.some((candidate) => this.isTalentCandidate(candidate));
     const nextCandidates: MockJobCandidate[] =
       stage === 'radar'
-        ? existing.candidates.map((candidate) =>
-            candidate.name === this.talentCandidateName
-              ? { ...candidate, ...appliedCandidate, stage: 'radar' as const, radarOnly: true }
-              : { ...candidate },
-          )
+        ? hasCandidate
+          ? existing.candidates.map((candidate) =>
+              this.isTalentCandidate(candidate)
+                ? { ...candidate, ...appliedCandidate, stage: 'radar' as const, radarOnly: true }
+                : { ...candidate },
+            )
+          : [{ ...appliedCandidate, stage: 'radar' as const, radarOnly: true }, ...existing.candidates.map((candidate) => ({ ...candidate }))]
         : hasCandidate
           ? existing.candidates.map((candidate) =>
-              candidate.name === appliedCandidate.name
+              this.isTalentCandidate(candidate)
                 ? { ...candidate, ...appliedCandidate, stage, radarOnly: false }
                 : { ...candidate },
             )
@@ -283,7 +310,7 @@ export class VagasMockService {
     const radarCount = Math.max(4, Math.round(talents * 0.72));
     const match = Math.min(99, Math.max(42, Math.round(command.previewAderencia)));
 
-    return {
+    return this.decorateTalentVisibility({
       id: existing?.id ?? this.createId(),
       priority: command.draft.location.toUpperCase(),
       match,
@@ -312,7 +339,7 @@ export class VagasMockService {
         ...section,
         items: [...section.items],
       })),
-    };
+    });
   }
 
   private normalizeJobs(records: MockJobRecord[]): MockJobRecord[] {
@@ -328,7 +355,7 @@ export class VagasMockService {
       techStack: record.techStack.map((item) => ({ ...item })),
       differentials: [...record.differentials],
       responsibilitySections: this.normalizeResponsibilitySections(record.responsibilitySections, record.differentials),
-      candidates: record.candidates.map((candidate) => ({ ...candidate })),
+      candidates: record.candidates.map((candidate) => this.normalizeCandidate(candidate)),
       avatars: [...record.avatars],
     })).map((record) => this.decorateTalentVisibility(record));
   }
@@ -411,31 +438,117 @@ export class VagasMockService {
   }
 
   private buildTalentCandidate(job: MockJobRecord): MockJobCandidate {
+    const identity = this.readTalentIdentity();
+
     return {
-      name: this.talentCandidateName,
+      name: identity.name,
       role: `${job.seniority} ${job.title}`.trim(),
       match: Math.max(72, Math.min(98, job.match)),
       minutesAgo: 1,
       status: 'online',
-      avatar: this.talentAvatar,
+      avatar: identity.avatar,
       stage: 'candidatura',
       availabilityLabel: 'Disponibilidade imediata',
       radarOnly: false,
+      source: 'system',
+      hasProfileAvatar: identity.hasProfileAvatar,
     };
   }
 
   private decorateTalentVisibility(job: MockJobRecord): MockJobRecord {
-    const highlightedAvatars = job.talentDecision === 'applied'
-      ? [this.talentAvatar, ...job.avatars.filter((avatar) => avatar !== this.talentAvatar)]
-      : [...job.avatars];
+    const highlightedAvatars = this.collectVisibleSystemAvatars(job);
 
     return {
       ...job,
       avatars: highlightedAvatars.slice(0, 3),
-      extraCount: Math.max(
-        job.extraCount,
-        highlightedAvatars.length > 3 ? highlightedAvatars.length - 3 : job.extraCount,
-      ),
+      extraCount: Math.max(0, highlightedAvatars.length - 3),
     };
+  }
+
+  private normalizeCandidate(candidate: MockJobCandidate): MockJobCandidate {
+    const isSystemCandidate = this.isTalentCandidate(candidate);
+    const identity = isSystemCandidate ? this.readTalentIdentity() : null;
+
+    return {
+      ...candidate,
+      name: identity?.name ?? candidate.name,
+      avatar: identity?.avatar ?? candidate.avatar,
+      source: candidate.source ?? (isSystemCandidate ? 'system' : 'seed'),
+      hasProfileAvatar: isSystemCandidate
+        ? identity?.hasProfileAvatar ?? false
+        : candidate.hasProfileAvatar ?? false,
+    };
+  }
+
+  private collectVisibleSystemAvatars(job: MockJobRecord): string[] {
+    const identity = this.readTalentIdentity();
+    const systemCandidates = job.candidates.filter((candidate) => this.isTalentCandidate(candidate, identity));
+    const candidatesToShow = systemCandidates.length
+      ? systemCandidates
+      : this.shouldShowTalentAsRadar(job, identity)
+        ? [{ ...this.buildTalentCandidate(job), stage: 'radar' as const, radarOnly: true }]
+        : [];
+
+    return candidatesToShow
+      .filter((candidate) => candidate.hasProfileAvatar && this.shouldShowCandidateAvatar(candidate))
+      .map((candidate) => candidate.avatar.trim())
+      .filter(Boolean)
+      .filter((avatar, index, items) => items.indexOf(avatar) === index);
+  }
+
+  private shouldShowTalentAsRadar(job: MockJobRecord, identity: TalentIdentity): boolean {
+    if (!identity.hasProfileAvatar || job.status !== 'ativas' || job.talentDecision === 'hidden') {
+      return false;
+    }
+
+    return !job.candidates.some((candidate) => this.isTalentCandidate(candidate, identity));
+  }
+
+  private shouldShowCandidateAvatar(candidate: MockJobCandidate): boolean {
+    return candidate.radarOnly === true || !!candidate.stage;
+  }
+
+  private isTalentCandidate(candidate: MockJobCandidate, identity = this.readTalentIdentity()): boolean {
+    return candidate.source === 'system'
+      || candidate.name === identity.name
+      || candidate.name === this.fallbackTalentCandidateName;
+  }
+
+  private hasRealProfileAvatar(avatar: string | undefined): boolean {
+    return !!avatar?.trim() && avatar !== this.fallbackTalentAvatar;
+  }
+
+  private readTalentIdentity(): TalentIdentity {
+    const storage = this.getStorage();
+    const fallback: TalentIdentity = {
+      name: this.fallbackTalentCandidateName,
+      avatar: this.fallbackTalentAvatar,
+      hasProfileAvatar: false,
+    };
+
+    if (!storage) {
+      return fallback;
+    }
+
+    const rawDraft = storage.getItem(this.basicDraftStorageKey);
+
+    if (!rawDraft) {
+      return fallback;
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
+      const name = draft.profile?.name?.trim() || fallback.name;
+      const avatar = draft.photoPreviewUrl?.trim() || fallback.avatar;
+
+      return {
+        name,
+        avatar,
+        hasProfileAvatar: this.hasRealProfileAvatar(draft.photoPreviewUrl),
+      };
+    } catch {
+      storage.removeItem(this.basicDraftStorageKey);
+      return fallback;
+    }
   }
 }

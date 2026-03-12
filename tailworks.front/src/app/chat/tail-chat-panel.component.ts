@@ -58,6 +58,8 @@ export class TailChatPanelComponent implements OnChanges {
 
   @Input() job!: ChatJob;
   @Input() startIndex = 0;
+  @Input() showConversationList = true;
+  @Input() embedded = false;
   @Output() close = new EventEmitter<void>();
 
   searchText = '';

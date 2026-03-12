@@ -55,7 +55,6 @@ export class CadastroPage implements OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
-  private readonly talentCandidateName = 'Rafael Oliveira';
   private readonly subscriptions = new Subscription();
   private summaryPanelDragState: {
     pointerId: number;
@@ -1409,7 +1408,7 @@ export class CadastroPage implements OnDestroy {
   }
 
   private hydrateStatusFromJob(job: MockJobRecord): void {
-    const candidate = job.candidates.find((item) => item.name === this.talentCandidateName);
+    const candidate = this.vagasMockService.findTalentCandidate(job);
 
     this.contractDecision = null;
     this.documentsSubmittedByTalent = false;
