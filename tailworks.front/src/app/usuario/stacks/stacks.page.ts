@@ -54,7 +54,7 @@ export class StacksPage implements OnInit {
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks', active: true },
     { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Geral', route: '/usuario/dados-cadastrais/geral' },
+    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
   ];
 
   readonly maxStacks = 10;
@@ -324,11 +324,22 @@ export class StacksPage implements OnInit {
     }
 
     this.persistStacks();
-    void this.router.navigate(['/usuario/dados-cadastrais/experiencia']);
+    this.scrollToSection('usuario-experiencia', '/usuario/dados-cadastrais/experiencia');
   }
 
   private persistStacks(): void {
     localStorage.setItem(StacksPage.storageKey, JSON.stringify(this.stacks));
+  }
+
+  private scrollToSection(sectionId: string, fallbackRoute: string): void {
+    const target = document.getElementById(sectionId);
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    void this.router.navigate([fallbackRoute]);
   }
 
   private scheduleEditorSync(): void {

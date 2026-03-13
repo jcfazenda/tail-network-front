@@ -4,6 +4,7 @@ import { JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCa
 
 type CandidateBasicProfile = {
   name: string;
+  location: string;
 };
 
 type CandidateBasicDraft = {
@@ -14,6 +15,7 @@ type CandidateBasicDraft = {
 type TalentIdentity = {
   name: string;
   avatar: string;
+  location: string;
   hasProfileAvatar: boolean;
 };
 
@@ -144,11 +146,87 @@ export class VagasMockService {
     stage: MockJobCandidate['stage'],
     talentDecision?: TalentJobDecision,
   ): MockJobRecord | undefined {
-    return this.updateTalentStage(
+    const talentCandidate = this.findTalentCandidateByJobId(jobId);
+
+    if (!talentCandidate) {
+      return undefined;
+    }
+
+    return this.updateCandidateStage(
       jobId,
+      talentCandidate.name,
       stage,
       talentDecision ?? (stage === 'radar' || stage === 'cancelado' ? undefined : 'applied'),
     );
+  }
+
+  updateCandidateStage(
+    jobId: string,
+    candidateName: string,
+    stage: MockJobCandidate['stage'],
+    talentDecision?: TalentJobDecision,
+    options?: {
+      talentSubmittedDocuments?: string[];
+      talentDocumentsConsentAccepted?: boolean;
+    },
+  ): MockJobRecord | undefined {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === jobId);
+
+    if (!existing) {
+      return undefined;
+    }
+
+    const nextCandidates = existing.candidates.map((candidate) => {
+      if (!this.isCandidateMatch(candidate, candidateName)) {
+        return { ...candidate };
+      }
+
+      return {
+        ...candidate,
+        ...(this.isTalentCandidate(candidate) ? this.buildTalentCandidate(existing) : {}),
+        stage,
+        radarOnly: stage === 'radar',
+      };
+    });
+
+    const targetCandidate = existing.candidates.find((candidate) => this.isCandidateMatch(candidate, candidateName));
+
+    if (!targetCandidate) {
+      return undefined;
+    }
+
+    const isTalentCandidate = this.isTalentCandidate(targetCandidate);
+    const shouldPreserveSubmittedDocuments = isTalentCandidate && (stage === 'documentacao' || stage === 'contratado');
+    const nextSubmittedDocuments =
+      options?.talentSubmittedDocuments !== undefined
+        ? options.talentSubmittedDocuments
+        : shouldPreserveSubmittedDocuments
+          ? [...(existing.talentSubmittedDocuments ?? [])]
+          : isTalentCandidate
+            ? []
+            : [...(existing.talentSubmittedDocuments ?? [])];
+    const nextConsentAccepted =
+      options?.talentDocumentsConsentAccepted !== undefined
+        ? options.talentDocumentsConsentAccepted
+        : shouldPreserveSubmittedDocuments
+          ? existing.talentDocumentsConsentAccepted ?? false
+          : isTalentCandidate
+            ? false
+            : existing.talentDocumentsConsentAccepted ?? false;
+
+    const updatedJob: MockJobRecord = this.decorateTalentVisibility({
+      ...existing,
+      talentDecision: isTalentCandidate ? talentDecision : existing.talentDecision,
+      talentSubmittedDocuments: nextSubmittedDocuments,
+      talentDocumentsConsentAccepted: nextConsentAccepted,
+      candidates: nextCandidates,
+      updatedAt: new Date().toISOString(),
+    });
+
+    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    this.persist();
+    return updatedJob;
   }
 
   hideFromTalent(jobId: string): MockJobRecord | undefined {
@@ -258,6 +336,15 @@ export class VagasMockService {
     this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
     this.persist();
     return updatedJob;
+  }
+
+  private findTalentCandidateByJobId(jobId: string): MockJobCandidate | undefined {
+    const existing = this.getJobById(jobId);
+    if (!existing) {
+      return undefined;
+    }
+
+    return this.findTalentCandidate(existing);
   }
 
   private parseJobs(raw: string | null): MockJobRecord[] {
@@ -443,6 +530,7 @@ export class VagasMockService {
     return {
       name: identity.name,
       role: `${job.seniority} ${job.title}`.trim(),
+      location: identity.location,
       match: Math.max(72, Math.min(98, job.match)),
       minutesAgo: 1,
       status: 'online',
@@ -473,6 +561,7 @@ export class VagasMockService {
       ...candidate,
       name: identity?.name ?? candidate.name,
       avatar: identity?.avatar ?? candidate.avatar,
+      location: identity?.location ?? candidate.location,
       source: candidate.source ?? (isSystemCandidate ? 'system' : 'seed'),
       hasProfileAvatar: isSystemCandidate
         ? identity?.hasProfileAvatar ?? false
@@ -514,6 +603,10 @@ export class VagasMockService {
       || candidate.name === this.fallbackTalentCandidateName;
   }
 
+  private isCandidateMatch(candidate: MockJobCandidate, candidateName: string): boolean {
+    return candidate.name === candidateName;
+  }
+
   private hasRealProfileAvatar(avatar: string | undefined): boolean {
     return !!avatar?.trim() && avatar !== this.fallbackTalentAvatar;
   }
@@ -523,6 +616,7 @@ export class VagasMockService {
     const fallback: TalentIdentity = {
       name: this.fallbackTalentCandidateName,
       avatar: this.fallbackTalentAvatar,
+      location: '',
       hasProfileAvatar: false,
     };
 
@@ -540,10 +634,12 @@ export class VagasMockService {
       const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
       const name = draft.profile?.name?.trim() || fallback.name;
       const avatar = draft.photoPreviewUrl?.trim() || fallback.avatar;
+      const location = draft.profile?.location?.trim() || fallback.location;
 
       return {
         name,
         avatar,
+        location,
         hasProfileAvatar: this.hasRealProfileAvatar(draft.photoPreviewUrl),
       };
     } catch {

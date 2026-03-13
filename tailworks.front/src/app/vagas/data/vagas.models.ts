@@ -60,6 +60,7 @@ export interface MockJobDraft extends VagaPanelDraft {
 export interface MockJobCandidate {
   name: string;
   role: string;
+  location?: string;
   match: number;
   minutesAgo: number;
   status: 'online' | 'offline';

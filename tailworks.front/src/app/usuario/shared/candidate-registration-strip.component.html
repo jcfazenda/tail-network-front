@@ -1,0 +1,70 @@
+<section class="candidate-registration-strip">
+  <input
+    #avatarInput
+    class="candidate-registration-strip__avatar-input"
+    type="file"
+    accept=".jpg,.jpeg,.png,.gif"
+    (change)="onPhotoSelected($event)"
+  />
+
+  <div class="candidate-registration-strip__identity-row">
+    <button
+      class="candidate-registration-strip__avatar"
+      type="button"
+      (click)="openPhotoPicker(avatarInput)"
+      (keydown)="onPhotoKeydown($event, avatarInput)"
+      aria-label="Trocar foto do perfil"
+      title="Trocar foto do perfil"
+    >
+      <img
+        *ngIf="displayPhotoPreviewUrl; else defaultAvatar"
+        [src]="displayPhotoPreviewUrl"
+        alt=""
+        class="candidate-registration-strip__avatar-image"
+      />
+
+      <ng-template #defaultAvatar>
+        <span class="material-symbols-rounded">person</span>
+      </ng-template>
+    </button>
+
+    <div class="candidate-registration-strip__identity">
+      <div class="candidate-registration-strip__identity-name">
+        <strong>{{ displayName }}</strong>
+        <span
+          class="candidate-registration-strip__identity-verified material-symbols-rounded"
+          aria-label="Validado no sistema"
+          title="Validado no sistema"
+        >
+          verified
+        </span>
+      </div>
+      <strong class="candidate-registration-strip__identity-degree">{{ displayGraduation }}</strong>
+      <span class="candidate-registration-strip__identity-copy">{{ displaySpecialization }}</span>
+    </div>
+
+    <div class="candidate-registration-strip__controls">
+      <label class="candidate-registration-strip__toggle" [class.candidate-registration-strip__toggle--active]="isVisibleInEcosystem">
+        <input
+          type="checkbox"
+          [checked]="isVisibleInEcosystem"
+          (change)="updateVisibleInEcosystem($any($event.target).checked)"
+        />
+        <span class="candidate-registration-strip__toggle-chip" aria-hidden="true"></span>
+        <span class="candidate-registration-strip__toggle-text">Ecossistema</span>
+      </label>
+
+      <label class="candidate-registration-strip__toggle" [class.candidate-registration-strip__toggle--active]="isAvailableForApplications">
+        <input
+          type="checkbox"
+          [checked]="isAvailableForApplications"
+          (change)="updateAvailableForApplications($any($event.target).checked)"
+        />
+        <span class="candidate-registration-strip__toggle-chip" aria-hidden="true"></span>
+        <span class="candidate-registration-strip__toggle-text">Disponivel</span>
+      </label>
+    </div>
+  </div>
+
+  <small class="candidate-registration-strip__photo-error" *ngIf="photoError">{{ photoError }}</small>
+</section>

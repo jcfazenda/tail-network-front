@@ -52,7 +52,6 @@ export class FormacaoPage implements OnInit {
     { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
     { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
     { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao', active: true },
-    { index: 5, label: 'Geral' },
   ];
 
   readonly monthOptions = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -159,10 +158,6 @@ export class FormacaoPage implements OnInit {
 
     event.preventDefault();
     this.openIntroLogoPicker(input);
-  }
-
-  continueToGeneral(): void {
-    void this.router.navigate(['/usuario/dados-cadastrais/geral']);
   }
 
   updateRadarAvailability(nextValue: boolean): void {

@@ -1,0 +1,295 @@
+<div
+  class="candidate-modal-backdrop"
+  *ngIf="modalData as modal"
+  (click)="closeModal()"
+>
+  <section class="candidate-modal" (click)="$event.stopPropagation()">
+    <header class="candidate-modal__header">
+      <div class="candidate-modal__identity">
+        <div class="candidate-modal__avatar">
+          <img [src]="modal.avatar" [alt]="modal.name" class="candidate-modal__avatar-image" />
+        </div>
+
+        <div class="candidate-modal__identity-copy">
+          <div class="candidate-modal__identity-name">
+            <strong>{{ modal.name }}</strong>
+            <span
+              class="candidate-modal__identity-verified material-symbols-rounded"
+              aria-label="Validado no sistema"
+              title="Validado no sistema"
+            >
+              verified
+            </span>
+          </div>
+          <strong class="candidate-modal__identity-role">{{ modal.role }}</strong>
+          <span *ngIf="modal.location">{{ modal.location }}</span>
+        </div>
+      </div>
+
+      <button class="candidate-modal__close" type="button" (click)="closeModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </header>
+
+    <div class="candidate-modal__tabs">
+      <button
+        type="button"
+        class="candidate-modal__tab"
+        [class.candidate-modal__tab--active]="activeTab === 'journey'"
+        (click)="setTab('journey')"
+      >
+        Jornada
+      </button>
+      <button
+        type="button"
+        class="candidate-modal__tab"
+        [class.candidate-modal__tab--active]="activeTab === 'curriculum'"
+        (click)="setTab('curriculum')"
+      >
+        Curriculum
+      </button>
+    </div>
+
+    <div class="candidate-modal__body candidate-modal__body--journey" *ngIf="activeTab === 'journey'; else curriculumTab">
+      <section class="candidate-modal__status-panel">
+        <div class="candidate-modal__status-head">
+          <span class="candidate-modal__status-label">Status do talento</span>
+        </div>
+
+        <div class="candidate-modal__status-list">
+          <div
+            class="candidate-modal__status-step"
+            *ngFor="let item of modal.journey; let i = index"
+            [class.candidate-modal__status-step--expanded]="isJourneyExpanded(i)"
+          >
+            <span
+              class="candidate-modal__status-indicator"
+              [class.candidate-modal__status-indicator--active]="item.active"
+              [class.candidate-modal__status-indicator--done]="item.completed"
+              [class.candidate-modal__status-indicator--pending]="!item.completed"
+              aria-hidden="true"
+            >sports_baseball</span>
+
+            <button
+              class="candidate-modal__status-copy"
+              [class.candidate-modal__status-copy--expanded]="isJourneyExpanded(i)"
+              type="button"
+              [attr.aria-expanded]="isJourneyExpanded(i)"
+              (click)="toggleJourneyDetails(i)"
+            >
+              <span
+                class="candidate-modal__status-name"
+                [class.candidate-modal__status-name--active]="item.active"
+                [class.candidate-modal__status-name--muted]="!item.completed"
+              >
+                {{ item.label }}
+              </span>
+              <span class="candidate-modal__status-time" *ngIf="item.timeLabel && item.completed">{{ item.timeLabel }}</span>
+              <span class="candidate-modal__status-description">{{ item.description }}</span>
+              <span class="candidate-modal__status-owner">{{ item.ownerText }}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="candidate-modal__status-documents" *ngIf="showJourneyDocumentsPreview">
+        <h4 class="candidate-modal__section-title">Documentos para validação de contratação.</h4>
+
+        <p class="candidate-modal__documents-text">
+          {{ isAwaitingTalentDocuments
+            ? 'Aguardando o talento marcar e enviar os documentos solicitados para esta vaga.'
+            : 'O talento enviou os documentos marcados abaixo e o aceite LGPD já foi registrado.' }}
+        </p>
+
+        <div class="candidate-modal__status-documents-list" *ngIf="hiringDocuments.length; else emptyStatusDocuments">
+          <div
+            class="candidate-modal__status-documents-item"
+            *ngFor="let item of hiringDocuments"
+            [class.candidate-modal__status-documents-item--checked]="isSubmittedHiringDocument(item)"
+            [class.candidate-modal__status-documents-item--pending]="!isSubmittedHiringDocument(item)"
+          >
+            <span class="candidate-modal__status-documents-item-check" aria-hidden="true"></span>
+            <span class="candidate-modal__status-documents-item-dot" aria-hidden="true"></span>
+            <div class="candidate-modal__status-documents-item-copy">
+              <span class="candidate-modal__status-documents-item-label">{{ item }}</span>
+              <span class="candidate-modal__status-documents-item-description">
+                {{ isSubmittedHiringDocument(item) ? 'Marcado e enviado pelo talento' : 'Aguardando envio do talento' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #emptyStatusDocuments>
+          <span class="candidate-modal__fact-empty">Nenhum documento informado</span>
+        </ng-template>
+
+        <div class="candidate-modal__status-document-consent">
+          <span class="candidate-modal__status-document-consent-control">
+            <span
+              class="candidate-modal__status-document-consent-check material-symbols-rounded"
+              [class.candidate-modal__status-document-consent-check--checked]="talentDocumentsConsentAccepted"
+              aria-hidden="true"
+            >check</span>
+          </span>
+          <span class="candidate-modal__status-document-consent-text">
+            {{ talentDocumentsConsentAccepted
+              ? 'LGPD aceita pelo talento para compartilhamento e validação dos documentos.'
+              : 'Aceite LGPD ainda não enviado pelo talento.' }}
+          </span>
+        </div>
+      </section>
+
+      <div class="candidate-modal__status-footer">
+        <button
+          *ngIf="showJourneyAdvanceAction"
+          class="candidate-modal__status-action candidate-modal__status-action--primary"
+          type="button"
+          (click)="advanceJourneyStage()"
+        >
+          <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+          {{ journeyAdvanceLabel }}
+        </button>
+
+        <p class="candidate-modal__status-note" *ngIf="showAwaitingTalentDecisionMessage">
+          Aguardando a resposta do talento sobre a proposta enviada.
+        </p>
+
+        <button
+          *ngIf="showValidateDocumentsAction"
+          class="candidate-modal__status-action candidate-modal__status-action--primary candidate-modal__status-action--documents"
+          type="button"
+          (click)="concludeJourneyDocuments()"
+        >
+          <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
+          Concluir validação
+        </button>
+
+        <p class="candidate-modal__status-note" *ngIf="showRadarStatusMessage">
+          Tudo bem, voce ainda esta no nosso Radar.
+        </p>
+
+        <p class="candidate-modal__status-note" *ngIf="showWelcomeStatusMessage">
+          Parabens, bem-vindo ao time.
+        </p>
+      </div>
+    </div>
+
+    <ng-template #curriculumTab>
+      <div class="candidate-modal__body">
+        <section class="candidate-modal__formation">
+          <div class="candidate-modal__formation-mark">
+            <span class="material-symbols-rounded" aria-hidden="true">school</span>
+          </div>
+
+          <div class="candidate-modal__formation-copy">
+            <em>{{ modal.formationHeading }}</em>
+            <strong>{{ modal.graduation }}</strong>
+            <div class="candidate-modal__formation-meta">
+              <span>{{ modal.specialization }}</span>
+              <small>{{ modal.educationStatus }}</small>
+            </div>
+          </div>
+        </section>
+
+        <ng-container *ngIf="modal.experiences.length; else emptyCurriculum">
+          <div class="candidate-modal__experience-head">
+            <p>Atuação por experiência</p>
+            <div class="candidate-modal__experience-nav">
+              <button
+                class="candidate-modal__experience-nav-button"
+                type="button"
+                aria-label="Experiência anterior"
+                [disabled]="!canGoToPreviousExperience"
+                (click)="showPreviousExperience()"
+              >
+                &lt;
+              </button>
+              <span class="candidate-modal__experience-page">{{ currentExperiencePageNumber }} / {{ modal.experiences.length }}</span>
+              <button
+                class="candidate-modal__experience-nav-button"
+                type="button"
+                aria-label="Próxima experiência"
+                [disabled]="!canGoToNextExperience"
+                (click)="showNextExperience()"
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+
+          <div class="candidate-modal__experience-list" *ngIf="currentExperience as experience">
+            <article class="candidate-modal__experience-item candidate-modal__experience-item--single">
+              <div class="candidate-modal__experience-item-head">
+                <span class="candidate-modal__experience-item-company">{{ experience.company }}</span>
+                <span class="candidate-modal__experience-item-level">{{ experience.positionLevel }}</span>
+              </div>
+
+              <div class="candidate-modal__experience-item-meta">
+                <div class="candidate-modal__experience-item-role-row">
+                  <span class="candidate-modal__experience-item-role">{{ experience.role }}</span>
+                </div>
+                <span class="candidate-modal__experience-item-context">{{ experience.workModel }}</span>
+              </div>
+
+              <div class="candidate-modal__experience-item-timeline">
+                <span>Setor: {{ experience.companySegment }}</span>
+                <span>
+                  {{ experience.startMonth }} {{ experience.startYear }}
+                  •
+                  {{ experience.currentlyWorkingHere ? 'Atual' : experience.endMonth + ' ' + experience.endYear }}
+                </span>
+              </div>
+
+              <div class="candidate-modal__experience-item-fit">
+                <span class="candidate-modal__experience-item-fit-track" aria-hidden="true">
+                  <span class="candidate-modal__experience-item-fit-fill" [style.width.%]="experience.actuation"></span>
+                </span>
+                <div class="candidate-modal__experience-item-fit-meta">
+                  <strong>{{ experience.actuation }}%</strong>
+                  <span>Coerência</span>
+                </div>
+              </div>
+
+              <div
+                class="candidate-modal__experience-item-description"
+                *ngIf="experience.responsibilities"
+                [innerHTML]="experience.responsibilities"
+              ></div>
+
+              <section class="candidate-modal__experience-stacks" *ngIf="currentExperiencePreviewStacks.length">
+                <div class="candidate-modal__experience-stacks-head">
+                  <strong>Stacks aplicadas nesta experiência</strong>
+                </div>
+
+                <div class="stack-card__list">
+                  <div class="stack-item" *ngFor="let stack of currentExperiencePreviewStacks">
+                    <div class="stack-item__meta">
+                      <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                      <span class="stack-item__name">{{ stack.name }}</span>
+                    </div>
+
+                    <div class="stack-item__progress">
+                      <span class="stack-item__track" aria-hidden="true">
+                        <span class="stack-item__fill" [style.width.%]="stack.knowledge"></span>
+                        <span class="stack-item__thumb" [style.left.%]="stack.knowledge"></span>
+                      </span>
+                      <span class="stack-item__value">{{ stack.knowledge }}%</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </article>
+          </div>
+        </ng-container>
+
+        <ng-template #emptyCurriculum>
+          <div class="candidate-modal__empty">
+            <span class="material-symbols-rounded" aria-hidden="true">description</span>
+            <strong>Nenhum dado curricular disponível.</strong>
+            <p>Esse talento ainda não sincronizou experiências completas para exibição no recruiter.</p>
+          </div>
+        </ng-template>
+      </div>
+    </ng-template>
+  </section>
+</div>

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
+import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
+import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
 import { JobStatus, MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
@@ -15,10 +16,16 @@ interface RadarCategory {
   offset?: number;
 }
 
+type CandidateProfileContext = {
+  job: ChatJob;
+  candidate: ChatCandidate;
+  initialTab: 'journey' | 'curriculum';
+};
+
 @Component({
   standalone: true,
   selector: 'app-stub-page',
-  imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent, AlcanceRadarComponent],
+  imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent, AlcanceRadarComponent, CandidateProfileModalComponent],
   templateUrl: './stub.page.html',
   styleUrls: ['./stub.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,6 +64,7 @@ export class StubPage implements OnDestroy {
   selectedChatJob: ChatJob | null = null;
   selectedCandidateName: string | null = null;
   chatStartIndex = 0;
+  candidateProfileContext: CandidateProfileContext | null = null;
 
   constructor() {
     this.subscriptions.add(
@@ -168,6 +176,33 @@ export class StubPage implements OnDestroy {
     this.selectedCandidateName = null;
   }
 
+  openCandidateProfile(context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' }): void {
+    this.candidateProfileContext = context;
+  }
+
+  openCandidateProfileFromList(index: number): void {
+    if (!this.selectedJobPanel) {
+      return;
+    }
+
+    const sortedCandidates = this.sortedCandidatesFor(this.selectedJobPanel) as unknown as ChatCandidate[];
+    const candidate = sortedCandidates[index];
+
+    if (!candidate) {
+      return;
+    }
+
+    this.openCandidateProfile({
+      job: this.selectedJobPanel,
+      candidate,
+      initialTab: 'curriculum',
+    });
+  }
+
+  closeCandidateProfile(): void {
+    this.candidateProfileContext = null;
+  }
+
   sortedCandidatesFor(job: MockJobRecord | ChatJob): MockJobCandidate[] {
     const order = ['radar', 'candidatura', 'tecnica', 'processo', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
     return [...job.candidates as MockJobCandidate[]].sort((left, right) => {
@@ -239,6 +274,9 @@ export class StubPage implements OnDestroy {
       company: job.company,
       location: job.location,
       workModel: job.workModel,
+      hiringDocuments: [...job.hiringDocuments],
+      talentSubmittedDocuments: [...(job.talentSubmittedDocuments ?? [])],
+      talentDocumentsConsentAccepted: job.talentDocumentsConsentAccepted ?? false,
       techStack: job.techStack.map((item) => ({
         name: item.name,
         match: item.match,
@@ -277,5 +315,30 @@ export class StubPage implements OnDestroy {
     if (nextIndex >= 0) {
       this.chatStartIndex = nextIndex;
     }
+
+    if (!this.candidateProfileContext) {
+      return;
+    }
+
+    const profileJobMatches = this.candidateProfileContext.job.id === latestJob.id;
+    if (!profileJobMatches) {
+      return;
+    }
+
+    const refreshedProfileJob = this.asChatJob(latestJob);
+    const refreshedProfileCandidate = refreshedProfileJob.candidates.find(
+      (candidate) => candidate.name === this.candidateProfileContext?.candidate.name,
+    );
+
+    if (!refreshedProfileCandidate) {
+      this.candidateProfileContext = null;
+      return;
+    }
+
+    this.candidateProfileContext = {
+      ...this.candidateProfileContext,
+      job: refreshedProfileJob,
+      candidate: refreshedProfileCandidate,
+    };
   }
 }

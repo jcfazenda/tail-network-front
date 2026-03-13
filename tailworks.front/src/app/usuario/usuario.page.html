@@ -1,0 +1,28 @@
+<div class="usuario-page">
+  <app-candidate-registration-strip
+    [name]="displayName"
+    [graduation]="displayGraduation"
+    [specialization]="displaySpecialization"
+    [photoPreviewUrl]="photoPreviewUrl"
+  />
+
+  <section class="usuario-page__section" id="usuario-dados-cadastrais">
+    <section class="usuario-page__intro">
+      <h1>Dados Básicos</h1>
+      <p>Comece preenchendo as informações abaixo.</p>
+    </section>
+    <app-dados-cadastrais-page />
+  </section>
+
+  <section class="usuario-page__section" id="usuario-stacks">
+    <app-stacks-page />
+  </section>
+
+  <section class="usuario-page__section" id="usuario-experiencia">
+    <app-experiencia-page />
+  </section>
+
+  <section class="usuario-page__section" id="usuario-formacao">
+    <app-formacao-page />
+  </section>
+</div>

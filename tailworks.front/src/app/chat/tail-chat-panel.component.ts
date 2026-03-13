@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 export interface ChatCandidate {
   name: string;
   role: string;
+  location?: string;
   match: number;
   minutesAgo: number;
   status: 'online' | 'offline';
@@ -15,6 +16,7 @@ export interface ChatCandidate {
   stage?: string;
   availabilityLabel?: string;
   radarOnly?: boolean;
+  source?: 'seed' | 'system';
 }
 
 export interface ChatTechStackItem {
@@ -30,6 +32,9 @@ export interface ChatJob {
   workModel?: string;
   techStack: ChatTechStackItem[];
   candidates: ChatCandidate[];
+  hiringDocuments?: string[];
+  talentSubmittedDocuments?: string[];
+  talentDocumentsConsentAccepted?: boolean;
 }
 
 type StageStatus = 'done' | 'pending';
@@ -51,6 +56,54 @@ interface Stage {
   active?: boolean;
 }
 
+type CandidateModalTab = 'journey' | 'curriculum';
+
+type CandidateBasicDraft = {
+  profile?: {
+    name?: string;
+    location?: string;
+  };
+  photoPreviewUrl?: string;
+};
+
+type FormationCopyDraft = {
+  graduation: string;
+  specialization: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  graduated: boolean;
+  educationStatus: string;
+};
+
+type ExperienceEntry = {
+  id: string;
+  company: string;
+  role: string;
+  workModel: 'Presencial' | 'Híbrido' | 'Remoto';
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  currentlyWorkingHere: boolean;
+  responsibilities: string;
+  positionLevel: 'Júnior' | 'Pleno' | 'Sênior' | 'Tech Lead';
+  companySize: 'Startup' | 'Média' | 'Grande';
+  companySegment: string;
+  sector: string;
+  actuation: number;
+};
+
+interface CandidateJourneyStep {
+  label: string;
+  timeLabel?: string;
+  description: string;
+  ownerText: string;
+  completed: boolean;
+  active: boolean;
+}
+
 @Component({
   standalone: true,
   selector: 'app-tail-chat-panel',
@@ -60,6 +113,10 @@ interface Stage {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TailChatPanelComponent implements OnChanges {
+  private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly experiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
+  private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
+
   private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() job!: ChatJob;
@@ -67,6 +124,7 @@ export class TailChatPanelComponent implements OnChanges {
   @Input() showConversationList = true;
   @Input() embedded = false;
   @Output() close = new EventEmitter<void>();
+  @Output() openCandidateProfile = new EventEmitter<{ job: ChatJob; candidate: ChatCandidate; initialTab: CandidateModalTab }>();
 
   searchText = '';
   messageText = '';
@@ -116,6 +174,26 @@ export class TailChatPanelComponent implements OnChanges {
     return this.job?.techStack ?? [];
   }
 
+  get jobTechStackAverage(): number {
+    if (!this.jobTechStack.length) {
+      return 0;
+    }
+
+    const total = this.jobTechStack.reduce((sum, item) => sum + item.match, 0);
+    return total / this.jobTechStack.length;
+  }
+
+  get selectedFitNearTarget(): boolean {
+    const selectedMatch = this.selectedConversation?.match ?? 0;
+    const average = this.jobTechStackAverage;
+
+    if (!average) {
+      return false;
+    }
+
+    return selectedMatch >= average - 4;
+  }
+
   get showHiringFlow(): boolean {
     return !this.selectedConversation?.radarOnly;
   }
@@ -123,6 +201,20 @@ export class TailChatPanelComponent implements OnChanges {
   selectConversation(index: number) {
     this.selectedConversationIndex = index;
     this.updateStagesForSelected();
+  }
+
+  openCandidateModal(tab: CandidateModalTab = 'curriculum') {
+    const selected = this.selectedConversation;
+
+    if (!selected) {
+      return;
+    }
+
+    this.openCandidateProfile.emit({
+      job: this.job,
+      candidate: selected,
+      initialTab: tab,
+    });
   }
 
   sendMessage() {

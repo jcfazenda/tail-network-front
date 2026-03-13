@@ -1,36 +1,4 @@
 <section class="candidate-stacks">
-  <header class="candidate-stacks__hero">
-    <div class="candidate-stacks__identity">
-      <div class="candidate-stacks__avatar" aria-hidden="true">
-        <img
-          *ngIf="photoPreviewUrl; else defaultAvatar"
-          [src]="photoPreviewUrl"
-          alt=""
-          class="candidate-stacks__avatar-image"
-        />
-
-        <ng-template #defaultAvatar>
-          <span class="material-symbols-rounded">person</span>
-        </ng-template>
-      </div>
-
-      <div class="candidate-stacks__identity-copy">
-        <div class="candidate-stacks__identity-name">
-          <strong>{{ displayName }}</strong>
-          <span
-            class="candidate-stacks__identity-verified material-symbols-rounded"
-            aria-label="Validado no sistema"
-            title="Validado no sistema"
-          >
-            verified
-          </span>
-        </div>
-        <strong class="candidate-stacks__identity-degree">{{ displayGraduation }}</strong>
-        <span>{{ displaySpecialization }}</span>
-      </div>
-    </div>
-  </header>
-
   <nav class="candidate-stacks__steps" aria-label="Etapas de cadastro">
     <ng-container *ngFor="let step of steps">
       <a
@@ -55,37 +23,38 @@
     </ng-container>
   </nav>
 
-  <section class="candidate-stacks__card">
-    <div class="candidate-stacks__section-head">
-      <div class="candidate-stacks__crest" aria-hidden="true">
-        <img
-          src="/assets/images/image-cadastro-radar.png"
-          alt=""
-          class="candidate-stacks__crest-image"
-        />
-      </div>
-
-      <div class="candidate-stacks__section-copy">
-        <h2>Suas Stacks</h2>
-        <p>Adicione abaixo as tecnologias nas quais você tem experiência e prazer em trabalhar.</p>
-      </div>
+  <div class="candidate-stacks__section-head">
+    <div class="candidate-stacks__crest" aria-hidden="true">
+      <img
+        src="/assets/images/image-cadastro-radar.png"
+        alt=""
+        class="candidate-stacks__crest-image"
+      />
     </div>
 
-    <div class="candidate-stacks__form-card">
-      <div class="candidate-stacks__toolbar">
-        <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
-          <app-alcance-radar
-            title="Seu alcance no Ecossistema."
-            [score]="radarPreviewScore"
-            [showGaugeLabel]="false"
-            [items]="radarPreviewItems"
-          />
-        </div>
+    <div class="candidate-stacks__section-copy">
+      <h2>Suas Stacks</h2>
+      <p>Adicione abaixo as tecnologias nas quais você tem experiência e prazer em trabalhar.</p>
+    </div>
+  </div>
 
-        <button class="candidate-stacks__add-button" type="button" (click)="openCreateStackModal()" aria-label="Adicionar nova stack" title="Adicionar nova stack">
-          <span class="material-symbols-rounded" aria-hidden="true">add</span>
-        </button>
-      </div>
+  <div class="candidate-stacks__toolbar">
+    <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
+      <app-alcance-radar
+        title="Seu alcance no Ecossistema."
+        [score]="radarPreviewScore"
+        [showGaugeLabel]="false"
+        [items]="radarPreviewItems"
+      />
+    </div>
+
+    <button class="candidate-stacks__add-button" type="button" (click)="openCreateStackModal()" aria-label="Adicionar nova stack" title="Adicionar nova stack">
+      <span class="material-symbols-rounded" aria-hidden="true">add</span>
+    </button>
+  </div>
+
+  <section class="candidate-stacks__card">
+    <div class="candidate-stacks__form-card">
 
       <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
 

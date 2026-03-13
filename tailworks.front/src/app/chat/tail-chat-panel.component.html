@@ -126,12 +126,15 @@
             <div class="chat-active__profile-text">
               <div class="chat-active__name">{{ selected.name }}</div>
               <div class="chat-active__role">{{ selectedRoleLabel }}</div>
+              <div class="chat-active__location" *ngIf="selected.location">{{ selected.location }}</div>
             </div>
           </div>
 
           <div class="chat-active__fit-row" *ngIf="selected.match">
             <div
               class="chat-active__fit-track"
+              [class.chat-active__fit-track--success]="selectedFitNearTarget"
+              [class.chat-active__fit-track--warm]="!selectedFitNearTarget"
               [style.--val]="selected.match"
               [style.--val-pct]="selected.match + '%'"
               [style.--delay]="'0ms'"
@@ -147,7 +150,11 @@
 
         <section class="chat-active__stack-block" *ngIf="jobTechStack.length">
           <div class="chat-active__stack-head">
-            <h4 class="chat-active__stack-title">Percentual de Conhecimentos mínimos</h4>
+            <h4 class="chat-active__stack-title">Principais Stacks</h4>
+            <button type="button" class="chat-active__stack-cv" (click)="openCandidateModal('curriculum')">
+              <span class="material-symbols-rounded" aria-hidden="true">search</span>
+              <span>Curriculum</span>
+            </button>
           </div>
 
           <div class="chat-active__stack">
@@ -170,27 +177,6 @@
           </div>
         </section>
       </div>
-
-      <ng-container *ngIf="showHiringFlow">
-        <div class="chat-active__stages">
-        <div
-          class="stage"
-          *ngFor="let stage of stages"
-          [class.stage--done]="stage.status === 'done'"
-          [class.stage--active]="stage.active"
-        >
-          <span class="stage__icon"></span>
-          <div class="stage__text">
-            <span class="stage__label">{{ stage.label }}</span>
-            <span class="stage__meta" *ngIf="stage.meta">{{ stage.meta }}</span>
-          </div>
-        </div>
-        </div>
-
-        <div class="chat-panel__cta chat-panel__cta--spaced">
-          <button type="button" class="btn-advance" (click)="advanceStage()">Avançar etapa do candidato</button>
-        </div>
-      </ng-container>
 
       <div class="chat-active__messages">
         <div

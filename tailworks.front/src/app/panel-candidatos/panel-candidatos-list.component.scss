@@ -249,8 +249,8 @@
 
 .cand-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
 }
 
 .stage-separator {
@@ -331,74 +331,53 @@
 
 .candidate-card {
   width: 100%;
-  border: 0;
   text-align: left;
-  cursor: pointer;
-  display: flex;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 10px;
-  background: var(--surface-raised);
+  display: block;
+  padding: 0;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(252, 248, 239, 0.78));
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
   position: relative;
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-    background: var(--surface-gradient);
-  }
+  overflow: hidden;
 }
 
-.cand-chat {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+.candidate-card__surface{
+  width: 100%;
+  border: 0;
+  background: transparent;
   display: grid;
-  place-items: center;
-  background: rgba(15, 23, 42, 0.06);
-  border: none;
-  box-shadow: none;
-  opacity: 0.82;
-  transition:
-    opacity 0.12s ease,
-    transform 0.12s ease;
-  pointer-events: none;
+  gap: 12px;
+  padding: 18px 16px 14px;
+  text-align: left;
+  cursor: pointer;
+}
 
-  svg {
-    width: 24px;
-    height: 24px;
-    fill: rgba(15, 23, 42, 0.72);
-  }
+.candidate-card__curriculum{
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 1;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 999px;
+  background: rgba(244, 240, 232, 0.94);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(15, 23, 42, 0.62);
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-  &__badge {
-    position: absolute;
-    top: 2px;
-    right: -6px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #d9fbe7, #b8f3d1);
-    color: #0f5132;
-    font-size: 10px;
-    font-weight: 800;
-    line-height: 16px;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(15, 110, 80, 0.08);
-  }
-
-  &:hover {
-    opacity: 1;
-    transform: translateY(-1px);
-  }
+.candidate-card__curriculum .material-symbols-rounded{
+  font-size: 14px;
+  line-height: 1;
 }
 
 .cand-avatar {
@@ -415,8 +394,8 @@
 .cand-avatar-wrap {
   position: relative;
   display: block;
-  width: 54px;
-  height: 54px;
+  width: 68px;
+  height: 68px;
   flex: 0 0 auto;
 }
 
@@ -433,130 +412,70 @@
     no-repeat;
 }
 
-.cand-body {
+.candidate-card__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-card__avatar-column{
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.candidate-card__availability{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(111, 216, 202, 0.16);
+  font-size: 0.74rem;
+  color: #588e6a;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.candidate-card__availability--radar{
+  color: var(--info);
+}
+
+.candidate-card__profile-text{
   flex: 1;
   min-width: 0;
   display: grid;
-  gap: 8px;
-}
-
-.cand-main {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 10px;
+  gap: 3px;
 }
 
 .cand-name {
   font-weight: 800;
   color: #1f1f1f;
-  font-size: 14px;
-  line-height: 1.15;
-}
-
-.cand-status-chip {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--accent-gradient-soft);
-  color: var(--primary-ink);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.15px;
-  backdrop-filter: blur(2px);
-}
-
-.cand-status-chip.stage-aguardando {
-  background: linear-gradient(180deg, rgba(230, 240, 255, 0.82) 0%, rgba(213, 229, 255, 0.78) 100%);
-  color: var(--info);
-}
-
-.cand-status-chip.stage-processo {
-  background: linear-gradient(180deg, rgba(230, 248, 245, 0.82) 0%, rgba(209, 241, 234, 0.78) 100%);
-  color: var(--success);
-}
-
-.cand-status-chip.stage-tecnica {
-  background: linear-gradient(180deg, rgba(255, 243, 204, 0.82) 0%, rgba(255, 233, 163, 0.78) 100%);
-  color: var(--warning);
-}
-
-.cand-status-chip.stage-documentacao {
-  background: linear-gradient(180deg, rgba(243, 236, 255, 0.82) 0%, rgba(228, 217, 255, 0.78) 100%);
-  color: var(--accent-strong);
-}
-
-.cand-status-chip.stage-aceito {
-  background: linear-gradient(180deg, rgba(230, 248, 245, 0.92) 0%, rgba(209, 241, 234, 0.86) 100%);
-  color: var(--success);
-}
-
-.cand-status-chip.stage-contratado {
-  background: linear-gradient(180deg, rgba(219, 244, 238, 0.96) 0%, rgba(187, 231, 220, 0.9) 100%);
-  color: var(--success);
-}
-
-.cand-status-chip.stage-proxima {
-  background: linear-gradient(180deg, rgba(239, 241, 244, 0.96) 0%, rgba(227, 230, 235, 0.9) 100%);
-  color: rgba(38, 44, 58, 0.72);
-}
-
-.cand-status-chip.stage-candidatura {
-  background: linear-gradient(180deg, rgba(255, 245, 227, 0.82) 0%, rgba(255, 233, 199, 0.78) 100%);
-  color: var(--warning);
-}
-
-.cand-status-chip.stage-cancelado {
-  background: linear-gradient(180deg, #f1f1f1 0%, #e1e1e1 100%);
-  color: #666;
-  text-decoration: line-through;
+  font-size: 1rem;
+  line-height: 1.1;
 }
 
 .cand-role {
-  font-size: 13px;
-  color: rgba(15, 23, 42, 0.58);
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.62);
+  font-weight: 600;
+  line-height: 1.28;
+}
+
+.candidate-card__location{
+  font-size: 0.76rem;
+  color: rgba(15, 23, 42, 0.52);
   font-weight: 600;
   line-height: 1.2;
+  margin-top: 2px;
 }
 
 .cand-progress {
-  margin-top: 8px;
   width: 100%;
   display: grid;
   gap: 6px;
-}
-
-.cand-progress__label-row {
-  display: flex;
-  align-items: center;
-  min-height: 26px;
-}
-
-.cand-availability-chip {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(230, 248, 245, 0.92) 0%, rgba(209, 241, 234, 0.86) 100%);
-  color: var(--success);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.1px;
-}
-
-.cand-compat-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(15, 23, 42, 0.52);
 }
 
 .cand-bar-wrap {
@@ -567,9 +486,22 @@
   width: 100%;
 }
 
+.candidate-card__fit-meta{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.candidate-card__fit-label{
+  color: rgba(15, 23, 42, 0.58);
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .cand-bar {
   position: relative;
-  height: 8px;
+  height: 10px;
   border-radius: 999px;
   background: linear-gradient(180deg, #e6e5ed 0%, #d9d6e4 100%);
   overflow: hidden;
@@ -679,7 +611,18 @@
 }
 
 @media (max-width: 700px) {
-  .cand-grid {
-    grid-template-columns: 1fr;
+  .candidate-card{
+  }
+
+  .candidate-card__surface{
+    padding: 18px 14px 12px;
+  }
+
+  .candidate-card__profile{
+    align-items: flex-start;
+  }
+
+  .candidate-card__curriculum{
+    right: 10px;
   }
 }

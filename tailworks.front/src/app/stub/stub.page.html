@@ -223,6 +223,7 @@
           [stageLabel]="stageLabel"
           (closePanelEvent)="closePanel()"
           (openChat)="openCandidate(findJobById(selectedJobPanel!.id), $event)"
+          (openCandidateProfile)="openCandidateProfileFromList($event)"
         ></app-panel-candidatos-list>
 
         <app-tail-chat-panel
@@ -231,6 +232,7 @@
           [job]="selectedChatJob"
           [startIndex]="chatStartIndex"
           [showConversationList]="false"
+          (openCandidateProfile)="openCandidateProfile($event)"
           (close)="closeChat()">
         </app-tail-chat-panel>
       </div>
@@ -238,4 +240,12 @@
 
     <div class="panel-backdrop" *ngIf="selectedJobPanel" (click)="closePanel()"></div>
   </div>
+
+  <app-candidate-profile-modal
+    *ngIf="candidateProfileContext"
+    [job]="candidateProfileContext.job"
+    [candidate]="candidateProfileContext.candidate"
+    [initialTab]="candidateProfileContext.initialTab"
+    (close)="closeCandidateProfile()"
+  ></app-candidate-profile-modal>
 </div>

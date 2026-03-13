@@ -17,6 +17,7 @@ export type CandidateStage =
 interface PanelCandidate {
   name: string;
   role: string;
+  location?: string;
   match: number;
   avatar: string;
   stage?: CandidateStage;
@@ -50,6 +51,7 @@ export class PanelCandidatosListComponent {
   @Input() embedded = false;
   @Output() closePanelEvent = new EventEmitter<void>();
   @Output() openChat = new EventEmitter<number>();
+  @Output() openCandidateProfile = new EventEmitter<number>();
 
   closePanel() {
     this.closePanelEvent.emit();
@@ -57,6 +59,10 @@ export class PanelCandidatosListComponent {
 
   handleOpenChat(index: number) {
     this.openChat.emit(index);
+  }
+
+  handleOpenCandidateProfile(index: number): void {
+    this.openCandidateProfile.emit(index);
   }
 
   get groupedCandidates(): CandidateGroup[] {

@@ -21,29 +21,13 @@ export const routes: Routes = [
   },
   {
     path: 'usuario/dados-cadastrais',
-    loadComponent: () => import('./usuario/dados-cadastrais/dados-cadastrais.page').then((m) => m.DadosCadastraisPage),
+    loadComponent: () => import('./usuario/usuario.page').then((m) => m.UsuarioPage),
     data: { title: 'Dados Cadastrais' },
   },
-  {
-    path: 'usuario/dados-cadastrais/stacks',
-    loadComponent: () => import('./usuario/stacks/stacks.page').then((m) => m.StacksPage),
-    data: { title: 'Suas Stacks' },
-  },
-  {
-    path: 'usuario/dados-cadastrais/experiencia',
-    loadComponent: () => import('./usuario/experiencia/experiencia.page').then((m) => m.ExperienciaPage),
-    data: { title: 'Experiência' },
-  },
-  {
-    path: 'usuario/dados-cadastrais/formacao',
-    loadComponent: () => import('./usuario/formacao/formacao.page').then((m) => m.FormacaoPage),
-    data: { title: 'Formação' },
-  },
-  {
-    path: 'usuario/dados-cadastrais/geral',
-    loadComponent: () => import('./usuario/placeholder/placeholder.page').then((m) => m.PlaceholderPage),
-    data: { title: 'Geral' },
-  },
+  { path: 'usuario/dados-cadastrais/stacks', redirectTo: 'usuario/dados-cadastrais', pathMatch: 'full' },
+  { path: 'usuario/dados-cadastrais/experiencia', redirectTo: 'usuario/dados-cadastrais', pathMatch: 'full' },
+  { path: 'usuario/dados-cadastrais/formacao', redirectTo: 'usuario/dados-cadastrais', pathMatch: 'full' },
+  { path: 'usuario/dados-cadastrais/geral', redirectTo: 'usuario/dados-cadastrais', pathMatch: 'full' },
   {
     path: 'usuario/minhas-candidaturas',
     loadComponent: () => import('./usuario/placeholder/placeholder.page').then((m) => m.PlaceholderPage),

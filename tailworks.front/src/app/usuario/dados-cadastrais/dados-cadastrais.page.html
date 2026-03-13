@@ -1,246 +1,158 @@
 <section class="candidate-profile">
-  <header class="candidate-profile__hero">
-    <div class="candidate-profile__identity">
-      <div class="candidate-profile__avatar" aria-hidden="true">
-        <img
-          *ngIf="photoPreviewUrl; else defaultAvatar"
-          [src]="photoPreviewUrl"
-          alt=""
-          class="candidate-profile__avatar-image"
-        />
-
-        <ng-template #defaultAvatar>
-          <span class="material-symbols-rounded">person</span>
-        </ng-template>
-      </div>
-
-      <div class="candidate-profile__identity-copy">
-        <div class="candidate-profile__identity-name">
-          <strong>{{ displayName }}</strong>
-          <span
-            class="candidate-profile__identity-verified material-symbols-rounded"
-            aria-label="Validado no sistema"
-            title="Validado no sistema"
-          >
-            verified
-          </span>
-        </div>
-        <strong class="candidate-profile__identity-degree">{{ displayGraduation }}</strong>
-        <span>{{ displaySpecialization }}</span>
-      </div>
-    </div>
-  </header>
-
-  <nav class="candidate-profile__steps" aria-label="Etapas de cadastro">
-    <ng-container *ngFor="let step of steps">
-      <a
-        *ngIf="step.route; else staticStep"
-        class="candidate-profile__step"
-        [class.candidate-profile__step--active]="step.active"
-        [routerLink]="step.route"
-      >
-        <span class="candidate-profile__step-index">{{ step.index }}</span>
-        <span class="candidate-profile__step-label">{{ step.label }}</span>
-      </a>
-
-      <ng-template #staticStep>
-        <span
-          class="candidate-profile__step"
-          [class.candidate-profile__step--active]="step.active"
-        >
-          <span class="candidate-profile__step-index">{{ step.index }}</span>
-          <span class="candidate-profile__step-label">{{ step.label }}</span>
-        </span>
-      </ng-template>
-    </ng-container>
-  </nav>
-
-  <section class="candidate-profile__card">
-    <div class="candidate-profile__section-head">
-      <div class="candidate-profile__crest" aria-hidden="true">
-        <img
-          src="/assets/images/image-cadastro-radar.png"
-          alt=""
-          class="candidate-profile__crest-image"
-        />
-      </div>
-
-      <div class="candidate-profile__section-copy">
-        <h2>Dados Básicos</h2>
-        <p>Comece preenchendo as informações abaixo.</p>
-      </div>
-    </div>
-
-    <form class="candidate-profile__form" #basicForm="ngForm" novalidate (ngSubmit)="submitBasicData(basicForm)">
+  <form class="candidate-profile__form" #basicForm="ngForm" novalidate (ngSubmit)="submitBasicData(basicForm)">
       <div class="candidate-profile__form-card">
-        <div class="candidate-profile__grid">
-          <label class="candidate-profile__field">
-          <span>Nome</span>
-          <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(nameModel)">
-            <span class="material-symbols-rounded" aria-hidden="true">person</span>
-            <input
-              type="text"
-              [(ngModel)]="profile.name"
-              name="name"
-              required
-              placeholder="Nome"
-              #nameModel="ngModel"
-            />
+        <div class="candidate-profile__formation-summary">
+          <div class="candidate-profile__formation-summary-logo" aria-hidden="true">
+            <img [src]="formationLogoUrl" alt="" class="candidate-profile__formation-summary-image" />
           </div>
-          <small class="candidate-profile__error" *ngIf="showFieldError(nameModel)">Informe seu nome.</small>
-        </label>
 
-        <label class="candidate-profile__field">
-          <span>E-mail</span>
-          <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(emailModel)">
-            <span class="material-symbols-rounded" aria-hidden="true">mail</span>
-            <input
-              type="email"
-              [(ngModel)]="profile.email"
-              name="email"
-              required
-              email
-              placeholder="E-mail"
-              #emailModel="ngModel"
-            />
+          <div class="candidate-profile__formation-summary-copy">
+            <em>{{ displayFormationHeading }}</em>
+            <strong>{{ displayGraduation }}</strong>
+            <span>{{ displaySpecialization }}</span>
           </div>
-          <small class="candidate-profile__error" *ngIf="showFieldError(emailModel)">
-            <ng-container *ngIf="emailModel.errors?.['required']; else invalidEmail">Informe seu e-mail.</ng-container>
-            <ng-template #invalidEmail>Informe um e-mail válido.</ng-template>
-          </small>
-        </label>
 
-        <label class="candidate-profile__field">
-          <span>Telefone</span>
-          <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(phoneModel)">
-            <span class="material-symbols-rounded" aria-hidden="true">call</span>
-            <input
-              type="text"
-              [(ngModel)]="profile.phone"
-              (ngModelChange)="onPhoneInput($event)"
-              name="phone"
-              required
-              pattern="^\(\d{2}\)\s\d\s\d{4}-\d{4}$"
-              inputmode="numeric"
-              maxlength="16"
-              placeholder="(11) 9 9999-9999"
-              #phoneModel="ngModel"
-            />
-          </div>
-          <small class="candidate-profile__error" *ngIf="showFieldError(phoneModel)">
-            <ng-container *ngIf="phoneModel.errors?.['required']; else invalidPhone">Informe seu celular.</ng-container>
-            <ng-template #invalidPhone>Use o formato (11) 9 9999-9999.</ng-template>
-          </small>
-        </label>
+          <div class="candidate-profile__formation-summary-side">
+            <button
+              class="candidate-profile__formation-summary-edit"
+              type="button"
+              (click)="openFormationSection()"
+              aria-label="Ir para a seção de formação"
+              title="Ir para a seção de formação"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+            </button>
 
-        <label class="candidate-profile__field">
-          <span>LinkedIn</span>
-          <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(linkedinModel)">
-            <span class="material-symbols-rounded" aria-hidden="true">link</span>
-            <input
-              type="text"
-              [(ngModel)]="profile.linkedin"
-              name="linkedin"
-              required
-              placeholder="LinkedIn"
-              #linkedinModel="ngModel"
-            />
+            <small>{{ displayEducationStatus }}</small>
           </div>
-          <small class="candidate-profile__error" *ngIf="showFieldError(linkedinModel)">Informe seu LinkedIn.</small>
-        </label>
+        </div>
 
-        <label class="candidate-profile__field">
-          <span>Cidade / Estado</span>
-          <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(locationModel)">
-            <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
-            <select [(ngModel)]="profile.location" name="location" required #locationModel="ngModel">
-              <option value="" disabled>Selecione</option>
-              <option *ngFor="let item of stateOptions" [value]="item">{{ item }}</option>
-            </select>
-            <span class="material-symbols-rounded candidate-profile__select-chevron" aria-hidden="true">expand_more</span>
-          </div>
-          <small class="candidate-profile__error" *ngIf="showFieldError(locationModel)">Informe sua cidade e estado.</small>
-        </label>
+        <div class="candidate-profile__grid candidate-profile__grid--basic">
+          <label class="candidate-profile__field candidate-profile__field--left">
+            <span>Nome</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(nameModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">person</span>
+              <input
+                type="text"
+                [(ngModel)]="profile.name"
+                name="name"
+                required
+                placeholder="Nome"
+                #nameModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(nameModel)">Informe seu nome.</small>
+          </label>
 
-        <label class="candidate-profile__field">
-          <span>GitHub / Portfólio</span>
-          <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(portfolioModel)">
-            <span class="material-symbols-rounded" aria-hidden="true">language</span>
-            <input
-              type="text"
-              [(ngModel)]="profile.portfolio"
-              name="portfolio"
-              required
-              placeholder="GitHub / Portfólio"
-              #portfolioModel="ngModel"
-            />
-          </div>
-          <small class="candidate-profile__error" *ngIf="showFieldError(portfolioModel)">
-            Informe seu GitHub ou portfólio.
-          </small>
+          <label class="candidate-profile__field candidate-profile__field--right">
+            <span>Estado</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(stateModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">flag</span>
+              <select [(ngModel)]="profile.state" name="state" required #stateModel="ngModel">
+                <option value="" disabled>Selecione</option>
+                <option *ngFor="let item of stateOptions" [value]="item.value">{{ item.label }}</option>
+              </select>
+              <span class="material-symbols-rounded candidate-profile__select-chevron" aria-hidden="true">expand_more</span>
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(stateModel)">Informe o estado.</small>
+          </label>
+
+          <label class="candidate-profile__field candidate-profile__field--left">
+            <span>Telefone</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(phoneModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">call</span>
+              <input
+                type="text"
+                [(ngModel)]="profile.phone"
+                (ngModelChange)="onPhoneInput($event)"
+                name="phone"
+                required
+                pattern="^\\(\\d{2}\\)\\s\\d\\s\\d{4}-\\d{4}$"
+                inputmode="numeric"
+                maxlength="16"
+                placeholder="(11) 9 9999-9999"
+                #phoneModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(phoneModel)">
+              <ng-container *ngIf="phoneModel.errors?.['required']; else invalidPhone">Informe seu celular.</ng-container>
+              <ng-template #invalidPhone>Use o formato (11) 9 9999-9999.</ng-template>
+            </small>
+          </label>
+
+          <label class="candidate-profile__field candidate-profile__field--right">
+            <span>Cidade</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(cityModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">location_city</span>
+              <input
+                type="text"
+                [(ngModel)]="profile.city"
+                name="city"
+                required
+                placeholder="Cidade"
+                #cityModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(cityModel)">Informe a cidade.</small>
+          </label>
+
+          <label class="candidate-profile__field candidate-profile__field--left">
+            <span>E-mail</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(emailModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">mail</span>
+              <input
+                type="email"
+                [(ngModel)]="profile.email"
+                name="email"
+                required
+                email
+                placeholder="E-mail"
+                #emailModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(emailModel)">
+              <ng-container *ngIf="emailModel.errors?.['required']; else invalidEmail">Informe seu e-mail.</ng-container>
+              <ng-template #invalidEmail>Informe um e-mail válido.</ng-template>
+            </small>
+          </label>
+
+          <div class="candidate-profile__grid-divider" aria-hidden="true"></div>
+
+          <label class="candidate-profile__field candidate-profile__field--left">
+            <span>GitHub / Portfólio</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(portfolioModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">language</span>
+              <input
+                type="text"
+                [(ngModel)]="profile.portfolio"
+                name="portfolio"
+                required
+                placeholder="GitHub / Portfólio"
+                #portfolioModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(portfolioModel)">
+              Informe seu GitHub ou portfólio.
+            </small>
+          </label>
+
+          <label class="candidate-profile__field candidate-profile__field--right">
+            <span>LinkedIn</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(linkedinModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">link</span>
+              <input
+                type="text"
+                [(ngModel)]="profile.linkedin"
+                name="linkedin"
+                required
+                placeholder="LinkedIn"
+                #linkedinModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(linkedinModel)">Informe seu LinkedIn.</small>
           </label>
         </div>
 
-        <input
-          #photoInput
-          class="candidate-profile__upload-input"
-          type="file"
-          accept=".jpg,.jpeg,.png,.gif"
-          (change)="onPhotoSelected($event)"
-        />
-
-        <div
-          class="candidate-profile__upload"
-          [class.candidate-profile__upload--dragging]="isPhotoDragging"
-          [class.candidate-profile__upload--invalid]="!!photoError"
-          tabindex="0"
-          role="button"
-          aria-label="Adicionar foto"
-          (click)="openPhotoPicker(photoInput)"
-          (keydown)="onPhotoKeydown($event, photoInput)"
-          (dragover)="onPhotoDragOver($event)"
-          (dragleave)="onPhotoDragLeave($event)"
-          (drop)="onPhotoDropped($event, photoInput)"
-        >
-          <div class="candidate-profile__upload-button" aria-hidden="true">
-            <img
-              *ngIf="photoPreviewUrl; else uploadPlaceholder"
-              [src]="photoPreviewUrl"
-              alt=""
-              class="candidate-profile__upload-preview"
-            />
-
-            <ng-template #uploadPlaceholder>
-              <span class="material-symbols-rounded" aria-hidden="true">add</span>
-            </ng-template>
-          </div>
-
-          <div class="candidate-profile__upload-copy">
-            <strong>
-              {{ photoPreviewUrl ? 'Foto selecionada com sucesso' : 'Arraste ou clique para adicionar sua foto' }}
-            </strong>
-            <span>{{ photoPreviewUrl ? photoFileName : 'Formatos JPG, PNG, GIF menores de 5MB' }}</span>
-            <small class="candidate-profile__error candidate-profile__error--upload" *ngIf="photoError">
-              {{ photoError }}
-            </small>
-          </div>
-        </div>
-      </div>
-
-      <div class="candidate-profile__footer">
-        <button class="candidate-profile__cta" type="submit">
-          <span>Continuar</span>
-          <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-          <span>Montar Radar Profissional</span>
-        </button>
-
-        <p>
-          Ao me cadastrar, aceito os
-          <strong>Termos de Uso</strong>
-          e a
-          <strong>Política de Privacidade</strong>
-        </p>
       </div>
     </form>
-  </section>
 </section>

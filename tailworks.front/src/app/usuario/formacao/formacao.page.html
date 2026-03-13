@@ -1,36 +1,4 @@
 <section class="candidate-formation">
-  <header class="candidate-formation__hero">
-    <div class="candidate-formation__identity">
-      <div class="candidate-formation__avatar" aria-hidden="true">
-        <img
-          *ngIf="photoPreviewUrl; else defaultAvatar"
-          [src]="photoPreviewUrl"
-          alt=""
-          class="candidate-formation__avatar-image"
-        />
-
-        <ng-template #defaultAvatar>
-          <span class="material-symbols-rounded">person</span>
-        </ng-template>
-      </div>
-
-      <div class="candidate-formation__identity-copy">
-        <div class="candidate-formation__identity-name">
-          <strong>{{ displayName }}</strong>
-          <span
-            class="candidate-formation__identity-verified material-symbols-rounded"
-            aria-label="Validado no sistema"
-            title="Validado no sistema"
-          >
-            verified
-          </span>
-        </div>
-        <strong class="candidate-formation__identity-degree">{{ displayGraduation }}</strong>
-        <span>{{ displaySpecialization }}</span>
-      </div>
-    </div>
-  </header>
-
   <nav class="candidate-formation__steps" aria-label="Etapas de cadastro">
     <ng-container *ngFor="let step of steps">
       <a

@@ -1,20 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-
-type RegistrationStep = {
-  label: string;
-  index: number | string;
-  route?: string;
-  active?: boolean;
-};
+import { Router } from '@angular/router';
 
 type CandidateBasicProfile = {
   name: string;
   email: string;
   phone: string;
   linkedin: string;
+  state: string;
+  city: string;
   location: string;
   portfolio: string;
   formation: string;
@@ -29,12 +24,15 @@ type CandidateBasicDraft = {
 type FormationCopyDraft = {
   graduation: string;
   specialization: string;
+  endMonth: string;
+  endYear: string;
+  educationStatus: string;
 };
 
 @Component({
   standalone: true,
   selector: 'app-dados-cadastrais-page',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dados-cadastrais.page.html',
   styleUrls: ['./dados-cadastrais.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,32 +40,32 @@ type FormationCopyDraft = {
 export class DadosCadastraisPage implements OnInit, OnDestroy {
   private static readonly draftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
+  private static readonly logoDraftStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
+  private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
 
   private readonly router = inject(Router);
-
-  readonly steps: RegistrationStep[] = [
-    { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais', active: true },
-    { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
-    { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Geral', route: '/usuario/dados-cadastrais/geral' },
-  ];
+  private readonly photoUpdatedListener = (event: Event) => {
+    const customEvent = event as CustomEvent<{ photoPreviewUrl?: string; photoFileName?: string }>;
+    this.photoPreviewUrl = customEvent.detail?.photoPreviewUrl ?? this.photoPreviewUrl;
+    this.photoFileName = customEvent.detail?.photoFileName ?? this.photoFileName;
+    this.photoError = '';
+  };
 
   readonly stateOptions = [
-    'São Paulo - SP',
-    'Rio de Janeiro - RJ',
-    'Belo Horizonte - MG',
-    'Curitiba - PR',
-    'Porto Alegre - RS',
+    { value: 'SP', label: 'São Paulo' },
+    { value: 'RJ', label: 'Rio de Janeiro' },
+    { value: 'MG', label: 'Minas Gerais' },
+    { value: 'PR', label: 'Paraná' },
+    { value: 'RS', label: 'Rio Grande do Sul' },
   ];
-
-  readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-  readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
 
   profile: CandidateBasicProfile = {
     name: '',
     email: '',
     phone: '',
     linkedin: '',
+    state: '',
+    city: '',
     location: '',
     portfolio: '',
     formation: '',
@@ -78,9 +76,13 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   photoPreviewUrl = '';
   photoFileName = '';
   photoError = '';
+  formationLogoUrl = '/assets/images/logo-estacio.png';
   formationCopy: FormationCopyDraft = {
     graduation: 'Bacharelado em Sistemas de Informação',
     specialization: 'Especialização em Arquitetura de Software',
+    endMonth: 'Dez',
+    endYear: '2025',
+    educationStatus: 'Concluído',
   };
 
   get displayName(): string {
@@ -95,12 +97,23 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     return this.formationCopy.specialization;
   }
 
+  get displayFormationHeading(): string {
+    return `Formado em ${this.formationCopy.endMonth} ${this.formationCopy.endYear}`;
+  }
+
+  get displayEducationStatus(): string {
+    return this.formationCopy.educationStatus;
+  }
+
   ngOnInit(): void {
     this.restoreDraft();
+    this.restoreFormationLogo();
     this.restoreFormationCopy();
+    window.addEventListener(DadosCadastraisPage.photoUpdatedEventName, this.photoUpdatedListener as EventListener);
   }
 
   ngOnDestroy(): void {
+    window.removeEventListener(DadosCadastraisPage.photoUpdatedEventName, this.photoUpdatedListener as EventListener);
     this.revokePhotoPreviewUrl();
   }
 
@@ -111,8 +124,9 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.syncLocationFromFields();
     this.persistDraft();
-    void this.router.navigate(['/usuario/dados-cadastrais/stacks']);
+    this.scrollToSection('usuario-stacks', '/usuario/dados-cadastrais/stacks');
   }
 
   onPhoneInput(rawValue: string): void {
@@ -124,64 +138,8 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     return Boolean(control && control.invalid && (control.touched || this.submitAttempted));
   }
 
-  openPhotoPicker(input: HTMLInputElement): void {
-    input.click();
-  }
-
-  onPhotoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.handlePhotoFile(input?.files?.[0] ?? null);
-
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  onPhotoDragOver(event: DragEvent): void {
-    event.preventDefault();
-    this.isPhotoDragging = true;
-  }
-
-  onPhotoDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    this.isPhotoDragging = false;
-  }
-
-  onPhotoDropped(event: DragEvent, input: HTMLInputElement): void {
-    event.preventDefault();
-    this.isPhotoDragging = false;
-    this.handlePhotoFile(event.dataTransfer?.files?.[0] ?? null);
-    input.value = '';
-  }
-
-  onPhotoKeydown(event: KeyboardEvent, input: HTMLInputElement): void {
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-
-    event.preventDefault();
-    this.openPhotoPicker(input);
-  }
-
-  private handlePhotoFile(file: File | null): void {
-    this.photoError = '';
-
-    if (!file) {
-      return;
-    }
-
-    if (!this.acceptedPhotoMimeTypes.includes(file.type)) {
-      this.photoError = 'Use apenas JPG, PNG ou GIF.';
-      return;
-    }
-
-    if (file.size > this.maxPhotoSizeBytes) {
-      this.photoError = 'A foto deve ter no máximo 5MB.';
-      return;
-    }
-
-    this.photoFileName = file.name;
-    this.readPhotoAsDataUrl(file);
+  openFormationSection(): void {
+    this.scrollToSection('usuario-formacao', '/usuario/dados-cadastrais/formacao');
   }
 
   private formatPhone(digits: string): string {
@@ -229,6 +187,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
         ...this.profile,
         ...draft.profile,
       };
+      this.restoreLocationParts();
       this.photoPreviewUrl = draft.photoPreviewUrl ?? '';
       this.photoFileName = draft.photoFileName ?? '';
     } catch {
@@ -248,13 +207,28 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
       this.formationCopy = {
         graduation: draft.graduation?.trim() || this.formationCopy.graduation,
         specialization: draft.specialization?.trim() || this.formationCopy.specialization,
+        endMonth: draft.endMonth || this.formationCopy.endMonth,
+        endYear: draft.endYear || this.formationCopy.endYear,
+        educationStatus: draft.educationStatus?.trim() || this.formationCopy.educationStatus,
       };
     } catch {
       localStorage.removeItem(DadosCadastraisPage.formationCopyStorageKey);
     }
   }
 
+  private restoreFormationLogo(): void {
+    const savedLogo = localStorage.getItem(DadosCadastraisPage.logoDraftStorageKey);
+
+    if (!savedLogo) {
+      return;
+    }
+
+    this.formationLogoUrl = savedLogo;
+  }
+
   private persistDraft(): void {
+    this.syncLocationFromFields();
+
     localStorage.setItem(
       DadosCadastraisPage.draftStorageKey,
       JSON.stringify({
@@ -265,23 +239,52 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     );
   }
 
-  private readPhotoAsDataUrl(file: File): void {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      this.revokePhotoPreviewUrl();
-      this.photoPreviewUrl = typeof reader.result === 'string' ? reader.result : '';
-      this.persistDraft();
-    };
-
-    reader.readAsDataURL(file);
-  }
-
   private revokePhotoPreviewUrl(): void {
     if (!this.photoPreviewUrl.startsWith('blob:')) {
       return;
     }
 
     URL.revokeObjectURL(this.photoPreviewUrl);
+  }
+
+  private scrollToSection(sectionId: string, fallbackRoute: string): void {
+    const target = document.getElementById(sectionId);
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    void this.router.navigate([fallbackRoute]);
+  }
+
+  private syncLocationFromFields(): void {
+    const city = this.profile.city.trim();
+    const state = this.profile.state.trim();
+
+    this.profile.location = city && state ? `${city} - ${state}` : city || state || '';
+  }
+
+  private restoreLocationParts(): void {
+    if (this.profile.city || this.profile.state) {
+      this.syncLocationFromFields();
+      return;
+    }
+
+    const location = this.profile.location.trim();
+
+    if (!location) {
+      return;
+    }
+
+    const parts = location.split(' - ').map((item) => item.trim()).filter(Boolean);
+
+    if (parts.length >= 2) {
+      this.profile.city = parts[0];
+      this.profile.state = parts[1];
+      return;
+    }
+
+    this.profile.city = location;
   }
 }

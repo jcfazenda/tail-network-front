@@ -50,43 +50,53 @@
         </div>
 
         <div class="cand-grid">
-          <button
+          <article
             *ngFor="let item of group.candidates"
-            type="button"
             class="candidate-card"
-            (click)="handleOpenChat(item.index)"
           >
-            <span class="cand-chat" title="Abrir chat" aria-hidden="true">
-              <span class="cand-chat__badge" *ngIf="item.index % 2 === 0">{{ item.badgeCount }}</span>
-              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"></path>
-              </svg>
-            </span>
-            <div class="cand-body">
-              <div class="cand-main">
-                <span class="cand-avatar-wrap">
-                  <span class="cand-avatar" [style.backgroundImage]="'url(' + item.candidate.avatar + ')'"></span>
-                  <span
-                    *ngIf="item.candidate.radarOnly"
-                    class="cand-avatar-badge"
-                    title="Perfil no radar"
-                    aria-label="Perfil no radar"
-                  ></span>
-                </span>
-                <div class="cand-text">
+            <button
+              type="button"
+              class="candidate-card__curriculum"
+              (click)="handleOpenCandidateProfile(item.index)"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">search</span>
+              <span>Curriculum</span>
+            </button>
+
+            <button
+              type="button"
+              class="candidate-card__surface"
+              (click)="handleOpenChat(item.index)"
+            >
+              <div class="candidate-card__profile">
+                <div class="candidate-card__avatar-column">
+                  <span class="cand-avatar-wrap">
+                    <span class="cand-avatar" [style.backgroundImage]="'url(' + item.candidate.avatar + ')'"></span>
+                    <span
+                      *ngIf="item.candidate.radarOnly"
+                      class="cand-avatar-badge"
+                      title="Perfil no radar"
+                      aria-label="Perfil no radar"
+                    ></span>
+                  </span>
+
+                  <div
+                    class="candidate-card__availability"
+                    *ngIf="item.candidate.availabilityLabel"
+                    [class.candidate-card__availability--radar]="item.candidate.radarOnly"
+                  >
+                    {{ item.candidate.availabilityLabel === 'Disponibilidade imediata' ? 'Disponivel' : item.candidate.availabilityLabel }}
+                  </div>
+                </div>
+
+                <div class="candidate-card__profile-text">
                   <div class="cand-name">{{ item.candidate.name }}</div>
                   <div class="cand-role">{{ item.candidate.role }}</div>
+                  <div class="candidate-card__location" *ngIf="item.candidate.location">{{ item.candidate.location }}</div>
                 </div>
               </div>
+
               <div class="cand-progress">
-                <div class="cand-progress__label-row">
-                  <span class="cand-availability-chip" *ngIf="item.candidate.availabilityLabel; else compatibilityLabel">
-                    {{ item.candidate.availabilityLabel }}
-                  </span>
-                  <ng-template #compatibilityLabel>
-                    <span class="cand-compat-label">Compatibilidade</span>
-                  </ng-template>
-                </div>
                 <div class="cand-bar-wrap">
                   <div class="cand-bar" [ngClass]="'stage-' + (item.candidate.stage || 'processo')">
                     <div
@@ -95,11 +105,14 @@
                       [ngClass]="'stage-' + (item.candidate.stage || 'processo')"
                     ></div>
                   </div>
-                  <span class="cand-bar-val">{{ item.candidate.match }}%</span>
+                  <div class="candidate-card__fit-meta">
+                    <span class="cand-bar-val">{{ item.candidate.match }}%</span>
+                    <span class="candidate-card__fit-label">Aderente</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </button>
+            </button>
+          </article>
         </div>
       </section>
     </ng-container>
