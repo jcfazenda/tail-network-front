@@ -367,7 +367,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   get canCancelSelectedJob(): boolean {
     return this.selectedJobPanel?.talentDecision === 'applied'
-      && ['candidatura', 'processo', 'tecnica'].includes(this.selectedJobTalentStage ?? '');
+      && ['processo', 'tecnica', 'documentacao'].includes(this.selectedJobTalentStage ?? '');
   }
 
   get canRespondToProposalSelectedJob(): boolean {
@@ -425,7 +425,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       case 'aguardando':
         return 'Contratação solicitada';
       case 'aceito':
-        return 'Aceitou proposta';
+        return 'Aceito';
       case 'proxima':
         return 'Ficou pra próxima';
       case 'documentacao':
@@ -647,14 +647,14 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       {
         label:
           stage === 'aceito'
-            ? 'Aceitou proposta'
+            ? 'Aceito'
             : stage === 'proxima'
               ? 'Ficou pra próxima'
               : 'Aceito / Ficou pra próxima',
         timeLabel: 'Em atualização',
         description:
           stage === 'aceito'
-            ? 'Aceitei a proposta e o fluxo segue para a etapa documental.'
+            ? 'Aceitei a proposta e agora posso enviar os documentos da contratação.'
             : stage === 'proxima'
               ? 'Preferi não seguir agora e pedi para continuar disponível para próximas oportunidades.'
               : 'Aqui eu avalio a proposta e decido se aceito ou se prefiro ficar para a próxima.',
@@ -731,7 +731,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
-    return this.vagasMockService.findTalentCandidate(job)?.stage;
+    return this.vagasMockService.getEffectiveCandidateStage(this.vagasMockService.findTalentCandidate(job));
   }
 
   private syncSelectedJobDocumentState(): void {
@@ -797,7 +797,8 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   private isDeclinedJob(job: MockJobRecord): boolean {
-    return this.getTalentStage(job) === 'proxima';
+    const stage = this.getTalentStage(job);
+    return stage === 'proxima' || stage === 'cancelado';
   }
 
   private isTalentStatusStepCompleted(index: number, stage: CandidateStage | undefined): boolean {

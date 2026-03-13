@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core';
 import { ChatCandidate, ChatJob } from './tail-chat-panel.component';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
+import { Subscription } from 'rxjs';
 
 type CandidateModalTab = 'journey' | 'curriculum';
 
@@ -79,7 +80,7 @@ interface CandidateModalData {
   styleUrls: ['./candidate-profile-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CandidateProfileModalComponent implements OnChanges {
+export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly experiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
@@ -111,6 +112,8 @@ export class CandidateProfileModalComponent implements OnChanges {
     ['dezembro', 12],
   ]);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly subscriptions = new Subscription();
 
   @Input({ required: true }) job!: ChatJob;
   @Input({ required: true }) candidate!: ChatCandidate;
@@ -122,11 +125,20 @@ export class CandidateProfileModalComponent implements OnChanges {
   currentExperienceIndex: number | null = null;
   expandedJourneyIndex = 0;
 
+  constructor() {
+    this.subscriptions.add(
+      this.vagasMockService.jobsChanged$.subscribe(() => {
+        this.refreshFromLatestJob();
+      }),
+    );
+  }
+
   ngOnChanges(): void {
-    this.activeTab = this.initialTab;
-    this.modalData = this.buildModalData(this.candidate);
-    this.currentExperienceIndex = this.getDefaultExperienceIndex();
-    this.expandedJourneyIndex = this.currentJourneyIndex;
+    this.syncModalState(true);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   setTab(tab: CandidateModalTab): void {
@@ -204,7 +216,7 @@ export class CandidateProfileModalComponent implements OnChanges {
   }
 
   get currentStage(): string {
-    return this.candidate.radarOnly ? 'radar' : (this.candidate.stage ?? 'processo');
+    return this.resolveCandidateStage(this.currentCandidateRecord);
   }
 
   get currentJourneyIndex(): number {
@@ -232,11 +244,31 @@ export class CandidateProfileModalComponent implements OnChanges {
   }
 
   get showJourneyAdvanceAction(): boolean {
-    return this.currentStage === 'candidatura' || this.currentStage === 'processo' || this.currentStage === 'tecnica';
+    return false;
   }
 
   get journeyAdvanceLabel(): string {
-    return this.currentStage === 'candidatura' ? 'Avançar para processo' : 'Solicitar contratação';
+    return 'Avançar';
+  }
+
+  get showAdvanceToProcessAction(): boolean {
+    return this.currentStage === 'candidatura';
+  }
+
+  get showRequestHiringAction(): boolean {
+    return this.currentStage === 'processo' || this.currentStage === 'tecnica';
+  }
+
+  get showCloseVacancyAction(): boolean {
+    return this.showRequestHiringAction;
+  }
+
+  get showCancelHiringRequestAction(): boolean {
+    return this.currentStage === 'aguardando';
+  }
+
+  get showMarkAsHiredAction(): boolean {
+    return this.currentStage === 'documentacao';
   }
 
   get showAwaitingTalentDecisionMessage(): boolean {
@@ -248,7 +280,7 @@ export class CandidateProfileModalComponent implements OnChanges {
   }
 
   get showValidateDocumentsAction(): boolean {
-    return this.contractDecision === 'accepted' && this.documentsSubmittedByTalent && !this.documentsSent;
+    return this.showMarkAsHiredAction;
   }
 
   get showRadarStatusMessage(): boolean {
@@ -268,26 +300,55 @@ export class CandidateProfileModalComponent implements OnChanges {
   }
 
   get submittedHiringDocuments(): string[] {
-    return this.job.talentSubmittedDocuments ?? [];
+    return this.currentCandidateRecord.submittedDocuments ?? [];
   }
 
   get talentDocumentsConsentAccepted(): boolean {
-    return this.job.talentDocumentsConsentAccepted ?? false;
+    return this.currentCandidateRecord.documentsConsentAccepted ?? false;
   }
 
   advanceJourneyStage(): void {
-    const nextStage =
-      this.currentStage === 'candidatura'
-        ? 'processo'
-        : this.currentStage === 'processo' || this.currentStage === 'tecnica'
-          ? 'aguardando'
-          : null;
-
-    if (!nextStage) {
+    if (!this.showAdvanceToProcessAction) {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(this.job.id, this.candidate.name, nextStage);
+    this.vagasMockService.updateCandidateStage(
+      this.job.id,
+      this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
+      'processo',
+    );
+  }
+
+  requestHiring(): void {
+    if (!this.showRequestHiringAction) {
+      return;
+    }
+
+    this.vagasMockService.updateCandidateStage(
+      this.job.id,
+      this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
+      'aguardando',
+    );
+  }
+
+  cancelHiringRequest(): void {
+    if (!this.showCancelHiringRequestAction) {
+      return;
+    }
+
+    this.vagasMockService.updateCandidateStage(
+      this.job.id,
+      this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
+      'processo',
+    );
+  }
+
+  closeVacancy(): void {
+    if (!this.showCloseVacancyAction) {
+      return;
+    }
+
+    this.vagasMockService.updateJobStatus(this.job.id, 'encerradas', 'Encerrada a partir do fluxo do candidato');
   }
 
   concludeJourneyDocuments(): void {
@@ -295,7 +356,11 @@ export class CandidateProfileModalComponent implements OnChanges {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(this.job.id, this.candidate.name, 'contratado');
+    this.vagasMockService.updateCandidateStage(
+      this.job.id,
+      this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
+      'contratado',
+    );
   }
 
   isSubmittedHiringDocument(label: string): boolean {
@@ -324,7 +389,7 @@ export class CandidateProfileModalComponent implements OnChanges {
   }
 
   private buildCandidateJourney(candidate: ChatCandidate): CandidateJourneyStep[] {
-    const stage = candidate.radarOnly ? 'radar' : (candidate.stage ?? 'processo');
+    const stage = this.resolveCandidateStage(candidate);
     const activeIndex = this.getJourneyStageIndex(stage);
     const decisionAccepted = stage === 'aceito';
     const decisionNext = stage === 'proxima' || stage === 'cancelado';
@@ -356,10 +421,10 @@ export class CandidateProfileModalComponent implements OnChanges {
         ownerText: 'Ação do recruiter',
       },
       {
-        label: decisionAccepted ? 'Aceitou proposta' : decisionNext ? 'Ficou pra próxima' : 'Aceito / Ficou pra próxima',
+        label: decisionAccepted ? 'Aceito' : decisionNext ? 'Ficou pra próxima' : 'Aceito / Ficou pra próxima',
         timeLabel: 'Em atualização',
         description: decisionAccepted
-          ? 'O talento aceitou a proposta e o processo pode avançar para a etapa documental.'
+          ? 'O talento aceitou a proposta e agora pode enviar os documentos da contratação.'
           : decisionNext
             ? 'O talento preferiu não seguir nesta vaga agora, mas pode continuar elegível para futuras oportunidades.'
             : 'Aqui o talento responde se aceita a proposta ou se prefere ficar para uma próxima oportunidade.',
@@ -432,7 +497,86 @@ export class CandidateProfileModalComponent implements OnChanges {
       return index <= 5;
     }
 
-    return index < this.getJourneyStageIndex(stage);
+    switch (stage) {
+      case 'candidatura':
+        return index <= 1;
+      case 'processo':
+      case 'tecnica':
+        return index <= 2;
+      case 'aguardando':
+        return index <= 3;
+      case 'aceito':
+        return index <= 4;
+      default:
+        return index === 0;
+    }
+  }
+
+  private refreshFromLatestJob(): void {
+    if (!this.job?.id || !this.candidate) {
+      return;
+    }
+
+    const latestJob = this.vagasMockService.getJobById(this.job.id);
+    if (!latestJob) {
+      return;
+    }
+
+    const candidateKey = this.candidate.id ?? this.candidate.name;
+    const refreshedCandidate = latestJob.candidates.find(
+      (item) => (item.id ?? item.name) === candidateKey,
+    );
+
+    if (!refreshedCandidate) {
+      return;
+    }
+
+    this.job = {
+      ...this.job,
+      hiringDocuments: [...latestJob.hiringDocuments],
+      talentSubmittedDocuments: [...(latestJob.talentSubmittedDocuments ?? [])],
+      talentDocumentsConsentAccepted: latestJob.talentDocumentsConsentAccepted ?? false,
+    };
+    this.candidate = {
+      ...this.candidate,
+      ...refreshedCandidate,
+    };
+
+    this.syncModalState(false);
+    this.cdr.markForCheck();
+  }
+
+  private syncModalState(resetTab: boolean): void {
+    if (resetTab) {
+      this.activeTab = this.initialTab;
+    }
+
+    const currentCandidate = this.currentCandidateRecord;
+    this.modalData = this.buildModalData(currentCandidate);
+    this.currentExperienceIndex = this.getDefaultExperienceIndex();
+    this.expandedJourneyIndex = this.currentJourneyIndex;
+  }
+
+  private resolveCandidateStage(candidate: ChatCandidate): string {
+    return this.vagasMockService.getEffectiveCandidateStage(candidate) ?? 'radar';
+  }
+
+  private get currentCandidateRecord(): ChatCandidate {
+    if (!this.job?.id || !this.candidate) {
+      return this.candidate;
+    }
+
+    const latestJob = this.vagasMockService.getJobById(this.job.id);
+    if (!latestJob) {
+      return this.candidate;
+    }
+
+    const candidateKey = this.candidate.id ?? this.candidate.name;
+    const refreshedCandidate = latestJob.candidates.find(
+      (item) => (item.id ?? item.name) === candidateKey,
+    );
+
+    return (refreshedCandidate as ChatCandidate | undefined) ?? this.candidate;
   }
 
   private buildFormationHeading(formation: FormationCopyDraft | null): string {

@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule, UpperCasePipe, NgClass } from '@angular/common';
+import { VagasMockService } from '../vagas/data/vagas-mock.service';
 
 export type CandidateStage =
   | 'radar'
@@ -15,6 +16,7 @@ export type CandidateStage =
   | undefined;
 
 interface PanelCandidate {
+  id?: string;
   name: string;
   role: string;
   location?: string;
@@ -23,6 +25,11 @@ interface PanelCandidate {
   stage?: CandidateStage;
   availabilityLabel?: string;
   radarOnly?: boolean;
+  source?: 'seed' | 'system';
+  stageOwner?: 'system' | 'talent' | 'recruiter';
+  recruiterManagedJourney?: boolean;
+  recruiterStageCommittedAt?: string;
+  decision?: 'applied' | 'hidden';
 }
 
 interface GroupedCandidate {
@@ -44,6 +51,8 @@ interface CandidateGroup {
   styleUrls: ['./panel-candidatos-list.component.scss']
 })
 export class PanelCandidatosListComponent {
+  private readonly vagasMockService = inject(VagasMockService);
+
   @Input() selectedJobPanel: any = null;
   @Input() sortedCandidatesFor!: (job: any) => any[];
   @Input() openCandidate!: (job: any, index: number) => void;
@@ -52,6 +61,7 @@ export class PanelCandidatosListComponent {
   @Output() closePanelEvent = new EventEmitter<void>();
   @Output() openChat = new EventEmitter<number>();
   @Output() openCandidateProfile = new EventEmitter<number>();
+  @Output() openCandidateStatus = new EventEmitter<number>();
 
   closePanel() {
     this.closePanelEvent.emit();
@@ -65,6 +75,18 @@ export class PanelCandidatosListComponent {
     this.openCandidateProfile.emit(index);
   }
 
+  handleOpenCandidateStatus(index: number): void {
+    this.openCandidateStatus.emit(index);
+  }
+
+  candidateStatusLabel(candidate: PanelCandidate): string {
+    return this.stageLabel(this.normalizeCandidateStage(candidate));
+  }
+
+  candidateStatusTone(candidate: PanelCandidate): string {
+    return this.normalizeCandidateStage(candidate) ?? 'radar';
+  }
+
   get groupedCandidates(): CandidateGroup[] {
     if (!this.selectedJobPanel || !this.sortedCandidatesFor) {
       return [];
@@ -74,7 +96,7 @@ export class PanelCandidatosListComponent {
     const groups: CandidateGroup[] = [];
 
     sorted.forEach((candidate, index) => {
-      const currentStage: CandidateStage = candidate.radarOnly ? 'radar' : candidate.stage;
+      const currentStage: CandidateStage = this.normalizeCandidateStage(candidate);
       const previousGroup = groups[groups.length - 1];
       const candidateEntry: GroupedCandidate = {
         candidate,
@@ -98,5 +120,9 @@ export class PanelCandidatosListComponent {
 
   get hasRadarProfiles(): boolean {
     return this.groupedCandidates.some(group => group.stage === 'radar');
+  }
+
+  private normalizeCandidateStage(candidate: PanelCandidate): CandidateStage {
+    return this.vagasMockService.getEffectiveCandidateStage(candidate);
   }
 }

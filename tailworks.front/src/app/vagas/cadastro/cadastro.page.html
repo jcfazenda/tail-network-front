@@ -515,41 +515,8 @@
                   </ng-container>
 
                   <ng-template #statusFooterAdvanceOrDecision>
-                  <ng-container *ngIf="showStatusAdvanceAction; else statusFooterDecisionOrResolved">
-                    <button
-                      class="summary-card__status-action summary-card__status-action--primary"
-                      type="button"
-                      (click)="advanceStatusStage()"
-                    >
-                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-                      {{ statusAdvanceLabel }}
-                    </button>
-                  </ng-container>
-                  </ng-template>
-
-                  <ng-template #statusFooterDecisionOrResolved>
-                  <p class="summary-card__status-note" *ngIf="showAwaitingTalentDecisionMessage; else statusFooterResolved">
-                    Aguardando a resposta do talento sobre a proposta enviada.
-                  </p>
-                  </ng-template>
-
-                  <ng-template #statusFooterResolved>
-                    <button
-                      *ngIf="showValidateDocumentsAction"
-                      class="summary-card__status-action summary-card__status-action--primary summary-card__status-action--documents"
-                      type="button"
-                      (click)="sendStatusDocuments()"
-                    >
-                      <span class="summary-card__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
-                      Concluir validação
-                    </button>
-
-                    <p class="summary-card__status-note" *ngIf="showRadarStatusMessage">
-                      Tudo bem, voce ainda esta no nosso Radar.
-                    </p>
-
-                    <p class="summary-card__status-note" *ngIf="showWelcomeStatusMessage">
-                      Parabens, bem-vindo ao time.
+                    <p class="summary-card__status-note">
+                      {{ statusCandidateGuidance }}
                     </p>
                   </ng-template>
                 </div>

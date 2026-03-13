@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnChanges, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { VagasMockService } from '../vagas/data/vagas-mock.service';
 
 export interface ChatCandidate {
+  id?: string;
   name: string;
   role: string;
   location?: string;
@@ -17,6 +19,12 @@ export interface ChatCandidate {
   availabilityLabel?: string;
   radarOnly?: boolean;
   source?: 'seed' | 'system';
+  stageOwner?: 'system' | 'talent' | 'recruiter';
+  recruiterManagedJourney?: boolean;
+  recruiterStageCommittedAt?: string;
+  decision?: 'applied' | 'hidden';
+  submittedDocuments?: string[];
+  documentsConsentAccepted?: boolean;
 }
 
 export interface ChatTechStackItem {
@@ -118,6 +126,7 @@ export class TailChatPanelComponent implements OnChanges {
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
 
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly vagasMockService = inject(VagasMockService);
 
   @Input() job!: ChatJob;
   @Input() startIndex = 0;
@@ -168,6 +177,15 @@ export class TailChatPanelComponent implements OnChanges {
 
   get selectedRoleLabel(): string {
     return this.selectedConversation?.stack || this.selectedConversation?.role || '';
+  }
+
+  get selectedStatusLabel(): string {
+    const selected = this.selectedConversation;
+    if (!selected) {
+      return 'Talento no radar';
+    }
+
+    return this.stageLabelFor(selected);
   }
 
   get jobTechStack(): ChatTechStackItem[] {
@@ -342,10 +360,43 @@ export class TailChatPanelComponent implements OnChanges {
   }
 
   trackByConversation(_i: number, c: ChatCandidate) {
-    return _i;
+    return c.id ?? c.name;
   }
 
   trackByMessage(index: number) {
     return index;
+  }
+
+  private stageLabelFor(candidate: ChatCandidate): string {
+    const stage = this.normalizeCandidateStage(candidate);
+
+    switch (stage) {
+      case 'radar':
+        return 'Talento no radar';
+      case 'candidatura':
+        return 'Candidatura enviada';
+      case 'processo':
+        return 'Em processo';
+      case 'tecnica':
+        return 'Em entrevista técnica';
+      case 'aguardando':
+        return 'Contratação solicitada';
+      case 'aceito':
+        return 'Aceito';
+      case 'documentacao':
+        return 'Validando documentos';
+      case 'contratado':
+        return 'Contratado';
+      case 'proxima':
+        return 'Ficou pra próxima';
+      case 'cancelado':
+        return 'Candidatura cancelada';
+      default:
+        return 'Talento no radar';
+    }
+  }
+
+  private normalizeCandidateStage(candidate: ChatCandidate): string {
+    return this.vagasMockService.getEffectiveCandidateStage(candidate) ?? 'radar';
   }
 }

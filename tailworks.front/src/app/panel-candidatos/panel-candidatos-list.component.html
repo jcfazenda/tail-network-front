@@ -54,14 +54,25 @@
             *ngFor="let item of group.candidates"
             class="candidate-card"
           >
-            <button
-              type="button"
-              class="candidate-card__curriculum"
-              (click)="handleOpenCandidateProfile(item.index)"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">search</span>
-              <span>Curriculum</span>
-            </button>
+            <div class="candidate-card__actions">
+              <button
+                type="button"
+                class="candidate-card__action candidate-card__action--status"
+                (click)="handleOpenCandidateStatus(item.index)"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">monitoring</span>
+                <span>Status</span>
+              </button>
+
+              <button
+                type="button"
+                class="candidate-card__action candidate-card__action--curriculum"
+                (click)="handleOpenCandidateProfile(item.index)"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                <span>Curriculum</span>
+              </button>
+            </div>
 
             <button
               type="button"
@@ -93,16 +104,20 @@
                   <div class="cand-name">{{ item.candidate.name }}</div>
                   <div class="cand-role">{{ item.candidate.role }}</div>
                   <div class="candidate-card__location" *ngIf="item.candidate.location">{{ item.candidate.location }}</div>
+                  <div class="candidate-card__status-line">
+                    <span class="candidate-card__status-kicker">Status</span>
+                    <strong>{{ candidateStatusLabel(item.candidate) }}</strong>
+                  </div>
                 </div>
               </div>
 
               <div class="cand-progress">
                 <div class="cand-bar-wrap">
-                  <div class="cand-bar" [ngClass]="'stage-' + (item.candidate.stage || 'processo')">
+                  <div class="cand-bar" [ngClass]="'stage-' + candidateStatusTone(item.candidate)">
                     <div
                       class="cand-bar-fill"
                       [style.width.%]="item.candidate.match"
-                      [ngClass]="'stage-' + (item.candidate.stage || 'processo')"
+                      [ngClass]="'stage-' + candidateStatusTone(item.candidate)"
                     ></div>
                   </div>
                   <div class="candidate-card__fit-meta">

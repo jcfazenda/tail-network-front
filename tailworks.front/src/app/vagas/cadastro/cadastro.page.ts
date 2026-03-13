@@ -229,14 +229,14 @@ export class CadastroPage implements OnDestroy {
       {
         label:
           this.contractDecision === 'accepted'
-            ? 'Aceitou proposta'
+            ? 'Aceito'
             : this.contractDecision === 'next'
               ? 'Ficou pra próxima'
               : 'Aceito / Ficou pra próxima',
         timeLabel: 'Em atualização',
         description:
           this.contractDecision === 'accepted'
-            ? 'O talento aceitou a proposta e o processo pode avançar para a etapa documental.'
+            ? 'O talento aceitou a proposta e agora pode enviar os documentos da contratação.'
             : this.contractDecision === 'next'
               ? 'O talento preferiu não seguir nesta vaga agora, mas pode continuar elegível para próximas oportunidades.'
               : 'Aqui o talento responde se aceita a proposta ou se prefere ficar para uma próxima oportunidade.',
@@ -342,6 +342,26 @@ export class CadastroPage implements OnDestroy {
 
   get showWelcomeStatusMessage(): boolean {
     return this.contractDecision === 'accepted' && this.documentsSent;
+  }
+
+  get statusCandidateGuidance(): string {
+    if (this.showWelcomeStatusMessage) {
+      return 'A jornada deste talento foi concluída. Para acompanhar detalhes individuais, use o chat do candidato.';
+    }
+
+    if (this.showValidateDocumentsAction || this.isAwaitingTalentDocuments) {
+      return 'Documentos e validação agora são tratados no modal do candidato, dentro do chat da vaga.';
+    }
+
+    if (this.showAwaitingTalentDecisionMessage) {
+      return 'A resposta do talento deve ser acompanhada no chat do candidato, onde a jornada fica sincronizada em tempo real.';
+    }
+
+    if (this.statusStageIndex > 0 || this.contractDecision !== null) {
+      return 'A movimentação do talento acontece no chat do candidato. Este painel da vaga fica como leitura de contexto.';
+    }
+
+    return 'Quando um talento interagir com a vaga, acompanhe a jornada individual dele pelo chat do candidato.';
   }
 
   get isAwaitingTalentDocuments(): boolean {
@@ -1409,6 +1429,7 @@ export class CadastroPage implements OnDestroy {
 
   private hydrateStatusFromJob(job: MockJobRecord): void {
     const candidate = this.vagasMockService.findTalentCandidate(job);
+    const effectiveStage = this.vagasMockService.getEffectiveCandidateStage(candidate);
 
     this.contractDecision = null;
     this.documentsSubmittedByTalent = false;
@@ -1417,13 +1438,13 @@ export class CadastroPage implements OnDestroy {
     this.talentDocumentsConsentAccepted = false;
     this.statusDocumentsConsentAccepted = false;
 
-    if (job.talentDecision === 'hidden' || candidate?.stage === 'cancelado') {
+    if (job.talentDecision === 'hidden' || effectiveStage === 'cancelado') {
       this.statusStageIndex = 0;
       this.expandCurrentStatusPreview();
       return;
     }
 
-    switch (candidate?.stage) {
+    switch (effectiveStage) {
       case 'candidatura':
         this.statusStageIndex = 1;
         this.expandCurrentStatusPreview();

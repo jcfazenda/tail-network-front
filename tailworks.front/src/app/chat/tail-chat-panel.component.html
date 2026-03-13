@@ -127,6 +127,10 @@
               <div class="chat-active__name">{{ selected.name }}</div>
               <div class="chat-active__role">{{ selectedRoleLabel }}</div>
               <div class="chat-active__location" *ngIf="selected.location">{{ selected.location }}</div>
+              <div class="chat-active__current-status">
+                <span class="chat-active__current-status-kicker">Status</span>
+                <strong>{{ selectedStatusLabel }}</strong>
+              </div>
             </div>
           </div>
 
@@ -151,10 +155,16 @@
         <section class="chat-active__stack-block" *ngIf="jobTechStack.length">
           <div class="chat-active__stack-head">
             <h4 class="chat-active__stack-title">Principais Stacks</h4>
-            <button type="button" class="chat-active__stack-cv" (click)="openCandidateModal('curriculum')">
-              <span class="material-symbols-rounded" aria-hidden="true">search</span>
-              <span>Curriculum</span>
-            </button>
+            <div class="chat-active__stack-actions">
+              <button type="button" class="chat-active__stack-cv chat-active__stack-cv--status" (click)="openCandidateModal('journey')">
+                <span class="material-symbols-rounded" aria-hidden="true">monitoring</span>
+                <span>Status</span>
+              </button>
+              <button type="button" class="chat-active__stack-cv" (click)="openCandidateModal('curriculum')">
+                <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                <span>Curriculum</span>
+              </button>
+            </div>
           </div>
 
           <div class="chat-active__stack">

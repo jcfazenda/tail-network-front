@@ -457,6 +457,12 @@
   padding-top: 4px;
 }
 
+.candidate-modal__status-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .candidate-modal__status-note{
   margin: 0;
   color: rgba(15, 23, 42, 0.58);
@@ -496,6 +502,18 @@
 .candidate-modal__status-action--primary:hover{
   background: var(--btn-primary-bg-hover);
   box-shadow: var(--btn-primary-shadow-hover);
+}
+
+.candidate-modal__status-action--ghost{
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(15, 23, 42, 0.1);
+  color: rgba(15, 23, 42, 0.68);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+}
+
+.candidate-modal__status-action--ghost:hover{
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(15, 23, 42, 0.14);
 }
 
 .candidate-modal__status-action--documents{

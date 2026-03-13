@@ -38,7 +38,7 @@
         [class.candidate-modal__tab--active]="activeTab === 'journey'"
         (click)="setTab('journey')"
       >
-        Jornada
+        Status
       </button>
       <button
         type="button"
@@ -53,7 +53,7 @@
     <div class="candidate-modal__body candidate-modal__body--journey" *ngIf="activeTab === 'journey'; else curriculumTab">
       <section class="candidate-modal__status-panel">
         <div class="candidate-modal__status-head">
-          <span class="candidate-modal__status-label">Status do talento</span>
+          <span class="candidate-modal__status-label">Status do candidato</span>
         </div>
 
         <div class="candidate-modal__status-list">
@@ -141,13 +141,43 @@
 
       <div class="candidate-modal__status-footer">
         <button
-          *ngIf="showJourneyAdvanceAction"
+          *ngIf="showAdvanceToProcessAction"
           class="candidate-modal__status-action candidate-modal__status-action--primary"
           type="button"
           (click)="advanceJourneyStage()"
         >
           <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-          {{ journeyAdvanceLabel }}
+          Avançar para Processo
+        </button>
+
+        <div class="candidate-modal__status-actions" *ngIf="showRequestHiringAction">
+          <button
+            class="candidate-modal__status-action candidate-modal__status-action--primary"
+            type="button"
+            (click)="requestHiring()"
+          >
+            <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+            Solicitar contratação
+          </button>
+
+          <button
+            class="candidate-modal__status-action candidate-modal__status-action--ghost"
+            type="button"
+            (click)="closeVacancy()"
+          >
+            <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">block</span>
+            Fechar vaga
+          </button>
+        </div>
+
+        <button
+          *ngIf="showCancelHiringRequestAction"
+          class="candidate-modal__status-action candidate-modal__status-action--ghost"
+          type="button"
+          (click)="cancelHiringRequest()"
+        >
+          <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">undo</span>
+          Cancelar solicitação de contratação
         </button>
 
         <p class="candidate-modal__status-note" *ngIf="showAwaitingTalentDecisionMessage">
@@ -161,7 +191,7 @@
           (click)="concludeJourneyDocuments()"
         >
           <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
-          Concluir validação
+          Contratado
         </button>
 
         <p class="candidate-modal__status-note" *ngIf="showRadarStatusMessage">

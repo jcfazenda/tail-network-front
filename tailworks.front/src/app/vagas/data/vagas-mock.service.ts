@@ -1,6 +1,6 @@
 import { Injectable, NgZone, inject } from '@angular/core';
 import { Subject } from 'rxjs';
-import { JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, TalentJobDecision } from './vagas.models';
+import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, TalentJobDecision } from './vagas.models';
 
 type CandidateBasicProfile = {
   name: string;
@@ -60,7 +60,46 @@ export class VagasMockService {
 
   findTalentCandidate(job: Pick<MockJobRecord, 'candidates'>): MockJobCandidate | undefined {
     const identity = this.readTalentIdentity();
-    return job.candidates.find((candidate) => this.isTalentCandidate(candidate, identity));
+    return job.candidates.find((candidate) => candidate.source === 'system')
+      ?? job.candidates.find((candidate) => this.isTalentCandidate(candidate, identity));
+  }
+
+  getEffectiveCandidateStage(
+    candidate:
+      | { stage?: string | undefined; radarOnly?: boolean; source?: 'seed' | 'system'; stageOwner?: 'system' | 'talent' | 'recruiter'; decision?: TalentJobDecision; recruiterManagedJourney?: boolean; recruiterStageCommittedAt?: string }
+      | undefined,
+  ): CandidateStage | undefined {
+    if (!candidate) {
+      return undefined;
+    }
+
+    if (candidate.radarOnly || candidate.decision === 'hidden') {
+      return 'radar';
+    }
+
+    if (!candidate.stage) {
+      return candidate.decision === 'applied' ? 'candidatura' : 'radar';
+    }
+
+    if (candidate.stage === 'processo' || candidate.stage === 'tecnica' || candidate.stage === 'aguardando') {
+      const recruiterOwnsStage =
+        (
+          candidate.recruiterManagedJourney
+          && candidate.stageOwner === 'recruiter'
+          && !!candidate.recruiterStageCommittedAt
+        )
+        || candidate.source === 'seed';
+
+      if (!recruiterOwnsStage) {
+        return candidate.decision === 'applied' ? 'candidatura' : 'radar';
+      }
+    }
+
+    return this.isCandidateStage(candidate.stage)
+      ? candidate.stage
+      : candidate.decision === 'applied'
+        ? 'candidatura'
+        : 'radar';
   }
 
   saveJob(command: SaveMockJobCommand): MockJobRecord {
@@ -83,6 +122,26 @@ export class VagasMockService {
     this.cache = [record, ...jobs.filter((job) => job.id !== id)];
     this.persist();
     return record;
+  }
+
+  updateJobStatus(id: string, status: MockJobRecord['status'], statusReason?: string): MockJobRecord | undefined {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === id);
+
+    if (!existing) {
+      return undefined;
+    }
+
+    const updatedJob: MockJobRecord = {
+      ...existing,
+      status,
+      statusReason: statusReason?.trim() || existing.statusReason,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.cache = jobs.map((job) => (job.id === id ? updatedJob : job));
+    this.persist();
+    return updatedJob;
   }
 
   publishOnlyJob(command: SaveMockJobCommand): MockJobRecord {
@@ -172,54 +231,52 @@ export class VagasMockService {
   ): MockJobRecord | undefined {
     const jobs = this.loadJobs();
     const existing = jobs.find((job) => job.id === jobId);
+    const hasDecisionOverride = arguments.length >= 4;
 
     if (!existing) {
       return undefined;
     }
 
+    let targetCandidate: MockJobCandidate | undefined;
     const nextCandidates = existing.candidates.map((candidate) => {
       if (!this.isCandidateMatch(candidate, candidateName)) {
         return { ...candidate };
       }
 
+      targetCandidate = candidate;
+      const currentSubmittedDocuments = this.normalizeCandidateSubmittedDocuments(candidate.submittedDocuments, existing.hiringDocuments);
+      const shouldResetTalentDocuments = this.isTalentCandidate(candidate) && stage !== 'documentacao' && stage !== 'contratado';
+
       return {
         ...candidate,
-        ...(this.isTalentCandidate(candidate) ? this.buildTalentCandidate(existing) : {}),
+        ...(this.isTalentCandidate(candidate) ? this.buildTalentCandidate(existing, candidate) : {}),
         stage,
         radarOnly: stage === 'radar',
+        stageOwner: this.resolveStageOwner(stage, talentDecision, 'recruiter', candidate.stageOwner),
+        recruiterManagedJourney: true,
+        recruiterStageCommittedAt: new Date().toISOString(),
+        decision: hasDecisionOverride ? talentDecision : candidate.decision,
+        submittedDocuments:
+          options?.talentSubmittedDocuments !== undefined
+            ? this.normalizeCandidateSubmittedDocuments(options.talentSubmittedDocuments, existing.hiringDocuments)
+            : shouldResetTalentDocuments
+              ? []
+              : currentSubmittedDocuments,
+        documentsConsentAccepted:
+          options?.talentDocumentsConsentAccepted !== undefined
+            ? options.talentDocumentsConsentAccepted
+            : shouldResetTalentDocuments
+              ? false
+              : candidate.documentsConsentAccepted ?? false,
       };
     });
-
-    const targetCandidate = existing.candidates.find((candidate) => this.isCandidateMatch(candidate, candidateName));
 
     if (!targetCandidate) {
       return undefined;
     }
 
-    const isTalentCandidate = this.isTalentCandidate(targetCandidate);
-    const shouldPreserveSubmittedDocuments = isTalentCandidate && (stage === 'documentacao' || stage === 'contratado');
-    const nextSubmittedDocuments =
-      options?.talentSubmittedDocuments !== undefined
-        ? options.talentSubmittedDocuments
-        : shouldPreserveSubmittedDocuments
-          ? [...(existing.talentSubmittedDocuments ?? [])]
-          : isTalentCandidate
-            ? []
-            : [...(existing.talentSubmittedDocuments ?? [])];
-    const nextConsentAccepted =
-      options?.talentDocumentsConsentAccepted !== undefined
-        ? options.talentDocumentsConsentAccepted
-        : shouldPreserveSubmittedDocuments
-          ? existing.talentDocumentsConsentAccepted ?? false
-          : isTalentCandidate
-            ? false
-            : existing.talentDocumentsConsentAccepted ?? false;
-
     const updatedJob: MockJobRecord = this.decorateTalentVisibility({
       ...existing,
-      talentDecision: isTalentCandidate ? talentDecision : existing.talentDecision,
-      talentSubmittedDocuments: nextSubmittedDocuments,
-      talentDocumentsConsentAccepted: nextConsentAccepted,
       candidates: nextCandidates,
       updatedAt: new Date().toISOString(),
     });
@@ -230,22 +287,7 @@ export class VagasMockService {
   }
 
   hideFromTalent(jobId: string): MockJobRecord | undefined {
-    const jobs = this.loadJobs();
-    const existing = jobs.find((job) => job.id === jobId);
-
-    if (!existing) {
-      return undefined;
-    }
-
-    const updatedJob: MockJobRecord = {
-      ...existing,
-      talentDecision: 'hidden',
-      updatedAt: new Date().toISOString(),
-    };
-
-    this.cache = jobs.map((job) => (job.id === jobId ? this.decorateTalentVisibility(updatedJob) : job));
-    this.persist();
-    return this.cache.find((job) => job.id === jobId);
+    return this.updateTalentStage(jobId, 'radar', 'hidden');
   }
 
   private loadJobs(): MockJobRecord[] {
@@ -287,48 +329,52 @@ export class VagasMockService {
   ): MockJobRecord | undefined {
     const jobs = this.loadJobs();
     const existing = jobs.find((job) => job.id === jobId);
+    const hasDecisionOverride = arguments.length >= 3;
 
     if (!existing) {
       return undefined;
     }
 
-    const appliedCandidate = this.buildTalentCandidate(existing);
-    const hasCandidate = existing.candidates.some((candidate) => this.isTalentCandidate(candidate));
-    const nextCandidates: MockJobCandidate[] =
-      stage === 'radar'
-        ? hasCandidate
-          ? existing.candidates.map((candidate) =>
-              this.isTalentCandidate(candidate)
-                ? { ...candidate, ...appliedCandidate, stage: 'radar' as const, radarOnly: true }
-                : { ...candidate },
-            )
-          : [{ ...appliedCandidate, stage: 'radar' as const, radarOnly: true }, ...existing.candidates.map((candidate) => ({ ...candidate }))]
-        : hasCandidate
-          ? existing.candidates.map((candidate) =>
-              this.isTalentCandidate(candidate)
-                ? { ...candidate, ...appliedCandidate, stage, radarOnly: false }
-                : { ...candidate },
-            )
-          : [{ ...appliedCandidate, stage, radarOnly: false }, ...existing.candidates.map((candidate) => ({ ...candidate }))];
-    const shouldPreserveSubmittedDocuments = stage === 'documentacao' || stage === 'contratado';
+    const existingTalentCandidate = this.findTalentCandidate(existing);
+    const baseTalentCandidate = this.buildTalentCandidate(existing, existingTalentCandidate);
+    const currentSubmittedDocuments = this.normalizeCandidateSubmittedDocuments(
+      existingTalentCandidate?.submittedDocuments,
+      existing.hiringDocuments,
+    );
     const nextSubmittedDocuments =
       options?.talentSubmittedDocuments !== undefined
-        ? options.talentSubmittedDocuments
-        : shouldPreserveSubmittedDocuments
-          ? [...(existing.talentSubmittedDocuments ?? [])]
+        ? this.normalizeCandidateSubmittedDocuments(options.talentSubmittedDocuments, existing.hiringDocuments)
+        : stage === 'documentacao' || stage === 'contratado'
+          ? currentSubmittedDocuments
           : [];
     const nextConsentAccepted =
       options?.talentDocumentsConsentAccepted !== undefined
         ? options.talentDocumentsConsentAccepted
-        : shouldPreserveSubmittedDocuments
-          ? existing.talentDocumentsConsentAccepted ?? false
+        : stage === 'documentacao' || stage === 'contratado'
+          ? existingTalentCandidate?.documentsConsentAccepted ?? false
           : false;
+    const nextTalentCandidate: MockJobCandidate = {
+      ...baseTalentCandidate,
+      stage,
+      radarOnly: stage === 'radar',
+      stageOwner: this.resolveStageOwner(stage, talentDecision, 'talent', existingTalentCandidate?.stageOwner),
+      recruiterManagedJourney: existingTalentCandidate?.recruiterManagedJourney ?? false,
+      recruiterStageCommittedAt: existingTalentCandidate?.recruiterStageCommittedAt,
+      decision: hasDecisionOverride ? talentDecision : existingTalentCandidate?.decision,
+      submittedDocuments: nextSubmittedDocuments,
+      documentsConsentAccepted: nextConsentAccepted,
+    };
+    const hasCandidate = existing.candidates.some((candidate) => this.isTalentCandidate(candidate));
+    const nextCandidates: MockJobCandidate[] = hasCandidate
+      ? existing.candidates.map((candidate) =>
+          this.isTalentCandidate(candidate)
+            ? nextTalentCandidate
+            : { ...candidate },
+        )
+      : [nextTalentCandidate, ...existing.candidates.map((candidate) => ({ ...candidate }))];
 
     const updatedJob: MockJobRecord = this.decorateTalentVisibility({
       ...existing,
-      talentDecision,
-      talentSubmittedDocuments: nextSubmittedDocuments,
-      talentDocumentsConsentAccepted: nextConsentAccepted,
       candidates: nextCandidates,
       updatedAt: new Date().toISOString(),
     });
@@ -414,7 +460,9 @@ export class VagasMockService {
           ?.filter((item) => command.draft.hiringDocuments.includes(item))
           ?? [],
       talentDocumentsConsentAccepted: existing?.talentDocumentsConsentAccepted ?? false,
-      candidates: existing?.candidates.map((candidate) => ({ ...candidate })) ?? [],
+      candidates:
+        existing?.candidates.map((candidate) => this.cloneCandidate(candidate, command.draft.hiringDocuments))
+          ?? [],
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       ...command.draft,
@@ -432,19 +480,21 @@ export class VagasMockService {
   private normalizeJobs(records: MockJobRecord[]): MockJobRecord[] {
     return records.map((record) => ({
       ...record,
+      hiringDocuments: this.normalizeHiringDocuments(record.hiringDocuments),
       showSalaryRangeInCard: record.showSalaryRangeInCard ?? true,
       talentDecision: record.talentDecision,
       benefits: this.normalizeBenefits(record.benefits),
-      hiringDocuments: this.normalizeHiringDocuments(record.hiringDocuments),
       talentSubmittedDocuments: this.normalizeHiringDocuments(record.talentSubmittedDocuments)
         .filter((item) => this.normalizeHiringDocuments(record.hiringDocuments).includes(item)),
       talentDocumentsConsentAccepted: record.talentDocumentsConsentAccepted ?? false,
       techStack: record.techStack.map((item) => ({ ...item })),
       differentials: [...record.differentials],
       responsibilitySections: this.normalizeResponsibilitySections(record.responsibilitySections, record.differentials),
-      candidates: record.candidates.map((candidate) => this.normalizeCandidate(candidate)),
+      candidates: record.candidates.map((candidate, index) =>
+        this.normalizeCandidate(candidate, record.id, index, this.normalizeHiringDocuments(record.hiringDocuments)),
+      ),
       avatars: [...record.avatars],
-    })).map((record) => this.decorateTalentVisibility(record));
+    })).map((record) => this.decorateTalentVisibility(this.migrateLegacyTalentState(record)));
   }
 
   private normalizeBenefits(benefits: unknown): JobBenefitItem[] {
@@ -524,10 +574,11 @@ export class VagasMockService {
     return `vaga-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
   }
 
-  private buildTalentCandidate(job: MockJobRecord): MockJobCandidate {
+  private buildTalentCandidate(job: MockJobRecord, existingCandidate?: MockJobCandidate): MockJobCandidate {
     const identity = this.readTalentIdentity();
 
     return {
+      id: existingCandidate?.id ?? `system-${job.id}`,
       name: identity.name,
       role: `${job.seniority} ${job.title}`.trim(),
       location: identity.location,
@@ -540,25 +591,39 @@ export class VagasMockService {
       radarOnly: false,
       source: 'system',
       hasProfileAvatar: identity.hasProfileAvatar,
+      stageOwner: existingCandidate?.stageOwner,
+      recruiterManagedJourney: existingCandidate?.recruiterManagedJourney ?? false,
+      recruiterStageCommittedAt: existingCandidate?.recruiterStageCommittedAt,
+      decision: existingCandidate?.decision,
+      submittedDocuments: this.normalizeCandidateSubmittedDocuments(existingCandidate?.submittedDocuments, job.hiringDocuments),
+      documentsConsentAccepted: existingCandidate?.documentsConsentAccepted ?? false,
     };
   }
 
   private decorateTalentVisibility(job: MockJobRecord): MockJobRecord {
-    const highlightedAvatars = this.collectVisibleSystemAvatars(job);
+    const canonicalJob = this.collapseTalentCandidates(job);
+    const jobWithTalentState = this.withDerivedTalentState(canonicalJob);
+    const highlightedAvatars = this.collectVisibleSystemAvatars(jobWithTalentState);
 
     return {
-      ...job,
+      ...jobWithTalentState,
       avatars: highlightedAvatars.slice(0, 3),
       extraCount: Math.max(0, highlightedAvatars.length - 3),
     };
   }
 
-  private normalizeCandidate(candidate: MockJobCandidate): MockJobCandidate {
+  private normalizeCandidate(
+    candidate: MockJobCandidate,
+    jobId: string,
+    index: number,
+    allowedDocuments: string[],
+  ): MockJobCandidate {
     const isSystemCandidate = this.isTalentCandidate(candidate);
     const identity = isSystemCandidate ? this.readTalentIdentity() : null;
 
     return {
       ...candidate,
+      id: candidate.id?.trim() || `${isSystemCandidate ? 'system' : 'candidate'}-${jobId}-${index + 1}`,
       name: identity?.name ?? candidate.name,
       avatar: identity?.avatar ?? candidate.avatar,
       location: identity?.location ?? candidate.location,
@@ -566,6 +631,33 @@ export class VagasMockService {
       hasProfileAvatar: isSystemCandidate
         ? identity?.hasProfileAvatar ?? false
         : candidate.hasProfileAvatar ?? false,
+      stageOwner: candidate.stageOwner,
+      recruiterManagedJourney: candidate.recruiterManagedJourney ?? false,
+      recruiterStageCommittedAt: candidate.recruiterStageCommittedAt,
+      decision: candidate.decision,
+      submittedDocuments: this.normalizeCandidateSubmittedDocuments(candidate.submittedDocuments, allowedDocuments),
+      documentsConsentAccepted: candidate.documentsConsentAccepted ?? false,
+    };
+  }
+
+  private collapseTalentCandidates(job: MockJobRecord): MockJobRecord {
+    const canonicalTalentCandidate = this.findTalentCandidate(job);
+
+    if (!canonicalTalentCandidate) {
+      return job;
+    }
+
+    const nextCandidates = job.candidates.filter((candidate) =>
+      !this.isTalentCandidate(candidate) || candidate === canonicalTalentCandidate,
+    );
+
+    if (nextCandidates.length === job.candidates.length) {
+      return job;
+    }
+
+    return {
+      ...job,
+      candidates: nextCandidates,
     };
   }
 
@@ -594,17 +686,134 @@ export class VagasMockService {
   }
 
   private shouldShowCandidateAvatar(candidate: MockJobCandidate): boolean {
-    return candidate.radarOnly === true || !!candidate.stage;
+    return candidate.decision !== 'hidden' && (candidate.radarOnly === true || !!candidate.stage);
   }
 
   private isTalentCandidate(candidate: MockJobCandidate, identity = this.readTalentIdentity()): boolean {
     return candidate.source === 'system'
+      || candidate.id?.startsWith('system-')
       || candidate.name === identity.name
       || candidate.name === this.fallbackTalentCandidateName;
   }
 
   private isCandidateMatch(candidate: MockJobCandidate, candidateName: string): boolean {
-    return candidate.name === candidateName;
+    return candidate.id === candidateName || candidate.name === candidateName;
+  }
+
+  private cloneCandidate(candidate: MockJobCandidate, allowedDocuments: string[]): MockJobCandidate {
+    return {
+      ...candidate,
+      submittedDocuments: this.normalizeCandidateSubmittedDocuments(candidate.submittedDocuments, allowedDocuments),
+      documentsConsentAccepted: candidate.documentsConsentAccepted ?? false,
+    };
+  }
+
+  private resolveStageOwner(
+    stage: MockJobCandidate['stage'],
+    talentDecision: TalentJobDecision | undefined,
+    preferredOwner: 'system' | 'talent' | 'recruiter',
+    fallbackOwner?: MockJobCandidate['stageOwner'],
+  ): MockJobCandidate['stageOwner'] {
+    if (stage === 'radar') {
+      return talentDecision === 'hidden' ? 'talent' : 'system';
+    }
+
+    if (stage === 'candidatura' || stage === 'aceito' || stage === 'documentacao' || stage === 'proxima' || stage === 'cancelado') {
+      return 'talent';
+    }
+
+    if (stage === 'processo' || stage === 'tecnica' || stage === 'aguardando' || stage === 'contratado') {
+      return preferredOwner === 'talent' ? (fallbackOwner ?? 'recruiter') : preferredOwner;
+    }
+
+    return fallbackOwner ?? preferredOwner;
+  }
+
+  private normalizeCandidateSubmittedDocuments(documents: unknown, allowedDocuments: string[]): string[] {
+    return this.normalizeHiringDocuments(documents)
+      .filter((item) => allowedDocuments.includes(item));
+  }
+
+  private isCandidateStage(value: string | undefined): value is CandidateStage {
+    return value === 'radar'
+      || value === 'candidatura'
+      || value === 'processo'
+      || value === 'tecnica'
+      || value === 'aguardando'
+      || value === 'aceito'
+      || value === 'documentacao'
+      || value === 'contratado'
+      || value === 'proxima'
+      || value === 'cancelado';
+  }
+
+  private migrateLegacyTalentState(job: MockJobRecord): MockJobRecord {
+    const identity = this.readTalentIdentity();
+    const topLevelSubmittedDocuments = this.normalizeCandidateSubmittedDocuments(
+      job.talentSubmittedDocuments,
+      job.hiringDocuments,
+    );
+    const hasLegacyTalentState =
+      job.talentDecision !== undefined
+      || topLevelSubmittedDocuments.length > 0
+      || !!job.talentDocumentsConsentAccepted;
+    const talentCandidateIndex = job.candidates.findIndex((candidate) => this.isTalentCandidate(candidate, identity));
+
+    if (talentCandidateIndex === -1) {
+      if (!hasLegacyTalentState) {
+        return job;
+      }
+
+      return {
+        ...job,
+        candidates: [
+          {
+            ...this.buildTalentCandidate(job),
+            stage: job.talentDecision === 'hidden' ? 'radar' : 'candidatura',
+            radarOnly: job.talentDecision === 'hidden',
+            recruiterManagedJourney: false,
+            recruiterStageCommittedAt: undefined,
+            decision: job.talentDecision,
+            submittedDocuments: topLevelSubmittedDocuments,
+            documentsConsentAccepted: job.talentDocumentsConsentAccepted ?? false,
+          },
+          ...job.candidates.map((candidate) => ({ ...candidate })),
+        ],
+      };
+    }
+
+    const talentCandidate = job.candidates[talentCandidateIndex];
+    const nextTalentCandidate: MockJobCandidate = {
+      ...talentCandidate,
+      recruiterManagedJourney: talentCandidate.recruiterManagedJourney ?? false,
+      recruiterStageCommittedAt: talentCandidate.recruiterStageCommittedAt,
+      decision: talentCandidate.decision ?? job.talentDecision,
+      submittedDocuments: talentCandidate.submittedDocuments?.length
+        ? this.normalizeCandidateSubmittedDocuments(talentCandidate.submittedDocuments, job.hiringDocuments)
+        : topLevelSubmittedDocuments,
+      documentsConsentAccepted: talentCandidate.documentsConsentAccepted ?? job.talentDocumentsConsentAccepted ?? false,
+    };
+
+    return {
+      ...job,
+      candidates: job.candidates.map((candidate, index) => (
+        index === talentCandidateIndex ? nextTalentCandidate : { ...candidate }
+      )),
+    };
+  }
+
+  private withDerivedTalentState(job: MockJobRecord): MockJobRecord {
+    const talentCandidate = this.findTalentCandidate(job);
+
+    return {
+      ...job,
+      talentDecision: talentCandidate?.decision,
+      talentSubmittedDocuments: this.normalizeCandidateSubmittedDocuments(
+        talentCandidate?.submittedDocuments,
+        job.hiringDocuments,
+      ),
+      talentDocumentsConsentAccepted: talentCandidate?.documentsConsentAccepted ?? false,
+    };
   }
 
   private hasRealProfileAvatar(avatar: string | undefined): boolean {

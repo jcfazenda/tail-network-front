@@ -58,6 +58,7 @@ export interface MockJobDraft extends VagaPanelDraft {
 }
 
 export interface MockJobCandidate {
+  id?: string;
   name: string;
   role: string;
   location?: string;
@@ -70,6 +71,12 @@ export interface MockJobCandidate {
   radarOnly?: boolean;
   source?: 'seed' | 'system';
   hasProfileAvatar?: boolean;
+  stageOwner?: 'system' | 'talent' | 'recruiter';
+  recruiterManagedJourney?: boolean;
+  recruiterStageCommittedAt?: string;
+  decision?: TalentJobDecision;
+  submittedDocuments?: string[];
+  documentsConsentAccepted?: boolean;
 }
 
 export interface MockJobRecord extends MockJobDraft {

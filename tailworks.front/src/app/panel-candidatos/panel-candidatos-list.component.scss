@@ -349,16 +349,22 @@
   background: transparent;
   display: grid;
   gap: 12px;
-  padding: 18px 16px 14px;
+  padding: 54px 16px 14px;
   text-align: left;
   cursor: pointer;
 }
 
-.candidate-card__curriculum{
+.candidate-card__actions{
   position: absolute;
   top: 10px;
   right: 12px;
   z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.candidate-card__action{
   min-height: 28px;
   padding: 0 10px;
   border: 1px solid rgba(15, 23, 42, 0.1);
@@ -375,7 +381,12 @@
   cursor: pointer;
 }
 
-.candidate-card__curriculum .material-symbols-rounded{
+.candidate-card__action--status{
+  background: rgba(255, 255, 255, 0.92);
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.candidate-card__action .material-symbols-rounded{
   font-size: 14px;
   line-height: 1;
 }
@@ -470,6 +481,28 @@
   font-weight: 600;
   line-height: 1.2;
   margin-top: 2px;
+}
+
+.candidate-card__status-line{
+  margin-top: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.candidate-card__status-kicker{
+  color: rgba(15, 23, 42, 0.42);
+  font-weight: 600;
+}
+
+.candidate-card__status-line strong{
+  color: rgba(15, 23, 42, 0.82);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .cand-progress {
@@ -615,14 +648,14 @@
   }
 
   .candidate-card__surface{
-    padding: 18px 14px 12px;
+    padding: 58px 14px 12px;
   }
 
   .candidate-card__profile{
     align-items: flex-start;
   }
 
-  .candidate-card__curriculum{
+  .candidate-card__actions{
     right: 10px;
   }
 }

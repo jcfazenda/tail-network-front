@@ -50,19 +50,19 @@ export class StubPage implements OnDestroy {
   readonly stageLabels = [
     'Contratado',
     'Validando documentos',
-    'Proposta aceita',
+    'Aceitou proposta',
     'Contratação Solicitada',
     'Em Processo',
-    'Candidatura',
-    'Continua no Radar',
-    'Cancelado',
+    'Candidatura enviada',
+    'Talento no radar',
+    'Candidatura cancelada',
   ];
 
   activeTab: JobStatus = this.resolveInitialTab();
 
   selectedJobPanel: ChatJob | null = null;
   selectedChatJob: ChatJob | null = null;
-  selectedCandidateName: string | null = null;
+  selectedCandidateKey: string | null = null;
   chatStartIndex = 0;
   candidateProfileContext: CandidateProfileContext | null = null;
 
@@ -94,7 +94,7 @@ export class StubPage implements OnDestroy {
   openPanel(job: MockJobRecord) {
     this.selectedJobPanel = this.asChatJob(job);
     this.selectedChatJob = null;
-    this.selectedCandidateName = null;
+    this.selectedCandidateKey = null;
     this.chatStartIndex = 0;
   }
 
@@ -115,7 +115,7 @@ export class StubPage implements OnDestroy {
     const selectedCandidate = sortedCandidates[index];
     const asChatJob = this.asChatJob(job);
 
-    this.selectedCandidateName = selectedCandidate?.name ?? null;
+    this.selectedCandidateKey = selectedCandidate?.id ?? selectedCandidate?.name ?? null;
     this.selectedJobPanel = asChatJob;
     this.selectedChatJob = asChatJob;
     this.chatStartIndex = index;
@@ -132,7 +132,7 @@ export class StubPage implements OnDestroy {
   stageLabel(stage?: MockJobCandidate['stage']): string {
     switch (stage) {
       case 'radar':
-        return 'No Radar';
+        return 'Talento no radar';
       case 'contratado':
         return 'Contratado';
       case 'aguardando':
@@ -142,23 +142,23 @@ export class StubPage implements OnDestroy {
       case 'tecnica':
         return 'Em Entrevista Técnica';
       case 'aceito':
-        return 'Proposta aceita';
+        return 'Aceito';
       case 'proxima':
-        return 'Continua no Radar';
+        return 'Ficou pra próxima';
       case 'documentacao':
         return 'Validando documentos';
       case 'candidatura':
-        return 'Candidatura';
+        return 'Candidatura enviada';
       case 'cancelado':
-        return 'Cancelado';
+        return 'Candidatura cancelada';
       default:
-        return 'Em Processo';
+        return 'Talento no radar';
     }
   }
 
   closeChat() {
     this.selectedChatJob = null;
-    this.selectedCandidateName = null;
+    this.selectedCandidateKey = null;
   }
 
   handleSidePanelAction(): void {
@@ -173,7 +173,7 @@ export class StubPage implements OnDestroy {
   closePanel() {
     this.selectedChatJob = null;
     this.selectedJobPanel = null;
-    this.selectedCandidateName = null;
+    this.selectedCandidateKey = null;
   }
 
   openCandidateProfile(context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' }): void {
@@ -199,6 +199,25 @@ export class StubPage implements OnDestroy {
     });
   }
 
+  openCandidateStatusFromList(index: number): void {
+    if (!this.selectedJobPanel) {
+      return;
+    }
+
+    const sortedCandidates = this.sortedCandidatesFor(this.selectedJobPanel) as unknown as ChatCandidate[];
+    const candidate = sortedCandidates[index];
+
+    if (!candidate) {
+      return;
+    }
+
+    this.openCandidateProfile({
+      job: this.selectedJobPanel,
+      candidate,
+      initialTab: 'journey',
+    });
+  }
+
   closeCandidateProfile(): void {
     this.candidateProfileContext = null;
   }
@@ -206,8 +225,8 @@ export class StubPage implements OnDestroy {
   sortedCandidatesFor(job: MockJobRecord | ChatJob): MockJobCandidate[] {
     const order = ['radar', 'candidatura', 'tecnica', 'processo', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
     return [...job.candidates as MockJobCandidate[]].sort((left, right) => {
-      const stageLeft = left.radarOnly ? 'radar' : (left.stage ?? 'processo');
-      const stageRight = right.radarOnly ? 'radar' : (right.stage ?? 'processo');
+      const stageLeft = this.vagasMockService.getEffectiveCandidateStage(left) ?? 'radar';
+      const stageRight = this.vagasMockService.getEffectiveCandidateStage(right) ?? 'radar';
       return order.indexOf(stageLeft) - order.indexOf(stageRight);
     });
   }
@@ -304,12 +323,12 @@ export class StubPage implements OnDestroy {
 
     this.selectedChatJob = this.asChatJob(latestJob);
 
-    if (!this.selectedCandidateName) {
+    if (!this.selectedCandidateKey) {
       return;
     }
 
     const nextIndex = this.selectedChatJob.candidates.findIndex(
-      (candidate) => candidate.name === this.selectedCandidateName,
+      (candidate) => (candidate.id ?? candidate.name) === this.selectedCandidateKey,
     );
 
     if (nextIndex >= 0) {
@@ -327,7 +346,7 @@ export class StubPage implements OnDestroy {
 
     const refreshedProfileJob = this.asChatJob(latestJob);
     const refreshedProfileCandidate = refreshedProfileJob.candidates.find(
-      (candidate) => candidate.name === this.candidateProfileContext?.candidate.name,
+      (candidate) => (candidate.id ?? candidate.name) === (this.candidateProfileContext?.candidate.id ?? this.candidateProfileContext?.candidate.name),
     );
 
     if (!refreshedProfileCandidate) {
