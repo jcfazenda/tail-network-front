@@ -126,6 +126,23 @@
   </section>
 
   <section class="topbar-notification-modal" *ngIf="activeTalentNotification" (click)="$event.stopPropagation()">
+    <div class="topbar-notification-modal__confetti" *ngIf="notificationConfettiPieces.length > 0" aria-hidden="true">
+      <span
+        class="topbar-notification-modal__confetti-piece"
+        *ngFor="let piece of notificationConfettiPieces"
+        [style.left]="piece.left"
+        [style.top]="piece.top"
+        [style.animation-delay]="piece.delay"
+        [style.animation-duration]="piece.duration"
+        [style.width]="piece.size"
+        [style.height]="piece.size"
+        [style.--confetti-rotate]="piece.rotate"
+        [style.--confetti-dx]="piece.dx"
+        [style.--confetti-dy]="piece.dy"
+        [style.background]="piece.color"
+      ></span>
+    </div>
+
     <button class="topbar-notification-modal__close" type="button" (click)="closeNotificationModal()">
       <span class="material-symbols-rounded" aria-hidden="true">close</span>
     </button>
@@ -142,6 +159,14 @@
       </span>
       <span class="topbar-notification-modal__job-offer" *ngIf="activeTalentNotificationOfferLine">
         {{ activeTalentNotificationOfferLine }}
+      </span>
+    </div>
+
+    <div class="topbar-notification-modal__recruiter">
+      <span class="topbar-notification-modal__recruiter-avatar" aria-hidden="true"></span>
+      <span class="topbar-notification-modal__recruiter-copy">
+        <strong>Rafael Souza</strong>
+        <span>Talent Acquisition</span>
       </span>
     </div>
 

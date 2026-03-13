@@ -324,6 +324,26 @@
   box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18);
 }
 
+.topbar-notification-modal__confetti{
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.topbar-notification-modal__confetti-piece{
+  position: absolute;
+  display: block;
+  border-radius: 2px;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) rotate(var(--confetti-rotate, 0deg)) scale(0.35);
+  animation-name: topbarNotificationConfetti;
+  animation-timing-function: cubic-bezier(0.18, 0.74, 0.24, 1);
+  animation-fill-mode: forwards;
+}
+
 .topbar-notification-modal__close{
   position: absolute;
   top: 16px;
@@ -338,6 +358,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 1;
 }
 
 .topbar-notification-modal__label{
@@ -351,6 +372,7 @@
   white-space: nowrap;
   color: #000000;
   text-shadow: 0 8px 22px rgba(15, 23, 42, 0.32);
+  z-index: 1;
 }
 
 .topbar-notification-modal__job{
@@ -362,6 +384,7 @@
   gap: 7px;
   min-width: 0;
   color: #111827;
+  z-index: 1;
 }
 
 .topbar-notification-modal__job-kicker{
@@ -410,6 +433,46 @@
   bottom: 54px;
   display: flex;
   justify-content: flex-end;
+  z-index: 1;
+}
+
+.topbar-notification-modal__recruiter{
+  position: absolute;
+  right: 128px;
+  bottom: 126px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1;
+}
+
+.topbar-notification-modal__recruiter-avatar{
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png');
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.96);
+  flex: 0 0 auto;
+}
+
+.topbar-notification-modal__recruiter-copy{
+  display: grid;
+  gap: 2px;
+  color: #1f2937;
+}
+
+.topbar-notification-modal__recruiter-copy strong{
+  font-size: 16px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.topbar-notification-modal__recruiter-copy span{
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: rgba(31, 41, 55, 0.78);
 }
 
 .topbar-notification-modal__action{
@@ -427,6 +490,29 @@
 .topbar-notification-modal__action--primary{
   background: linear-gradient(180deg, #dd7f24 0%, #b85f12 100%);
   color: #fff;
+}
+
+@keyframes topbarNotificationConfetti{
+  0%{
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(var(--confetti-rotate, 0deg)) scale(0.35);
+  }
+
+  10%{
+    opacity: 1;
+  }
+
+  38%{
+    opacity: 1;
+    transform: translate3d(calc(var(--confetti-dx, 0px) * 0.72), calc(var(--confetti-dy, 0px) * 0.72), 0)
+      rotate(calc(var(--confetti-rotate, 0deg) + 180deg)) scale(1.02);
+  }
+
+  100%{
+    opacity: 0;
+    transform: translate3d(var(--confetti-dx, 0px), var(--confetti-dy, 0px), 0)
+      rotate(calc(var(--confetti-rotate, 0deg) + 360deg)) scale(0.92);
+  }
 }
 
 @media (max-width: 960px){
@@ -496,6 +582,24 @@
     bottom: 16px;
   }
 
+  .topbar-notification-modal__recruiter{
+    right: 84px;
+    bottom: 94px;
+  }
+
+  .topbar-notification-modal__recruiter-avatar{
+    width: 48px;
+    height: 48px;
+  }
+
+  .topbar-notification-modal__recruiter-copy strong{
+    font-size: 14px;
+  }
+
+  .topbar-notification-modal__recruiter-copy span{
+    font-size: 12px;
+  }
+
   .topbar-notification-list{
     left: 16px;
     right: 16px;
@@ -528,5 +632,24 @@
   .topbar-notification-modal__job-location,
   .topbar-notification-modal__job-offer{
     font-size: 13px;
+  }
+
+  .topbar-notification-modal__recruiter{
+    right: 40px;
+    bottom: 88px;
+    gap: 10px;
+  }
+
+  .topbar-notification-modal__recruiter-avatar{
+    width: 42px;
+    height: 42px;
+  }
+
+  .topbar-notification-modal__recruiter-copy strong{
+    font-size: 13px;
+  }
+
+  .topbar-notification-modal__recruiter-copy span{
+    font-size: 11px;
   }
 }

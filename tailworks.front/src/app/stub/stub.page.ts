@@ -300,7 +300,10 @@ export class StubPage implements OnDestroy {
         name: item.name,
         match: item.match,
       })),
-      candidates: this.sortedCandidatesFor(job),
+      candidates: this.sortedCandidatesFor(job).map((candidate) => ({
+        ...candidate,
+        location: undefined,
+      })),
     };
   }
 

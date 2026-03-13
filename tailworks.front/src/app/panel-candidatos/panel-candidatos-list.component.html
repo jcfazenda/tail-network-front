@@ -103,7 +103,6 @@
                 <div class="candidate-card__profile-text">
                   <div class="cand-name">{{ item.candidate.name }}</div>
                   <div class="cand-role">{{ item.candidate.role }}</div>
-                  <div class="candidate-card__location" *ngIf="item.candidate.location">{{ item.candidate.location }}</div>
                   <div class="candidate-card__status-line">
                     <span class="candidate-card__status-kicker">Status</span>
                     <strong>{{ candidateStatusLabel(item.candidate) }}</strong>

@@ -1,33 +1,48 @@
 <section class="candidate-placeholder" [class.candidate-placeholder--applications]="isApplicationsPage">
   <ng-container *ngIf="isApplicationsPage; else defaultPlaceholder">
     <div class="candidate-applications__intro">
-      <div class="candidate-applications__intro-avatar" aria-hidden="true">
+      <div class="candidate-applications__intro-formation">
         <img
-          *ngIf="talentAvatarUrl; else defaultTalentAvatar"
-          [src]="talentAvatarUrl"
+          [src]="talentFormationLogoUrl"
           alt=""
-          class="candidate-applications__intro-avatar-image"
+          class="candidate-applications__intro-formation-logo"
         />
 
-        <ng-template #defaultTalentAvatar>
-          <span class="material-symbols-rounded">person</span>
-        </ng-template>
+        <div class="candidate-applications__intro-formation-copy">
+          <strong class="candidate-applications__intro-degree">{{ talentGraduation }}</strong>
+          <span class="candidate-applications__intro-specialization">{{ talentSpecialization }}</span>
+          <span class="candidate-applications__intro-formation-heading">{{ talentFormationHeading }}</span>
+        </div>
       </div>
 
-      <div class="candidate-applications__intro-copy">
-        <div class="candidate-applications__intro-name">
-          <strong>{{ talentName }}</strong>
-          <span
-            class="candidate-applications__intro-verified material-symbols-rounded"
-            aria-label="Validado no sistema"
-            title="Validado no sistema"
-          >
-            verified
-          </span>
+      <div class="candidate-applications__intro-profile">
+        <div class="candidate-applications__intro-avatar" aria-hidden="true">
+          <img
+            *ngIf="talentAvatarUrl; else defaultTalentAvatar"
+            [src]="talentAvatarUrl"
+            alt=""
+            class="candidate-applications__intro-avatar-image"
+          />
+
+          <ng-template #defaultTalentAvatar>
+            <span class="material-symbols-rounded">person</span>
+          </ng-template>
         </div>
 
-        <strong class="candidate-applications__intro-degree">{{ talentGraduation }}</strong>
-        <span class="candidate-applications__intro-specialization">{{ talentSpecialization }}</span>
+        <div class="candidate-applications__intro-identity">
+          <div class="candidate-applications__intro-name">
+            <strong>{{ talentName }}</strong>
+            <span
+              class="candidate-applications__intro-verified material-symbols-rounded"
+              aria-label="Validado no sistema"
+              title="Validado no sistema"
+            >
+              verified
+            </span>
+          </div>
+
+          <span class="candidate-applications__intro-detail">{{ talentEmail }}</span>
+        </div>
       </div>
     </div>
 

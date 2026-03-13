@@ -43,6 +43,11 @@ type CompanySummaryProfile = {
 
 type CandidateBasicProfile = {
   name: string;
+  email: string;
+  phone: string;
+  city: string;
+  state: string;
+  location: string;
 };
 
 type CandidateBasicDraft = {
@@ -53,6 +58,8 @@ type CandidateBasicDraft = {
 type CandidateFormationCopyDraft = {
   graduation: string;
   specialization: string;
+  endMonth: string;
+  endYear: string;
 };
 
 @Component({
@@ -67,6 +74,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private static readonly stacksStorageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
+  private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
 
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
@@ -110,7 +118,12 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
   talentName = 'Julio Fazenda';
+  talentEmail = 'jfazenda@gmail.com';
+  talentPhone = '(11) 1111-1111';
+  talentCityState = 'Rio de Janeiro - RJ';
   talentAvatarUrl = '';
+  talentFormationLogoUrl = '/assets/images/logo-estacio.png';
+  talentFormationHeading = 'Formado em Dez 2025';
   talentGraduation = 'Bacharelado em Sistemas de Informação';
   talentSpecialization = 'Especialização em Arquitetura de Software';
   selectedJobId: string | null = null;
@@ -122,6 +135,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.restoreTalentDraft();
     this.restoreTalentFormationCopy();
+    this.restoreTalentFormationLogo();
     this.restoreTalentStacks();
     this.subscriptions.add(
       this.route.queryParamMap.subscribe((params) => {
@@ -869,6 +883,13 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     try {
       const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
       this.talentName = draft.profile?.name?.trim() || this.talentName;
+      this.talentEmail = draft.profile?.email?.trim() || this.talentEmail;
+      this.talentPhone = draft.profile?.phone?.trim() || this.talentPhone;
+      this.talentCityState = this.composeCityState(
+        draft.profile?.city,
+        draft.profile?.state,
+        draft.profile?.location,
+      );
       this.talentAvatarUrl = draft.photoPreviewUrl ?? '';
     } catch {
       localStorage.removeItem(PlaceholderPage.basicDraftStorageKey);
@@ -884,10 +905,20 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
     try {
       const draft = JSON.parse(rawDraft) as Partial<CandidateFormationCopyDraft>;
+      const endMonth = draft.endMonth?.trim() || 'Dez';
+      const endYear = draft.endYear?.trim() || '2025';
+      this.talentFormationHeading = `Formado em ${endMonth} ${endYear}`;
       this.talentGraduation = draft.graduation?.trim() || this.talentGraduation;
       this.talentSpecialization = draft.specialization?.trim() || this.talentSpecialization;
     } catch {
       localStorage.removeItem(PlaceholderPage.formationCopyStorageKey);
+    }
+  }
+
+  private restoreTalentFormationLogo(): void {
+    const savedLogo = localStorage.getItem(PlaceholderPage.formationLogoStorageKey);
+    if (savedLogo?.trim()) {
+      this.talentFormationLogoUrl = savedLogo.trim();
     }
   }
 
@@ -914,6 +945,18 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       localStorage.removeItem(PlaceholderPage.stacksStorageKey);
       this.talentStacks = this.defaultStacks();
     }
+  }
+
+  private composeCityState(city?: string, state?: string, location?: string): string {
+    const cityLabel = city?.trim();
+    const stateLabel = state?.trim();
+
+    if (cityLabel && stateLabel) {
+      return `${cityLabel} - ${stateLabel}`;
+    }
+
+    const locationLabel = location?.trim();
+    return locationLabel || this.talentCityState;
   }
 
   private isWorkModel(value: string): value is WorkModel {
