@@ -588,6 +588,13 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return this.candidate;
     }
 
+    if (this.isTalentCandidateSelection(this.candidate)) {
+      const canonicalTalentCandidate = this.vagasMockService.findTalentCandidate(latestJob);
+      if (canonicalTalentCandidate) {
+        return canonicalTalentCandidate as ChatCandidate;
+      }
+    }
+
     const candidateKey = this.candidate.id ?? this.candidate.name;
     const refreshedCandidate = latestJob.candidates.find(
       (item) => (item.id ?? item.name) === candidateKey,
@@ -617,6 +624,15 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
 
     const basicDraft = this.readBasicDraft();
     return candidate.name === (basicDraft?.profile?.name?.trim() || '');
+  }
+
+  private isTalentCandidateSelection(candidate: ChatCandidate): boolean {
+    if (candidate.source === 'system' || candidate.id?.startsWith('system-')) {
+      return true;
+    }
+
+    const identity = this.vagasMockService.getTalentCandidateIdentity();
+    return candidate.name === identity.name;
   }
 
   private readBasicDraft(): CandidateBasicDraft | null {

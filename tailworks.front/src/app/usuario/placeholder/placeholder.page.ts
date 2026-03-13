@@ -124,6 +124,27 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.restoreTalentFormationCopy();
     this.restoreTalentStacks();
     this.subscriptions.add(
+      this.route.queryParamMap.subscribe((params) => {
+        const jobId = params.get('job');
+        const panel = params.get('panel');
+
+        if (!jobId) {
+          return;
+        }
+
+        const job = this.vagasMockService.getJobById(jobId);
+        if (!job) {
+          return;
+        }
+
+        this.openJobPanel(jobId);
+        if (panel === 'details' || panel === 'benefits' || panel === 'status') {
+          this.activeCandidatePanelView = panel;
+        }
+        this.cdr.markForCheck();
+      }),
+    );
+    this.subscriptions.add(
       this.vagasMockService.jobsChanged$.subscribe(() => {
         const previousStage = this.selectedJobObservedStage;
         this.syncSelectedJobDocumentState();

@@ -1,6 +1,7 @@
 import { Injectable, NgZone, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, TalentJobDecision } from './vagas.models';
+import { TalentNotificationService } from '../../usuario/talent-notification.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -43,6 +44,7 @@ export class VagasMockService {
   private readonly fallbackTalentAvatar = '/assets/avatars/avatar-rafael.png';
   private readonly fallbackTalentCandidateName = 'Rafael Oliveira';
   private readonly zone = inject(NgZone);
+  private readonly talentNotificationService = inject(TalentNotificationService);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
@@ -316,6 +318,7 @@ export class VagasMockService {
     }
 
     let targetCandidate: MockJobCandidate | undefined;
+    let nextTargetCandidate: MockJobCandidate | undefined;
     const nextCandidates = existing.candidates.map((candidate) => {
       if (!this.isCandidateMatch(candidate, candidateName)) {
         return { ...candidate };
@@ -325,7 +328,7 @@ export class VagasMockService {
       const currentSubmittedDocuments = this.normalizeCandidateSubmittedDocuments(candidate.submittedDocuments, existing.hiringDocuments);
       const shouldResetTalentDocuments = this.isTalentCandidate(candidate) && stage !== 'documentacao' && stage !== 'contratado';
 
-      return {
+      nextTargetCandidate = {
         ...candidate,
         ...(this.isTalentCandidate(candidate) ? this.buildTalentCandidate(existing, candidate) : {}),
         stage,
@@ -347,6 +350,8 @@ export class VagasMockService {
               ? false
               : candidate.documentsConsentAccepted ?? false,
       };
+
+      return nextTargetCandidate;
     });
 
     if (!targetCandidate) {
@@ -358,6 +363,18 @@ export class VagasMockService {
       candidates: nextCandidates,
       updatedAt: new Date().toISOString(),
     });
+
+    const previousEffectiveStage = this.getEffectiveCandidateStage(targetCandidate);
+    const nextEffectiveStage = this.getEffectiveCandidateStage(nextTargetCandidate);
+    if (
+      targetCandidate
+      && nextTargetCandidate
+      && this.isTalentCandidate(targetCandidate)
+      && previousEffectiveStage !== 'processo'
+      && nextEffectiveStage === 'processo'
+    ) {
+      this.talentNotificationService.pushProcessAdvancedNotification(updatedJob, nextTargetCandidate);
+    }
 
     this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
     this.persist();

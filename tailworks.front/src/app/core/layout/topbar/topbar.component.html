@@ -65,12 +65,97 @@
   </div>
 
   <div class="actions">
-    <button class="iconBtn" aria-label="Notificações">
+    <button
+      class="iconBtn topbar__notifications"
+      [class.topbar__notifications--active]="unreadTalentNotifications > 0"
+      aria-label="Notificações"
+      type="button"
+      (click)="openNotifications()"
+    >
       <span class="material-symbols-rounded">notifications</span>
+      <span class="topbar__notifications-badge" *ngIf="unreadTalentNotifications > 0">
+        {{ unreadTalentNotifications }}
+      </span>
     </button>
     <div class="avatar" aria-label="Perfil"></div>
   </div>
 </header>
+
+<div
+  class="topbar-notification-backdrop"
+  *ngIf="isNotificationListOpen || activeTalentNotification"
+  (click)="closeNotificationModal()"
+>
+  <section
+    class="topbar-notification-list"
+    *ngIf="isNotificationListOpen"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="topbar-notification-list__head">
+      <strong>Notificações</strong>
+      <span>{{ talentNotifications.length }}</span>
+    </header>
+
+    <div class="topbar-notification-list__items" *ngIf="talentNotifications.length; else emptyNotifications">
+      <article
+        class="topbar-notification-list__item"
+        *ngFor="let notification of talentNotifications"
+        [class.topbar-notification-list__item--unread]="notificationIsUnread(notification)"
+      >
+        <div class="topbar-notification-list__copy">
+          <div class="topbar-notification-list__copy-head">
+            <strong>{{ notificationTitle(notification) }}</strong>
+            <button
+              class="topbar-notification-list__action"
+              type="button"
+              (click)="openNotificationPreview(notification)"
+            >
+              Ver
+            </button>
+          </div>
+          <p>{{ notificationPreview(notification) }}</p>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #emptyNotifications>
+      <div class="topbar-notification-list__empty">
+        Nenhuma notificação por aqui.
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="topbar-notification-modal" *ngIf="activeTalentNotification" (click)="$event.stopPropagation()">
+    <button class="topbar-notification-modal__close" type="button" (click)="closeNotificationModal()">
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
+    </button>
+
+    <div class="topbar-notification-modal__label">
+      Você avançou no processo seletivo!
+    </div>
+
+    <div class="topbar-notification-modal__job" *ngIf="activeTalentNotificationJob as job">
+      <strong class="topbar-notification-modal__job-title">{{ job.title }}</strong>
+      <span class="topbar-notification-modal__job-company">{{ activeTalentNotificationCompanyLine }}</span>
+      <span class="topbar-notification-modal__job-location" *ngIf="activeTalentNotificationLocationLine">
+        {{ activeTalentNotificationLocationLine }}
+      </span>
+      <span class="topbar-notification-modal__job-offer" *ngIf="activeTalentNotificationOfferLine">
+        {{ activeTalentNotificationOfferLine }}
+      </span>
+    </div>
+
+    <div class="topbar-notification-modal__actions">
+      <button
+        class="topbar-notification-modal__action topbar-notification-modal__action--primary"
+        type="button"
+        (click)="openNotificationConversation()"
+      >
+        Ir para conversa com recrutador
+      </button>
+    </div>
+  </section>
+</div>
 
 <ng-template #selectionTopbar>
   <div class="topbar__primary">
