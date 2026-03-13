@@ -123,7 +123,10 @@
                   </div>
 
                   <div class="candidate-experience__stack-list" *ngIf="currentExperienceStacks.length; else emptyExperienceStacks">
-                    <div class="candidate-experience__stack-item" *ngFor="let stack of currentExperienceStacks; let index = index">
+                    <div
+                      class="candidate-experience__stack-item"
+                      *ngFor="let stack of currentExperienceStacks; let index = index; trackBy: trackByExperienceStackName"
+                    >
                       <div class="candidate-experience__stack-item-meta">
                         <button
                           class="candidate-experience__stack-item-edit"

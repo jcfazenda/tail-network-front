@@ -164,6 +164,7 @@ export class ExperienciaPage implements OnInit {
   experienceDraft: ExperienceEntry = this.createEmptyExperienceDraft();
 
   readonly trackByExperience = (_index: number, experience: ExperienceEntry): string => experience.id;
+  readonly trackByExperienceStackName = (_index: number, stack: ExperienceStackChip): string => stack.name;
 
   get displayName(): string {
     return this.profile.name.trim() || 'Julio Fazenda';
@@ -751,6 +752,7 @@ export class ExperienciaPage implements OnInit {
     }));
   }
 
+
   updateExperienceDraftDate(kind: 'start' | 'end', value: string): void {
     if (!value) {
       return;
@@ -811,6 +813,7 @@ export class ExperienciaPage implements OnInit {
       localStorage.removeItem(ExperienciaPage.basicDraftStorageKey);
     }
   }
+
 
   private scrollToSection(sectionId: string, fallbackRoute: string): void {
     const target = document.getElementById(sectionId);
