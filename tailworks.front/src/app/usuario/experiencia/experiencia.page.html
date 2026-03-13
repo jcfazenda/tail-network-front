@@ -25,244 +25,247 @@
 
   <section class="candidate-experience__card">
     <div class="candidate-experience__form-card">
-      <div class="candidate-experience__experience-intro">
-        <strong>Como você quer estar no sistema?</strong>
-
-        <p>Mostre por onde voce passou, quais desafios assumiu e como sua trajetória reforça seu radar profissional.</p>
-      </div>
-
-      <div class="candidate-experience__experience-shell">
-        <div class="candidate-experience__experience-head">
-          <p>Atuação por experiência</p>
-          <div class="candidate-experience__experience-head-actions">
-            <div class="candidate-experience__experience-nav" *ngIf="experiences.length > 1">
-              <button
-                class="candidate-experience__experience-nav-button"
-                type="button"
-                (click)="showPreviousExperience()"
-                [disabled]="!canGoToPreviousExperience"
-                aria-label="Mostrar experiência anterior"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
-              </button>
-
-              <span class="candidate-experience__experience-page">
-                {{ currentExperiencePageNumber }} / {{ experiences.length }}
-              </span>
-
-              <button
-                class="candidate-experience__experience-nav-button"
-                type="button"
-                (click)="showNextExperience()"
-                [disabled]="!canGoToNextExperience"
-                aria-label="Mostrar próxima experiência"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
-              </button>
-            </div>
-
-            <button
-              class="candidate-experience__add-button candidate-experience__add-button--inline"
-              type="button"
-              (click)="openExperienceModal()"
-              aria-label="Adicionar experiência"
-              title="Adicionar experiência"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">add</span>
-            </button>
+      <div class="candidate-experience__content-shell">
+        <div class="candidate-experience__experience-shell">
+          <div class="candidate-experience__experience-intro">
+            <strong>Experiências</strong>
           </div>
-        </div>
-
-        <div class="candidate-experience__experience-box" *ngIf="experiences.length; else emptyExperiences">
-          <div class="candidate-experience__experience-list" *ngIf="currentExperience as experience">
-            <div class="candidate-experience__experience-item">
-              <div class="candidate-experience__experience-item-head">
-                <span class="candidate-experience__experience-item-company">{{ experience.company }}</span>
+          <div class="candidate-experience__experience-head">
+            <p class="candidate-experience__experience-head-copy">
+              Mostre por onde voce passou, quais desafios assumiu e como sua trajetória reforça seu radar profissional.
+            </p>
+            <div class="candidate-experience__experience-head-actions">
+              <div class="candidate-experience__experience-nav" *ngIf="experiences.length > 1">
                 <button
-                  class="candidate-experience__experience-item-edit"
+                  class="candidate-experience__experience-nav-button"
                   type="button"
-                  (click)="openEditExperienceModal(currentExperienceIndex ?? 0)"
-                  [attr.aria-label]="'Editar ' + experience.role"
+                  (click)="showPreviousExperience()"
+                  [disabled]="!canGoToPreviousExperience"
+                  aria-label="Mostrar experiência anterior"
                 >
-                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
+                </button>
+
+                <span class="candidate-experience__experience-page">
+                  {{ currentExperiencePageNumber }} / {{ experiences.length }}
+                </span>
+
+                <button
+                  class="candidate-experience__experience-nav-button"
+                  type="button"
+                  (click)="showNextExperience()"
+                  [disabled]="!canGoToNextExperience"
+                  aria-label="Mostrar próxima experiência"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
                 </button>
               </div>
 
-              <div class="candidate-experience__experience-item-meta">
-                <div class="candidate-experience__experience-item-role-row">
-                  <span class="candidate-experience__experience-item-role">{{ experience.role }}</span>
-                </div>
-                <span class="candidate-experience__experience-item-context">
-                  {{ experience.workModel }}
-                </span>
-              </div>
+              <button
+                class="candidate-experience__add-button candidate-experience__add-button--inline"
+                type="button"
+                (click)="openExperienceModal()"
+                aria-label="Adicionar experiência"
+                title="Adicionar experiência"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">add</span>
+              </button>
+            </div>
+          </div>
 
-              <div class="candidate-experience__experience-item-timeline">
-                <span class="candidate-experience__experience-item-timeline-label">
-                  Setor: {{ experience.companySegment }}
-                </span>
-                <span class="candidate-experience__experience-item-timeline-dates">
-                  {{ experience.startMonth }} {{ experience.startYear }}
-                  •
-                  {{ experience.currentlyWorkingHere ? 'Atual' : experience.endMonth + ' ' + experience.endYear }}
-                </span>
-              </div>
-
-              <section class="candidate-experience__experience-stacks">
-                <div class="candidate-experience__experience-stacks-head">
-                  <strong>Stacks aplicadas nesta experiência</strong>
+          <div class="candidate-experience__experience-box" *ngIf="experiences.length; else emptyExperiences">
+            <div class="candidate-experience__experience-list" *ngIf="currentExperience as experience">
+              <div class="candidate-experience__experience-item">
+                <div class="candidate-experience__experience-item-head">
+                  <span class="candidate-experience__experience-item-company">{{ experience.company }}</span>
                   <button
-                    class="candidate-experience__experience-stack-add"
+                    class="candidate-experience__experience-item-edit"
                     type="button"
-                    (click)="openCreateExperienceStackModal()"
-                    aria-label="Adicionar stack aplicada nesta experiência"
-                    title="Adicionar stack aplicada nesta experiência"
+                    (click)="openEditExperienceModal(currentExperienceIndex ?? 0)"
+                    [attr.aria-label]="'Editar ' + experience.role"
                   >
-                    <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                   </button>
                 </div>
 
-                <div class="candidate-experience__stack-list" *ngIf="currentExperienceStacks.length; else emptyExperienceStacks">
-                  <div class="candidate-experience__stack-item" *ngFor="let stack of currentExperienceStacks; let index = index">
-                    <div class="candidate-experience__stack-item-meta">
-                      <button
-                        class="candidate-experience__stack-item-edit"
-                        type="button"
-                        (click)="openEditExperienceStackModal(index)"
-                        [attr.aria-label]="'Editar descrição de ' + stack.name"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                      </button>
-                      <span class="candidate-experience__stack-item-name">{{ stack.name }}</span>
-                      <button
-                        *ngIf="stack.description"
-                        class="candidate-experience__stack-item-info"
-                        type="button"
-                        (click)="toggleExperienceStackDescription(index)"
-                        [class.candidate-experience__stack-item-info--active]="expandedExperienceStackDescriptionIndex === index"
-                        [attr.aria-label]="(expandedExperienceStackDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                      </button>
-                    </div>
+                <div class="candidate-experience__experience-item-meta">
+                  <div class="candidate-experience__experience-item-role-row">
+                    <span class="candidate-experience__experience-item-role">{{ experience.role }}</span>
+                  </div>
+                  <span class="candidate-experience__experience-item-context">
+                    {{ experience.workModel }}
+                  </span>
+                </div>
 
-                    <div class="candidate-experience__stack-item-progress">
-                      <div class="candidate-experience__stack-item-slider">
-                        <input
-                          class="candidate-experience__stack-item-range"
-                          type="range"
-                          min="0"
-                          max="100"
-                          step="1"
-                          [value]="stack.knowledge"
-                          [style.--stack-progress]="stack.knowledge + '%'"
-                          (input)="updateExperienceStackKnowledge(index, $any($event.target).value)"
-                          [attr.aria-label]="'Ajustar percentual de ' + stack.name"
-                        />
+                <div class="candidate-experience__experience-item-timeline">
+                  <span class="candidate-experience__experience-item-timeline-label">
+                    Setor: {{ experience.companySegment }}
+                  </span>
+                  <span class="candidate-experience__experience-item-timeline-dates">
+                    {{ experience.startMonth }} {{ experience.startYear }}
+                    •
+                    {{ experience.currentlyWorkingHere ? 'Atual' : experience.endMonth + ' ' + experience.endYear }}
+                  </span>
+                </div>
+
+                <section class="candidate-experience__experience-stacks">
+                  <div class="candidate-experience__experience-stacks-head">
+                    <strong>Stacks aplicadas nesta experiência</strong>
+                    <button
+                      class="candidate-experience__experience-stack-add"
+                      type="button"
+                      (click)="openCreateExperienceStackModal()"
+                      aria-label="Adicionar stack aplicada nesta experiência"
+                      title="Adicionar stack aplicada nesta experiência"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                    </button>
+                  </div>
+
+                  <div class="candidate-experience__stack-list" *ngIf="currentExperienceStacks.length; else emptyExperienceStacks">
+                    <div class="candidate-experience__stack-item" *ngFor="let stack of currentExperienceStacks; let index = index">
+                      <div class="candidate-experience__stack-item-meta">
+                        <button
+                          class="candidate-experience__stack-item-edit"
+                          type="button"
+                          (click)="openEditExperienceStackModal(index)"
+                          [attr.aria-label]="'Editar descrição de ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                        </button>
+                        <span class="candidate-experience__stack-item-name">{{ stack.name }}</span>
+                        <button
+                          *ngIf="stack.description"
+                          class="candidate-experience__stack-item-info"
+                          type="button"
+                          (click)="toggleExperienceStackDescription(index)"
+                          [class.candidate-experience__stack-item-info--active]="expandedExperienceStackDescriptionIndex === index"
+                          [attr.aria-label]="(expandedExperienceStackDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                        </button>
                       </div>
-                      <span class="candidate-experience__stack-item-value">{{ stack.knowledge }}%</span>
+
+                      <div class="candidate-experience__stack-item-progress">
+                        <div
+                          class="candidate-experience__stack-item-slider"
+                          [style.--stack-progress]="stack.knowledge + '%'"
+                        >
+                          <input
+                            class="candidate-experience__stack-item-range"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="1"
+                            [value]="stack.knowledge"
+                            (input)="updateExperienceStackKnowledge(index, $any($event.target).value)"
+                            [attr.aria-label]="'Ajustar percentual de ' + stack.name"
+                          />
+                        </div>
+                        <span class="candidate-experience__stack-item-value">{{ stack.knowledge }}%</span>
+                        <button
+                          class="candidate-experience__stack-item-remove"
+                          type="button"
+                          (click)="removeExperienceStack(index)"
+                          [attr.aria-label]="'Remover ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                        </button>
+                      </div>
+
+                      <div
+                        class="candidate-experience__stack-item-description"
+                        *ngIf="expandedExperienceStackDescriptionIndex === index && stack.description"
+                        [innerHTML]="stack.description"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <ng-template #emptyExperienceStacks>
+                    <span class="candidate-experience__experience-stacks-empty">
+                      Adicione as stacks que você aplicou nesta empresa.
+                    </span>
+                  </ng-template>
+                </section>
+
+                <div class="candidate-experience__experience-item-description">
+                  <div class="candidate-experience__editor">
+                    <div class="candidate-experience__editor-toolbar">
                       <button
-                        class="candidate-experience__stack-item-remove"
+                        class="candidate-experience__editor-tool"
                         type="button"
-                        (click)="removeExperienceStack(index)"
-                        [attr.aria-label]="'Remover ' + stack.name"
+                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('bold')"
+                        aria-label="Negrito"
                       >
-                        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                        <span class="material-symbols-rounded" aria-hidden="true">format_bold</span>
+                      </button>
+                      <button
+                        class="candidate-experience__editor-tool"
+                        type="button"
+                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('italic')"
+                        aria-label="Itálico"
+                      >
+                        <span class="material-symbols-rounded" aria-hidden="true">format_italic</span>
+                      </button>
+                      <button
+                        class="candidate-experience__editor-tool"
+                        type="button"
+                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('underline')"
+                        aria-label="Sublinhar"
+                      >
+                        <span class="material-symbols-rounded" aria-hidden="true">format_underlined</span>
+                      </button>
+                      <button
+                        class="candidate-experience__editor-tool"
+                        type="button"
+                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertUnorderedList')"
+                        aria-label="Lista com marcadores"
+                      >
+                        <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
+                      </button>
+                      <button
+                        class="candidate-experience__editor-tool"
+                        type="button"
+                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertOrderedList')"
+                        aria-label="Lista numerada"
+                      >
+                        <span class="material-symbols-rounded" aria-hidden="true">format_list_numbered</span>
+                      </button>
+                      <button
+                        class="candidate-experience__editor-tool"
+                        type="button"
+                        (mousedown)="$event.preventDefault(); clearResponsibilityFormat()"
+                        aria-label="Limpar formatação"
+                      >
+                        <span class="material-symbols-rounded" aria-hidden="true">format_clear</span>
                       </button>
                     </div>
 
                     <div
-                      class="candidate-experience__stack-item-description"
-                      *ngIf="expandedExperienceStackDescriptionIndex === index && stack.description"
-                      [innerHTML]="stack.description"
+                      #responsibilityInlineEditor
+                      class="candidate-experience__editor-surface candidate-experience__editor-surface--inline"
+                      contenteditable="true"
+                      data-placeholder="Descreva os principais desafios e resultados desta experiência"
+                      (input)="onResponsibilityInput($event)"
                     ></div>
                   </div>
-                </div>
 
-                <ng-template #emptyExperienceStacks>
-                  <span class="candidate-experience__experience-stacks-empty">
-                    Adicione as stacks que você aplicou nesta empresa.
-                  </span>
-                </ng-template>
-              </section>
-
-              <div class="candidate-experience__experience-item-description">
-                <div class="candidate-experience__editor">
-                  <div class="candidate-experience__editor-toolbar">
+                  <div class="candidate-experience__experience-item-description-actions">
                     <button
-                      class="candidate-experience__editor-tool"
+                      class="candidate-experience__modal-button candidate-experience__modal-button--ghost"
                       type="button"
-                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('bold')"
-                      aria-label="Negrito"
+                      (click)="cancelResponsibilitiesInline(currentExperienceIndex ?? 0)"
                     >
-                      <span class="material-symbols-rounded" aria-hidden="true">format_bold</span>
+                      Cancelar
                     </button>
                     <button
-                      class="candidate-experience__editor-tool"
+                      class="candidate-experience__modal-button candidate-experience__modal-button--primary"
                       type="button"
-                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('italic')"
-                      aria-label="Itálico"
+                      (click)="saveResponsibilitiesInline(currentExperienceIndex ?? 0)"
                     >
-                      <span class="material-symbols-rounded" aria-hidden="true">format_italic</span>
-                    </button>
-                    <button
-                      class="candidate-experience__editor-tool"
-                      type="button"
-                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('underline')"
-                      aria-label="Sublinhar"
-                    >
-                      <span class="material-symbols-rounded" aria-hidden="true">format_underlined</span>
-                    </button>
-                    <button
-                      class="candidate-experience__editor-tool"
-                      type="button"
-                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertUnorderedList')"
-                      aria-label="Lista com marcadores"
-                    >
-                      <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
-                    </button>
-                    <button
-                      class="candidate-experience__editor-tool"
-                      type="button"
-                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertOrderedList')"
-                      aria-label="Lista numerada"
-                    >
-                      <span class="material-symbols-rounded" aria-hidden="true">format_list_numbered</span>
-                    </button>
-                    <button
-                      class="candidate-experience__editor-tool"
-                      type="button"
-                      (mousedown)="$event.preventDefault(); clearResponsibilityFormat()"
-                      aria-label="Limpar formatação"
-                    >
-                      <span class="material-symbols-rounded" aria-hidden="true">format_clear</span>
+                      Salvar
                     </button>
                   </div>
-
-                  <div
-                    #responsibilityInlineEditor
-                    class="candidate-experience__editor-surface candidate-experience__editor-surface--inline"
-                    contenteditable="true"
-                    data-placeholder="Descreva os principais desafios e resultados desta experiência"
-                    (input)="onResponsibilityInput($event)"
-                  ></div>
-                </div>
-
-                <div class="candidate-experience__experience-item-description-actions">
-                  <button
-                    class="candidate-experience__modal-button candidate-experience__modal-button--ghost"
-                    type="button"
-                    (click)="cancelResponsibilitiesInline(currentExperienceIndex ?? 0)"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    class="candidate-experience__modal-button candidate-experience__modal-button--primary"
-                    type="button"
-                    (click)="saveResponsibilitiesInline(currentExperienceIndex ?? 0)"
-                  >
-                    Salvar
-                  </button>
                 </div>
               </div>
             </div>

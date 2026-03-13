@@ -22,6 +22,9 @@ export class CandidateRegistrationStripComponent {
   private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
 
   @Input() name = '';
+  @Input() email = '';
+  @Input() phone = '';
+  @Input() cityState = '';
   @Input() formationHeading = '';
   @Input() graduation = '';
   @Input() specialization = '';
@@ -42,6 +45,18 @@ export class CandidateRegistrationStripComponent {
 
   get displayName(): string {
     return this.name.trim() || 'Julio Fazenda';
+  }
+
+  get displayEmail(): string {
+    return this.email.trim() || 'jfazenda@gmail.com';
+  }
+
+  get displayPhone(): string {
+    return this.phone.trim() || '(11) 1111-1111';
+  }
+
+  get displayCityState(): string {
+    return this.cityState.trim() || 'Rio de Janeiro - RJ';
   }
 
   get displayGraduation(): string {

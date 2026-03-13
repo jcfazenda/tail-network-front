@@ -93,7 +93,10 @@
               </div>
 
               <div class="candidate-stacks__stack-item-progress">
-                <div class="candidate-stacks__stack-item-slider">
+                <div
+                  class="candidate-stacks__stack-item-slider"
+                  [style.--stack-progress]="stack.knowledge + '%'"
+                >
                   <input
                     class="candidate-stacks__stack-item-range"
                     type="range"
@@ -101,7 +104,6 @@
                     max="100"
                     step="1"
                     [value]="stack.knowledge"
-                    [style.--stack-progress]="stack.knowledge + '%'"
                     (input)="updateStackKnowledge(index, $any($event.target).value)"
                     [attr.aria-label]="'Ajustar percentual de ' + stack.name"
                   />

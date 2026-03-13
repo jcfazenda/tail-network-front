@@ -8,6 +8,11 @@ import { FormacaoPage } from './formacao/formacao.page';
 
 type CandidateBasicProfile = {
   name: string;
+  email: string;
+  phone: string;
+  state: string;
+  city: string;
+  location: string;
 };
 
 type CandidateBasicDraft = {
@@ -36,6 +41,9 @@ export class UsuarioPage implements OnInit {
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
 
   displayName = 'Julio Fazenda';
+  displayEmail = 'jfazenda@gmail.com';
+  displayPhone = '(11) 1111-1111';
+  displayCityState = 'Rio de Janeiro - RJ';
   displayFormationHeading = 'Formado em Dez 2025';
   displayGraduation = 'Bacharelado em Sistemas de Informação';
   displaySpecialization = 'Especialização em Arquitetura de Software';
@@ -72,6 +80,9 @@ export class UsuarioPage implements OnInit {
 
     if (!rawDraft) {
       this.displayName = 'Julio Fazenda';
+      this.displayEmail = 'jfazenda@gmail.com';
+      this.displayPhone = '(11) 1111-1111';
+      this.displayCityState = 'Rio de Janeiro - RJ';
       this.photoPreviewUrl = '';
       return;
     }
@@ -79,10 +90,16 @@ export class UsuarioPage implements OnInit {
     try {
       const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
       this.displayName = draft.profile?.name?.trim() || 'Julio Fazenda';
+      this.displayEmail = draft.profile?.email?.trim() || 'jfazenda@gmail.com';
+      this.displayPhone = draft.profile?.phone?.trim() || '(11) 1111-1111';
+      this.displayCityState = this.composeCityState(draft.profile?.city, draft.profile?.state, draft.profile?.location);
       this.photoPreviewUrl = draft.photoPreviewUrl ?? '';
     } catch {
       localStorage.removeItem(UsuarioPage.basicDraftStorageKey);
       this.displayName = 'Julio Fazenda';
+      this.displayEmail = 'jfazenda@gmail.com';
+      this.displayPhone = '(11) 1111-1111';
+      this.displayCityState = 'Rio de Janeiro - RJ';
       this.photoPreviewUrl = '';
     }
   }
@@ -120,5 +137,16 @@ export class UsuarioPage implements OnInit {
     }
 
     this.formationLogoUrl = savedLogo;
+  }
+
+  private composeCityState(city?: string, state?: string, location?: string): string {
+    const safeCity = city?.trim();
+    const safeState = state?.trim();
+
+    if (safeCity && safeState) {
+      return `${safeCity} - ${safeState}`;
+    }
+
+    return location?.trim() || 'Rio de Janeiro - RJ';
   }
 }
