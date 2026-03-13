@@ -23,126 +23,129 @@
     </ng-container>
   </nav>
 
-  <div class="candidate-stacks__section-head">
-    <div class="candidate-stacks__crest" aria-hidden="true">
-      <img
-        src="/assets/images/image-cadastro-radar.png"
-        alt=""
-        class="candidate-stacks__crest-image"
-      />
-    </div>
+  <div class="candidate-stacks__form-card">
+    <div class="candidate-stacks__main">
+      <div class="candidate-stacks__chips">
+        <label class="candidate-stacks__chip" [class.candidate-stacks__chip--active]="isVisibleInEcosystem">
+          <input
+            type="checkbox"
+            [checked]="isVisibleInEcosystem"
+            (change)="updateVisibleInEcosystem($any($event.target).checked)"
+          />
+          <span class="candidate-stacks__chip-dot" aria-hidden="true"></span>
+          <span class="candidate-stacks__chip-text">Ecossistema</span>
+        </label>
 
-    <div class="candidate-stacks__section-copy">
-      <h2>Suas Stacks</h2>
-      <p>Adicione abaixo as tecnologias nas quais você tem experiência e prazer em trabalhar.</p>
-    </div>
-  </div>
+        <label class="candidate-stacks__chip" [class.candidate-stacks__chip--active]="isAvailableForApplications">
+          <input
+            type="checkbox"
+            [checked]="isAvailableForApplications"
+            (change)="updateAvailableForApplications($any($event.target).checked)"
+          />
+          <span class="candidate-stacks__chip-dot" aria-hidden="true"></span>
+          <span class="candidate-stacks__chip-text">Disponivel</span>
+        </label>
+      </div>
 
-  <div class="candidate-stacks__toolbar">
-    <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
-      <app-alcance-radar
-        title="Seu alcance no Ecossistema."
-        [score]="radarPreviewScore"
-        [showGaugeLabel]="false"
-        [items]="radarPreviewItems"
-      />
-    </div>
+      <div class="candidate-stacks__editor-area">
+        <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
 
-    <button class="candidate-stacks__add-button" type="button" (click)="openCreateStackModal()" aria-label="Adicionar nova stack" title="Adicionar nova stack">
-      <span class="material-symbols-rounded" aria-hidden="true">add</span>
-    </button>
-  </div>
+        <div class="candidate-stacks__stack-box">
+          <div class="candidate-stacks__stack-head">
+            <p class="candidate-stacks__stack-lead">Adicione outras tecnologias (3 a 10 termos).</p>
 
-  <section class="candidate-stacks__card">
-    <div class="candidate-stacks__form-card">
-
-      <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
-
-      <div class="candidate-stacks__stack-box">
-        <p>Adicione outras tecnologias (3 a 10 termos).</p>
-
-        <div class="candidate-stacks__stack-list">
-          <div
-            *ngFor="let stack of stacks; let index = index; trackBy: trackByStackName"
-            class="candidate-stacks__stack-item"
-          >
-            <div class="candidate-stacks__stack-item-meta">
-              <button
-                class="candidate-stacks__stack-item-edit"
-                type="button"
-                (click)="openEditStackModal(index)"
-                [attr.aria-label]="'Editar descrição de ' + stack.name"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-              </button>
-              <span class="candidate-stacks__stack-item-name">{{ stack.name }}</span>
-              <button
-                *ngIf="stack.description"
-                class="candidate-stacks__stack-item-info"
-                type="button"
-                (click)="toggleStackDescription(index)"
-                [class.candidate-stacks__stack-item-info--active]="expandedDescriptionIndex === index"
-                [attr.aria-label]="(expandedDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">search</span>
-              </button>
-            </div>
-
-            <div class="candidate-stacks__stack-item-progress">
-              <div class="candidate-stacks__stack-item-slider">
-                <input
-                  class="candidate-stacks__stack-item-range"
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  [value]="stack.knowledge"
-                  [style.--stack-progress]="stack.knowledge + '%'"
-                  (input)="updateStackKnowledge(index, $any($event.target).value)"
-                  [attr.aria-label]="'Ajustar percentual de ' + stack.name"
-                />
-              </div>
-              <span class="candidate-stacks__stack-item-value">{{ stack.knowledge }}%</span>
-              <button
-                class="candidate-stacks__stack-item-remove"
-                type="button"
-                (click)="removeStack(index)"
-                [attr.aria-label]="'Remover ' + stack.name"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">close</span>
-              </button>
-            </div>
-
-            <div
-              class="candidate-stacks__stack-item-description"
-              *ngIf="expandedDescriptionIndex === index && stack.description"
-              [innerHTML]="stack.description"
+            <button
+              class="candidate-stacks__add-button"
+              type="button"
+              (click)="openCreateStackModal()"
+              aria-label="Adicionar nova stack"
+              title="Adicionar nova stack"
             >
+              <span class="material-symbols-rounded" aria-hidden="true">add</span>
+            </button>
+          </div>
+
+          <div class="candidate-stacks__stack-list">
+            <div
+              *ngFor="let stack of stacks; let index = index; trackBy: trackByStackName"
+              class="candidate-stacks__stack-item"
+            >
+              <div class="candidate-stacks__stack-item-meta">
+                <button
+                  class="candidate-stacks__stack-item-edit"
+                  type="button"
+                  (click)="openEditStackModal(index)"
+                  [attr.aria-label]="'Editar descrição de ' + stack.name"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                </button>
+                <span class="candidate-stacks__stack-item-name">{{ stack.name }}</span>
+                <button
+                  *ngIf="stack.description"
+                  class="candidate-stacks__stack-item-info"
+                  type="button"
+                  (click)="toggleStackDescription(index)"
+                  [class.candidate-stacks__stack-item-info--active]="expandedDescriptionIndex === index"
+                  [attr.aria-label]="(expandedDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                </button>
+              </div>
+
+              <div class="candidate-stacks__stack-item-progress">
+                <div class="candidate-stacks__stack-item-slider">
+                  <input
+                    class="candidate-stacks__stack-item-range"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    [value]="stack.knowledge"
+                    [style.--stack-progress]="stack.knowledge + '%'"
+                    (input)="updateStackKnowledge(index, $any($event.target).value)"
+                    [attr.aria-label]="'Ajustar percentual de ' + stack.name"
+                  />
+                </div>
+                <span class="candidate-stacks__stack-item-value">{{ stack.knowledge }}%</span>
+                <button
+                  class="candidate-stacks__stack-item-remove"
+                  type="button"
+                  (click)="removeStack(index)"
+                  [attr.aria-label]="'Remover ' + stack.name"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                </button>
+              </div>
+
+              <div
+                class="candidate-stacks__stack-item-description"
+                *ngIf="expandedDescriptionIndex === index && stack.description"
+                [innerHTML]="stack.description"
+              >
+              </div>
             </div>
           </div>
         </div>
+
+        <p class="candidate-stacks__helper">
+          Mova os percentuais para ver sua aderência e alcance no Ecossistema.
+        </p>
       </div>
-
-      <p class="candidate-stacks__helper">
-        Mova os percentuais para ver sua aderência e alcance no Ecossistema.
-      </p>
     </div>
 
-    <div class="candidate-stacks__footer">
-      <button class="candidate-stacks__cta" type="button" (click)="continueToExperience()">
-        <span>Continuar</span>
-        <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-        <span>Preencher Experiência</span>
-      </button>
-
-      <p>
-        Ao me cadastrar, aceito os
-        <strong>Termos de Uso</strong>
-        e a
-        <strong>Política de Privacidade</strong>
-      </p>
+    <div class="candidate-stacks__aside">
+      <div class="candidate-stacks__toolbar">
+        <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
+          <app-alcance-radar
+            title=""
+            [score]="radarPreviewScore"
+            [showGaugeLabel]="false"
+            [items]="radarPreviewItems"
+          />
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
 </section>
 
 <div

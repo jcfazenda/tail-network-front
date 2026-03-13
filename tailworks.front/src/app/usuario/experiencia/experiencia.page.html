@@ -24,50 +24,6 @@
   </nav>
 
   <section class="candidate-experience__card">
-      <input
-        #introLogoInput
-        class="candidate-experience__intro-logo-input"
-        type="file"
-        accept="image/jpeg,image/png,image/gif,image/webp"
-        (change)="onIntroLogoSelected($event)"
-      />
-
-      <div class="candidate-experience__section-head">
-        <button
-          class="candidate-experience__crest"
-          type="button"
-          (click)="openIntroLogoPicker(introLogoInput)"
-          (keydown)="onIntroLogoKeydown($event, introLogoInput)"
-          aria-label="Selecionar imagem da formação"
-          title="Selecionar imagem da formação"
-        >
-          <img
-            [src]="introLogoUrl"
-            alt=""
-            class="candidate-experience__crest-image"
-          />
-        </button>
-
-        <div class="candidate-experience__formation-copy">
-          <em>{{ displayFormationHeading }}</em>
-          <strong>{{ displayGraduation }}</strong>
-          <div class="candidate-experience__formation-meta">
-            <span>{{ displaySpecialization }}</span>
-            <small>{{ displayEducationStatus }}</small>
-          </div>
-        </div>
-
-        <button
-          class="candidate-experience__formation-edit"
-          type="button"
-          (click)="openFormationModal()"
-          aria-label="Editar formação"
-          title="Editar formação"
-        >
-          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-        </button>
-      </div>
-
     <div class="candidate-experience__form-card">
       <div class="candidate-experience__experience-intro">
         <strong>Como você quer estar no sistema?</strong>
@@ -135,15 +91,6 @@
               <div class="candidate-experience__experience-item-meta">
                 <div class="candidate-experience__experience-item-role-row">
                   <span class="candidate-experience__experience-item-role">{{ experience.role }}</span>
-                  <button
-                    class="candidate-experience__experience-item-info"
-                    type="button"
-                    (click)="toggleResponsibilities(currentExperienceIndex ?? 0)"
-                    [class.candidate-experience__experience-item-info--active]="editingResponsibilityIndex === (currentExperienceIndex ?? 0)"
-                    [attr.aria-label]="(editingResponsibilityIndex === (currentExperienceIndex ?? 0) ? 'Ocultar' : 'Editar') + ' responsabilidades de ' + experience.role"
-                  >
-                    <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                  </button>
                 </div>
                 <span class="candidate-experience__experience-item-context">
                   {{ experience.workModel }}
@@ -239,90 +186,84 @@
                 </ng-template>
               </section>
 
-              <div class="candidate-experience__experience-item-description" *ngIf="expandedResponsibilityIndex === (currentExperienceIndex ?? 0)">
-                <ng-container *ngIf="editingResponsibilityIndex === (currentExperienceIndex ?? 0); else readResponsibilities">
-                  <div class="candidate-experience__editor">
-                    <div class="candidate-experience__editor-toolbar">
-                      <button
-                        class="candidate-experience__editor-tool"
-                        type="button"
-                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('bold')"
-                        aria-label="Negrito"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">format_bold</span>
-                      </button>
-                      <button
-                        class="candidate-experience__editor-tool"
-                        type="button"
-                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('italic')"
-                        aria-label="Itálico"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">format_italic</span>
-                      </button>
-                      <button
-                        class="candidate-experience__editor-tool"
-                        type="button"
-                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('underline')"
-                        aria-label="Sublinhar"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">format_underlined</span>
-                      </button>
-                      <button
-                        class="candidate-experience__editor-tool"
-                        type="button"
-                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertUnorderedList')"
-                        aria-label="Lista com marcadores"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
-                      </button>
-                      <button
-                        class="candidate-experience__editor-tool"
-                        type="button"
-                        (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertOrderedList')"
-                        aria-label="Lista numerada"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">format_list_numbered</span>
-                      </button>
-                      <button
-                        class="candidate-experience__editor-tool"
-                        type="button"
-                        (mousedown)="$event.preventDefault(); clearResponsibilityFormat()"
-                        aria-label="Limpar formatação"
-                      >
-                        <span class="material-symbols-rounded" aria-hidden="true">format_clear</span>
-                      </button>
-                    </div>
-
-                    <div
-                      #responsibilityInlineEditor
-                      class="candidate-experience__editor-surface candidate-experience__editor-surface--inline"
-                      contenteditable="true"
-                      data-placeholder="Descreva os principais desafios e resultados desta experiência"
-                      (input)="onResponsibilityInput($event)"
-                    ></div>
-                  </div>
-
-                  <div class="candidate-experience__experience-item-description-actions">
+              <div class="candidate-experience__experience-item-description">
+                <div class="candidate-experience__editor">
+                  <div class="candidate-experience__editor-toolbar">
                     <button
-                      class="candidate-experience__modal-button candidate-experience__modal-button--ghost"
+                      class="candidate-experience__editor-tool"
                       type="button"
-                      (click)="cancelResponsibilitiesInline(currentExperienceIndex ?? 0)"
+                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('bold')"
+                      aria-label="Negrito"
                     >
-                      Cancelar
+                      <span class="material-symbols-rounded" aria-hidden="true">format_bold</span>
                     </button>
                     <button
-                      class="candidate-experience__modal-button candidate-experience__modal-button--primary"
+                      class="candidate-experience__editor-tool"
                       type="button"
-                      (click)="saveResponsibilitiesInline(currentExperienceIndex ?? 0)"
+                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('italic')"
+                      aria-label="Itálico"
                     >
-                      Salvar
+                      <span class="material-symbols-rounded" aria-hidden="true">format_italic</span>
+                    </button>
+                    <button
+                      class="candidate-experience__editor-tool"
+                      type="button"
+                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('underline')"
+                      aria-label="Sublinhar"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">format_underlined</span>
+                    </button>
+                    <button
+                      class="candidate-experience__editor-tool"
+                      type="button"
+                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertUnorderedList')"
+                      aria-label="Lista com marcadores"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
+                    </button>
+                    <button
+                      class="candidate-experience__editor-tool"
+                      type="button"
+                      (mousedown)="$event.preventDefault(); applyResponsibilityFormat('insertOrderedList')"
+                      aria-label="Lista numerada"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">format_list_numbered</span>
+                    </button>
+                    <button
+                      class="candidate-experience__editor-tool"
+                      type="button"
+                      (mousedown)="$event.preventDefault(); clearResponsibilityFormat()"
+                      aria-label="Limpar formatação"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">format_clear</span>
                     </button>
                   </div>
-                </ng-container>
 
-                <ng-template #readResponsibilities>
-                  <div [innerHTML]="experience.responsibilities"></div>
-                </ng-template>
+                  <div
+                    #responsibilityInlineEditor
+                    class="candidate-experience__editor-surface candidate-experience__editor-surface--inline"
+                    contenteditable="true"
+                    data-placeholder="Descreva os principais desafios e resultados desta experiência"
+                    (input)="onResponsibilityInput($event)"
+                  ></div>
+                </div>
+
+                <div class="candidate-experience__experience-item-description-actions">
+                  <button
+                    class="candidate-experience__modal-button candidate-experience__modal-button--ghost"
+                    type="button"
+                    (click)="cancelResponsibilitiesInline(currentExperienceIndex ?? 0)"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    class="candidate-experience__modal-button candidate-experience__modal-button--primary"
+                    type="button"
+                    (click)="saveResponsibilitiesInline(currentExperienceIndex ?? 0)"
+                  >
+                    Salvar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -337,21 +278,6 @@
           </div>
         </div>
       </ng-template>
-    </div>
-
-    <div class="candidate-experience__footer">
-      <button class="candidate-experience__cta" type="button" (click)="continueToFormation()">
-        <span>Continuar</span>
-        <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-        <span>Preencher Formação</span>
-      </button>
-
-      <p>
-        Ao me cadastrar, aceito os
-        <strong>Termos de Uso</strong>
-        e a
-        <strong>Política de Privacidade</strong>
-      </p>
     </div>
   </section>
 </section>

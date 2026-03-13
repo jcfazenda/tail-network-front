@@ -1,32 +1,6 @@
 <section class="candidate-profile">
   <form class="candidate-profile__form" #basicForm="ngForm" novalidate (ngSubmit)="submitBasicData(basicForm)">
       <div class="candidate-profile__form-card">
-        <div class="candidate-profile__formation-summary">
-          <div class="candidate-profile__formation-summary-logo" aria-hidden="true">
-            <img [src]="formationLogoUrl" alt="" class="candidate-profile__formation-summary-image" />
-          </div>
-
-          <div class="candidate-profile__formation-summary-copy">
-            <em>{{ displayFormationHeading }}</em>
-            <strong>{{ displayGraduation }}</strong>
-            <span>{{ displaySpecialization }}</span>
-          </div>
-
-          <div class="candidate-profile__formation-summary-side">
-            <button
-              class="candidate-profile__formation-summary-edit"
-              type="button"
-              (click)="openFormationSection()"
-              aria-label="Ir para a seção de formação"
-              title="Ir para a seção de formação"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-            </button>
-
-            <small>{{ displayEducationStatus }}</small>
-          </div>
-        </div>
-
         <div class="candidate-profile__grid candidate-profile__grid--basic">
           <label class="candidate-profile__field candidate-profile__field--left">
             <span>Nome</span>
@@ -42,19 +16,6 @@
               />
             </div>
             <small class="candidate-profile__error" *ngIf="showFieldError(nameModel)">Informe seu nome.</small>
-          </label>
-
-          <label class="candidate-profile__field candidate-profile__field--right">
-            <span>Estado</span>
-            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(stateModel)">
-              <span class="material-symbols-rounded" aria-hidden="true">flag</span>
-              <select [(ngModel)]="profile.state" name="state" required #stateModel="ngModel">
-                <option value="" disabled>Selecione</option>
-                <option *ngFor="let item of stateOptions" [value]="item.value">{{ item.label }}</option>
-              </select>
-              <span class="material-symbols-rounded candidate-profile__select-chevron" aria-hidden="true">expand_more</span>
-            </div>
-            <small class="candidate-profile__error" *ngIf="showFieldError(stateModel)">Informe o estado.</small>
           </label>
 
           <label class="candidate-profile__field candidate-profile__field--left">
@@ -80,6 +41,39 @@
             </small>
           </label>
 
+          <label class="candidate-profile__field candidate-profile__field--left">
+            <span>Email</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(emailModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">mail</span>
+              <input
+                type="email"
+                [(ngModel)]="profile.email"
+                name="email"
+                required
+                email
+                placeholder="Email"
+                #emailModel="ngModel"
+              />
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(emailModel)">
+              <ng-container *ngIf="emailModel.errors?.['required']; else invalidEmail">Informe seu email.</ng-container>
+              <ng-template #invalidEmail>Informe um email válido.</ng-template>
+            </small>
+          </label>
+
+          <label class="candidate-profile__field candidate-profile__field--right">
+            <span>Estado - Cidade UF</span>
+            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(stateModel)">
+              <span class="material-symbols-rounded" aria-hidden="true">flag</span>
+              <select [(ngModel)]="profile.state" name="state" required #stateModel="ngModel">
+                <option value="" disabled>Selecione</option>
+                <option *ngFor="let item of stateOptions" [value]="item.value">{{ item.label }}</option>
+              </select>
+              <span class="material-symbols-rounded candidate-profile__select-chevron" aria-hidden="true">expand_more</span>
+            </div>
+            <small class="candidate-profile__error" *ngIf="showFieldError(stateModel)">Informe o estado.</small>
+          </label>
+
           <label class="candidate-profile__field candidate-profile__field--right">
             <span>Cidade</span>
             <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(cityModel)">
@@ -94,26 +88,6 @@
               />
             </div>
             <small class="candidate-profile__error" *ngIf="showFieldError(cityModel)">Informe a cidade.</small>
-          </label>
-
-          <label class="candidate-profile__field candidate-profile__field--left">
-            <span>E-mail</span>
-            <div class="candidate-profile__input-shell" [class.candidate-profile__input-shell--invalid]="showFieldError(emailModel)">
-              <span class="material-symbols-rounded" aria-hidden="true">mail</span>
-              <input
-                type="email"
-                [(ngModel)]="profile.email"
-                name="email"
-                required
-                email
-                placeholder="E-mail"
-                #emailModel="ngModel"
-              />
-            </div>
-            <small class="candidate-profile__error" *ngIf="showFieldError(emailModel)">
-              <ng-container *ngIf="emailModel.errors?.['required']; else invalidEmail">Informe seu e-mail.</ng-container>
-              <ng-template #invalidEmail>Informe um e-mail válido.</ng-template>
-            </small>
           </label>
 
           <div class="candidate-profile__grid-divider" aria-hidden="true"></div>

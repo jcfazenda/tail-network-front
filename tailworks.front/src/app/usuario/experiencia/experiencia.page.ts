@@ -439,6 +439,7 @@ export class ExperienciaPage implements OnInit {
     this.experiences = this.sortExperiencesByDateDesc(this.experiences);
     this.currentExperienceIndex = this.findExperienceIndexById(focusExperienceId);
     this.persistExperiences();
+    this.activateCurrentResponsibilityEditor();
     this.closeExperienceModal();
   }
 
@@ -533,6 +534,7 @@ export class ExperienciaPage implements OnInit {
     }
 
     this.persistExperiences();
+    this.activateCurrentResponsibilityEditor();
   }
 
   deleteEditingExperience(): void {
@@ -582,13 +584,6 @@ export class ExperienciaPage implements OnInit {
       return;
     }
 
-    if (this.expandedResponsibilityIndex === index && this.editingResponsibilityIndex === index) {
-      this.expandedResponsibilityIndex = null;
-      this.editingResponsibilityIndex = null;
-      this.responsibilityDraft = '';
-      return;
-    }
-
     this.expandedResponsibilityIndex = index;
     this.editingResponsibilityIndex = index;
     this.responsibilityDraft = current.responsibilities;
@@ -634,10 +629,8 @@ export class ExperienciaPage implements OnInit {
     }
 
     this.currentExperienceIndex = (this.currentExperienceIndex ?? 0) - 1;
-    this.expandedResponsibilityIndex = null;
-    this.editingResponsibilityIndex = null;
     this.expandedExperienceStackDescriptionIndex = null;
-    this.responsibilityDraft = '';
+    this.activateCurrentResponsibilityEditor();
   }
 
   showNextExperience(): void {
@@ -646,10 +639,8 @@ export class ExperienciaPage implements OnInit {
     }
 
     this.currentExperienceIndex = (this.currentExperienceIndex ?? 0) + 1;
-    this.expandedResponsibilityIndex = null;
-    this.editingResponsibilityIndex = null;
     this.expandedExperienceStackDescriptionIndex = null;
-    this.responsibilityDraft = '';
+    this.activateCurrentResponsibilityEditor();
   }
 
   saveResponsibilitiesInline(index: number): void {
@@ -672,16 +663,18 @@ export class ExperienciaPage implements OnInit {
     );
 
     this.persistExperiences();
-    this.expandedResponsibilityIndex = hasResponsibilities ? index : null;
-    this.editingResponsibilityIndex = null;
-    this.responsibilityDraft = '';
+    this.expandedResponsibilityIndex = index;
+    this.editingResponsibilityIndex = index;
+    this.responsibilityDraft = hasResponsibilities ? nextResponsibilities : '';
+    this.scheduleResponsibilityEditorSync();
   }
 
   cancelResponsibilitiesInline(index: number): void {
     const current = this.experiences[index];
-    this.responsibilityDraft = '';
-    this.editingResponsibilityIndex = null;
-    this.expandedResponsibilityIndex = this.hasRichContent(current?.responsibilities ?? '') ? index : null;
+    this.responsibilityDraft = current?.responsibilities ?? '';
+    this.editingResponsibilityIndex = index;
+    this.expandedResponsibilityIndex = index;
+    this.scheduleResponsibilityEditorSync();
   }
 
   onResponsibilityInput(event: Event): void {
@@ -843,6 +836,7 @@ export class ExperienciaPage implements OnInit {
         ? this.sortExperiencesByDateDesc(draft.map((item) => this.normalizeExperience(item)))
         : [];
       this.currentExperienceIndex = this.experiences.length ? 0 : null;
+      this.activateCurrentResponsibilityEditor();
     } catch {
       localStorage.removeItem(ExperienciaPage.storageKey);
     }
@@ -876,6 +870,23 @@ export class ExperienciaPage implements OnInit {
 
       editor.innerHTML = this.responsibilityDraft || '';
     });
+  }
+
+  private activateCurrentResponsibilityEditor(): void {
+    const index = this.currentExperienceIndex;
+    const current = index !== null ? this.experiences[index] : null;
+
+    if (!current || index === null) {
+      this.expandedResponsibilityIndex = null;
+      this.editingResponsibilityIndex = null;
+      this.responsibilityDraft = '';
+      return;
+    }
+
+    this.expandedResponsibilityIndex = index;
+    this.editingResponsibilityIndex = index;
+    this.responsibilityDraft = current.responsibilities ?? '';
+    this.scheduleResponsibilityEditorSync();
   }
 
   private scheduleExperienceStackEditorSync(): void {

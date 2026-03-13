@@ -1,6 +1,6 @@
 <section class="radar-overview" aria-label="Alcance do radar">
   <div class="radar-overview__content">
-    <span class="radar-overview__kicker">{{ title }}</span>
+    <span class="radar-overview__kicker" *ngIf="title.trim()">{{ title }}</span>
 
     <div class="radar-overview__legend-list">
       <div

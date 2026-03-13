@@ -1,13 +1,10 @@
 :host{
   display: block;
-  min-height: calc(100vh - 120px);
-  margin: -50px -44px -40px;
-  padding: 50px 44px 40px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.82) 0%, rgba(244, 244, 240, 0.56) 52%, rgba(236, 236, 231, 0.42) 100%),
-    url('/assets/images/fundo-home-tailworks.png') center / cover no-repeat;
-  background-blend-mode: normal, luminosity;
+  background: transparent;
 }
 
 .candidate-formation{
@@ -247,16 +244,8 @@
 .candidate-formation__formation-meta{
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
-}
-
-.candidate-formation__formation-meta small{
-  color: rgba(15, 23, 42, 0.46);
-  font-size: 13px;
-  line-height: 1.35;
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 .candidate-formation__formation-edit{

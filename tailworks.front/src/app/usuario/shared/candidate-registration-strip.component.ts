@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 type CandidateBasicDraft = {
   profile?: {
@@ -17,22 +17,22 @@ type CandidateBasicDraft = {
   styleUrls: ['./candidate-registration-strip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CandidateRegistrationStripComponent implements OnInit {
-  private static readonly ecosystemVisibilityStorageKey = 'tailworks:candidate-experience-ecosystem-visibility:v1';
-  private static readonly candidacyAvailabilityStorageKey = 'tailworks:candidate-experience-candidacy-availability:v1';
+export class CandidateRegistrationStripComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
 
   @Input() name = '';
+  @Input() formationHeading = '';
   @Input() graduation = '';
   @Input() specialization = '';
+  @Input() formationLogoUrl = '';
   @Input() photoPreviewUrl = '';
+  @Output() basicDataRequested = new EventEmitter<void>();
+  @Output() formationRequested = new EventEmitter<void>();
 
   readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
   readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
 
-  isVisibleInEcosystem = true;
-  isAvailableForApplications = true;
   localPhotoPreviewUrl = '';
   photoError = '';
 
@@ -48,22 +48,24 @@ export class CandidateRegistrationStripComponent implements OnInit {
     return this.graduation.trim() || 'Bacharelado em Sistemas de Informação';
   }
 
+  get displayFormationHeading(): string {
+    return this.formationHeading.trim() || 'Formado em Dez 2025';
+  }
+
   get displaySpecialization(): string {
     return this.specialization.trim() || 'Especialização em Arquitetura de Software';
   }
 
-  ngOnInit(): void {
-    this.restoreControls();
+  get displayFormationLogoUrl(): string {
+    return this.formationLogoUrl.trim() || '/assets/images/logo-estacio.png';
   }
 
-  updateVisibleInEcosystem(nextValue: boolean): void {
-    this.isVisibleInEcosystem = nextValue;
-    this.persistControls();
+  openBasicDataDialog(): void {
+    this.basicDataRequested.emit();
   }
 
-  updateAvailableForApplications(nextValue: boolean): void {
-    this.isAvailableForApplications = nextValue;
-    this.persistControls();
+  openFormationDialog(): void {
+    this.formationRequested.emit();
   }
 
   openPhotoPicker(input: HTMLInputElement): void {
@@ -86,30 +88,6 @@ export class CandidateRegistrationStripComponent implements OnInit {
 
     event.preventDefault();
     this.openPhotoPicker(input);
-  }
-
-  private restoreControls(): void {
-    const ecosystemVisibility = localStorage.getItem(CandidateRegistrationStripComponent.ecosystemVisibilityStorageKey);
-    const candidacyAvailability = localStorage.getItem(CandidateRegistrationStripComponent.candidacyAvailabilityStorageKey);
-
-    if (ecosystemVisibility !== null) {
-      this.isVisibleInEcosystem = ecosystemVisibility === 'true';
-    }
-
-    if (candidacyAvailability !== null) {
-      this.isAvailableForApplications = candidacyAvailability === 'true';
-    }
-  }
-
-  private persistControls(): void {
-    localStorage.setItem(
-      CandidateRegistrationStripComponent.ecosystemVisibilityStorageKey,
-      String(this.isVisibleInEcosystem),
-    );
-    localStorage.setItem(
-      CandidateRegistrationStripComponent.candidacyAvailabilityStorageKey,
-      String(this.isAvailableForApplications),
-    );
   }
 
   private handlePhotoFile(file: File | null): void {

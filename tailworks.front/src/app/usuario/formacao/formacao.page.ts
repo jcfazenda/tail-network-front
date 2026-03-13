@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 type RegistrationStep = {
   label: string;
@@ -34,7 +34,7 @@ type FormationCopyDraft = {
 @Component({
   standalone: true,
   selector: 'app-formacao-page',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './formacao.page.html',
   styleUrls: ['./formacao.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

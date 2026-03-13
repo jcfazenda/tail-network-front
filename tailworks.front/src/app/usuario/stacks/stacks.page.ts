@@ -46,6 +46,8 @@ export class StacksPage implements OnInit {
   private static readonly storageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
+  private static readonly ecosystemVisibilityStorageKey = 'tailworks:candidate-experience-ecosystem-visibility:v1';
+  private static readonly candidacyAvailabilityStorageKey = 'tailworks:candidate-experience-candidacy-availability:v1';
   private static readonly stackDescriptionMaxLength = 920;
 
   private readonly router = inject(Router);
@@ -67,6 +69,8 @@ export class StacksPage implements OnInit {
 
   stackError = '';
   stacks: StackChip[] = [];
+  isVisibleInEcosystem = true;
+  isAvailableForApplications = true;
   isStackModalOpen = false;
   editingStackIndex: number | null = null;
   stackDraftName = '';
@@ -129,6 +133,7 @@ export class StacksPage implements OnInit {
   ngOnInit(): void {
     this.restoreBasicDraft();
     this.restoreFormationCopy();
+    this.restoreControls();
 
     const stored = localStorage.getItem(StacksPage.storageKey);
 
@@ -150,6 +155,16 @@ export class StacksPage implements OnInit {
       this.createStackChip('Azure'),
     ];
     this.persistStacks();
+  }
+
+  updateVisibleInEcosystem(nextValue: boolean): void {
+    this.isVisibleInEcosystem = nextValue;
+    this.persistControls();
+  }
+
+  updateAvailableForApplications(nextValue: boolean): void {
+    this.isAvailableForApplications = nextValue;
+    this.persistControls();
   }
 
   openCreateStackModal(): void {
@@ -389,6 +404,24 @@ export class StacksPage implements OnInit {
     } catch {
       localStorage.removeItem(StacksPage.formationCopyStorageKey);
     }
+  }
+
+  private restoreControls(): void {
+    const ecosystemVisibility = localStorage.getItem(StacksPage.ecosystemVisibilityStorageKey);
+    const candidacyAvailability = localStorage.getItem(StacksPage.candidacyAvailabilityStorageKey);
+
+    if (ecosystemVisibility !== null) {
+      this.isVisibleInEcosystem = ecosystemVisibility === 'true';
+    }
+
+    if (candidacyAvailability !== null) {
+      this.isAvailableForApplications = candidacyAvailability === 'true';
+    }
+  }
+
+  private persistControls(): void {
+    localStorage.setItem(StacksPage.ecosystemVisibilityStorageKey, String(this.isVisibleInEcosystem));
+    localStorage.setItem(StacksPage.candidacyAvailabilityStorageKey, String(this.isAvailableForApplications));
   }
 
   private createStackChip(name: string, knowledge?: number, description = ''): StackChip {

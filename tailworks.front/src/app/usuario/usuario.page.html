@@ -1,20 +1,20 @@
 <div class="usuario-page">
   <app-candidate-registration-strip
     [name]="displayName"
+    [formationHeading]="displayFormationHeading"
     [graduation]="displayGraduation"
     [specialization]="displaySpecialization"
+    [formationLogoUrl]="formationLogoUrl"
     [photoPreviewUrl]="photoPreviewUrl"
+    (basicDataRequested)="openBasicDataModal()"
+    (formationRequested)="openFormationEditor()"
   />
 
-  <section class="usuario-page__section" id="usuario-dados-cadastrais">
+  <section class="usuario-page__section usuario-page__section--stacks" id="usuario-stacks">
     <section class="usuario-page__intro">
-      <h1>Dados Básicos</h1>
-      <p>Comece preenchendo as informações abaixo.</p>
+      <h1>Suas Stacks</h1>
+      <p>Adicione abaixo as tecnologias nas quais você tem experiência e prazer em trabalhar.</p>
     </section>
-    <app-dados-cadastrais-page />
-  </section>
-
-  <section class="usuario-page__section" id="usuario-stacks">
     <app-stacks-page />
   </section>
 
@@ -25,4 +25,33 @@
   <section class="usuario-page__section" id="usuario-formacao">
     <app-formacao-page />
   </section>
+
+  <div
+    *ngIf="isBasicDataModalOpen"
+    class="usuario-page__modal-backdrop"
+    (click)="closeBasicDataModal()"
+  >
+    <section
+      class="usuario-page__modal"
+      (click)="$event.stopPropagation()"
+      aria-modal="true"
+      role="dialog"
+    >
+      <button
+        class="usuario-page__modal-close"
+        type="button"
+        aria-label="Fechar dados básicos"
+        (click)="closeBasicDataModal()"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+
+      <section class="usuario-page__modal-intro">
+        <h1>Dados Básicos</h1>
+        <p>Comece preenchendo as informações abaixo.</p>
+      </section>
+
+      <app-dados-cadastrais-page />
+    </section>
+  </div>
 </div>

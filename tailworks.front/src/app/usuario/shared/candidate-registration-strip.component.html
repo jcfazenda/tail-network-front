@@ -39,31 +39,38 @@
           verified
         </span>
       </div>
-      <strong class="candidate-registration-strip__identity-degree">{{ displayGraduation }}</strong>
-      <span class="candidate-registration-strip__identity-copy">{{ displaySpecialization }}</span>
     </div>
 
-    <div class="candidate-registration-strip__controls">
-      <label class="candidate-registration-strip__toggle" [class.candidate-registration-strip__toggle--active]="isVisibleInEcosystem">
-        <input
-          type="checkbox"
-          [checked]="isVisibleInEcosystem"
-          (change)="updateVisibleInEcosystem($any($event.target).checked)"
-        />
-        <span class="candidate-registration-strip__toggle-chip" aria-hidden="true"></span>
-        <span class="candidate-registration-strip__toggle-text">Ecossistema</span>
-      </label>
-
-      <label class="candidate-registration-strip__toggle" [class.candidate-registration-strip__toggle--active]="isAvailableForApplications">
-        <input
-          type="checkbox"
-          [checked]="isAvailableForApplications"
-          (change)="updateAvailableForApplications($any($event.target).checked)"
-        />
-        <span class="candidate-registration-strip__toggle-chip" aria-hidden="true"></span>
-        <span class="candidate-registration-strip__toggle-text">Disponivel</span>
-      </label>
+    <div class="candidate-registration-strip__formation">
+      <img
+        [src]="displayFormationLogoUrl"
+        alt=""
+        class="candidate-registration-strip__formation-logo"
+      />
+      <div class="candidate-registration-strip__formation-copy-wrap">
+        <span class="candidate-registration-strip__formation-heading">{{ displayFormationHeading }}</span>
+        <strong class="candidate-registration-strip__formation-degree">{{ displayGraduation }}</strong>
+        <span class="candidate-registration-strip__formation-copy">{{ displaySpecialization }}</span>
+      </div>
+      <button
+        class="candidate-registration-strip__formation-edit"
+        type="button"
+        (click)="openFormationDialog()"
+        aria-label="Editar formação"
+        title="Editar formação"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+      </button>
     </div>
+
+    <button
+      class="candidate-registration-strip__basic-button"
+      type="button"
+      (click)="openBasicDataDialog()"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">edit_square</span>
+      <span>Dados Básicos</span>
+    </button>
   </div>
 
   <small class="candidate-registration-strip__photo-error" *ngIf="photoError">{{ photoError }}</small>
