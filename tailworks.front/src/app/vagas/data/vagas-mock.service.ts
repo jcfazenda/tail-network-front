@@ -19,6 +19,22 @@ type TalentIdentity = {
   hasProfileAvatar: boolean;
 };
 
+type RecruiterWorkflowActions = {
+  advanceToProcess: boolean;
+  requestHiring: boolean;
+  closeVacancy: boolean;
+  cancelHiringRequest: boolean;
+  hireCandidate: boolean;
+  declineCandidate: boolean;
+};
+
+type TalentWorkflowActions = {
+  apply: boolean;
+  cancelApplication: boolean;
+  respondToProposal: boolean;
+  submitDocuments: boolean;
+};
+
 @Injectable({ providedIn: 'root' })
 export class VagasMockService {
   private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
@@ -62,6 +78,68 @@ export class VagasMockService {
     const identity = this.readTalentIdentity();
     return job.candidates.find((candidate) => candidate.source === 'system')
       ?? job.candidates.find((candidate) => this.isTalentCandidate(candidate, identity));
+  }
+
+  getRecruiterWorkflowActions(stage: CandidateStage | undefined): RecruiterWorkflowActions {
+    switch (stage) {
+      case 'candidatura':
+        return {
+          advanceToProcess: true,
+          requestHiring: false,
+          closeVacancy: true,
+          cancelHiringRequest: false,
+          hireCandidate: false,
+          declineCandidate: false,
+        };
+      case 'processo':
+      case 'tecnica':
+        return {
+          advanceToProcess: false,
+          requestHiring: true,
+          closeVacancy: true,
+          cancelHiringRequest: false,
+          hireCandidate: false,
+          declineCandidate: false,
+        };
+      case 'aguardando':
+        return {
+          advanceToProcess: false,
+          requestHiring: false,
+          closeVacancy: false,
+          cancelHiringRequest: true,
+          hireCandidate: false,
+          declineCandidate: false,
+        };
+      case 'documentacao':
+        return {
+          advanceToProcess: false,
+          requestHiring: false,
+          closeVacancy: false,
+          cancelHiringRequest: false,
+          hireCandidate: true,
+          declineCandidate: true,
+        };
+      default:
+        return {
+          advanceToProcess: false,
+          requestHiring: false,
+          closeVacancy: false,
+          cancelHiringRequest: false,
+          hireCandidate: false,
+          declineCandidate: false,
+        };
+    }
+  }
+
+  getTalentWorkflowActions(stage: CandidateStage | undefined, decision: TalentJobDecision | undefined): TalentWorkflowActions {
+    const applied = decision === 'applied';
+
+    return {
+      apply: !applied && stage !== 'proxima' && stage !== 'cancelado',
+      cancelApplication: applied && ['candidatura', 'processo', 'tecnica', 'aceito', 'documentacao'].includes(stage ?? ''),
+      respondToProposal: applied && stage === 'aguardando',
+      submitDocuments: stage === 'aceito',
+    };
   }
 
   getEffectiveCandidateStage(

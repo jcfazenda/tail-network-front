@@ -362,16 +362,25 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   get canApplySelectedJob(): boolean {
     const job = this.selectedJobPanel;
-    return !!job && !job.talentDecision && this.selectedJobTalentStage !== 'proxima' && this.selectedJobTalentStage !== 'cancelado';
+    if (!job) {
+      return false;
+    }
+
+    return this.vagasMockService.getTalentWorkflowActions(this.selectedJobTalentStage, job.talentDecision).apply;
   }
 
   get canCancelSelectedJob(): boolean {
-    return this.selectedJobPanel?.talentDecision === 'applied'
-      && ['candidatura', 'processo', 'tecnica', 'aceito', 'documentacao'].includes(this.selectedJobTalentStage ?? '');
+    return this.vagasMockService.getTalentWorkflowActions(
+      this.selectedJobTalentStage,
+      this.selectedJobPanel?.talentDecision,
+    ).cancelApplication;
   }
 
   get canRespondToProposalSelectedJob(): boolean {
-    return this.selectedJobPanel?.talentDecision === 'applied' && this.selectedJobTalentStage === 'aguardando';
+    return this.vagasMockService.getTalentWorkflowActions(
+      this.selectedJobTalentStage,
+      this.selectedJobPanel?.talentDecision,
+    ).respondToProposal;
   }
 
   get showSelectedJobDocumentsSection(): boolean {
@@ -379,7 +388,10 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get showSelectedJobDocumentsSubmission(): boolean {
-    return this.selectedJobTalentStage === 'aceito';
+    return this.vagasMockService.getTalentWorkflowActions(
+      this.selectedJobTalentStage,
+      this.selectedJobPanel?.talentDecision,
+    ).submitDocuments;
   }
 
   get showSelectedJobDocumentsSubmittedState(): boolean {

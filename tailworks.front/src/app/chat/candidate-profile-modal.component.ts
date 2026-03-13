@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core';
 import { ChatCandidate, ChatJob } from './tail-chat-panel.component';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
+import { CandidateStage } from '../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
 
 type CandidateModalTab = 'journey' | 'curriculum';
@@ -252,27 +253,27 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
   }
 
   get showAdvanceToProcessAction(): boolean {
-    return this.currentStage === 'candidatura';
+    return this.recruiterWorkflow.advanceToProcess;
   }
 
   get showRequestHiringAction(): boolean {
-    return this.currentStage === 'processo' || this.currentStage === 'tecnica';
+    return this.recruiterWorkflow.requestHiring;
   }
 
   get showCloseVacancyAction(): boolean {
-    return this.showAdvanceToProcessAction || this.showRequestHiringAction;
+    return this.recruiterWorkflow.closeVacancy;
   }
 
   get showCancelHiringRequestAction(): boolean {
-    return this.currentStage === 'aguardando';
+    return this.recruiterWorkflow.cancelHiringRequest;
   }
 
   get showMarkAsHiredAction(): boolean {
-    return this.currentStage === 'documentacao';
+    return this.recruiterWorkflow.hireCandidate;
   }
 
   get showDeclineCandidateAction(): boolean {
-    return this.currentStage === 'documentacao';
+    return this.recruiterWorkflow.declineCandidate;
   }
 
   get showAwaitingTalentDecisionMessage(): boolean {
@@ -593,6 +594,10 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
     );
 
     return (refreshedCandidate as ChatCandidate | undefined) ?? this.candidate;
+  }
+
+  private get recruiterWorkflow() {
+    return this.vagasMockService.getRecruiterWorkflowActions(this.currentStage as CandidateStage);
   }
 
   private buildFormationHeading(formation: FormationCopyDraft | null): string {
