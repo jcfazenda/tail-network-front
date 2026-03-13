@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -85,6 +85,9 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     educationStatus: 'Concluído',
   };
 
+  @Output() readonly cancelRequested = new EventEmitter<void>();
+  @Output() readonly saveCompleted = new EventEmitter<void>();
+
   get displayName(): string {
     return this.profile.name.trim() || 'Julio Fazenda';
   }
@@ -126,7 +129,11 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
 
     this.syncLocationFromFields();
     this.persistDraft();
-    this.scrollToSection('usuario-stacks', '/usuario/dados-cadastrais/stacks');
+    this.saveCompleted.emit();
+  }
+
+  cancelBasicData(): void {
+    this.cancelRequested.emit();
   }
 
   onPhoneInput(rawValue: string): void {

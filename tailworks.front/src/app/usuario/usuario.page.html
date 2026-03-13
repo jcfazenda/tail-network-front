@@ -26,7 +26,7 @@
   </section>
 
   <section class="usuario-page__section" id="usuario-formacao">
-    <app-formacao-page />
+    <app-formacao-page (formationSaved)="handleFormationSaved()" />
   </section>
 
   <div
@@ -54,7 +54,10 @@
         <p>Comece preenchendo as informações abaixo.</p>
       </section>
 
-      <app-dados-cadastrais-page />
+      <app-dados-cadastrais-page
+        (cancelRequested)="closeBasicDataModal()"
+        (saveCompleted)="handleBasicDataSaved()"
+      />
     </section>
   </div>
 </div>

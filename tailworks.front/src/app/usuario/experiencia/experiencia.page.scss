@@ -754,7 +754,7 @@
 .candidate-experience__stack-item{
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(150px, 210px) minmax(0, 1fr);
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   grid-template-areas:
     'meta progress'
     'description description';
@@ -794,10 +794,14 @@
 
 .candidate-experience__stack-item-name{
   min-width: 0;
+  display: block;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.35;
   color: rgba(15, 23, 42, 0.76);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .candidate-experience__stack-item-info{

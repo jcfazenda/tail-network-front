@@ -19,39 +19,47 @@
 
 .candidate-registration-strip__identity-row{
   display: grid;
-  grid-template-columns: 86px minmax(280px, 340px) minmax(0, 1fr) auto;
+  grid-template-columns: 86px minmax(280px, 340px) minmax(0, 1fr);
   align-items: center;
   gap: 22px;
   padding-bottom: 14px;
   border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
 }
 
+.candidate-registration-strip__actions-row{
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 6px;
+}
+
 .candidate-registration-strip__basic-button{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 38px;
-  padding: 0 14px;
-  border: 1px solid rgba(217, 176, 86, 0.22);
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--btn-primary-border);
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 245, 230, 0.98), rgba(255, 255, 255, 0.98));
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  color: rgba(15, 23, 42, 0.78);
-  font-size: 12px;
-  font-weight: 600;
+  background: var(--btn-primary-bg);
+  box-shadow: var(--btn-primary-shadow);
+  color: var(--btn-primary-text);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
   line-height: 1;
   cursor: pointer;
   justify-self: end;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .candidate-registration-strip__basic-button .material-symbols-rounded{
-  font-size: 16px;
-  color: rgba(219, 145, 24, 0.86);
+  font-size: 20px;
 }
 
 .candidate-registration-strip__basic-button:hover{
-  border-color: rgba(217, 176, 86, 0.32);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--btn-primary-shadow-hover);
 }
 
 .candidate-registration-strip__basic-button:focus-visible{
@@ -157,21 +165,21 @@
 
 .candidate-registration-strip__formation{
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto;
+  grid-template-columns: 74px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
   padding-left: 24px;
   border-left: 1px solid rgba(15, 23, 42, 0.12);
 }
 
 .candidate-registration-strip__formation-logo{
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
+  width: 74px;
+  height: 74px;
+  border-radius: 18px;
   object-fit: cover;
   display: block;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
 }
 
 .candidate-registration-strip__formation-copy-wrap{
@@ -319,9 +327,12 @@
     padding-bottom: 24px;
   }
 
+  .candidate-registration-strip__actions-row{
+    justify-content: flex-start;
+  }
+
   .candidate-registration-strip__basic-button{
     margin-top: 8px;
-    justify-self: start;
   }
 
   .candidate-registration-strip__identity{
@@ -330,14 +341,14 @@
   }
 
   .candidate-registration-strip__formation{
-    grid-template-columns: 52px minmax(0, 1fr) auto;
+    grid-template-columns: 60px minmax(0, 1fr) auto;
     padding-left: 0;
     border-left: 0;
   }
 
   .candidate-registration-strip__formation-logo{
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
   }
 
   .candidate-registration-strip__controls{

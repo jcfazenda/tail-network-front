@@ -25,6 +25,7 @@ type FormationCopyDraft = {
   endYear: string;
   graduation: string;
   specialization: string;
+  graduated?: boolean;
 };
 
 @Component({
@@ -63,6 +64,15 @@ export class UsuarioPage implements OnInit {
 
   closeBasicDataModal(): void {
     this.isBasicDataModalOpen = false;
+  }
+
+  handleBasicDataSaved(): void {
+    this.restoreHeaderData();
+    this.closeBasicDataModal();
+  }
+
+  handleFormationSaved(): void {
+    this.restoreHeaderData();
   }
 
   openFormationEditor(): void {
@@ -117,7 +127,11 @@ export class UsuarioPage implements OnInit {
     try {
       const draft = JSON.parse(rawDraft) as Partial<FormationCopyDraft>;
       this.displayFormationHeading =
-        draft.endMonth && draft.endYear ? `Formado em ${draft.endMonth} ${draft.endYear}` : 'Formado em Dez 2025';
+        draft.graduated === false
+          ? 'Em andamento'
+          : draft.endMonth && draft.endYear
+            ? `Formado em ${draft.endMonth} ${draft.endYear}`
+            : 'Formado em Dez 2025';
       this.displayGraduation = draft.graduation?.trim() || 'Bacharelado em Sistemas de Informação';
       this.displaySpecialization = draft.specialization?.trim() || 'Especialização em Arquitetura de Software';
     } catch {

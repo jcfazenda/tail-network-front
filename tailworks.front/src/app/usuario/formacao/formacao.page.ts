@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -46,6 +46,7 @@ export class FormacaoPage implements OnInit {
   private static readonly radarAvailabilityStorageKey = 'tailworks:candidate-experience-radar-availability:v1';
 
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   readonly steps: RegistrationStep[] = [
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
@@ -67,6 +68,8 @@ export class FormacaoPage implements OnInit {
   photoPreviewUrl = '';
   introLogoUrl = this.defaultIntroLogoUrl;
   introLogoError = '';
+  formationDraftLogoUrl = this.defaultIntroLogoUrl;
+  formationDraftLogoError = '';
   isFormationModalOpen = false;
   isAvailableInRadar = true;
   formationCopy: FormationCopyDraft = {
@@ -80,6 +83,7 @@ export class FormacaoPage implements OnInit {
     educationStatus: 'Concluído',
   };
   formationDraft: FormationCopyDraft = { ...this.formationCopy };
+  @Output() readonly formationSaved = new EventEmitter<void>();
 
   get displayName(): string {
     return this.profile.name.trim() || 'Julio Fazenda';
@@ -112,11 +116,15 @@ export class FormacaoPage implements OnInit {
 
   openFormationModal(): void {
     this.formationDraft = { ...this.formationCopy };
+    this.formationDraftLogoUrl = this.introLogoUrl;
+    this.formationDraftLogoError = '';
     this.isFormationModalOpen = true;
+    this.cdr.markForCheck();
   }
 
   closeFormationModal(): void {
     this.isFormationModalOpen = false;
+    this.cdr.markForCheck();
   }
 
   saveFormationCopy(form: NgForm): void {
@@ -134,8 +142,12 @@ export class FormacaoPage implements OnInit {
       graduated: this.formationDraft.graduated,
       educationStatus: this.formationDraft.graduated ? 'Concluído' : `${this.formationDraft.startMonth}/${this.formationDraft.startYear}`,
     };
+    this.introLogoUrl = this.formationDraftLogoUrl || this.defaultIntroLogoUrl;
     this.persistFormationCopy();
+    this.persistIntroLogo();
     this.closeFormationModal();
+    this.formationSaved.emit();
+    this.cdr.markForCheck();
   }
 
   openIntroLogoPicker(input: HTMLInputElement): void {
@@ -151,6 +163,28 @@ export class FormacaoPage implements OnInit {
     }
   }
 
+  openFormationLogoPicker(input: HTMLInputElement): void {
+    input.click();
+  }
+
+  onFormationLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.handleFormationLogoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  onFormationLogoKeydown(event: KeyboardEvent, input: HTMLInputElement): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.openFormationLogoPicker(input);
+  }
+
   onIntroLogoKeydown(event: KeyboardEvent, input: HTMLInputElement): void {
     if (event.key !== 'Enter' && event.key !== ' ') {
       return;
@@ -163,6 +197,7 @@ export class FormacaoPage implements OnInit {
   updateRadarAvailability(nextValue: boolean): void {
     this.isAvailableInRadar = nextValue;
     this.persistRadarAvailability();
+    this.cdr.markForCheck();
   }
 
   private restoreBasicDraft(): void {
@@ -262,6 +297,33 @@ export class FormacaoPage implements OnInit {
     reader.onload = () => {
       this.introLogoUrl = typeof reader.result === 'string' ? reader.result : this.defaultIntroLogoUrl;
       this.persistIntroLogo();
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  private handleFormationLogoFile(file: File | null): void {
+    this.formationDraftLogoError = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.acceptedLogoMimeTypes.includes(file.type)) {
+      this.formationDraftLogoError = 'Use JPG, PNG, GIF ou WEBP.';
+      return;
+    }
+
+    if (file.size > this.maxLogoSizeBytes) {
+      this.formationDraftLogoError = 'A imagem deve ter no máximo 5MB.';
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.formationDraftLogoUrl = typeof reader.result === 'string' ? reader.result : this.defaultIntroLogoUrl;
+      this.cdr.markForCheck();
     };
 
     reader.readAsDataURL(file);
