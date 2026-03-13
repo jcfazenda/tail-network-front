@@ -140,15 +140,25 @@
       </section>
 
       <div class="candidate-modal__status-footer">
-        <button
-          *ngIf="showAdvanceToProcessAction"
-          class="candidate-modal__status-action candidate-modal__status-action--primary"
-          type="button"
-          (click)="advanceJourneyStage()"
-        >
-          <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-          Avançar para Processo
-        </button>
+        <div class="candidate-modal__status-actions" *ngIf="showAdvanceToProcessAction">
+          <button
+            class="candidate-modal__status-action candidate-modal__status-action--primary"
+            type="button"
+            (click)="advanceJourneyStage()"
+          >
+            <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+            Avançar para Processo
+          </button>
+
+          <button
+            class="candidate-modal__status-action candidate-modal__status-action--ghost"
+            type="button"
+            (click)="closeVacancy()"
+          >
+            <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">block</span>
+            Fechar vaga
+          </button>
+        </div>
 
         <div class="candidate-modal__status-actions" *ngIf="showRequestHiringAction">
           <button
@@ -184,15 +194,27 @@
           Aguardando a resposta do talento sobre a proposta enviada.
         </p>
 
-        <button
-          *ngIf="showValidateDocumentsAction"
-          class="candidate-modal__status-action candidate-modal__status-action--primary candidate-modal__status-action--documents"
-          type="button"
-          (click)="concludeJourneyDocuments()"
-        >
-          <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
-          Contratado
-        </button>
+        <div class="candidate-modal__status-actions" *ngIf="showValidateDocumentsAction || showDeclineCandidateAction">
+          <button
+            *ngIf="showValidateDocumentsAction"
+            class="candidate-modal__status-action candidate-modal__status-action--primary candidate-modal__status-action--documents"
+            type="button"
+            (click)="concludeJourneyDocuments()"
+          >
+            <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">upload_file</span>
+            Contratar Candidato
+          </button>
+
+          <button
+            *ngIf="showDeclineCandidateAction"
+            class="candidate-modal__status-action candidate-modal__status-action--ghost"
+            type="button"
+            (click)="declineCandidate()"
+          >
+            <span class="candidate-modal__status-action-icon material-symbols-rounded" aria-hidden="true">block</span>
+            Recusar
+          </button>
+        </div>
 
         <p class="candidate-modal__status-note" *ngIf="showRadarStatusMessage">
           Tudo bem, voce ainda esta no nosso Radar.

@@ -367,7 +367,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   get canCancelSelectedJob(): boolean {
     return this.selectedJobPanel?.talentDecision === 'applied'
-      && ['processo', 'tecnica', 'documentacao'].includes(this.selectedJobTalentStage ?? '');
+      && ['candidatura', 'processo', 'tecnica', 'aceito', 'documentacao'].includes(this.selectedJobTalentStage ?? '');
   }
 
   get canRespondToProposalSelectedJob(): boolean {

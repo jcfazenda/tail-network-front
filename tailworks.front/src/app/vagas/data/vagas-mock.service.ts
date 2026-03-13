@@ -718,8 +718,12 @@ export class VagasMockService {
       return talentDecision === 'hidden' ? 'talent' : 'system';
     }
 
-    if (stage === 'candidatura' || stage === 'aceito' || stage === 'documentacao' || stage === 'proxima' || stage === 'cancelado') {
+    if (stage === 'candidatura' || stage === 'aceito' || stage === 'documentacao') {
       return 'talent';
+    }
+
+    if (stage === 'proxima' || stage === 'cancelado') {
+      return preferredOwner === 'recruiter' ? 'recruiter' : 'talent';
     }
 
     if (stage === 'processo' || stage === 'tecnica' || stage === 'aguardando' || stage === 'contratado') {

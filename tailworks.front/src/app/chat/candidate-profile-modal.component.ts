@@ -260,7 +260,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
   }
 
   get showCloseVacancyAction(): boolean {
-    return this.showRequestHiringAction;
+    return this.showAdvanceToProcessAction || this.showRequestHiringAction;
   }
 
   get showCancelHiringRequestAction(): boolean {
@@ -268,6 +268,10 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
   }
 
   get showMarkAsHiredAction(): boolean {
+    return this.currentStage === 'documentacao';
+  }
+
+  get showDeclineCandidateAction(): boolean {
     return this.currentStage === 'documentacao';
   }
 
@@ -360,6 +364,18 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       this.job.id,
       this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
       'contratado',
+    );
+  }
+
+  declineCandidate(): void {
+    if (!this.showDeclineCandidateAction) {
+      return;
+    }
+
+    this.vagasMockService.updateCandidateStage(
+      this.job.id,
+      this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
+      'proxima',
     );
   }
 
