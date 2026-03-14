@@ -34,6 +34,85 @@
   min-width: 0;
 }
 
+.job-home-announcement{
+  display: grid;
+}
+
+.job-home-announcement__split{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.job-home-announcement__card{
+  background: rgba(253, 253, 253, 0.58);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 16px 14px 18px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  display: grid;
+  gap: 14px;
+}
+
+.job-home-announcement__card--ad{
+  align-content: start;
+}
+
+.job-home-announcement__head{
+  display: grid;
+  gap: 6px;
+}
+
+.job-home-announcement__copy{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.job-home-announcement__copy strong{
+  font-size: 15px;
+  line-height: 1.2;
+  color: #263142;
+}
+
+.job-home-announcement__copy span{
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: rgba(70, 78, 92, 0.62);
+  white-space: nowrap;
+}
+
+.job-home-announcement__head p{
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(70, 78, 92, 0.68);
+}
+
+.job-home-announcement .summary-card__company{
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.job-home-announcement .summary-card__company--announcement{
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.job-home-announcement .summary-card__image-guide--inline{
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 980px){
+  .job-home-announcement__split{
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .job-create__nav{
   display: flex;
   align-items: center;
@@ -111,9 +190,8 @@
 .job-create__panel-progress{
   width: min(100%, 999px);
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 18px;
+  align-items: center;
+  justify-content: flex-end;
   margin: -2px 0 10px;
 }
 
@@ -126,7 +204,7 @@
 
 .job-create__panel-progress-action{
   flex: 0 0 auto;
-  margin-right: 16px;
+  margin-right: 0;
 }
 
 .job-create__hero-progress-label{
@@ -2817,6 +2895,96 @@
   line-height: 1.35;
 }
 
+.summary-card__image-guides{
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.summary-card__image-guide{
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(245, 246, 248, 0.92), rgba(238, 239, 242, 0.84));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.summary-card__image-guide-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.summary-card__image-guide-head strong{
+  font-size: 13px;
+  line-height: 1.2;
+  color: rgba(33, 41, 54, 0.88);
+}
+
+.summary-card__image-guide-head span{
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: rgba(70, 78, 92, 0.62);
+  white-space: nowrap;
+}
+
+.summary-card__image-guide p{
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(70, 78, 92, 0.68);
+}
+
+.announcement-upload-area{
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 220px;
+  border: 1px dashed rgba(15, 23, 42, 0.28);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.announcement-upload-area:hover{
+  border-color: rgba(15, 23, 42, 0.42);
+}
+
+.announcement-upload-area:focus-visible{
+  outline: 2px solid rgba(100, 100, 100, 0.28);
+  outline-offset: 4px;
+}
+
+.announcement-upload-area__image{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.announcement-upload-area__placeholder{
+  position: relative;
+  z-index: 1;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 700;
+}
+
 .summary-card--side .summary-card__company-name{
   font-size: 15px;
   line-height: 1.2;
@@ -2858,7 +3026,7 @@
 .summary-card__company-logo{
   width: 60px;
   height: 60px;
-  border-radius: 20px;
+  border-radius: 14px;
   display: grid;
   place-items: center;
   background:
@@ -2967,6 +3135,22 @@
   font-size: 12px;
   line-height: 1.55;
   color: rgba(15, 23, 42, 0.66);
+}
+
+.summary-card__company-location-row{
+  margin-top: 4px;
+  padding-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(15, 23, 42, 0.68);
+}
+
+.summary-card__company-location-row .material-symbols-rounded{
+  font-size: 15px;
+  color: rgba(15, 23, 42, 0.44);
 }
 
 .summary-card__company-description-dot{

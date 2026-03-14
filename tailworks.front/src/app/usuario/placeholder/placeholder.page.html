@@ -177,7 +177,7 @@
 
             <div class="candidate-stack-summary__stack-prelude">
               <div class="candidate-stack-summary__stack-prelude-head">
-                <div class="candidate-stack-summary__stack-kicker">Ranking das contratações nas tecnologias</div>
+                <div class="candidate-stack-summary__stack-kicker">Empresas com contratações recentes</div>
                 <button class="candidate-stack-summary__stack-prelude-period" type="button">
                   <span>Atual</span>
                   <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
@@ -202,16 +202,28 @@
                 (pointercancel)="topStacksHandlePointerUp($event)"
                 (pointerleave)="topStacksHandlePointerUp($event)"
               >
-                <article class="candidate-stack-summary__stack-prelude-metric" *ngFor="let category of topStackHighlights">
+                <article
+                  class="candidate-stack-summary__stack-prelude-metric"
+                  [class.candidate-stack-summary__stack-prelude-metric--image]="!!company.cardImageUrl"
+                  *ngFor="let company of topHiringCompanies; let i = index"
+                >
+                  <img
+                    class="candidate-stack-summary__stack-prelude-metric-bg"
+                    *ngIf="company.cardImageUrl"
+                    [src]="company.cardImageUrl"
+                    alt=""
+                    aria-hidden="true"
+                  />
+
                   <div class="candidate-stack-summary__stack-prelude-metric-top">
                     <span class="candidate-stack-summary__stack-prelude-icon-shell">
-                      <span class="material-symbols-rounded" aria-hidden="true">{{ topStackHighlightIcon(category.id) }}</span>
+                      <span class="material-symbols-rounded" aria-hidden="true">{{ topHiringCompanyIcon(i) }}</span>
                     </span>
                     <span class="material-symbols-rounded candidate-stack-summary__stack-prelude-more" aria-hidden="true">more_vert</span>
                   </div>
 
-                  <strong>{{ category.value }}%</strong>
-                  <span>{{ category.label }}</span>
+                  <strong>{{ company.hiringCount }}</strong>
+                  <span>{{ company.company }}</span>
                 </article>
               </div>
             </div>

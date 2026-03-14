@@ -38,6 +38,14 @@ type RadarCategory = {
   value: number;
   color: string;
 };
+type HiringCompanyHighlight = {
+  company: string;
+  hiringCount: number;
+  cardImageUrl: string;
+  logoLabel: string;
+  recentDateLabel: string;
+  sortTimestamp: number;
+};
 type HiringTrendPoint = {
   month: string;
   fullMonth: string;
@@ -177,6 +185,46 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       linkedinCount: '1.128.440 no LinkedIn',
       logoLabel: 'st',
       monthlyHiringCount: 24,
+    },
+    'Amazon BR': {
+      name: 'Amazon BR',
+      followers: '3.102.000 seguidores',
+      description: 'Cloud, marketplace e serviços digitais',
+      linkedinCount: '3.102.000 no LinkedIn',
+      logoLabel: 'am',
+      monthlyHiringCount: 37,
+    },
+    'Magazine Luiza': {
+      name: 'Magazine Luiza',
+      followers: '2.780.000 seguidores',
+      description: 'Varejo digital, logística e tecnologia',
+      linkedinCount: '2.780.000 no LinkedIn',
+      logoLabel: 'ml',
+      monthlyHiringCount: 28,
+    },
+    'BTG Pactual': {
+      name: 'BTG Pactual',
+      followers: '1.964.000 seguidores',
+      description: 'Banco de investimento e tecnologia financeira',
+      linkedinCount: '1.964.000 no LinkedIn',
+      logoLabel: 'bt',
+      monthlyHiringCount: 22,
+    },
+    Bradesco: {
+      name: 'Bradesco',
+      followers: '4.118.000 seguidores',
+      description: 'Serviços financeiros, seguros e canais digitais',
+      linkedinCount: '4.118.000 no LinkedIn',
+      logoLabel: 'br',
+      monthlyHiringCount: 26,
+    },
+    'Stefanini Brasil': {
+      name: 'Stefanini Brasil',
+      followers: '1.106.000 seguidores',
+      description: 'Consultoria, tecnologia e transformação digital',
+      linkedinCount: '1.106.000 no LinkedIn',
+      logoLabel: 'sb',
+      monthlyHiringCount: 19,
     },
   };
 
@@ -345,6 +393,31 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   get topStackHighlights(): RadarCategory[] {
     return this.allRadarCategories;
+  }
+
+  get topHiringCompanies(): HiringCompanyHighlight[] {
+    const companies = new Map<string, HiringCompanyHighlight>();
+
+    for (const job of this.vagasMockService.getJobs()) {
+      const company = job.company.trim();
+      const createdAt = Date.parse(job.createdAt || job.updatedAt);
+      const current = companies.get(company);
+
+      if (current && current.sortTimestamp >= createdAt) {
+        continue;
+      }
+
+      companies.set(company, {
+        company,
+        hiringCount: this.companyProfiles[company]?.monthlyHiringCount ?? Math.max(8, Math.min(99, job.radarCount)),
+        cardImageUrl: job.homeAnnouncementImageUrl ?? job.companyLogoUrl ?? this.companyProfiles[company]?.logoUrl ?? '',
+        logoLabel: (this.companyProfiles[company]?.logoLabel ?? company.slice(0, 2)).toUpperCase(),
+        recentDateLabel: this.formatHiringCompanyDateLabel(job.createdAt || job.updatedAt),
+        sortTimestamp: Number.isFinite(createdAt) ? createdAt : 0,
+      });
+    }
+
+    return [...companies.values()].sort((left, right) => right.sortTimestamp - left.sortTimestamp);
   }
 
   get hiringTrendChartPoints(): HiringTrendChartPoint[] {
@@ -661,6 +734,29 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       default:
         return 'deployed_code';
     }
+  }
+
+  topHiringCompanyIcon(index: number): string {
+    const categories = this.allRadarCategories;
+    if (!categories.length) {
+      return 'apartment';
+    }
+
+    return this.topStackHighlightIcon(categories[index % categories.length].id);
+  }
+
+  private formatHiringCompanyDateLabel(value: string | undefined): string {
+    if (!value) {
+      return 'Recente';
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return 'Recente';
+    }
+
+    const monthLabels = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    return `${String(parsed.getDate()).padStart(2, '0')} ${monthLabels[parsed.getMonth()]}`;
   }
 
   topStacksHandlePointerDown(event: PointerEvent): void {

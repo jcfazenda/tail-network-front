@@ -26,16 +26,8 @@
       </div>
     </section>
 
-    <div class="job-create__panel-progress">
-      <div class="job-create__hero-progress" aria-label="Andamento da configuracao da vaga">
-        <span class="job-create__hero-progress-label">Configuracao {{ configurationProgress }}%</span>
-        <span class="job-create__hero-progress-track" aria-hidden="true">
-          <span class="job-create__hero-progress-fill" [style.width.%]="configurationProgress"></span>
-        </span>
-      </div>
-
+    <div class="job-create__panel-progress" *ngIf="!summaryPanelOpen">
       <button
-        *ngIf="!summaryPanelOpen"
         class="job-preview-banner__action job-preview-banner__action--primary job-create__panel-progress-action"
         type="button"
         (click)="openSummaryPanel()"
@@ -46,88 +38,108 @@
       </button>
     </div>
 
-    <section
-      class="job-preview-banner"
-      [class.job-preview-banner--flipped]="previewCardFlipped"
-      aria-label="Resumo visual da vaga"
-    >
-      <button
-        class="job-preview-banner__flip-toggle"
-        type="button"
-        (click)="togglePreviewCardFace()"
-        [attr.aria-label]="previewCardFlipped ? 'Voltar para frente do card' : 'Virar card para alcance do radar'"
-        [title]="previewCardFlipped ? 'Voltar para frente do card' : 'Virar card para alcance do radar'"
-      >
-        <span class="material-symbols-rounded" aria-hidden="true">
-          {{ previewCardFlipped ? 'flip_to_front' : 'flip_to_back' }}
-        </span>
-      </button>
-
-      <div class="job-preview-banner__flip-stage">
-        <div
-          class="job-preview-banner__face job-preview-banner__face--front"
-          [class.job-preview-banner__face--active]="!previewCardFlipped"
-        >
-          <div class="job-preview-banner__main">
-            <div class="job-preview-banner__title-row">
-              <h2 class="job-preview-banner__title">{{ jobDraft.title }}</h2>
-            </div>
-
-            <div class="job-preview-banner__meta">
-              <span>{{ jobDraft.company }}</span>
-              <span class="job-preview-banner__meta-dot" aria-hidden="true"></span>
-              <span>{{ jobDraft.location }}</span>
-            </div>
-
-            <div class="job-preview-banner__benefits">
-              <span>{{ previewCardOfferLine }}</span>
-            </div>
-
-            <span class="job-preview-banner__chip">{{ jobDraft.workModel | uppercase }}</span>
-
-            <div class="job-preview-banner__footer">
-              <div class="job-preview-banner__fit">
-                <span class="job-preview-banner__fit-label">Compatíveis</span>
-                <span class="job-preview-banner__fit-bar" aria-hidden="true">
-                  <span class="job-preview-banner__fit-bar-fill" [style.width.%]="previewAderencia"></span>
-                </span>
-                <span class="job-preview-banner__fit-value">{{ previewAderencia }}%</span>
-              </div>
-
-              <div class="job-preview-banner__avatars" *ngIf="!previewCardFlipped">
-                <div class="job-preview-banner__avatars-stack">
-                  <ng-container *ngFor="let avatar of previewAvatars; let i = index">
-                    <span
-                      class="job-preview-banner__avatar"
-                      [style.zIndex]="i + 1"
-                      [style.marginLeft.px]="i === 0 ? 0 : -12"
-                      [style.backgroundImage]="'url(' + avatar + ')'"
-                      aria-hidden="true"
-                    ></span>
-                  </ng-container>
-                  <span class="job-preview-banner__avatar job-preview-banner__avatar--extra">+{{ previewAvatarExtraCount }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="job-preview-banner__face job-preview-banner__face--back"
-          [class.job-preview-banner__face--active]="previewCardFlipped"
-        >
-          <app-alcance-radar
-            class="job-preview-banner__radar"
-            [score]="previewAderencia"
-            [embedded]="true"
-          ></app-alcance-radar>
-        </div>
-      </div>
-    </section>
-
     <section class="job-create__content">
       <section class="job-create__layout">
       <div class="job-create__main">
+        <section class="job-home-announcement">
+          <input
+            #companyLogoInput
+            class="summary-card__company-logo-input"
+            type="file"
+            accept=".jpg,.jpeg,.png,.gif,.webp"
+            (change)="onCompanyLogoSelected($event)"
+          />
+          <input
+            #homeAnnouncementImageInput
+            class="summary-card__company-logo-input"
+            type="file"
+            accept=".jpg,.jpeg,.png,.gif,.webp"
+            (change)="onHomeAnnouncementImageSelected($event)"
+          />
+
+          <div class="job-home-announcement__split">
+            <div class="job-home-announcement__card">
+              <div class="summary-card__company summary-card__company--announcement">
+                <article class="summary-card__image-guide summary-card__image-guide--inline">
+                  <div class="summary-card__image-guide-head">
+                    <strong>Logo da empresa</strong>
+                    <span>{{ companyLogoGuide }}</span>
+                  </div>
+                  <p>Use uma arte quadrada para manter o logo nítido no card, no painel e nas listas.</p>
+                </article>
+
+                <div class="summary-card__company-top">
+                  <div class="summary-card__company-brand">
+                    <button
+                      class="summary-card__company-logo summary-card__company-logo-button"
+                      type="button"
+                      [class.summary-card__company-logo--image]="!!currentCompanyProfile.logoUrl"
+                      [style.backgroundImage]="currentCompanyProfile.logoUrl ? 'url(' + currentCompanyProfile.logoUrl + ')' : null"
+                      (click)="openCompanyLogoPicker(companyLogoInput)"
+                      (keydown)="onCompanyLogoKeydown($event, companyLogoInput)"
+                      aria-label="Trocar logo da empresa"
+                      title="Trocar logo da empresa"
+                    >{{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}</button>
+
+                    <div class="summary-card__company-meta">
+                      <div class="summary-card__company-name-row">
+                        <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
+                        <span class="summary-card__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
+                      </div>
+                      <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="summary-card__company-description">
+                  <span>{{ currentCompanyProfile.description }}</span>
+                  <span class="summary-card__company-description-dot" aria-hidden="true"></span>
+                  <span>+ de 10.001 funcionários</span>
+                </p>
+
+                <div class="summary-card__company-location-row">
+                  <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+                  <span>{{ jobDraft.location }}</span>
+                </div>
+
+                <small class="summary-card__company-logo-error" *ngIf="companyLogoError">{{ companyLogoError }}</small>
+              </div>
+            </div>
+
+            <div class="job-home-announcement__card job-home-announcement__card--ad">
+              <article class="summary-card__image-guide summary-card__image-guide--inline">
+                <div class="summary-card__image-guide-head">
+                  <strong>Anúncio home</strong>
+                  <span>{{ homeAnnouncementImageGuide }}</span>
+                </div>
+                <p>Essa imagem será o gabarito do card promocional na home e nos destaques visuais.</p>
+              </article>
+
+              <button
+                class="announcement-upload-area"
+                type="button"
+                (click)="openHomeAnnouncementImagePicker(homeAnnouncementImageInput)"
+                aria-label="Escolher imagem do anúncio"
+                title="Escolher imagem do anúncio"
+              >
+                <img
+                  class="announcement-upload-area__image"
+                  *ngIf="currentAnnouncementCardImageUrl"
+                  [src]="currentAnnouncementCardImageUrl"
+                  alt=""
+                  aria-hidden="true"
+                />
+
+                <span class="announcement-upload-area__placeholder" *ngIf="!currentAnnouncementCardImageUrl">
+                  Clique para escolher a imagem
+                </span>
+              </button>
+
+              <small class="summary-card__company-logo-error" *ngIf="homeAnnouncementImageError">{{ homeAnnouncementImageError }}</small>
+            </div>
+          </div>
+        </section>
+
         <section class="job-info-block">
         <h2 class="job-info-block__title">Informações da Vaga</h2>
 
@@ -337,52 +349,6 @@
       </button>
 
       <div class="summary-card__body summary-card__body--tabs">
-        <input
-          #companyLogoInput
-          class="summary-card__company-logo-input"
-          type="file"
-          accept=".jpg,.jpeg,.png,.gif,.webp"
-          (change)="onCompanyLogoSelected($event)"
-        />
-
-        <div class="summary-card__company summary-card__company--top">
-          <div class="summary-card__company-top">
-            <div class="summary-card__company-brand">
-              <button
-                class="summary-card__company-logo summary-card__company-logo-button"
-                type="button"
-                [class.summary-card__company-logo--image]="!!currentCompanyProfile.logoUrl"
-                [style.backgroundImage]="currentCompanyProfile.logoUrl ? 'url(' + currentCompanyProfile.logoUrl + ')' : null"
-                (click)="openCompanyLogoPicker(companyLogoInput)"
-                (keydown)="onCompanyLogoKeydown($event, companyLogoInput)"
-                aria-label="Trocar logo da empresa"
-                title="Trocar logo da empresa"
-              >{{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}</button>
-
-              <div class="summary-card__company-meta">
-                <div class="summary-card__company-name-row">
-                  <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
-                  <span class="summary-card__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
-                </div>
-                <div class="summary-card__company-followers">{{ currentCompanyProfile.followers }}</div>
-              </div>
-            </div>
-          </div>
-
-          <p class="summary-card__company-description">
-            <span>{{ currentCompanyProfile.description }}</span>
-            <span class="summary-card__company-description-dot" aria-hidden="true"></span>
-            <span>+ de 10.001 funcionários</span>
-            <span class="summary-card__company-description-dot" aria-hidden="true"></span>
-            <span class="summary-card__company-description-location">
-              <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
-              <span>{{ jobDraft.location }}</span>
-            </span>
-          </p>
-
-          <small class="summary-card__company-logo-error" *ngIf="companyLogoError">{{ companyLogoError }}</small>
-        </div>
-
         <div class="summary-card__actions">
           <div class="summary-card__tabs" role="tablist" aria-label="Navegação do resumo da vaga">
             <button

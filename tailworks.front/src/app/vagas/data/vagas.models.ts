@@ -38,6 +38,7 @@ export interface VagaPanelDraft {
   title: string;
   company: string;
   companyLogoUrl?: string;
+  homeAnnouncementImageUrl?: string;
   location: string;
   workModel: WorkModel;
   seniority: string;

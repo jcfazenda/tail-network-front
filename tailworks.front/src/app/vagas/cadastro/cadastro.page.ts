@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlcanceRadarComponent } from './alcance-radar/alcance-radar.component';
 import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
 import { Subscription } from 'rxjs';
@@ -19,6 +18,7 @@ type CompanySummaryProfile = {
   linkedinCount: string;
   logoLabel: string;
   logoUrl?: string;
+  monthlyHiringCount?: number;
 };
 
 type CandidateStatusPreview = {
@@ -45,7 +45,7 @@ type ConfettiPiece = {
 @Component({
   standalone: true,
   selector: 'app-cadastro-page',
-  imports: [CommonModule, FormsModule, AlcanceRadarComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cadastro.page.html',
   styleUrls: ['./cadastro.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,7 +72,6 @@ export class CadastroPage implements OnDestroy {
   editingJobStatus: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
   editingJobStatusReason = '';
 
-  readonly configurationProgress = 60;
   readonly previewAderencia = 89;
   readonly previewAvatars = [
     '/assets/avatars/avatar-rafael.png',
@@ -113,12 +112,19 @@ export class CadastroPage implements OnDestroy {
     'Stone',
     'NTT DATA Latan',
     'BRQ Solutions TI',
+    'Amazon BR',
+    'Magazine Luiza',
+    'BTG Pactual',
+    'Bradesco',
+    'Stefanini Brasil',
   ];
   readonly locationOptions = [
     'Rio de Janeiro - RJ',
     'São Paulo - SP',
     'Remoto - Brasil',
   ];
+  readonly companyLogoGuide = '512 x 512 px';
+  readonly homeAnnouncementImageGuide = '1200 x 675 px';
   readonly acceptedCompanyLogoMimeTypes = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp'];
   readonly maxCompanyLogoSizeBytes = 5 * 1024 * 1024;
   readonly workModels: WorkModel[] = ['Remoto', 'Hibrido', 'Presencial'];
@@ -174,6 +180,7 @@ export class CadastroPage implements OnDestroy {
       linkedinCount: '5.248.921 no LinkedIn',
       logoLabel: 'it',
       logoUrl: '/assets/images/logo-itau.png',
+      monthlyHiringCount: 43,
     },
     Nubank: {
       name: 'Nubank',
@@ -181,6 +188,7 @@ export class CadastroPage implements OnDestroy {
       description: 'Tecnologia financeira e meios de pagamento',
       linkedinCount: '2.304.114 no LinkedIn',
       logoLabel: 'nu',
+      monthlyHiringCount: 31,
     },
     Stone: {
       name: 'Stone',
@@ -188,6 +196,47 @@ export class CadastroPage implements OnDestroy {
       description: 'Serviços financeiros e tecnologia para negocios',
       linkedinCount: '1.128.440 no LinkedIn',
       logoLabel: 'st',
+      monthlyHiringCount: 24,
+    },
+    'Amazon BR': {
+      name: 'Amazon BR',
+      followers: '3.102.000 seguidores',
+      description: 'Cloud, marketplace e serviços digitais',
+      linkedinCount: '3.102.000 no LinkedIn',
+      logoLabel: 'am',
+      monthlyHiringCount: 37,
+    },
+    'Magazine Luiza': {
+      name: 'Magazine Luiza',
+      followers: '2.780.000 seguidores',
+      description: 'Varejo digital, logística e tecnologia',
+      linkedinCount: '2.780.000 no LinkedIn',
+      logoLabel: 'ml',
+      monthlyHiringCount: 28,
+    },
+    'BTG Pactual': {
+      name: 'BTG Pactual',
+      followers: '1.964.000 seguidores',
+      description: 'Banco de investimento e tecnologia financeira',
+      linkedinCount: '1.964.000 no LinkedIn',
+      logoLabel: 'bt',
+      monthlyHiringCount: 22,
+    },
+    Bradesco: {
+      name: 'Bradesco',
+      followers: '4.118.000 seguidores',
+      description: 'Serviços financeiros, seguros e canais digitais',
+      linkedinCount: '4.118.000 no LinkedIn',
+      logoLabel: 'br',
+      monthlyHiringCount: 26,
+    },
+    'Stefanini Brasil': {
+      name: 'Stefanini Brasil',
+      followers: '1.106.000 seguidores',
+      description: 'Consultoria, tecnologia e transformação digital',
+      linkedinCount: '1.106.000 no LinkedIn',
+      logoLabel: 'sb',
+      monthlyHiringCount: 19,
     },
     'NTT DATA Latan': {
       name: 'NTT DATA Latan',
@@ -195,6 +244,7 @@ export class CadastroPage implements OnDestroy {
       description: 'Consultoria, tecnologia e transformação digital',
       linkedinCount: '412.000 no LinkedIn',
       logoLabel: 'nt',
+      monthlyHiringCount: 15,
     },
     'BRQ Solutions TI': {
       name: 'BRQ Solutions TI',
@@ -202,12 +252,12 @@ export class CadastroPage implements OnDestroy {
       description: 'Tecnologia, produtos digitais e serviços corporativos',
       linkedinCount: '286.000 no LinkedIn',
       logoLabel: 'br',
+      monthlyHiringCount: 15,
     },
   };
   statusStageIndex = 0;
   expandedStatusPreviewIndex = 0;
   summaryPanelOpen = true;
-  previewCardFlipped = false;
   contractDecision: ContractDecision = null;
   documentsSubmittedByTalent = false;
   documentsSent = false;
@@ -564,10 +614,6 @@ export class CadastroPage implements OnDestroy {
     this.summaryPanelOpen = true;
   }
 
-  togglePreviewCardFace(): void {
-    this.previewCardFlipped = !this.previewCardFlipped;
-  }
-
   startSummaryPanelDrag(event: PointerEvent): void {
     if (event.pointerType && event.pointerType !== 'mouse') {
       return;
@@ -714,6 +760,7 @@ export class CadastroPage implements OnDestroy {
     title: 'Backend .NET Sênior',
     company: 'Banco Itaú',
     companyLogoUrl: '',
+    homeAnnouncementImageUrl: '',
     location: 'Rio de Janeiro - RJ',
     workModel: 'Remoto',
     seniority: 'Senior',
@@ -731,6 +778,11 @@ export class CadastroPage implements OnDestroy {
     'Banco Itaú': true,
     Nubank: false,
     Stone: false,
+    'Amazon BR': false,
+    'Magazine Luiza': false,
+    'BTG Pactual': false,
+    Bradesco: false,
+    'Stefanini Brasil': false,
   };
   activeSummaryView: SummaryView = 'details';
   activeFrontResponsibilityIndex = 0;
@@ -744,6 +796,7 @@ export class CadastroPage implements OnDestroy {
   isResponsibilityModalOpen = false;
   isJobActionsModalOpen = false;
   companyLogoError = '';
+  homeAnnouncementImageError = '';
   editingResponsibilitySectionId: string | null = null;
   jobActionsStatusDraft: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
   jobActionsStatusReasonDraft = '';
@@ -771,23 +824,6 @@ export class CadastroPage implements OnDestroy {
 
   get editingJobStatusLabel(): string {
     return this.editableJobStatuses.find((item) => item.value === this.editingJobStatus)?.label ?? 'Ativa';
-  }
-
-  get previewCardOfferLine(): string {
-    const segments: string[] = [this.previewContractType];
-
-    if (this.showSalaryRangeInCard && this.hasSalaryRangeValue) {
-      segments.push(this.contractSalaryDisplay);
-    }
-
-    const hasBenefits = this.selectedBenefits.length > 0;
-    let line = segments.join(' - ');
-
-    if (hasBenefits) {
-      line = `${line} + Beneficios`;
-    }
-
-    return line;
   }
 
   get activeSummaryPageId(): SummaryPageId {
@@ -934,6 +970,14 @@ export class CadastroPage implements OnDestroy {
     };
   }
 
+  get currentAnnouncementCardImageUrl(): string {
+    return this.jobDraft.homeAnnouncementImageUrl?.trim() || this.currentCompanyProfile.logoUrl?.trim() || '';
+  }
+
+  get currentAnnouncementCardHiringCount(): number {
+    return this.currentCompanyProfile.monthlyHiringCount ?? 18;
+  }
+
   get isFollowingCurrentCompany(): boolean {
     return this.followingCompanies[this.currentCompanyProfile.name] ?? false;
   }
@@ -963,6 +1007,10 @@ export class CadastroPage implements OnDestroy {
     input.click();
   }
 
+  openHomeAnnouncementImagePicker(input: HTMLInputElement): void {
+    input.click();
+  }
+
   onCompanyLogoSelected(event: Event): void {
     const input = event.target as HTMLInputElement | null;
     this.handleCompanyLogoFile(input?.files?.[0] ?? null);
@@ -979,6 +1027,24 @@ export class CadastroPage implements OnDestroy {
 
     event.preventDefault();
     this.openCompanyLogoPicker(input);
+  }
+
+  onHomeAnnouncementImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.handleHomeAnnouncementImageFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  onHomeAnnouncementImageKeydown(event: KeyboardEvent, input: HTMLInputElement): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.openHomeAnnouncementImagePicker(input);
   }
 
   selectWorkModel(workModel: WorkModel): void {
@@ -1458,6 +1524,7 @@ export class CadastroPage implements OnDestroy {
       title: job.title,
       company: job.company,
       companyLogoUrl: job.companyLogoUrl ?? '',
+      homeAnnouncementImageUrl: job.homeAnnouncementImageUrl ?? '',
       location: job.location,
       workModel: job.workModel,
       seniority: job.seniority,
@@ -1610,6 +1677,36 @@ export class CadastroPage implements OnDestroy {
     reader.onload = () => {
       this.jobDraft.companyLogoUrl = typeof reader.result === 'string' ? reader.result : '';
       this.companyLogoError = '';
+      this.cdr.markForCheck();
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  private handleHomeAnnouncementImageFile(file: File | null): void {
+    this.homeAnnouncementImageError = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.isAcceptedCompanyLogoFile(file)) {
+      this.homeAnnouncementImageError = 'Use JPG, PNG, GIF ou WEBP.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (file.size > this.maxCompanyLogoSizeBytes) {
+      this.homeAnnouncementImageError = 'A imagem deve ter no máximo 5MB.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.jobDraft.homeAnnouncementImageUrl = typeof reader.result === 'string' ? reader.result : '';
+      this.homeAnnouncementImageError = '';
       this.cdr.markForCheck();
     };
 
