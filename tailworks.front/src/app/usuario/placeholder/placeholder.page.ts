@@ -10,6 +10,11 @@ import { EcosystemPanelService } from '../ecosystem-panel.service';
 type CandidateView = 'applications' | 'radar' | 'declined';
 type WorkModelFilter = 'all' | WorkModel;
 type CandidatePanelView = 'details' | 'benefits' | 'status';
+type OverviewShellView = 'applications' | 'radar' | 'process';
+type ProcessCardStep = {
+  label: string;
+  state: 'done' | 'active' | 'upcoming';
+};
 type CandidateStack = {
   name: string;
   knowledge: number;
@@ -61,6 +66,7 @@ type CompanySummaryProfile = {
   linkedinCount: string;
   logoLabel: string;
   logoUrl?: string;
+  monthlyHiringCount?: number;
 };
 
 type CandidateBasicProfile = {
@@ -154,6 +160,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       linkedinCount: '5.248.921 no LinkedIn',
       logoLabel: 'it',
       logoUrl: '/assets/images/logo-itau.png',
+      monthlyHiringCount: 43,
     },
     Nubank: {
       name: 'Nubank',
@@ -161,6 +168,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       description: 'Tecnologia financeira e meios de pagamento',
       linkedinCount: '2.304.114 no LinkedIn',
       logoLabel: 'nu',
+      monthlyHiringCount: 31,
     },
     Stone: {
       name: 'Stone',
@@ -168,6 +176,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       description: 'Serviços financeiros e tecnologia para negocios',
       linkedinCount: '1.128.440 no LinkedIn',
       logoLabel: 'st',
+      monthlyHiringCount: 24,
     },
   };
 
@@ -175,9 +184,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   workModelFilter: WorkModelFilter = 'all';
   advancedFilterOpen = false;
   activeCandidatePanelView: CandidatePanelView = 'details';
+  activeOverviewShellView: OverviewShellView = 'process';
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
   topStacksDragging = false;
+  processCardsDragging = false;
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
   talentName = 'Julio Fazenda';
@@ -195,6 +206,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   selectedJobDocumentsConsentAccepted = false;
   candidateConfettiPieces: ConfettiPiece[] = [];
   candidateConfettiActive = false;
+  private processCardsPointerId: number | null = null;
+  private processCardsPointerStartX = 0;
+  private processCardsPointerStartScrollLeft = 0;
+  private processCardsSuppressClick = false;
+  private processCardsSuppressClickTimer: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
     this.restoreTalentDraft();
@@ -281,6 +297,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clearCandidateCelebrationTimer();
+    this.clearProcessCardsSuppressClickTimer();
     this.subscriptions.unsubscribe();
   }
 
@@ -387,11 +404,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get applicationsCount(): number {
-    return this.activeTalentJobs.filter((job) => this.isApplicationsJob(job)).length;
+    return this.applicationsShellJobs.length;
   }
 
   get radarCount(): number {
-    return this.activeTalentJobs.filter((job) => this.isRadarJob(job)).length;
+    return this.radarShellJobs.length;
   }
 
   get declinedCount(): number {
@@ -423,8 +440,36 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return baseJobs.filter((job) => job.workModel === this.workModelFilter);
   }
 
+  get applicationsShellJobs(): MockJobRecord[] {
+    return this.activeTalentJobs.filter((job) => this.getTalentStage(job) === 'candidatura');
+  }
+
+  get radarShellJobs(): MockJobRecord[] {
+    return this.activeTalentJobs.filter((job) => this.isRadarJob(job));
+  }
+
+  get inProcessShellJobs(): MockJobRecord[] {
+    return this.activeTalentJobs.filter((job) => this.isOverviewProcessJob(job));
+  }
+
+  get overviewShellJobs(): MockJobRecord[] {
+    switch (this.activeOverviewShellView) {
+      case 'applications':
+        return this.applicationsShellJobs;
+      case 'radar':
+        return this.radarShellJobs;
+      case 'process':
+      default:
+        return this.inProcessShellJobs;
+    }
+  }
+
   get processJobs(): MockJobRecord[] {
     return this.activeTalentJobs.filter((job) => this.isApplicationsJob(job));
+  }
+
+  get processInProgressCount(): number {
+    return this.inProcessShellJobs.length;
   }
 
   get processJobGroups(): ProcessJobGroup[] {
@@ -454,7 +499,135 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get orderedProcessJobs(): MockJobRecord[] {
-    return this.processJobGroups.flatMap((group) => group.jobs);
+    const stageOrder = new Map<string, number>([
+      ['Validando documentos', 0],
+      ['Aceito', 1],
+      ['Contratação solicitada', 2],
+      ['Em processo', 3],
+      ['Candidatura enviada', 4],
+      ['Contratado', 5],
+      ['Ficou pra próxima', 6],
+      ['Candidatura cancelada', 7],
+      ['Talento no radar', 8],
+      ['Escondido', 9],
+    ]);
+
+    return [...this.overviewShellJobs].sort((left, right) => {
+      const stageDiff = (stageOrder.get(this.jobStatusLabel(left)) ?? 999) - (stageOrder.get(this.jobStatusLabel(right)) ?? 999);
+      if (stageDiff !== 0) {
+        return stageDiff;
+      }
+
+      if (right.match !== left.match) {
+        return right.match - left.match;
+      }
+
+      return left.title.localeCompare(right.title, 'pt-BR');
+    });
+  }
+
+  get overviewShellEmptyMessage(): string {
+    switch (this.activeOverviewShellView) {
+      case 'applications':
+        return 'Nenhuma candidatura enviada por enquanto.';
+      case 'radar':
+        return 'Nenhuma vaga disponível no seu radar agora.';
+      case 'process':
+      default:
+        return 'Nenhum processo ativo no momento.';
+    }
+  }
+
+  processCompanyFollowers(job: MockJobRecord): string {
+    return this.processCompanyMonthlyHiringLabel(job);
+  }
+
+  processCompanyLogoUrl(job: MockJobRecord): string {
+    return job.companyLogoUrl ?? this.companyProfiles[job.company]?.logoUrl ?? '';
+  }
+
+  processCompanyLogoLabel(job: MockJobRecord): string {
+    return (this.companyProfiles[job.company]?.logoLabel ?? job.company.slice(0, 2)).toUpperCase();
+  }
+
+  processCardSeniority(job: MockJobRecord): string {
+    const normalizedTitle = job.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+    if (normalizedTitle.includes('senior')) {
+      return 'Senior';
+    }
+
+    if (normalizedTitle.includes('pleno')) {
+      return 'Pleno';
+    }
+
+    if (normalizedTitle.includes('junior')) {
+      return 'Junior';
+    }
+
+    return 'Especialista';
+  }
+
+  processCardWorkModel(job: MockJobRecord): string {
+    if (job.workModel === 'Remoto') {
+      return 'HOME';
+    }
+
+    return this.workModelLabel(job.workModel).toUpperCase();
+  }
+
+  processCardLocation(job: MockJobRecord): string {
+    return job.location.replace(/\s*-\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  private processCompanyMonthlyHiringLabel(job: MockJobRecord): string {
+    const monthlyHiringCount = this.companyProfiles[job.company]?.monthlyHiringCount ?? Math.max(8, job.radarCount);
+    return `${monthlyHiringCount} contratações este mês`;
+  }
+
+  processCardSteps(job: MockJobRecord): ProcessCardStep[] {
+    const stage = this.getTalentStage(job);
+
+    switch (stage) {
+      case 'candidatura':
+        return [
+          { label: 'Candidatura enviada', state: 'active' },
+          { label: 'Recruiter movimentou', state: 'upcoming' },
+          { label: 'Entrevista agendada', state: 'upcoming' },
+        ];
+      case 'processo':
+        return [
+          { label: 'Candidatura enviada', state: 'done' },
+          { label: 'Recruiter movimentou', state: 'active' },
+          { label: 'Entrevista agendada', state: 'upcoming' },
+        ];
+      case 'tecnica':
+        return [
+          { label: 'Recruiter movimentou', state: 'done' },
+          { label: 'Entrevista agendada', state: 'active' },
+          { label: 'Entrevista finalizada', state: 'upcoming' },
+        ];
+      case 'aguardando':
+        return [
+          { label: 'Entrevista agendada', state: 'done' },
+          { label: 'Entrevista finalizada', state: 'done' },
+          { label: 'Análise', state: 'active' },
+        ];
+      case 'aceito':
+      case 'documentacao':
+      case 'contratado':
+        return [
+          { label: 'Entrevista agendada', state: 'done' },
+          { label: 'Entrevista finalizada', state: 'done' },
+          { label: 'Análise', state: 'done' },
+        ];
+      default:
+        return [
+          { label: 'Candidatura enviada', state: 'upcoming' },
+          { label: 'Recruiter movimentou', state: 'upcoming' },
+          { label: 'Entrevista agendada', state: 'upcoming' },
+        ];
+    }
   }
 
   radarWorkModelCount(value: WorkModel): number {
@@ -535,6 +708,69 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.topStacksDragging = false;
   }
 
+  processCardsHandlePointerDown(event: PointerEvent): void {
+    const rail = event.currentTarget as HTMLElement | null;
+    if (!rail) {
+      return;
+    }
+
+    this.processCardsPointerId = event.pointerId;
+    this.processCardsPointerStartX = event.clientX;
+    this.processCardsPointerStartScrollLeft = rail.scrollLeft;
+    this.processCardsDragging = false;
+    rail.setPointerCapture(event.pointerId);
+  }
+
+  processCardsHandlePointerMove(event: PointerEvent): void {
+    if (this.processCardsPointerId !== event.pointerId) {
+      return;
+    }
+
+    const rail = event.currentTarget as HTMLElement | null;
+    if (!rail) {
+      return;
+    }
+
+    const delta = event.clientX - this.processCardsPointerStartX;
+    if (Math.abs(delta) > 3) {
+      this.processCardsDragging = true;
+    }
+
+    rail.scrollLeft = this.processCardsPointerStartScrollLeft - delta;
+  }
+
+  processCardsHandlePointerUp(event: PointerEvent): void {
+    if (this.processCardsPointerId !== event.pointerId) {
+      return;
+    }
+
+    const rail = event.currentTarget as HTMLElement | null;
+    if (rail?.hasPointerCapture(event.pointerId)) {
+      rail.releasePointerCapture(event.pointerId);
+    }
+
+    if (this.processCardsDragging) {
+      this.processCardsSuppressClick = true;
+      this.clearProcessCardsSuppressClickTimer();
+      this.processCardsSuppressClickTimer = setTimeout(() => {
+        this.processCardsSuppressClick = false;
+      }, 80);
+    }
+
+    this.processCardsPointerId = null;
+    this.processCardsDragging = false;
+  }
+
+  handleProcessCardClick(jobId: string, event: Event): void {
+    if (this.processCardsSuppressClick) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    this.openJobPanel(jobId);
+  }
+
   private buildSmoothChartPath(points: Array<{ x: number; y: number }>): string {
     if (!points.length) {
       return '';
@@ -558,6 +794,15 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     const last = points[points.length - 1];
     path += ` T ${last.x} ${last.y}`;
     return path;
+  }
+
+  private clearProcessCardsSuppressClickTimer(): void {
+    if (!this.processCardsSuppressClickTimer) {
+      return;
+    }
+
+    clearTimeout(this.processCardsSuppressClickTimer);
+    this.processCardsSuppressClickTimer = null;
   }
 
   get emptyStateMessage(): string {
@@ -598,12 +843,18 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       };
     }
 
-    return this.companyProfiles[job.company] ?? {
+    const profile = this.companyProfiles[job.company] ?? {
       name: job.company,
       followers: '120.000 seguidores',
       description: 'Empresa em crescimento',
       linkedinCount: '120.000 no LinkedIn',
       logoLabel: job.company.slice(0, 2).toLowerCase(),
+    };
+
+    return {
+      ...profile,
+      followers: this.processCompanyMonthlyHiringLabel(job),
+      logoUrl: job.companyLogoUrl || profile.logoUrl,
     };
   }
 
@@ -936,6 +1187,10 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.advancedFilterOpen = false;
   }
 
+  setOverviewShellView(view: OverviewShellView): void {
+    this.activeOverviewShellView = view;
+  }
+
   get workModelFilterLabel(): string {
     return this.workModelFilter === 'all' ? 'Todos os formatos' : this.workModelLabel(this.workModelFilter);
   }
@@ -1218,6 +1473,16 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private isDeclinedJob(job: MockJobRecord): boolean {
     const stage = this.getTalentStage(job);
     return stage === 'proxima' || stage === 'cancelado';
+  }
+
+  private isOverviewProcessJob(job: MockJobRecord): boolean {
+    const stage = this.getTalentStage(job);
+    return stage === 'processo'
+      || stage === 'tecnica'
+      || stage === 'aguardando'
+      || stage === 'aceito'
+      || stage === 'documentacao'
+      || stage === 'contratado';
   }
 
   private isTalentStatusStepCompleted(index: number, stage: CandidateStage | undefined): boolean {

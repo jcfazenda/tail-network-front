@@ -3,6 +3,142 @@
     <section class="candidate-stack-summary" *ngIf="talentStacks.length">
       <div class="candidate-stack-summary__card">
         <div class="candidate-stack-summary__body">
+          <div class="candidate-stack-summary__top-shell">
+            <div class="candidate-stack-summary__top-shell-bar">
+              <div class="candidate-stack-summary__top-shell-filters" role="tablist" aria-label="Resumo de processos">
+                <button
+                  class="candidate-stack-summary__top-shell-chip"
+                  type="button"
+                  [class.candidate-stack-summary__top-shell-chip--active]="activeOverviewShellView === 'applications'"
+                  (click)="setOverviewShellView('applications')"
+                >
+                  <span>Candidaturas</span>
+                  <strong>{{ applicationsCount }}</strong>
+                </button>
+
+                <button
+                  class="candidate-stack-summary__top-shell-chip"
+                  type="button"
+                  [class.candidate-stack-summary__top-shell-chip--active]="activeOverviewShellView === 'radar'"
+                  (click)="setOverviewShellView('radar')"
+                >
+                  <span>No meu Radar</span>
+                  <strong>{{ radarCount }}</strong>
+                </button>
+
+                <button
+                  class="candidate-stack-summary__top-shell-chip"
+                  type="button"
+                  [class.candidate-stack-summary__top-shell-chip--active]="activeOverviewShellView === 'process'"
+                  (click)="setOverviewShellView('process')"
+                >
+                  <span>Em Processo</span>
+                  <strong>{{ processInProgressCount }}</strong>
+                </button>
+              </div>
+
+              <button class="candidate-stack-summary__top-shell-sort" type="button">
+                <span>Ordenar:</span>
+                <strong>Mais Recentes</strong>
+              </button>
+            </div>
+
+            <section class="candidate-stack-summary__processes" *ngIf="overviewShellJobs.length; else overviewShellEmpty">
+              <div
+                class="candidate-stack-summary__processes-list"
+                [class.candidate-stack-summary__processes-list--dragging]="processCardsDragging"
+                (pointerdown)="processCardsHandlePointerDown($event)"
+                (pointermove)="processCardsHandlePointerMove($event)"
+                (pointerup)="processCardsHandlePointerUp($event)"
+                (pointercancel)="processCardsHandlePointerUp($event)"
+                (pointerleave)="processCardsHandlePointerUp($event)"
+              >
+                <article class="candidate-stack-summary__process-card" *ngFor="let job of orderedProcessJobs">
+                  <div
+                    class="candidate-stack-summary__process-surface"
+                    role="button"
+                    tabindex="0"
+                    (click)="handleProcessCardClick(job.id, $event)"
+                    (keydown.enter)="openJobPanel(job.id)"
+                    (keydown.space)="openJobPanel(job.id); $event.preventDefault()"
+                  >
+                    <div class="candidate-stack-summary__process-header">
+                      <div class="candidate-stack-summary__process-company">
+                        <div
+                          class="candidate-stack-summary__process-company-logo"
+                          [class.candidate-stack-summary__process-company-logo--image]="!!processCompanyLogoUrl(job)"
+                          [style.backgroundImage]="processCompanyLogoUrl(job) ? 'url(' + processCompanyLogoUrl(job) + ')' : null"
+                          aria-hidden="true"
+                        >
+                          <span *ngIf="!processCompanyLogoUrl(job)">{{ processCompanyLogoLabel(job) }}</span>
+                        </div>
+
+                        <div class="candidate-stack-summary__process-company-copy">
+                          <strong>{{ job.company }}</strong>
+                          <span>{{ processCompanyFollowers(job) }}</span>
+                        </div>
+                      </div>
+
+                      <div class="candidate-stack-summary__process-top-meta">
+                        <span class="candidate-stack-summary__process-top-meta-line">
+                          {{ processCardWorkModel(job) }}
+                        </span>
+                        <span class="candidate-stack-summary__process-top-meta-line" *ngIf="jobCardSalary(job) as salary">
+                          {{ salary }}
+                        </span>
+                      </div>
+
+                    </div>
+
+                    <div class="candidate-stack-summary__process-meta-strip">
+                      <span>{{ processCardLocation(job) }}</span>
+                    </div>
+
+                    <div class="candidate-stack-summary__process-title-row">
+                      <h3 class="candidate-stack-summary__process-title">{{ job.title }}</h3>
+                    </div>
+
+                    <div class="candidate-stack-summary__process-journey">
+                      <div class="candidate-stack-summary__process-steps">
+                        <ng-container *ngFor="let step of processCardSteps(job); let last = last">
+                          <span
+                            class="candidate-stack-summary__process-step"
+                            [class.candidate-stack-summary__process-step--done]="step.state === 'done'"
+                            [class.candidate-stack-summary__process-step--active]="step.state === 'active'"
+                          >
+                            <span class="candidate-stack-summary__process-step-badge">
+                              <span
+                                class="material-symbols-rounded"
+                                aria-hidden="true"
+                              >{{ step.state === 'done' ? 'check' : step.state === 'active' ? 'schedule' : 'chevron_right' }}</span>
+                            </span>
+                            <span class="candidate-stack-summary__process-step-label">{{ step.label }}</span>
+                          </span>
+                          <span class="candidate-stack-summary__process-step-line" *ngIf="!last"></span>
+                        </ng-container>
+                      </div>
+                    </div>
+
+                    <div class="candidate-stack-summary__process-match">
+                      <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
+                        <span
+                          class="candidate-stack-summary__process-match-fill"
+                          [style.width.%]="job.match"
+                          [style.background]="processJobBarFill(job)"
+                        ></span>
+                      </span>
+                      <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <ng-template #overviewShellEmpty>
+              <div class="empty candidate-stack-summary__processes-empty">{{ overviewShellEmptyMessage }}</div>
+            </ng-template>
+          </div>
+
           <div class="candidate-stack-summary__slot">
             <section class="candidate-week-radar" aria-label="Radar da semana">
               <header class="candidate-week-radar__head">
@@ -81,159 +217,91 @@
             </div>
           </div>
 
-          <section class="candidate-hiring-trend" aria-label="Contratações por mês">
-            <header class="candidate-hiring-trend__head">
-              <h4>Contratações por mês</h4>
-              <button class="candidate-hiring-trend__period" type="button">
-                <span>Anual</span>
-                <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
-              </button>
-            </header>
+        </div>
+      </div>
+    </section>
 
-            <div class="candidate-hiring-trend__layout">
-              <div class="candidate-hiring-trend__scale" aria-hidden="true">
-                <span *ngFor="let value of hiringTrendScaleValues">{{ value }}</span>
-              </div>
+    <section class="candidate-hiring-trend" aria-label="Contratações por mês">
+      <header class="candidate-hiring-trend__head">
+        <h4>Contratações por mês</h4>
+        <button class="candidate-hiring-trend__period" type="button">
+          <span>Anual</span>
+          <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+        </button>
+      </header>
 
-              <div class="candidate-hiring-trend__plot">
-                <svg
-                  class="candidate-hiring-trend__svg"
-                  viewBox="0 0 820 280"
-                  preserveAspectRatio="none"
-                  role="img"
-                  aria-label="Evolução de contratações por mês"
-                >
-                  <defs>
-                    <linearGradient id="candidateHiringTrendFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#8a8a8a" stop-opacity="0.26"></stop>
-                      <stop offset="100%" stop-color="#8a8a8a" stop-opacity="0.03"></stop>
-                    </linearGradient>
-                  </defs>
+      <div class="candidate-hiring-trend__layout">
+        <div class="candidate-hiring-trend__scale" aria-hidden="true">
+          <span *ngFor="let value of hiringTrendScaleValues">{{ value }}</span>
+        </div>
 
-                  <line
-                    *ngFor="let value of hiringTrendScaleValues"
-                    class="candidate-hiring-trend__grid-line"
-                    x1="10"
-                    x2="796"
-                    [attr.y1]="hiringTrendGridY(value)"
-                    [attr.y2]="hiringTrendGridY(value)"
-                  ></line>
+        <div class="candidate-hiring-trend__plot">
+          <svg
+            class="candidate-hiring-trend__svg"
+            viewBox="0 0 820 280"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Evolução de contratações por mês"
+          >
+            <defs>
+              <linearGradient id="candidateHiringTrendFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#8a8a8a" stop-opacity="0.26"></stop>
+                <stop offset="100%" stop-color="#8a8a8a" stop-opacity="0.03"></stop>
+              </linearGradient>
+            </defs>
 
-                  <path class="candidate-hiring-trend__area" [attr.d]="hiringTrendAreaPath"></path>
-                  <path class="candidate-hiring-trend__line" [attr.d]="hiringTrendLinePath"></path>
+            <line
+              *ngFor="let value of hiringTrendScaleValues"
+              class="candidate-hiring-trend__grid-line"
+              x1="10"
+              x2="796"
+              [attr.y1]="hiringTrendGridY(value)"
+              [attr.y2]="hiringTrendGridY(value)"
+            ></line>
 
-                  <ng-container *ngIf="hiringTrendActivePoint as activePoint">
-                    <line
-                      class="candidate-hiring-trend__focus-line"
-                      [attr.x1]="activePoint.x"
-                      [attr.x2]="activePoint.x"
-                      [attr.y1]="activePoint.y"
-                      y2="254"
-                    ></line>
-                  </ng-container>
-                </svg>
+            <path class="candidate-hiring-trend__area" [attr.d]="hiringTrendAreaPath"></path>
+            <path class="candidate-hiring-trend__line" [attr.d]="hiringTrendLinePath"></path>
 
-                <div
-                  class="candidate-hiring-trend__focus-marker"
-                  *ngIf="hiringTrendActivePoint as activePoint"
-                  [style.left.%]="activePoint.xPercent"
-                  [style.top.%]="activePoint.yPercent"
-                  aria-hidden="true"
-                >
-                  <span class="candidate-hiring-trend__focus-marker-ring"></span>
-                  <span class="candidate-hiring-trend__focus-marker-dot"></span>
-                </div>
+            <ng-container *ngIf="hiringTrendActivePoint as activePoint">
+              <line
+                class="candidate-hiring-trend__focus-line"
+                [attr.x1]="activePoint.x"
+                [attr.x2]="activePoint.x"
+                [attr.y1]="activePoint.y"
+                y2="254"
+              ></line>
+            </ng-container>
+          </svg>
 
-                <div
-                  class="candidate-hiring-trend__tooltip"
-                  *ngIf="hiringTrendActivePoint as activePoint"
-                  [style.left.%]="activePoint.xPercent"
-                  [style.top.%]="activePoint.yPercent"
-                >
-                  <strong>{{ activePoint.fullMonth }} 2026</strong>
-                  <span>Contratações <b>{{ activePoint.value }}</b></span>
-                </div>
+          <div
+            class="candidate-hiring-trend__focus-marker"
+            *ngIf="hiringTrendActivePoint as activePoint"
+            [style.left.%]="activePoint.xPercent"
+            [style.top.%]="activePoint.yPercent"
+            aria-hidden="true"
+          >
+            <span class="candidate-hiring-trend__focus-marker-ring"></span>
+            <span class="candidate-hiring-trend__focus-marker-dot"></span>
+          </div>
 
-                <div class="candidate-hiring-trend__months" aria-hidden="true">
-                  <span
-                    *ngFor="let point of hiringTrendChartPoints"
-                    [class.candidate-hiring-trend__month--active]="point.month === hiringTrendActivePoint?.month"
-                  >
-                    {{ point.month }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
+          <div
+            class="candidate-hiring-trend__tooltip"
+            *ngIf="hiringTrendActivePoint as activePoint"
+            [style.left.%]="activePoint.xPercent"
+            [style.top.%]="activePoint.yPercent"
+          >
+            <strong>{{ activePoint.fullMonth }} 2026</strong>
+            <span>Contratações <b>{{ activePoint.value }}</b></span>
+          </div>
 
-          <section class="candidate-stack-summary__processes" *ngIf="processJobs.length">
-            <div class="candidate-stack-summary__processes-list">
-              <article class="candidate-stack-summary__process-card job-card" *ngFor="let job of orderedProcessJobs">
-                <div
-                  class="job-card__surface job-card__surface--interactive candidate-stack-summary__process-surface"
-                  role="button"
-                  tabindex="0"
-                  (click)="openJobPanel(job.id)"
-                  (keydown.enter)="openJobPanel(job.id)"
-                  (keydown.space)="openJobPanel(job.id); $event.preventDefault()"
-                >
-                  <div class="job-card__main">
-                    <div class="job-card__creator">
-                      <span
-                        class="job-card__creator-avatar"
-                        [style.backgroundImage]="'url(' + recruiterAvatar + ')'"
-                        aria-hidden="true"
-                      ></span>
-
-                      <div class="job-card__creator-copy">
-                        <div class="job-card__creator-heading">
-                          <div class="job-card__creator-name">
-                            <strong>{{ recruiterName }}</strong>
-                            <span
-                              class="job-card__creator-verified material-symbols-rounded"
-                              aria-label="Perfil verificado"
-                              title="Perfil verificado"
-                            >
-                              verified
-                            </span>
-                          </div>
-
-                          <span class="job-card__creator-company">{{ job.company }}</span>
-                        </div>
-                        <div class="job-card__creator-meta">
-                          <span class="job-card__creator-role">{{ recruiterRole }}</span>
-                          <span class="job-card__creator-salary" *ngIf="jobCardSalary(job) as salary">{{ salary }}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="job-card__meta">
-                      <span>{{ job.location }}</span>
-                    </div>
-
-                    <div class="job-card__title-row candidate-stack-summary__process-title-row">
-                      <h3 class="job-card__title">{{ job.title }}</h3>
-                    </div>
-
-                    <div class="job-card__footer candidate-stack-summary__process-footer">
-                      <div class="job-card__fit">
-                        <span class="job-card__fit-bar" aria-hidden="true">
-                          <span
-                            class="job-card__fit-bar-fill"
-                            [style.width.%]="job.match"
-                            [style.background]="processJobBarFill(job)"
-                          ></span>
-                        </span>
-                        <span class="job-card__fit-summary">
-                          <span class="job-card__fit-value">{{ job.match }}%</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </section>
+          <div class="candidate-hiring-trend__months" aria-hidden="true">
+            <span
+              *ngFor="let point of hiringTrendChartPoints"
+              [class.candidate-hiring-trend__month--active]="point.month === hiringTrendActivePoint?.month"
+            >
+              {{ point.month }}
+            </span>
+          </div>
         </div>
       </div>
     </section>

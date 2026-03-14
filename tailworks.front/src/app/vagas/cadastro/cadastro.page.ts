@@ -111,12 +111,16 @@ export class CadastroPage implements OnDestroy {
     'Banco Itaú',
     'Nubank',
     'Stone',
+    'NTT DATA Latan',
+    'BRQ Solutions TI',
   ];
   readonly locationOptions = [
     'Rio de Janeiro - RJ',
     'São Paulo - SP',
     'Remoto - Brasil',
   ];
+  readonly acceptedCompanyLogoMimeTypes = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp'];
+  readonly maxCompanyLogoSizeBytes = 5 * 1024 * 1024;
   readonly workModels: WorkModel[] = ['Remoto', 'Hibrido', 'Presencial'];
   readonly contractTypes: ContractType[] = ['CLT', 'PJ', 'Freelancer'];
   readonly editableJobStatuses: Array<{ value: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas'; label: string }> = [
@@ -184,6 +188,20 @@ export class CadastroPage implements OnDestroy {
       description: 'Serviços financeiros e tecnologia para negocios',
       linkedinCount: '1.128.440 no LinkedIn',
       logoLabel: 'st',
+    },
+    'NTT DATA Latan': {
+      name: 'NTT DATA Latan',
+      followers: '412.000 seguidores',
+      description: 'Consultoria, tecnologia e transformação digital',
+      linkedinCount: '412.000 no LinkedIn',
+      logoLabel: 'nt',
+    },
+    'BRQ Solutions TI': {
+      name: 'BRQ Solutions TI',
+      followers: '286.000 seguidores',
+      description: 'Tecnologia, produtos digitais e serviços corporativos',
+      linkedinCount: '286.000 no LinkedIn',
+      logoLabel: 'br',
     },
   };
   statusStageIndex = 0;
@@ -695,6 +713,7 @@ export class CadastroPage implements OnDestroy {
   readonly jobDraft: VagaPanelDraft = {
     title: 'Backend .NET Sênior',
     company: 'Banco Itaú',
+    companyLogoUrl: '',
     location: 'Rio de Janeiro - RJ',
     workModel: 'Remoto',
     seniority: 'Senior',
@@ -724,6 +743,7 @@ export class CadastroPage implements OnDestroy {
   editingTechStackIndex: number | null = null;
   isResponsibilityModalOpen = false;
   isJobActionsModalOpen = false;
+  companyLogoError = '';
   editingResponsibilitySectionId: string | null = null;
   jobActionsStatusDraft: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
   jobActionsStatusReasonDraft = '';
@@ -896,12 +916,21 @@ export class CadastroPage implements OnDestroy {
   }
 
   get currentCompanyProfile(): CompanySummaryProfile {
-    return this.companyProfiles[this.jobDraft.company] ?? {
+    const profile = this.companyProfiles[this.jobDraft.company] ?? {
       name: this.jobDraft.company,
       followers: '120.000 seguidores',
       description: 'Empresa em crescimento',
       linkedinCount: '120.000 no LinkedIn',
       logoLabel: this.jobDraft.company.slice(0, 2).toLowerCase(),
+    };
+
+    if (!this.jobDraft.companyLogoUrl) {
+      return profile;
+    }
+
+    return {
+      ...profile,
+      logoUrl: this.jobDraft.companyLogoUrl,
     };
   }
 
@@ -928,6 +957,28 @@ export class CadastroPage implements OnDestroy {
 
   onSalaryRangeChange(value: string): void {
     this.salaryRange = this.formatSalaryRange(value);
+  }
+
+  openCompanyLogoPicker(input: HTMLInputElement): void {
+    input.click();
+  }
+
+  onCompanyLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.handleCompanyLogoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  onCompanyLogoKeydown(event: KeyboardEvent, input: HTMLInputElement): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.openCompanyLogoPicker(input);
   }
 
   selectWorkModel(workModel: WorkModel): void {
@@ -1406,6 +1457,7 @@ export class CadastroPage implements OnDestroy {
     Object.assign(this.jobDraft, {
       title: job.title,
       company: job.company,
+      companyLogoUrl: job.companyLogoUrl ?? '',
       location: job.location,
       workModel: job.workModel,
       seniority: job.seniority,
@@ -1532,6 +1584,49 @@ export class CadastroPage implements OnDestroy {
         items: [...section.items],
       })),
     };
+  }
+
+  private handleCompanyLogoFile(file: File | null): void {
+    this.companyLogoError = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.isAcceptedCompanyLogoFile(file)) {
+      this.companyLogoError = 'Use JPG, PNG, GIF ou WEBP.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (file.size > this.maxCompanyLogoSizeBytes) {
+      this.companyLogoError = 'A imagem deve ter no máximo 5MB.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.jobDraft.companyLogoUrl = typeof reader.result === 'string' ? reader.result : '';
+      this.companyLogoError = '';
+      this.cdr.markForCheck();
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  private isAcceptedCompanyLogoFile(file: File): boolean {
+    if (this.acceptedCompanyLogoMimeTypes.includes(file.type)) {
+      return true;
+    }
+
+    const fileName = file.name.toLowerCase();
+    return fileName.endsWith('.jpg')
+      || fileName.endsWith('.jpeg')
+      || fileName.endsWith('.png')
+      || fileName.endsWith('.gif')
+      || fileName.endsWith('.webp');
   }
 
   private formatSalaryRange(value: string): string {

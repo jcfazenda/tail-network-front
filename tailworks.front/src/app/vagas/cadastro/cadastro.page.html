@@ -337,15 +337,27 @@
       </button>
 
       <div class="summary-card__body summary-card__body--tabs">
+        <input
+          #companyLogoInput
+          class="summary-card__company-logo-input"
+          type="file"
+          accept=".jpg,.jpeg,.png,.gif,.webp"
+          (change)="onCompanyLogoSelected($event)"
+        />
+
         <div class="summary-card__company summary-card__company--top">
           <div class="summary-card__company-top">
             <div class="summary-card__company-brand">
-              <span
-                class="summary-card__company-logo"
+              <button
+                class="summary-card__company-logo summary-card__company-logo-button"
+                type="button"
                 [class.summary-card__company-logo--image]="!!currentCompanyProfile.logoUrl"
                 [style.backgroundImage]="currentCompanyProfile.logoUrl ? 'url(' + currentCompanyProfile.logoUrl + ')' : null"
-                aria-hidden="true"
-              >{{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}</span>
+                (click)="openCompanyLogoPicker(companyLogoInput)"
+                (keydown)="onCompanyLogoKeydown($event, companyLogoInput)"
+                aria-label="Trocar logo da empresa"
+                title="Trocar logo da empresa"
+              >{{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}</button>
 
               <div class="summary-card__company-meta">
                 <div class="summary-card__company-name-row">
@@ -367,6 +379,8 @@
               <span>{{ jobDraft.location }}</span>
             </span>
           </p>
+
+          <small class="summary-card__company-logo-error" *ngIf="companyLogoError">{{ companyLogoError }}</small>
         </div>
 
         <div class="summary-card__actions">

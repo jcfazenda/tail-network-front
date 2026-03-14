@@ -2782,11 +2782,39 @@
   box-shadow: none;
 }
 
+.summary-card__company-logo-input{
+  display: none;
+}
+
+.summary-card__company-logo-button{
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.summary-card__company-logo-button:hover{
+  transform: translateY(-1px);
+}
+
+.summary-card__company-logo-button:focus-visible{
+  outline: 2px solid rgba(100, 100, 100, 0.28);
+  outline-offset: 4px;
+}
+
 .summary-card--side .summary-card__company-logo--image{
   background:
     center / cover no-repeat,
     rgba(255, 255, 255, 0.92);
   color: transparent;
+}
+
+.summary-card__company-logo-error{
+  margin-top: 10px;
+  display: block;
+  color: rgba(154, 52, 18, 0.88);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .summary-card--side .summary-card__company-name{

@@ -1,7 +1,7 @@
 .shell{
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 328px 1fr;
   background: #fff;
   overflow-x: hidden;
   transition: grid-template-columns .18s ease;
@@ -42,7 +42,7 @@
 .shell__topbar{
   position: fixed;
   top: 0;
-  left: 300px;
+  left: 328px;
   right: 0;
   z-index: 460;
 }

@@ -37,6 +37,7 @@ export interface JobResponsibilitySection {
 export interface VagaPanelDraft {
   title: string;
   company: string;
+  companyLogoUrl?: string;
   location: string;
   workModel: WorkModel;
   seniority: string;
