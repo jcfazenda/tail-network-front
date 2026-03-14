@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
+import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 import { EcosystemPanelService } from '../ecosystem-panel.service';
@@ -76,7 +76,7 @@ type CandidateFormationCopyDraft = {
 @Component({
   standalone: true,
   selector: 'app-candidate-placeholder-page',
-  imports: [CommonModule],
+  imports: [CommonModule, AlcanceRadarComponent],
   templateUrl: './placeholder.page.html',
   styleUrls: ['./placeholder.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -143,6 +143,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   activeCandidatePanelView: CandidatePanelView = 'details';
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
+  topStacksDragging = false;
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
   talentName = 'Julio Fazenda';
@@ -291,6 +292,10 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return this.allRadarCategories.filter((category) => selectedIds.has(category.id));
   }
 
+  get topStackHighlights(): RadarCategory[] {
+    return this.allRadarCategories;
+  }
+
   get activeTalentJobs(): MockJobRecord[] {
     return this.vagasMockService.getJobs()
       .filter((job) => job.status === 'ativas');
@@ -371,6 +376,78 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return this.activeTalentJobs
       .filter((job) => this.isRadarJob(job) && job.workModel === value)
       .length;
+  }
+
+  private topStacksPointerId: number | null = null;
+  private topStacksPointerStartX = 0;
+  private topStacksPointerStartScrollLeft = 0;
+
+  topStackHighlightIcon(categoryId: string): string {
+    switch (categoryId) {
+      case 'backend':
+        return 'dns';
+      case 'frontend':
+        return 'web';
+      case 'cloud':
+        return 'cloud';
+      case 'devops':
+        return 'settings_suggest';
+      case 'dados':
+        return 'database';
+      case 'mobile':
+        return 'smartphone';
+      case 'ia':
+        return 'neurology';
+      case 'seguranca':
+        return 'shield_lock';
+      default:
+        return 'deployed_code';
+    }
+  }
+
+  topStacksHandlePointerDown(event: PointerEvent): void {
+    const rail = event.currentTarget as HTMLElement | null;
+    if (!rail) {
+      return;
+    }
+
+    this.topStacksPointerId = event.pointerId;
+    this.topStacksPointerStartX = event.clientX;
+    this.topStacksPointerStartScrollLeft = rail.scrollLeft;
+    this.topStacksDragging = false;
+    rail.setPointerCapture(event.pointerId);
+  }
+
+  topStacksHandlePointerMove(event: PointerEvent): void {
+    if (this.topStacksPointerId !== event.pointerId) {
+      return;
+    }
+
+    const rail = event.currentTarget as HTMLElement | null;
+    if (!rail) {
+      return;
+    }
+
+    const delta = event.clientX - this.topStacksPointerStartX;
+    if (Math.abs(delta) > 3) {
+      this.topStacksDragging = true;
+    }
+
+    rail.scrollLeft = this.topStacksPointerStartScrollLeft - delta;
+  }
+
+  topStacksHandlePointerUp(event: PointerEvent): void {
+    if (this.topStacksPointerId !== event.pointerId) {
+      return;
+    }
+
+    const rail = event.currentTarget as HTMLElement | null;
+    if (rail?.hasPointerCapture(event.pointerId)) {
+      rail.releasePointerCapture(event.pointerId);
+    }
+
+    this.topStacksPointerId = null;
+    this.topStacksDragging = false;
   }
 
   get emptyStateMessage(): string {

@@ -47,4 +47,20 @@ export class AppShellComponent {
   get isSidebarOpen(): boolean {
     return this.sidebarVisibilityService.isOpen();
   }
+
+  get isCompactSidebarMode(): boolean {
+    return this.sidebarVisibilityService.isCompactViewport();
+  }
+
+  get shouldReserveSidebarSpace(): boolean {
+    return this.hasSidebar && this.sidebarVisibilityService.shouldReserveLayoutSpace();
+  }
+
+  get isSidebarOverlayVisible(): boolean {
+    return this.hasSidebar && this.isSidebarOpen && this.isCompactSidebarMode;
+  }
+
+  hideSidebar(): void {
+    this.sidebarVisibilityService.hide();
+  }
 }

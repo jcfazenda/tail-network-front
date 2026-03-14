@@ -38,6 +38,47 @@
                 </div>
               </div>
             </section>
+
+            <div class="candidate-stack-summary__stack-prelude">
+              <div class="candidate-stack-summary__stack-prelude-head">
+                <div class="candidate-stack-summary__stack-kicker">Ranking das contratações nas tecnologias</div>
+                <button class="candidate-stack-summary__stack-prelude-period" type="button">
+                  <span>Atual</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+                </button>
+              </div>
+
+              <div class="candidate-stack-summary__stack-prelude-radar">
+                <app-alcance-radar
+                  [title]="''"
+                  [score]="talentStackScore"
+                  [items]="talentStackRadarItems"
+                  [embedded]="true"
+                ></app-alcance-radar>
+              </div>
+
+              <div
+                class="candidate-stack-summary__stack-prelude-grid"
+                [class.candidate-stack-summary__stack-prelude-grid--dragging]="topStacksDragging"
+                (pointerdown)="topStacksHandlePointerDown($event)"
+                (pointermove)="topStacksHandlePointerMove($event)"
+                (pointerup)="topStacksHandlePointerUp($event)"
+                (pointercancel)="topStacksHandlePointerUp($event)"
+                (pointerleave)="topStacksHandlePointerUp($event)"
+              >
+                <article class="candidate-stack-summary__stack-prelude-metric" *ngFor="let category of topStackHighlights">
+                  <div class="candidate-stack-summary__stack-prelude-metric-top">
+                    <span class="candidate-stack-summary__stack-prelude-icon-shell">
+                      <span class="material-symbols-rounded" aria-hidden="true">{{ topStackHighlightIcon(category.id) }}</span>
+                    </span>
+                    <span class="material-symbols-rounded candidate-stack-summary__stack-prelude-more" aria-hidden="true">more_vert</span>
+                  </div>
+
+                  <strong>{{ category.value }}%</strong>
+                  <span>{{ category.label }}</span>
+                </article>
+              </div>
+            </div>
           </div>
 
           <section class="candidate-stack-summary__processes" *ngIf="processJobs.length">

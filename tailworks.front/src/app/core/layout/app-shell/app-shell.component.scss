@@ -94,6 +94,15 @@
   padding: 0;
 }
 
+.shell__sidebar-backdrop{
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(2px);
+  z-index: 320;
+}
+
 .shell--sidebar-hidden .shell__topbar{
   left: 0;
 }
@@ -101,6 +110,16 @@
 .shell--sidebar-hidden .shell__main::before{
   opacity: 0;
   width: 0;
+}
+
+@media (max-width: 1280px){
+  .shell__content{
+    padding: 118px 24px 32px;
+  }
+
+  .shell__content--ecosystem{
+    padding: 84px 18px 18px;
+  }
 }
 
 @media (max-width: 960px){
@@ -111,5 +130,13 @@
 
   .shell__topbar{
     left: 0;
+  }
+
+  .shell__content{
+    padding: 112px 18px 24px;
+  }
+
+  .shell__content--ecosystem{
+    padding: 82px 14px 16px;
   }
 }

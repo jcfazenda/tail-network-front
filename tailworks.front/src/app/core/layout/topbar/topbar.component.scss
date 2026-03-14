@@ -8,15 +8,13 @@
   align-items: center;
   gap: 8px;
   padding: 0 16px;
-  background:
-    radial-gradient(125% 140% at 0% 0%, rgba(255, 247, 232, 0.72), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(255,255,255,0.992), rgba(247,247,244,0.968));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.84);
+  background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.94),
-    inset 0 -1px 0 rgba(226, 232, 240, 0.48),
-    0 10px 24px rgba(15, 23, 42, 0.04),
-    0 18px 42px rgba(15, 23, 42, 0.08);
+    inset 0 -1px 0 rgba(228, 228, 228, 0.8),
+    0 10px 24px rgba(0, 0, 0, 0.04),
+    0 18px 42px rgba(0, 0, 0, 0.05);
 }
 
 .topbar__primary{
@@ -293,14 +291,14 @@
   gap: 8px;
   justify-items: stretch;
   padding: 10px 14px;
-  border: 0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 18px;
-  background: transparent;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.96),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.68),
-    0 8px 18px rgba(15, 23, 42, 0.04),
-    0 14px 26px rgba(15, 23, 42, 0.06);
+    inset 0 -1px 0 rgba(236, 236, 236, 0.92),
+    0 8px 18px rgba(0, 0, 0, 0.04),
+    0 14px 26px rgba(0, 0, 0, 0.05);
   text-align: left;
   cursor: pointer;
   overflow: hidden;
@@ -315,9 +313,9 @@
   transform: translateY(-1px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.7),
-    0 10px 22px rgba(15, 23, 42, 0.06),
-    0 18px 30px rgba(15, 23, 42, 0.08);
+    inset 0 -1px 0 rgba(236, 236, 236, 0.96),
+    0 10px 22px rgba(0, 0, 0, 0.05),
+    0 18px 30px rgba(0, 0, 0, 0.06);
 }
 
 .topbar__market-brief-head{
@@ -333,13 +331,13 @@
   display: inline-grid;
   place-items: center;
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255, 233, 198, 0.92), rgba(255, 247, 233, 0.98));
+  background: linear-gradient(180deg, #ececec, #f7f7f7);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 .topbar__market-brief-badge .material-symbols-rounded{
   font-size: 16px;
-  color: rgba(219, 145, 24, 0.88);
+  color: rgba(92, 92, 92, 0.9);
 }
 
 .topbar__market-brief-copy{
@@ -395,7 +393,7 @@
   width: 4px;
   height: 4px;
   border-radius: 999px;
-  background: rgba(219, 145, 24, 0.32);
+  background: rgba(120, 120, 120, 0.38);
   align-self: center;
   margin-right: 2px;
 }

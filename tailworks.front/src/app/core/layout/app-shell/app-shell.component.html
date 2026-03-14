@@ -2,15 +2,22 @@
   class="shell"
   [class.shell--plain]="isHomeEntry"
   [class.shell--candidate]="isCandidateArea"
-  [class.shell--sidebar-hidden]="hasSidebar && !isSidebarOpen"
+  [class.shell--sidebar-hidden]="hasSidebar && !shouldReserveSidebarSpace"
 >
   <ng-container *ngIf="!isHomeEntry">
     <app-sidebar *ngIf="hasSidebar && isSidebarOpen"></app-sidebar>
+    <button
+      *ngIf="isSidebarOverlayVisible"
+      class="shell__sidebar-backdrop"
+      type="button"
+      aria-label="Fechar sidebar"
+      (click)="hideSidebar()"
+    ></button>
 
     <div
       class="shell__main"
       [class.shell__main--candidate]="isCandidateArea"
-      [class.shell__main--full]="isCandidateEcosystem || (hasSidebar && !isSidebarOpen)"
+      [class.shell__main--full]="isCandidateEcosystem || !shouldReserveSidebarSpace"
       [class.shell__main--ecosystem]="isCandidateEcosystem"
     >
       <div class="shell__topbar">
