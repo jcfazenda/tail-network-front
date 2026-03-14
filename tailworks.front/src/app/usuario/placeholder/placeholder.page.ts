@@ -38,14 +38,6 @@ type RadarCategory = {
   value: number;
   color: string;
 };
-type HiringCompanyHighlight = {
-  company: string;
-  hiringCount: number;
-  cardImageUrl: string;
-  logoLabel: string;
-  recentDateLabel: string;
-  sortTimestamp: number;
-};
 type HiringTrendPoint = {
   month: string;
   fullMonth: string;
@@ -235,7 +227,6 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   activeOverviewShellView: OverviewShellView = 'process';
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
-  topStacksDragging = false;
   processCardsDragging = false;
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
@@ -389,35 +380,6 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   get radarCategories(): RadarCategory[] {
     const selectedIds = new Set(this.selectedRadarCategoryIds);
     return this.allRadarCategories.filter((category) => selectedIds.has(category.id));
-  }
-
-  get topStackHighlights(): RadarCategory[] {
-    return this.allRadarCategories;
-  }
-
-  get topHiringCompanies(): HiringCompanyHighlight[] {
-    const companies = new Map<string, HiringCompanyHighlight>();
-
-    for (const job of this.vagasMockService.getJobs()) {
-      const company = job.company.trim();
-      const createdAt = Date.parse(job.createdAt || job.updatedAt);
-      const current = companies.get(company);
-
-      if (current && current.sortTimestamp >= createdAt) {
-        continue;
-      }
-
-      companies.set(company, {
-        company,
-        hiringCount: this.companyProfiles[company]?.monthlyHiringCount ?? Math.max(8, Math.min(99, job.radarCount)),
-        cardImageUrl: job.homeAnnouncementImageUrl ?? job.companyLogoUrl ?? this.companyProfiles[company]?.logoUrl ?? '',
-        logoLabel: (this.companyProfiles[company]?.logoLabel ?? company.slice(0, 2)).toUpperCase(),
-        recentDateLabel: this.formatHiringCompanyDateLabel(job.createdAt || job.updatedAt),
-        sortTimestamp: Number.isFinite(createdAt) ? createdAt : 0,
-      });
-    }
-
-    return [...companies.values()].sort((left, right) => right.sortTimestamp - left.sortTimestamp);
   }
 
   get hiringTrendChartPoints(): HiringTrendChartPoint[] {
@@ -707,101 +669,6 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return this.activeTalentJobs
       .filter((job) => this.isRadarJob(job) && job.workModel === value)
       .length;
-  }
-
-  private topStacksPointerId: number | null = null;
-  private topStacksPointerStartX = 0;
-  private topStacksPointerStartScrollLeft = 0;
-
-  topStackHighlightIcon(categoryId: string): string {
-    switch (categoryId) {
-      case 'backend':
-        return 'dns';
-      case 'frontend':
-        return 'web';
-      case 'cloud':
-        return 'cloud';
-      case 'devops':
-        return 'settings_suggest';
-      case 'dados':
-        return 'database';
-      case 'mobile':
-        return 'smartphone';
-      case 'ia':
-        return 'neurology';
-      case 'seguranca':
-        return 'shield_lock';
-      default:
-        return 'deployed_code';
-    }
-  }
-
-  topHiringCompanyIcon(index: number): string {
-    const categories = this.allRadarCategories;
-    if (!categories.length) {
-      return 'apartment';
-    }
-
-    return this.topStackHighlightIcon(categories[index % categories.length].id);
-  }
-
-  private formatHiringCompanyDateLabel(value: string | undefined): string {
-    if (!value) {
-      return 'Recente';
-    }
-
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      return 'Recente';
-    }
-
-    const monthLabels = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-    return `${String(parsed.getDate()).padStart(2, '0')} ${monthLabels[parsed.getMonth()]}`;
-  }
-
-  topStacksHandlePointerDown(event: PointerEvent): void {
-    const rail = event.currentTarget as HTMLElement | null;
-    if (!rail) {
-      return;
-    }
-
-    this.topStacksPointerId = event.pointerId;
-    this.topStacksPointerStartX = event.clientX;
-    this.topStacksPointerStartScrollLeft = rail.scrollLeft;
-    this.topStacksDragging = false;
-    rail.setPointerCapture(event.pointerId);
-  }
-
-  topStacksHandlePointerMove(event: PointerEvent): void {
-    if (this.topStacksPointerId !== event.pointerId) {
-      return;
-    }
-
-    const rail = event.currentTarget as HTMLElement | null;
-    if (!rail) {
-      return;
-    }
-
-    const delta = event.clientX - this.topStacksPointerStartX;
-    if (Math.abs(delta) > 3) {
-      this.topStacksDragging = true;
-    }
-
-    rail.scrollLeft = this.topStacksPointerStartScrollLeft - delta;
-  }
-
-  topStacksHandlePointerUp(event: PointerEvent): void {
-    if (this.topStacksPointerId !== event.pointerId) {
-      return;
-    }
-
-    const rail = event.currentTarget as HTMLElement | null;
-    if (rail?.hasPointerCapture(event.pointerId)) {
-      rail.releasePointerCapture(event.pointerId);
-    }
-
-    this.topStacksPointerId = null;
-    this.topStacksDragging = false;
   }
 
   processCardsHandlePointerDown(event: PointerEvent): void {
