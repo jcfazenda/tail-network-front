@@ -23,9 +23,7 @@
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    linear-gradient(rgba(246, 247, 251, 0.9), rgba(246, 247, 251, 0.9)),
-    url('/assets/images/fundo-home-tailworks.png') center/cover no-repeat;
+  background: #fff;
   pointer-events: none;
   z-index: -2;
 }

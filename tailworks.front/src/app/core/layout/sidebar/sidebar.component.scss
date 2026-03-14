@@ -6,9 +6,7 @@
   z-index: 350;
   width: 300px;
   min-height: 100vh;
-  background:
-    radial-gradient(140% 120% at 0% 0%, rgba(255, 247, 232, 0.88), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(255,255,255,0.992), rgba(246,246,243,0.965));
+  background: transparent;
   border-right: 1px solid rgba(255, 255, 255, 0.84);
   padding: 18px 16px 24px;
   display: grid;

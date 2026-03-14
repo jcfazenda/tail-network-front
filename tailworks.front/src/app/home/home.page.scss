@@ -11,11 +11,9 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(244, 244, 240, 0.56) 54%, rgba(236, 236, 231, 0.42) 100%),
-    #f2f2ee url('/assets/images/fundo-home-tailworks.png') center / cover no-repeat;
-  filter: grayscale(1) saturate(0) contrast(0.94);
-  opacity: 0.28;
+  background: #fff;
+  filter: none;
+  opacity: 1;
 }
 
 .entry-home{
