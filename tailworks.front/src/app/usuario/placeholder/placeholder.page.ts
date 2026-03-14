@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
@@ -21,6 +21,11 @@ type CandidateStatusPreview = {
   timeLabel?: string;
   description: string;
   ownerText: string;
+};
+type RadarCategory = {
+  label: string;
+  value: number;
+  color: string;
 };
 
 type ConfettiPiece = {
@@ -77,6 +82,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
 
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly vagasMockService = inject(VagasMockService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
@@ -86,6 +92,14 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   readonly recruiterName = 'Rafael Souza';
   readonly recruiterRole = 'Talent Acquisition';
   readonly recruiterAvatar = '/assets/avatars/avatar-rafael.png';
+  readonly radarTotal = 87;
+  readonly radarDelta = 12;
+  readonly radarCategories: RadarCategory[] = [
+    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, var(--primary), var(--primary-2))' },
+    { label: 'Frontend', value: 81, color: 'linear-gradient(90deg, color-mix(in srgb, var(--primary) 76%, white), var(--primary))' },
+    { label: 'Cloud', value: 66, color: 'rgba(176, 184, 194, 0.9)' },
+    { label: 'DevOps', value: 55, color: 'rgba(198, 203, 211, 0.9)' },
+  ];
   readonly companyProfiles: Record<string, CompanySummaryProfile> = {
     'Banco Itaú': {
       name: 'Banco Itaú',
@@ -127,6 +141,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   talentGraduation = 'Bacharelado em Sistemas de Informação';
   talentSpecialization = 'Especialização em Arquitetura de Software';
   selectedJobId: string | null = null;
+  showProcessesPanel = false;
   selectedJobCheckedDocuments: string[] = [];
   selectedJobDocumentsConsentAccepted = false;
   candidateConfettiPieces: ConfettiPiece[] = [];
@@ -155,6 +170,15 @@ export class PlaceholderPage implements OnInit, OnDestroy {
         if (panel === 'details' || panel === 'benefits' || panel === 'status') {
           this.activeCandidatePanelView = panel;
         }
+        void this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            job: null,
+            panel: null,
+          },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
         this.cdr.markForCheck();
       }),
     );
@@ -247,6 +271,26 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     }
 
     return baseJobs.filter((job) => job.workModel === this.workModelFilter);
+  }
+
+  get radarPanelJobs(): MockJobRecord[] {
+    const baseJobs = this.activeTalentJobs.filter((job) => this.isRadarJob(job));
+
+    if (this.workModelFilter === 'all') {
+      return baseJobs;
+    }
+
+    return baseJobs.filter((job) => job.workModel === this.workModelFilter);
+  }
+
+  get processJobs(): MockJobRecord[] {
+    return this.activeTalentJobs.filter((job) => this.isApplicationsJob(job));
+  }
+
+  radarWorkModelCount(value: WorkModel): number {
+    return this.activeTalentJobs
+      .filter((job) => this.isRadarJob(job) && job.workModel === value)
+      .length;
   }
 
   get emptyStateMessage(): string {
@@ -500,6 +544,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   openJobPanel(jobId: string): void {
+    this.showProcessesPanel = false;
     this.selectedJobId = jobId;
     this.activeCandidatePanelView = 'details';
     this.syncSelectedJobDocumentState();
@@ -513,6 +558,16 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.selectedJobObservedStage = null;
     this.candidateConfettiActive = false;
     this.clearCandidateCelebrationTimer();
+  }
+
+  openProcessesPanel(): void {
+    this.activeView = 'radar';
+    this.closeJobPanel();
+    this.showProcessesPanel = true;
+  }
+
+  closeProcessesPanel(): void {
+    this.showProcessesPanel = false;
   }
 
   selectCandidatePanelView(view: CandidatePanelView): void {
@@ -598,7 +653,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   selectAdvancedWorkModelFilter(value: string): void {
-    this.setWorkModelFilter(value);
+    this.setWorkModelFilter(this.workModelFilter === value ? 'all' : value);
     this.advancedFilterOpen = false;
   }
 
@@ -647,6 +702,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     }
 
     return this.formatJobSalary(job.salaryRange) ?? 'Não informada';
+  }
+
+  jobCardSalary(job: MockJobRecord): string | null {
+    const salary = this.jobSalaryDisplay(job);
+    return salary === 'Não informada' ? null : salary;
   }
 
   private formatJobSalary(value?: string): string | null {
