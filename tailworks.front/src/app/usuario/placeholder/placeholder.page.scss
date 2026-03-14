@@ -435,8 +435,13 @@
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.035);
 }
 
+.candidate-week-radar__head{
+  display: grid;
+}
+
 .candidate-week-radar__head h4{
-  margin: 0 0 10px;
+  margin: 0;
+  padding-left: 12px;
   font-size: 22px;
   line-height: 1.1;
   color: rgba(15, 23, 42, 0.9);
@@ -528,6 +533,15 @@
     0 10px 24px rgba(15, 23, 42, 0.035);
 }
 
+.candidate-stack-summary__radar--week{
+  margin-top: -2px;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(250, 247, 242, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 6px 14px rgba(15, 23, 42, 0.012);
+}
+
 .candidate-stack-summary__radar ::ng-deep app-alcance-radar{
   display: block;
   padding-left: 0;
@@ -594,6 +608,7 @@
 
 .candidate-stack-summary__stack-box p{
   margin: 0;
+  padding-bottom: 8px;
   color: rgba(15, 23, 42, 0.56);
   font-size: 14px;
   line-height: 1.45;
@@ -793,42 +808,45 @@
 
 .candidate-stack-summary__stack-list{
   display: grid;
-  gap: 6px;
+  gap: 10px;
 }
 
 .candidate-stack-summary__stack-item{
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
-  min-height: 40px;
-  padding: 0 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.46);
+  gap: 10px;
+  min-height: 0;
+  padding: 0;
   color: rgba(15, 23, 42, 0.82);
   border: 0;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+  background: transparent;
+  box-shadow: none;
 }
 
 .candidate-stack-summary__stack-meta{
+  width: auto;
   min-width: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .candidate-stack-summary__stack-name{
   min-width: 0;
-  font-size: 13px;
+  font-size: 9px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.2;
   color: rgba(15, 23, 42, 0.76);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .candidate-stack-summary__stack-info{
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   padding: 0;
   border: 0;
   display: inline-grid;
@@ -839,7 +857,7 @@
 }
 
 .candidate-stack-summary__stack-info .material-symbols-rounded{
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .candidate-stack-summary__stack-info--active{
@@ -848,10 +866,11 @@
 
 .candidate-stack-summary__stack-progress{
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   min-width: 0;
+  width: 100%;
 }
 
 .candidate-stack-summary__stack-slider{
@@ -864,10 +883,10 @@
   width: 100%;
   position: relative;
   display: block;
-  height: 10px;
+  height: 5px;
   border-radius: 999px;
   overflow: hidden;
-  background: linear-gradient(90deg, rgba(236, 214, 175, 0.34), rgba(247, 240, 228, 0.72));
+  background: linear-gradient(90deg, rgba(233, 237, 242, 0.92), rgba(245, 247, 250, 0.98));
 }
 
 .candidate-stack-summary__stack-bar-fill{
@@ -878,14 +897,15 @@
 }
 
 .candidate-stack-summary__stack-value{
-  font-size: 12px;
+  font-size: 9px;
   font-weight: 700;
   color: rgba(15, 23, 42, 0.72);
+  white-space: nowrap;
 }
 
 .candidate-stack-summary__stack-description{
   grid-column: 1 / -1;
-  margin: 8px 0 10px;
+  margin: 4px 0 10px;
   padding-left: 0;
   padding-top: 6px;
   padding-bottom: 6px;

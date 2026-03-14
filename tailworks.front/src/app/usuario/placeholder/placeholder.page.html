@@ -47,34 +47,27 @@
     </div>
 
     <section class="candidate-stack-summary" *ngIf="talentStacks.length">
-      <div class="candidate-stack-summary__head">
-        <div class="candidate-stack-summary__head-copy">
-          <h3>Vagas publicadas</h3>
-          <p>veja as vagas publicadas disponiveis no ecossistema compativeis com você.</p>
-        </div>
-
-      <button
-        class="candidate-stack-summary__processes-button"
-        type="button"
-        (click)="openProcessesPanel()"
-      >
-        Ecossistema
-      </button>
-      </div>
-
       <div class="candidate-stack-summary__card">
         <div class="candidate-stack-summary__body">
           <div class="candidate-stack-summary__slot">
             <section class="candidate-week-radar" aria-label="Radar da semana">
               <header class="candidate-week-radar__head">
-                <div>
-                  <h4>Radar da Semana</h4>
-                  <div class="candidate-week-radar__subtitle">
-                    <span><strong>{{ radarTotal }}</strong> novas contratações</span>
-                    <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
-                  </div>
-                </div>
+                <h4>Radar da Semana</h4>
               </header>
+
+              <div class="candidate-stack-summary__radar candidate-stack-summary__radar--week">
+                <app-alcance-radar
+                  title=""
+                  [score]="talentStackScore"
+                  [showGaugeLabel]="false"
+                  [items]="talentStackRadarItems"
+                />
+              </div>
+
+              <div class="candidate-week-radar__subtitle">
+                <span><strong>{{ radarTotal }}</strong> novas contratações</span>
+                <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
+              </div>
 
               <div class="candidate-week-radar__bars">
                 <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
@@ -90,15 +83,6 @@
                 </div>
               </div>
             </section>
-          </div>
-
-          <div class="candidate-stack-summary__radar">
-            <app-alcance-radar
-              title="Seu alcance no Ecossistema."
-              [score]="talentStackScore"
-              [showGaugeLabel]="false"
-              [items]="talentStackRadarItems"
-            />
           </div>
 
           <section class="candidate-stack-summary__processes" *ngIf="processJobs.length">
@@ -220,7 +204,7 @@
   </div>
 
   <div class="candidate-stack-summary__stack-box">
-    <p>Minhas Stacks em relação ao Ecossistema</p>
+    <p>Minha aderência no Ecossistema</p>
 
     <div class="candidate-stack-summary__stack-list">
       <div class="candidate-stack-summary__stack-item" *ngFor="let stack of talentStacks; let index = index">

@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { VagasMockService } from '../../vagas/data/vagas-mock.service';
+import { EcosystemPanelService } from '../ecosystem-panel.service';
 
 type CandidateView = 'applications' | 'radar' | 'declined';
 type WorkModelFilter = 'all' | WorkModel;
@@ -84,6 +85,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly ecosystemPanelService = inject(EcosystemPanelService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private selectedJobObservedStage: CandidateStage | null = null;
@@ -156,8 +158,26 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       this.route.queryParamMap.subscribe((params) => {
         const jobId = params.get('job');
         const panel = params.get('panel');
+        const ecosystem = params.get('ecosystem');
+        let shouldCleanupParams = false;
+
+        if (ecosystem === 'open') {
+          this.openProcessesPanel();
+          shouldCleanupParams = true;
+        }
 
         if (!jobId) {
+          if (shouldCleanupParams) {
+            void this.router.navigate([], {
+              relativeTo: this.route,
+              queryParams: {
+                ecosystem: null,
+                notice: null,
+              },
+              queryParamsHandling: 'merge',
+              replaceUrl: true,
+            });
+          }
           return;
         }
 
@@ -173,12 +193,24 @@ export class PlaceholderPage implements OnInit, OnDestroy {
         void this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {
+            ecosystem: null,
             job: null,
             panel: null,
+            notice: null,
           },
           queryParamsHandling: 'merge',
           replaceUrl: true,
         });
+        this.cdr.markForCheck();
+      }),
+    );
+    this.subscriptions.add(
+      this.ecosystemPanelService.openRequests$.subscribe(() => {
+        if (!this.isApplicationsPage) {
+          return;
+        }
+
+        this.openProcessesPanel();
         this.cdr.markForCheck();
       }),
     );
@@ -224,7 +256,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   get talentStackRadarItems(): RadarLegendItem[] {
     return [
       {
-        label: 'Alta compatibilidade',
+        label: 'Media de alcance no ecossistema',
         tone: 'high',
         percent: Math.max(34, Math.min(96, this.talentStackScore)),
       },

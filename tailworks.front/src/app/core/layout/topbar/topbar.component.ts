@@ -7,6 +7,7 @@ import { TalentNotification, TalentNotificationService } from '../../../usuario/
 import { CandidateStage, MockJobRecord } from '../../../vagas/data/vagas.models';
 import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.service';
+import { EcosystemPanelService } from '../../../usuario/ecosystem-panel.service';
 import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
 
 type NotificationConfettiPiece = {
@@ -33,6 +34,7 @@ export class TopbarComponent {
   private readonly vagasMockService = inject(VagasMockService);
   private readonly talentNotificationService = inject(TalentNotificationService);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
+  private readonly ecosystemPanelService = inject(EcosystemPanelService);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
@@ -192,7 +194,18 @@ export class TopbarComponent {
   openCandidateEcosystem(event: Event): void {
     event.preventDefault();
     this.ecosystemEntryService.setMode('talent');
-    void this.router.navigateByUrl('/usuario/ecossistema');
+
+    if (this.currentUrl().startsWith('/usuario/minhas-candidaturas')) {
+      this.ecosystemPanelService.requestOpen();
+      return;
+    }
+
+    void this.router.navigate(['/usuario/minhas-candidaturas'], {
+      queryParams: {
+        ecosystem: 'open',
+        notice: Date.now(),
+      },
+    });
   }
 
   toggleSidebar(): void {
@@ -220,7 +233,7 @@ export class TopbarComponent {
     this.talentNotificationService.markAsRead(notification.id);
     this.notificationModal = notification;
     this.notificationsOpen = false;
-    this.confettiPieces = this.shouldLaunchNotificationConfetti(this.activeTalentNotificationStage)
+    this.confettiPieces = this.shouldLaunchNotificationConfetti(notification, this.activeTalentNotificationStage)
       ? this.buildNotificationConfetti()
       : [];
   }
@@ -257,8 +270,11 @@ export class TopbarComponent {
     });
   }
 
-  private shouldLaunchNotificationConfetti(stage: CandidateStage | null): boolean {
-    return stage === 'processo' || stage === 'contratado';
+  private shouldLaunchNotificationConfetti(
+    notification: TalentNotification | null,
+    stage: CandidateStage | null,
+  ): boolean {
+    return notification?.type === 'process-advanced' || stage === 'processo' || stage === 'contratado';
   }
 
   private buildNotificationConfetti(): NotificationConfettiPiece[] {
