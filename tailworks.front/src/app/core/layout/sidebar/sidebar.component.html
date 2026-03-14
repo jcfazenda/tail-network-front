@@ -2,14 +2,21 @@
   <div class="brand">
     <ng-container *ngIf="isCandidateMode; else defaultBrand">
       <div class="brandCandidate">
-        <div
-          class="brandAvatar"
-          [class.brandAvatar--image]="!!candidateAvatarUrl"
-          [style.backgroundImage]="candidateAvatarUrl ? 'url(' + candidateAvatarUrl + ')' : null"
-          [attr.aria-label]="candidateDisplayName"
+        <button
+          class="brandAvatarButton"
+          type="button"
+          (click)="hideSidebar()"
+          aria-label="Esconder sidebar"
         >
-          <span *ngIf="!candidateAvatarUrl">JF</span>
-        </div>
+          <div
+            class="brandAvatar"
+            [class.brandAvatar--image]="!!candidateAvatarUrl"
+            [style.backgroundImage]="candidateAvatarUrl ? 'url(' + candidateAvatarUrl + ')' : null"
+            [attr.aria-label]="candidateDisplayName"
+          >
+            <span *ngIf="!candidateAvatarUrl">{{ candidateDisplayInitials }}</span>
+          </div>
+        </button>
 
         <div class="brandCandidate__copy">
           <strong>{{ candidateDisplayName }}</strong>

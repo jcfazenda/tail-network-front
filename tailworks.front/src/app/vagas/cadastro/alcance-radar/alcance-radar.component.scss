@@ -187,11 +187,20 @@
 }
 
 .radar-overview__gauge-progress {
-  stroke: var(--primary-2);
   stroke-width: 9.5;
   filter:
     drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.16))
     drop-shadow(0 5px 10px rgba(var(--primary-rgb), 0.22));
+}
+
+.radar-overview__gauge-stop--start {
+  stop-color: var(--radar-gauge-color, var(--primary-2));
+  stop-opacity: var(--radar-gauge-start-opacity, 1);
+}
+
+.radar-overview__gauge-stop--end {
+  stop-color: var(--radar-gauge-color, var(--primary-2));
+  stop-opacity: var(--radar-gauge-end-opacity, 0.34);
 }
 
 .radar-overview__gauge-core strong {

@@ -6,18 +6,16 @@
           <div class="candidate-stack-summary__slot">
             <section class="candidate-week-radar" aria-label="Radar da semana">
               <header class="candidate-week-radar__head">
-                <h4>Radar da Semana</h4>
+                <h4>Stacks mais contratadas</h4>
+                <button
+                  class="candidate-week-radar__menu"
+                  type="button"
+                  aria-label="Selecionar stacks para mostrar"
+                  (click)="openRadarCategoryPicker()"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+                </button>
               </header>
-
-              <div class="candidate-stack-summary__radar candidate-stack-summary__radar--week">
-                <app-alcance-radar
-                  title=""
-                  [score]="talentStackScore"
-                  [showGaugeLabel]="true"
-                  gaugeLabel="Radar TailWorks"
-                  [items]="talentStackRadarItems"
-                />
-              </div>
 
               <div class="candidate-week-radar__subtitle">
                 <span><strong>{{ radarTotal }}</strong> novas contratações</span>
@@ -35,6 +33,18 @@
                     <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
                     <div class="candidate-week-radar__value">{{ cat.value }}%</div>
                   </div>
+                </div>
+              </div>
+
+              <div class="candidate-week-radar__gauge-card">
+                <div class="candidate-stack-summary__radar candidate-stack-summary__radar--week">
+                  <app-alcance-radar
+                    title=""
+                    [score]="talentStackScore"
+                    [showGaugeLabel]="true"
+                    gaugeLabel="Radar TailWorks"
+                    [items]="talentStackRadarItems"
+                  />
                 </div>
               </div>
             </section>
@@ -111,6 +121,58 @@
         </div>
       </div>
     </section>
+
+    <ng-container *ngIf="showRadarCategoryPicker">
+      <button
+        class="candidate-week-radar__picker-backdrop"
+        type="button"
+        aria-label="Fechar seleção de stacks"
+        (click)="closeRadarCategoryPicker()"
+      ></button>
+
+      <aside
+        class="candidate-week-radar__picker"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Selecionar stacks mais contratadas"
+      >
+        <button
+          class="candidate-week-radar__picker-close"
+          type="button"
+          aria-label="Fechar seleção de stacks"
+          (click)="closeRadarCategoryPicker()"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+        </button>
+
+        <div class="candidate-week-radar__picker-head">
+          <strong>Stacks mais contratadas</strong>
+          <p>Essas stacks são as que mais contratam no mercado pela ferramenta.</p>
+        </div>
+
+        <div class="candidate-week-radar__picker-list">
+          <button
+            class="candidate-week-radar__picker-option"
+            type="button"
+            *ngFor="let category of allRadarCategories"
+            [class.candidate-week-radar__picker-option--active]="isRadarCategorySelected(category.id)"
+            (click)="toggleRadarCategory(category.id)"
+          >
+            <span class="candidate-week-radar__picker-option-main">
+              <span class="candidate-week-radar__picker-dot" [style.background]="category.color"></span>
+              <span class="candidate-week-radar__picker-option-label">{{ category.label }}</span>
+            </span>
+
+            <span class="candidate-week-radar__picker-option-side">
+              <span class="candidate-week-radar__picker-option-value">{{ category.value }}%</span>
+              <span class="material-symbols-rounded candidate-week-radar__picker-option-icon" aria-hidden="true">
+                {{ isRadarCategorySelected(category.id) ? 'check_circle' : 'add_circle' }}
+              </span>
+            </span>
+          </button>
+        </div>
+      </aside>
+    </ng-container>
 
   </ng-container>
 
@@ -189,12 +251,18 @@
   </div>
 
   <div class="candidate-stack-summary__stack-box">
-    <p>Minha aderência no Ecossistema</p>
+    <div class="candidate-stack-summary__stack-head">
+      <h3 class="candidate-stack-summary__stack-title">Minha aderência no Ecossistema</h3>
+      <button class="candidate-stack-summary__stack-edit" type="button" (click)="editTalentStacks()">
+        <span class="material-symbols-rounded" aria-hidden="true">edit</span> 
+      </button>
+    </div>
 
     <div class="candidate-stack-summary__stack-list">
-      <div class="candidate-stack-summary__stack-item" *ngFor="let stack of talentStacks; let index = index">
-        <div class="candidate-stack-summary__stack-meta">
-          <span class="candidate-stack-summary__stack-name">{{ stack.name }}</span>
+      <div class="candidate-stack-summary__stack-item stack-item" *ngFor="let stack of talentStacks; let index = index">
+        <div class="candidate-stack-summary__stack-meta stack-item__meta">
+          <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+          <span class="stack-item__name">{{ stack.name }}</span>
           <button
             *ngIf="stack.description"
             class="candidate-stack-summary__stack-info"
@@ -207,13 +275,12 @@
           </button>
         </div>
 
-        <div class="candidate-stack-summary__stack-progress">
-          <div class="candidate-stack-summary__stack-slider">
-            <span class="candidate-stack-summary__stack-bar" aria-hidden="true">
-              <span class="candidate-stack-summary__stack-bar-fill" [style.width.%]="stack.knowledge"></span>
-            </span>
-          </div>
-          <span class="candidate-stack-summary__stack-value">{{ stack.knowledge }}%</span>
+        <div class="candidate-stack-summary__stack-progress stack-item__progress">
+          <span class="stack-item__track" aria-hidden="true">
+            <span class="stack-item__fill" [style.width.%]="stack.knowledge"></span>
+            <span class="stack-item__thumb" [style.left.%]="stack.knowledge"></span>
+          </span>
+          <span class="stack-item__value">{{ stack.knowledge }}%</span>
         </div>
 
         <div

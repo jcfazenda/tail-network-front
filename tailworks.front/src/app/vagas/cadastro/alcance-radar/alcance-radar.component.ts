@@ -23,8 +23,11 @@ export interface RadarLegendItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlcanceRadarComponent {
+  private static nextGaugeId = 0;
+
   readonly gaugeRadius = 42;
   readonly gaugeCircumference = 2 * Math.PI * this.gaugeRadius;
+  readonly gaugeGradientId = `radar-gauge-gradient-${AlcanceRadarComponent.nextGaugeId++}`;
 
   @Input() title = 'Alcance do radar';
   @Input() score = 89;

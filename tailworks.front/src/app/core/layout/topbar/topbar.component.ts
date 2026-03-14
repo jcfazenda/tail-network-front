@@ -18,6 +18,18 @@ type FormationCopyDraft = {
   graduated?: boolean;
 };
 
+type CandidateBasicProfile = {
+  name?: string;
+  city?: string;
+  state?: string;
+  location?: string;
+};
+
+type CandidateBasicDraft = {
+  profile?: CandidateBasicProfile;
+  photoPreviewUrl?: string;
+};
+
 type NotificationConfettiPiece = {
   left: string;
   top: string;
@@ -39,8 +51,11 @@ type NotificationConfettiPiece = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent {
+  private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
+  readonly topbarNewVacanciesCount = 43;
+  readonly topbarNewHiresCount = 17;
   private readonly vagasMockService = inject(VagasMockService);
   private readonly talentNotificationService = inject(TalentNotificationService);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
@@ -92,6 +107,85 @@ export class TopbarComponent {
 
   get canToggleSidebar(): boolean {
     return !this.isSelectionMode && !this.isCandidateEcosystem;
+  }
+
+  get showSidebarAvatarInPrimary(): boolean {
+    return this.isCandidateMode && !this.isCandidateEcosystem && !this.isSidebarOpen;
+  }
+
+  get shouldShowTopbarAvatar(): boolean {
+    if (this.isCandidateMode && !this.isCandidateEcosystem) {
+      return false;
+    }
+
+    return true;
+  }
+
+  get canToggleSidebarFromTopbarAvatar(): boolean {
+    return this.canToggleSidebar && (!this.isCandidateMode || !this.isSidebarOpen);
+  }
+
+  get topbarAvatarUrl(): string {
+    if (!this.isCandidateMode) {
+      return '';
+    }
+
+    if (typeof window === 'undefined') {
+      return '';
+    }
+
+    const rawDraft = window.localStorage.getItem(TopbarComponent.basicDraftStorageKey);
+    if (!rawDraft) {
+      return '';
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
+      return draft.photoPreviewUrl?.trim() || '';
+    } catch {
+      window.localStorage.removeItem(TopbarComponent.basicDraftStorageKey);
+      return '';
+    }
+  }
+
+  get topbarAvatarInitials(): string {
+    if (!this.isCandidateMode) {
+      return '';
+    }
+
+    const name = this.readCandidateDraft()?.profile?.name?.trim() || 'Julio Fazenda';
+    const parts = name
+      .split(' ')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .slice(0, 2);
+
+    if (!parts.length) {
+      return 'JF';
+    }
+
+    return parts.map((part) => part.charAt(0).toUpperCase()).join('');
+  }
+
+  get topbarCandidateDisplayName(): string {
+    return this.readCandidateDraft()?.profile?.name?.trim() || 'Julio Fazenda';
+  }
+
+  get topbarCandidateDisplayLocation(): string {
+    const draft = this.readCandidateDraft();
+    const city = draft?.profile?.city?.trim();
+    const state = draft?.profile?.state?.trim();
+    const location = draft?.profile?.location?.trim();
+
+    if (city && state) {
+      return `${city} ${state} - Brasil`;
+    }
+
+    if (location) {
+      return `${location} - Brasil`;
+    }
+
+    return 'Rio de Janeiro RJ - Brasil';
   }
 
   get topbarFormationLogoUrl(): string {
@@ -324,6 +418,24 @@ export class TopbarComponent {
       return JSON.parse(rawDraft) as FormationCopyDraft;
     } catch {
       window.localStorage.removeItem(TopbarComponent.formationCopyStorageKey);
+      return null;
+    }
+  }
+
+  private readCandidateDraft(): CandidateBasicDraft | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    const rawDraft = window.localStorage.getItem(TopbarComponent.basicDraftStorageKey);
+    if (!rawDraft) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawDraft) as CandidateBasicDraft;
+    } catch {
+      window.localStorage.removeItem(TopbarComponent.basicDraftStorageKey);
       return null;
     }
   }

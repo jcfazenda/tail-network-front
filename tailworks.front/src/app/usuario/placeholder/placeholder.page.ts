@@ -28,6 +28,7 @@ type ProcessJobGroup = {
   jobs: MockJobRecord[];
 };
 type RadarCategory = {
+  id: string;
   label: string;
   value: number;
   color: string;
@@ -82,6 +83,7 @@ type CandidateFormationCopyDraft = {
 })
 export class PlaceholderPage implements OnInit, OnDestroy {
   private static readonly stacksStorageKey = 'tailworks:candidate-stacks-draft:v2';
+  private static readonly radarCategoriesStorageKey = 'tailworks:radar-categories-selection:v1';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
@@ -100,11 +102,15 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   readonly recruiterAvatar = '/assets/avatars/avatar-rafael.png';
   readonly radarTotal = 87;
   readonly radarDelta = 12;
-  readonly radarCategories: RadarCategory[] = [
-    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, var(--primary), var(--primary-2))' },
-    { label: 'Frontend', value: 81, color: 'linear-gradient(90deg, color-mix(in srgb, var(--primary) 76%, white), var(--primary))' },
-    { label: 'Cloud', value: 66, color: 'rgba(176, 184, 194, 0.9)' },
-    { label: 'DevOps', value: 55, color: 'rgba(198, 203, 211, 0.9)' },
+  readonly allRadarCategories: RadarCategory[] = [
+    { id: 'backend', label: 'Backend', value: 92, color: 'linear-gradient(90deg, var(--primary), var(--primary-2))' },
+    { id: 'frontend', label: 'Frontend', value: 81, color: 'linear-gradient(90deg, color-mix(in srgb, var(--primary) 76%, white), var(--primary))' },
+    { id: 'cloud', label: 'Cloud', value: 66, color: 'rgba(176, 184, 194, 0.9)' },
+    { id: 'devops', label: 'DevOps', value: 55, color: 'rgba(198, 203, 211, 0.9)' },
+    { id: 'dados', label: 'Dados', value: 78, color: 'linear-gradient(90deg, rgba(231, 111, 81, 0.96), rgba(244, 162, 97, 0.92))' },
+    { id: 'mobile', label: 'Mobile', value: 64, color: 'linear-gradient(90deg, rgba(94, 96, 206, 0.96), rgba(116, 198, 157, 0.9))' },
+    { id: 'ia', label: 'IA', value: 73, color: 'linear-gradient(90deg, rgba(239, 71, 111, 0.96), rgba(255, 209, 102, 0.9))' },
+    { id: 'seguranca', label: 'Segurança', value: 61, color: 'linear-gradient(90deg, rgba(67, 97, 238, 0.92), rgba(76, 201, 240, 0.88))' },
   ];
   readonly companyProfiles: Record<string, CompanySummaryProfile> = {
     'Banco Itaú': {
@@ -135,6 +141,8 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   workModelFilter: WorkModelFilter = 'all';
   advancedFilterOpen = false;
   activeCandidatePanelView: CandidatePanelView = 'details';
+  showRadarCategoryPicker = false;
+  selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
   talentStacks: CandidateStack[] = [];
   expandedStackDescriptionIndex: number | null = null;
   talentName = 'Julio Fazenda';
@@ -158,6 +166,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.restoreTalentFormationCopy();
     this.restoreTalentFormationLogo();
     this.restoreTalentStacks();
+    this.restoreRadarCategorySelection();
     this.subscriptions.add(
       this.route.queryParamMap.subscribe((params) => {
         const jobId = params.get('job');
@@ -275,6 +284,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
         count: this.talentStacks.length,
       },
     ];
+  }
+
+  get radarCategories(): RadarCategory[] {
+    const selectedIds = new Set(this.selectedRadarCategoryIds);
+    return this.allRadarCategories.filter((category) => selectedIds.has(category.id));
   }
 
   get activeTalentJobs(): MockJobRecord[] {
@@ -749,6 +763,47 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.expandedStackDescriptionIndex = this.expandedStackDescriptionIndex === index ? null : index;
   }
 
+  editTalentStacks(): void {
+    void this.router.navigate(['/usuario/dados-cadastrais'], {
+      queryParams: {
+        section: 'stacks',
+      },
+    });
+  }
+
+  openRadarCategoryPicker(): void {
+    this.showRadarCategoryPicker = true;
+  }
+
+  closeRadarCategoryPicker(): void {
+    this.showRadarCategoryPicker = false;
+  }
+
+  isRadarCategorySelected(categoryId: string): boolean {
+    return this.selectedRadarCategoryIds.includes(categoryId);
+  }
+
+  toggleRadarCategory(categoryId: string): void {
+    const alreadySelected = this.isRadarCategorySelected(categoryId);
+
+    if (alreadySelected && this.selectedRadarCategoryIds.length === 1) {
+      return;
+    }
+
+    const nextSelection = alreadySelected
+      ? this.selectedRadarCategoryIds.filter((id) => id !== categoryId)
+      : [...this.selectedRadarCategoryIds, categoryId];
+
+    this.selectedRadarCategoryIds = this.allRadarCategories
+      .filter((category) => nextSelection.includes(category.id))
+      .map((category) => category.id);
+    localStorage.setItem(
+      PlaceholderPage.radarCategoriesStorageKey,
+      JSON.stringify(this.selectedRadarCategoryIds),
+    );
+    this.cdr.markForCheck();
+  }
+
   jobCardOfferLine(job: MockJobRecord): string {
     const segments: string[] = [job.contractType];
     const salary = job.showSalaryRangeInCard === false ? null : this.formatJobSalary(job.salaryRange);
@@ -1074,6 +1129,34 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     } catch {
       localStorage.removeItem(PlaceholderPage.stacksStorageKey);
       this.talentStacks = this.defaultStacks();
+    }
+  }
+
+  private restoreRadarCategorySelection(): void {
+    const rawSelection = localStorage.getItem(PlaceholderPage.radarCategoriesStorageKey);
+
+    if (!rawSelection) {
+      return;
+    }
+
+    try {
+      const parsedSelection = JSON.parse(rawSelection) as unknown;
+      const validSelection = Array.isArray(parsedSelection)
+        ? parsedSelection.filter(
+            (value): value is string =>
+              typeof value === 'string' && this.allRadarCategories.some((category) => category.id === value),
+          )
+        : [];
+
+      if (!validSelection.length) {
+        return;
+      }
+
+      this.selectedRadarCategoryIds = this.allRadarCategories
+        .filter((category) => validSelection.includes(category.id))
+        .map((category) => category.id);
+    } catch {
+      localStorage.removeItem(PlaceholderPage.radarCategoriesStorageKey);
     }
   }
 

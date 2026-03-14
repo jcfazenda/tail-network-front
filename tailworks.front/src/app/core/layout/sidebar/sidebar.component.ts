@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Params, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
+import { SidebarVisibilityService } from './sidebar-visibility.service';
 
 type NavItem = { label: string; route: string; icon: string };
 type CandidateTreeItem = {
@@ -37,6 +38,7 @@ type CandidateBasicDraft = {
 export class SidebarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private readonly router = inject(Router);
+  private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -179,6 +181,20 @@ export class SidebarComponent {
     return 'Rio de Janeiro RJ - Brasil';
   }
 
+  get candidateDisplayInitials(): string {
+    const parts = this.candidateDisplayName
+      .split(' ')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .slice(0, 2);
+
+    if (!parts.length) {
+      return 'JF';
+    }
+
+    return parts.map((part) => part.charAt(0).toUpperCase()).join('');
+  }
+
   isCandidateTreeItemActive(item: CandidateTreeItem): boolean {
     if (!item.route) {
       return false;
@@ -204,6 +220,10 @@ export class SidebarComponent {
 
   isExactRoute(item: NavItem): boolean {
     return item.route !== '/vagas' && item.route !== '/usuario/dados-cadastrais';
+  }
+
+  hideSidebar(): void {
+    this.sidebarVisibilityService.hide();
   }
 
   private readPrimaryPath(url: string): string {

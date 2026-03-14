@@ -1,5 +1,34 @@
 <header class="topbar">
-  <div class="topbar__primary" [class.topbar__primary--candidate]="isCandidateMode" *ngIf="!isSelectionMode; else selectionTopbar">
+  <div
+    class="topbar__primary"
+    [class.topbar__primary--candidate]="isCandidateMode"
+    [class.topbar__primary--candidate-collapsed]="showSidebarAvatarInPrimary"
+    *ngIf="!isSelectionMode; else selectionTopbar"
+  >
+    <button
+      *ngIf="showSidebarAvatarInPrimary"
+      class="topbar__sidebar-profile-trigger"
+      type="button"
+      (click)="toggleSidebar()"
+      aria-label="Mostrar sidebar"
+    >
+      <div class="topbar__sidebar-profile">
+        <div
+          class="avatar avatar--candidate topbar__sidebar-profile-avatar"
+          [class.avatar--image]="!!topbarAvatarUrl"
+          [style.backgroundImage]="topbarAvatarUrl ? 'url(' + topbarAvatarUrl + ')' : null"
+          aria-hidden="true"
+        >
+          <span *ngIf="!topbarAvatarUrl">{{ topbarAvatarInitials }}</span>
+        </div>
+
+        <div class="topbar__sidebar-profile-copy">
+          <strong>{{ topbarCandidateDisplayName }}</strong>
+          <span>{{ topbarCandidateDisplayLocation }}</span>
+        </div>
+      </div>
+    </button>
+
     <div class="topbar__formation-summary" *ngIf="isCandidateMode">
       <img
         [src]="topbarFormationLogoUrl"
@@ -11,17 +40,6 @@
         <span class="topbar__formation-specialization">{{ topbarFormationSpecialization }}</span>
       </div>
     </div>
-
-    <a
-      *ngIf="isCandidateMode && !isCandidateEcosystem"
-      class="topbar__cta topbar__cta--ecosystem"
-      href="/usuario/minhas-candidaturas"
-      (click)="openCandidateEcosystem($event)"
-      aria-label="Ir para Ecossistema"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">hub</span>
-      <span>Ecossistema</span>
-    </a>
 
     <div class="search" [class.search--candidate]="isCandidateMode">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
@@ -66,6 +84,35 @@
 
   <div class="actions">
     <button
+      *ngIf="isCandidateMode && !isCandidateEcosystem"
+      class="topbar__market-brief"
+      type="button"
+      (click)="openCandidateEcosystem($event)"
+      aria-label="Ir para Ecossistema"
+    >
+      <span class="topbar__market-brief-head">
+        <span class="topbar__market-brief-badge" aria-hidden="true">
+          <span class="material-symbols-rounded">insights</span>
+        </span>
+        <span class="topbar__market-brief-copy">
+          <strong>Movimento do mercado</strong>
+          <span>Visão rápida do Ecossistema</span>
+        </span>
+      </span>
+
+      <span class="topbar__market-brief-stats">
+        <span class="topbar__market-brief-metric">
+          <strong>{{ topbarNewVacanciesCount }}</strong>
+          <span>novas vagas</span>
+        </span>
+        <span class="topbar__market-brief-metric topbar__market-brief-metric--accent">
+          <strong>{{ topbarNewHiresCount }}</strong>
+          <span>novas contratações desde ontem</span>
+        </span>
+      </span>
+    </button>
+
+    <button
       class="iconBtn topbar__notifications"
       [class.topbar__notifications--active]="unreadTalentNotifications > 0"
       aria-label="Notificações"
@@ -77,19 +124,37 @@
         {{ unreadTalentNotifications }}
       </span>
     </button>
-    <button
-      *ngIf="canToggleSidebar; else staticAvatar"
-      class="topbar__avatar-trigger"
-      type="button"
-      (click)="toggleSidebar()"
-      [attr.aria-label]="isSidebarOpen ? 'Esconder sidebar' : 'Mostrar sidebar'"
-    >
-      <div class="avatar" aria-hidden="true"></div>
-    </button>
+    <ng-container *ngIf="shouldShowTopbarAvatar">
+      <button
+        *ngIf="canToggleSidebarFromTopbarAvatar; else staticAvatar"
+        class="topbar__avatar-trigger"
+        type="button"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="isSidebarOpen ? 'Esconder sidebar' : 'Mostrar sidebar'"
+      >
+        <div
+          class="avatar"
+          [class.avatar--candidate]="isCandidateMode"
+          [class.avatar--image]="isCandidateMode && !!topbarAvatarUrl"
+          [style.backgroundImage]="isCandidateMode && topbarAvatarUrl ? 'url(' + topbarAvatarUrl + ')' : null"
+          aria-hidden="true"
+        >
+          <span *ngIf="isCandidateMode && !topbarAvatarUrl">{{ topbarAvatarInitials }}</span>
+        </div>
+      </button>
 
-    <ng-template #staticAvatar>
-      <div class="avatar" aria-label="Perfil"></div>
-    </ng-template>
+      <ng-template #staticAvatar>
+        <div
+          class="avatar"
+          [class.avatar--candidate]="isCandidateMode"
+          [class.avatar--image]="isCandidateMode && !!topbarAvatarUrl"
+          [style.backgroundImage]="isCandidateMode && topbarAvatarUrl ? 'url(' + topbarAvatarUrl + ')' : null"
+          aria-label="Perfil"
+        >
+          <span *ngIf="isCandidateMode && !topbarAvatarUrl">{{ topbarAvatarInitials }}</span>
+        </div>
+      </ng-template>
+    </ng-container>
   </div>
 </header>
 

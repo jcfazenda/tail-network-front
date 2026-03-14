@@ -38,6 +38,27 @@
   text-align: center;
 }
 
+.brandAvatarButton{
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .18s ease;
+}
+
+.brandAvatarButton:hover{
+  transform: translateY(-1px);
+}
+
+.brandAvatarButton:focus-visible{
+  outline: 2px solid rgba(225, 138, 39, 0.42);
+  outline-offset: 4px;
+}
+
 .brandImg{
   width: 200px;
   height: auto;
