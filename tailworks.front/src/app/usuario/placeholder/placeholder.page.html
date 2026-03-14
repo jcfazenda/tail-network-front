@@ -53,13 +53,13 @@
           <p>veja as vagas publicadas disponiveis no ecossistema compativeis com você.</p>
         </div>
 
-        <button
-          class="candidate-stack-summary__processes-button"
-          type="button"
-          (click)="openProcessesPanel()"
-        >
-          Meus Processos
-        </button>
+      <button
+        class="candidate-stack-summary__processes-button"
+        type="button"
+        (click)="openProcessesPanel()"
+      >
+        Ecossistema
+      </button>
       </div>
 
       <div class="candidate-stack-summary__card">
@@ -285,11 +285,11 @@
                     </span>
                   </div>
 
-                  <span class="job-card__creator-salary" *ngIf="jobCardSalary(job) as salary">{{ salary }}</span>
+                  <span class="job-card__creator-company">{{ job.company }}</span>
                 </div>
                 <div class="job-card__creator-meta">
                   <span class="job-card__creator-role">{{ recruiterRole }}</span>
-                  <span class="job-card__creator-company">{{ job.company }}</span>
+                  <span class="job-card__creator-salary" *ngIf="jobCardSalary(job) as salary">{{ salary }}</span>
                 </div>
               </div>
             </div>
