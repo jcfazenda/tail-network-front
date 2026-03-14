@@ -224,7 +224,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   workModelFilter: WorkModelFilter = 'all';
   advancedFilterOpen = false;
   activeCandidatePanelView: CandidatePanelView = 'details';
-  activeOverviewShellView: OverviewShellView = 'process';
+  activeOverviewShellView: OverviewShellView = 'radar';
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
   processCardsDragging = false;
@@ -246,8 +246,8 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   candidateConfettiPieces: ConfettiPiece[] = [];
   candidateConfettiActive = false;
   private processCardsPointerId: number | null = null;
-  private processCardsPointerStartX = 0;
-  private processCardsPointerStartScrollLeft = 0;
+  private processCardsPointerStartY = 0;
+  private processCardsPointerStartScrollTop = 0;
   private processCardsSuppressClick = false;
   private processCardsSuppressClickTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -678,8 +678,8 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     }
 
     this.processCardsPointerId = event.pointerId;
-    this.processCardsPointerStartX = event.clientX;
-    this.processCardsPointerStartScrollLeft = rail.scrollLeft;
+    this.processCardsPointerStartY = event.clientY;
+    this.processCardsPointerStartScrollTop = rail.scrollTop;
     this.processCardsDragging = false;
     rail.setPointerCapture(event.pointerId);
   }
@@ -694,12 +694,12 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return;
     }
 
-    const delta = event.clientX - this.processCardsPointerStartX;
+    const delta = event.clientY - this.processCardsPointerStartY;
     if (Math.abs(delta) > 3) {
       this.processCardsDragging = true;
     }
 
-    rail.scrollLeft = this.processCardsPointerStartScrollLeft - delta;
+    rail.scrollTop = this.processCardsPointerStartScrollTop - delta;
   }
 
   processCardsHandlePointerUp(event: PointerEvent): void {

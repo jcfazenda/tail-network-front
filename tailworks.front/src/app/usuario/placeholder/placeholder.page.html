@@ -10,21 +10,21 @@
                   <button
                     class="candidate-stack-summary__top-shell-chip"
                     type="button"
-                    [class.candidate-stack-summary__top-shell-chip--active]="activeOverviewShellView === 'applications'"
-                    (click)="setOverviewShellView('applications')"
-                  >
-                    <span>Candidaturas</span>
-                    <strong>{{ applicationsCount }}</strong>
-                  </button>
-
-                  <button
-                    class="candidate-stack-summary__top-shell-chip"
-                    type="button"
                     [class.candidate-stack-summary__top-shell-chip--active]="activeOverviewShellView === 'radar'"
                     (click)="setOverviewShellView('radar')"
                   >
                     <span>No meu Radar</span>
                     <strong>{{ radarCount }}</strong>
+                  </button>
+
+                  <button
+                    class="candidate-stack-summary__top-shell-chip"
+                    type="button"
+                    [class.candidate-stack-summary__top-shell-chip--active]="activeOverviewShellView === 'applications'"
+                    (click)="setOverviewShellView('applications')"
+                  >
+                    <span>Candidaturas</span>
+                    <strong>{{ applicationsCount }}</strong>
                   </button>
 
                   <button
