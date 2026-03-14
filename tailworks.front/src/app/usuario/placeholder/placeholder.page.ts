@@ -23,6 +23,10 @@ type CandidateStatusPreview = {
   description: string;
   ownerText: string;
 };
+type ProcessJobGroup = {
+  label: string;
+  jobs: MockJobRecord[];
+};
 type RadarCategory = {
   label: string;
   value: number;
@@ -319,6 +323,32 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return this.activeTalentJobs.filter((job) => this.isApplicationsJob(job));
   }
 
+  get processJobGroups(): ProcessJobGroup[] {
+    const stageOrder = new Map<string, number>([
+      ['Validando documentos', 0],
+      ['Aceito', 1],
+      ['Contratação solicitada', 2],
+      ['Em processo', 3],
+      ['Candidatura enviada', 4],
+      ['Contratado', 5],
+      ['Ficou pra próxima', 6],
+      ['Candidatura cancelada', 7],
+      ['Escondido', 8],
+    ]);
+    const grouped = new Map<string, MockJobRecord[]>();
+
+    for (const job of this.processJobs) {
+      const label = this.jobStatusLabel(job);
+      const currentGroup = grouped.get(label) ?? [];
+      currentGroup.push(job);
+      grouped.set(label, currentGroup);
+    }
+
+    return [...grouped.entries()]
+      .sort((left, right) => (stageOrder.get(left[0]) ?? 999) - (stageOrder.get(right[0]) ?? 999))
+      .map(([label, jobs]) => ({ label, jobs }));
+  }
+
   radarWorkModelCount(value: WorkModel): number {
     return this.activeTalentJobs
       .filter((job) => this.isRadarJob(job) && job.workModel === value)
@@ -560,6 +590,10 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       default:
         return 'Talento no radar';
     }
+  }
+
+  processJobBarFill(job: MockJobRecord): string {
+    return 'linear-gradient(90deg, rgba(225, 138, 39, 0.98), rgba(242, 179, 26, 0.92) 46%, rgba(252, 237, 204, 0.98))';
   }
 
   jobCardPrimaryActionLabel(job: MockJobRecord): string {
