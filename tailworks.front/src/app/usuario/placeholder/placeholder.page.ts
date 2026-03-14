@@ -33,6 +33,17 @@ type RadarCategory = {
   value: number;
   color: string;
 };
+type HiringTrendPoint = {
+  month: string;
+  fullMonth: string;
+  value: number;
+};
+type HiringTrendChartPoint = HiringTrendPoint & {
+  x: number;
+  y: number;
+  xPercent: number;
+  yPercent: number;
+};
 
 type ConfettiPiece = {
   left: number;
@@ -96,6 +107,14 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
   private selectedJobObservedStage: CandidateStage | null = null;
   private candidateCelebrationTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly hiringTrendChartWidth = 820;
+  private readonly hiringTrendChartHeight = 280;
+  private readonly hiringTrendChartPadding = {
+    top: 26,
+    right: 24,
+    bottom: 26,
+    left: 10,
+  };
 
   readonly recruiterName = 'Rafael Souza';
   readonly recruiterRole = 'Talent Acquisition';
@@ -112,6 +131,21 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     { id: 'ia', label: 'IA', value: 73, color: 'linear-gradient(90deg, rgba(239, 71, 111, 0.96), rgba(255, 209, 102, 0.9))' },
     { id: 'seguranca', label: 'Segurança', value: 61, color: 'linear-gradient(90deg, rgba(67, 97, 238, 0.92), rgba(76, 201, 240, 0.88))' },
   ];
+  readonly hiringTrendSeries: HiringTrendPoint[] = [
+    { month: 'Jan', fullMonth: 'Janeiro', value: 26 },
+    { month: 'Fev', fullMonth: 'Fevereiro', value: 21 },
+    { month: 'Mar', fullMonth: 'Março', value: 31 },
+    { month: 'Abr', fullMonth: 'Abril', value: 27 },
+    { month: 'Mai', fullMonth: 'Maio', value: 35 },
+    { month: 'Jun', fullMonth: 'Junho', value: 29 },
+    { month: 'Jul', fullMonth: 'Julho', value: 33 },
+    { month: 'Ago', fullMonth: 'Agosto', value: 30 },
+    { month: 'Set', fullMonth: 'Setembro', value: 41 },
+    { month: 'Out', fullMonth: 'Outubro', value: 28 },
+    { month: 'Nov', fullMonth: 'Novembro', value: 25 },
+    { month: 'Dez', fullMonth: 'Dezembro', value: 16 },
+  ];
+  readonly hiringTrendScaleValues = [50, 40, 30, 20, 10, 0];
   readonly companyProfiles: Record<string, CompanySummaryProfile> = {
     'Banco Itaú': {
       name: 'Banco Itaú',
@@ -296,6 +330,57 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     return this.allRadarCategories;
   }
 
+  get hiringTrendChartPoints(): HiringTrendChartPoint[] {
+    const { top, right, bottom, left } = this.hiringTrendChartPadding;
+    const plotWidth = this.hiringTrendChartWidth - left - right;
+    const plotHeight = this.hiringTrendChartHeight - top - bottom;
+    const maxValue = this.hiringTrendScaleValues[0];
+    const lastIndex = Math.max(this.hiringTrendSeries.length - 1, 1);
+
+    return this.hiringTrendSeries.map((point, index) => {
+      const x = left + (plotWidth / lastIndex) * index;
+      const y = top + ((maxValue - point.value) / maxValue) * plotHeight;
+
+      return {
+        ...point,
+        x,
+        y,
+        xPercent: (x / this.hiringTrendChartWidth) * 100,
+        yPercent: (y / this.hiringTrendChartHeight) * 100,
+      };
+    });
+  }
+
+  get hiringTrendLinePath(): string {
+    return this.buildSmoothChartPath(this.hiringTrendChartPoints);
+  }
+
+  get hiringTrendAreaPath(): string {
+    const points = this.hiringTrendChartPoints;
+    if (!points.length) {
+      return '';
+    }
+
+    const linePath = this.buildSmoothChartPath(points);
+    const last = points[points.length - 1];
+    const first = points[0];
+    const baseline = this.hiringTrendChartHeight - this.hiringTrendChartPadding.bottom;
+
+    return `${linePath} L ${last.x} ${baseline} L ${first.x} ${baseline} Z`;
+  }
+
+  get hiringTrendActivePoint(): HiringTrendChartPoint | null {
+    return this.hiringTrendChartPoints.find((point) => point.month === 'Jun') ?? this.hiringTrendChartPoints[0] ?? null;
+  }
+
+  hiringTrendGridY(value: number): number {
+    const { top, bottom } = this.hiringTrendChartPadding;
+    const plotHeight = this.hiringTrendChartHeight - top - bottom;
+    const maxValue = this.hiringTrendScaleValues[0];
+
+    return top + ((maxValue - value) / maxValue) * plotHeight;
+  }
+
   get activeTalentJobs(): MockJobRecord[] {
     return this.vagasMockService.getJobs()
       .filter((job) => job.status === 'ativas');
@@ -448,6 +533,31 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
     this.topStacksPointerId = null;
     this.topStacksDragging = false;
+  }
+
+  private buildSmoothChartPath(points: Array<{ x: number; y: number }>): string {
+    if (!points.length) {
+      return '';
+    }
+
+    if (points.length === 1) {
+      return `M ${points[0].x} ${points[0].y}`;
+    }
+
+    let path = `M ${points[0].x} ${points[0].y}`;
+
+    for (let index = 0; index < points.length - 1; index += 1) {
+      const current = points[index];
+      const next = points[index + 1];
+      const midpointX = (current.x + next.x) / 2;
+      const midpointY = (current.y + next.y) / 2;
+
+      path += ` Q ${current.x} ${current.y} ${midpointX} ${midpointY}`;
+    }
+
+    const last = points[points.length - 1];
+    path += ` T ${last.x} ${last.y}`;
+    return path;
   }
 
   get emptyStateMessage(): string {

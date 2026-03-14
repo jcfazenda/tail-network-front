@@ -81,6 +81,91 @@
             </div>
           </div>
 
+          <section class="candidate-hiring-trend" aria-label="Contratações por mês">
+            <header class="candidate-hiring-trend__head">
+              <h4>Contratações por mês</h4>
+              <button class="candidate-hiring-trend__period" type="button">
+                <span>Anual</span>
+                <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+              </button>
+            </header>
+
+            <div class="candidate-hiring-trend__layout">
+              <div class="candidate-hiring-trend__scale" aria-hidden="true">
+                <span *ngFor="let value of hiringTrendScaleValues">{{ value }}</span>
+              </div>
+
+              <div class="candidate-hiring-trend__plot">
+                <svg
+                  class="candidate-hiring-trend__svg"
+                  viewBox="0 0 820 280"
+                  preserveAspectRatio="none"
+                  role="img"
+                  aria-label="Evolução de contratações por mês"
+                >
+                  <defs>
+                    <linearGradient id="candidateHiringTrendFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#8a8a8a" stop-opacity="0.26"></stop>
+                      <stop offset="100%" stop-color="#8a8a8a" stop-opacity="0.03"></stop>
+                    </linearGradient>
+                  </defs>
+
+                  <line
+                    *ngFor="let value of hiringTrendScaleValues"
+                    class="candidate-hiring-trend__grid-line"
+                    x1="10"
+                    x2="796"
+                    [attr.y1]="hiringTrendGridY(value)"
+                    [attr.y2]="hiringTrendGridY(value)"
+                  ></line>
+
+                  <path class="candidate-hiring-trend__area" [attr.d]="hiringTrendAreaPath"></path>
+                  <path class="candidate-hiring-trend__line" [attr.d]="hiringTrendLinePath"></path>
+
+                  <ng-container *ngIf="hiringTrendActivePoint as activePoint">
+                    <line
+                      class="candidate-hiring-trend__focus-line"
+                      [attr.x1]="activePoint.x"
+                      [attr.x2]="activePoint.x"
+                      [attr.y1]="activePoint.y"
+                      y2="254"
+                    ></line>
+                  </ng-container>
+                </svg>
+
+                <div
+                  class="candidate-hiring-trend__focus-marker"
+                  *ngIf="hiringTrendActivePoint as activePoint"
+                  [style.left.%]="activePoint.xPercent"
+                  [style.top.%]="activePoint.yPercent"
+                  aria-hidden="true"
+                >
+                  <span class="candidate-hiring-trend__focus-marker-ring"></span>
+                  <span class="candidate-hiring-trend__focus-marker-dot"></span>
+                </div>
+
+                <div
+                  class="candidate-hiring-trend__tooltip"
+                  *ngIf="hiringTrendActivePoint as activePoint"
+                  [style.left.%]="activePoint.xPercent"
+                  [style.top.%]="activePoint.yPercent"
+                >
+                  <strong>{{ activePoint.fullMonth }} 2026</strong>
+                  <span>Contratações <b>{{ activePoint.value }}</b></span>
+                </div>
+
+                <div class="candidate-hiring-trend__months" aria-hidden="true">
+                  <span
+                    *ngFor="let point of hiringTrendChartPoints"
+                    [class.candidate-hiring-trend__month--active]="point.month === hiringTrendActivePoint?.month"
+                  >
+                    {{ point.month }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section class="candidate-stack-summary__processes" *ngIf="processJobs.length">
             <div class="candidate-stack-summary__processes-list">
               <article class="candidate-stack-summary__process-card job-card" *ngFor="let job of orderedProcessJobs">

@@ -1,4 +1,4 @@
-<header class="topbar">
+<header class="topbar" [class.topbar--candidate]="isCandidateMode && !isSelectionMode">
   <div
     class="topbar__primary"
     [class.topbar__primary--candidate]="isCandidateMode"
