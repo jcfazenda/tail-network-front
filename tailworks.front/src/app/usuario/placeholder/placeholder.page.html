@@ -30,21 +30,11 @@
                   </div>
 
                   <div class="candidate-week-radar__track">
-                    <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+                    <div class="candidate-week-radar__rail" aria-hidden="true">
+                      <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+                    </div>
                     <div class="candidate-week-radar__value">{{ cat.value }}%</div>
                   </div>
-                </div>
-              </div>
-
-              <div class="candidate-week-radar__gauge-card">
-                <div class="candidate-stack-summary__radar candidate-stack-summary__radar--week">
-                  <app-alcance-radar
-                    title=""
-                    [score]="talentStackScore"
-                    [showGaugeLabel]="true"
-                    gaugeLabel="Radar TailWorks"
-                    [items]="talentStackRadarItems"
-                  />
                 </div>
               </div>
             </section>
@@ -198,8 +188,6 @@
 <ng-container *ngIf="showProcessesPanel">
   <aside class="candidate-job-panel" aria-label="Painel dos meus processos">
     <section class="candidate-job-panel__shell">
-      <button class="candidate-job-panel__close" type="button" (click)="closeProcessesPanel()">close</button>
-
       <div class="candidate-job-panel__body">
         <div class="candidate-job-panel__page candidate-job-panel__page--processes">
           <ng-container *ngTemplateOutlet="processesPanelContent"></ng-container>
@@ -213,8 +201,6 @@
 
 <ng-template #processesPanelContent>
   <div class="candidate-applications__toolbar candidate-applications__toolbar--panel">
-    <span class="candidate-applications__ecosystem-label">Ecossistema Tail Network</span>
-
     <div
       class="candidate-applications__filter-options candidate-applications__filter-options--centered"
       role="group"
@@ -253,7 +239,13 @@
   <div class="candidate-stack-summary__stack-box">
     <div class="candidate-stack-summary__stack-head">
       <h3 class="candidate-stack-summary__stack-title">Minha aderência no Ecossistema</h3>
-      <button class="candidate-stack-summary__stack-edit" type="button" (click)="editTalentStacks()">
+      <button
+        class="candidate-stack-summary__stack-edit"
+        type="button"
+        (click)="editTalentStacks()"
+        aria-label="Editar stacks"
+        title="Editar stacks"
+      >
         <span class="material-symbols-rounded" aria-hidden="true">edit</span> 
       </button>
     </div>

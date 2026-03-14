@@ -121,9 +121,9 @@
 }
 
 .menu--tree{
-  margin-top: 8px;
-  gap: 24px;
-  padding: 24px 10px 0 12px;
+  margin-top: 10px;
+  gap: 22px;
+  padding: 22px 8px 0 10px;
   border-top: 1px solid rgba(203, 213, 225, 0.52);
 }
 
@@ -134,79 +134,104 @@
 
 .menuTree__group{
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .menuTree__groupLabel{
-  color: rgba(15, 23, 42, 0.9);
-  font-size: 15px;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  padding-left: 4px;
+  color: rgba(148, 163, 184, 0.74);
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .menuTree__branch{
   display: grid;
-  gap: 12px;
-  padding-left: 10px;
+  gap: 6px;
+  padding-left: 0;
 }
 
 .menuTree__item{
   position: relative;
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
-  min-height: 24px;
-  color: rgba(15, 23, 42, 0.66);
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 8px;
+  border-radius: 14px;
+  color: rgba(71, 85, 105, 0.82);
   text-decoration: none;
   transition:
+    background .18s ease,
     color .18s ease,
+    box-shadow .18s ease,
     transform .18s ease;
 }
 
 .menuTree__item:hover{
-  color: rgba(15, 23, 42, 0.92);
+  background: rgba(255, 255, 255, 0.58);
+  color: rgba(15, 23, 42, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.82),
+    0 8px 18px rgba(15, 23, 42, 0.04);
   transform: translateX(2px);
 }
 
 .menuTree__item--placeholder{
-  opacity: 0.38;
+  opacity: 0.54;
   cursor: default;
 }
 
 .menuTree__item--placeholder:hover{
   transform: none;
-  color: rgba(15, 23, 42, 0.66);
+  background: transparent;
+  box-shadow: none;
+  color: rgba(71, 85, 105, 0.92);
 }
 
 .menuTree__icon{
   font-family: 'Material Symbols Rounded';
   flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
-  font-size: 17px;
-  color: rgba(148, 163, 184, 0.92);
+  font-size: 15px;
+  color: rgba(100, 116, 139, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 .menuTree__itemLabel{
-  font-size: 13px;
-  line-height: 1.2;
-  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 500;
   letter-spacing: 0.005em;
 }
 
 .menuTree__item--active{
-  color: rgba(15, 23, 42, 0.96);
+  background: linear-gradient(180deg, rgba(232, 244, 239, 0.96), rgba(241, 248, 245, 0.94));
+  color: rgba(28, 45, 38, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.92),
+    0 10px 22px rgba(15, 23, 42, 0.05);
 }
 
 .menuTree__item--active .menuTree__icon{
-  color: rgba(225, 138, 39, 0.94);
+  color: rgba(53, 107, 86, 0.96);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .menuTree__item--active .menuTree__itemLabel{
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .menuItem{

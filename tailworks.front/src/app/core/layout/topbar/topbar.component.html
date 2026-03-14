@@ -41,15 +41,6 @@
       </div>
     </div>
 
-    <div class="search" [class.search--candidate]="isCandidateMode">
-      <span class="material-symbols-rounded" aria-hidden="true">search</span>
-      <input
-        type="search"
-        [placeholder]="isCandidateMode ? 'Buscar vagas' : 'Buscar'"
-        [attr.aria-label]="isCandidateMode ? 'Buscar vagas' : 'Buscar talentos ou vagas'"
-      />
-    </div>
-
     <a
       *ngIf="isCandidateEcosystem"
       class="topbar__cta topbar__cta--back"
@@ -82,6 +73,15 @@
     </button>
   </div>
 
+  <div class="search" [class.search--candidate]="isCandidateMode" *ngIf="!isSelectionMode">
+    <span class="material-symbols-rounded" aria-hidden="true">search</span>
+    <input
+      type="search"
+      [placeholder]="isCandidateMode ? 'Buscar vagas' : 'Buscar'"
+      [attr.aria-label]="isCandidateMode ? 'Buscar vagas' : 'Buscar talentos ou vagas'"
+    />
+  </div>
+
   <div class="actions">
     <button
       *ngIf="isCandidateMode && !isCandidateEcosystem"
@@ -96,7 +96,9 @@
         </span>
         <span class="topbar__market-brief-copy">
           <strong>Movimento do mercado</strong>
-          <span>Visão rápida do Ecossistema</span>
+          <span class="topbar__market-brief-copy-row">
+            <span>Visão rápida do Ecossistema</span>
+          </span>
         </span>
       </span>
 
@@ -107,7 +109,7 @@
         </span>
         <span class="topbar__market-brief-metric topbar__market-brief-metric--accent">
           <strong>{{ topbarNewHiresCount }}</strong>
-          <span>novas contratações desde ontem</span>
+          <span>novas contratações</span>
         </span>
       </span>
     </button>

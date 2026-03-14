@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
+import { RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 import { EcosystemPanelService } from '../ecosystem-panel.service';
@@ -76,7 +76,7 @@ type CandidateFormationCopyDraft = {
 @Component({
   standalone: true,
   selector: 'app-candidate-placeholder-page',
-  imports: [CommonModule, AlcanceRadarComponent],
+  imports: [CommonModule],
   templateUrl: './placeholder.page.html',
   styleUrls: ['./placeholder.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
