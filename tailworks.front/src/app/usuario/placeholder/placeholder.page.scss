@@ -13,7 +13,7 @@
   align-content: start;
   gap: 26px;
   padding: 12px 0 20px;
-  margin: 0 auto;
+  margin: 0;
   position: relative;
   isolation: isolate;
 }
@@ -22,9 +22,7 @@
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(246, 243, 238, 0.28), rgba(246, 243, 238, 0.38)),
-    center / cover no-repeat url('/assets/images/fundo-home-tailworks.png');
+  background: #ececec;
   pointer-events: none;
   z-index: -2;
 }
@@ -415,8 +413,8 @@
   padding: 22px;
   border-radius: 22px;
   border: 0;
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.025);
+  background: transparent;
+  box-shadow: none;
 }
 
 .candidate-stack-summary__slot{
@@ -426,6 +424,7 @@
 .candidate-week-radar{
   display: grid;
   gap: 18px;
+  width: min(100%, 860px);
   padding: 20px 22px 22px;
   border-radius: 22px;
   background:
@@ -451,8 +450,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(15, 23, 42, 0.18);
+  padding-top: 0;
+  margin-top: -10px;
   font-size: 15px;
   color: rgba(15, 23, 42, 0.78);
 }
@@ -549,8 +548,8 @@
 }
 
 .candidate-stack-summary__radar ::ng-deep .radar-overview{
-  grid-template-columns: minmax(0, 1fr) 150px;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 20px;
 }
 
 .candidate-stack-summary__radar ::ng-deep .radar-overview__content{
@@ -581,21 +580,47 @@
 }
 
 .candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-wrap{
-  width: 150px;
-  height: 150px;
+  width: 300px;
+  height: 300px;
+  align-self: start;
+  margin-top: -28px;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-orbit{
+  display: none;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-track{
+  stroke: #f6c0da;
+  stroke-width: 5;
+  opacity: 1;
+}
+
+.candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-progress{
+  stroke: #ef4aa4;
+  stroke-width: 5;
+  stroke-linecap: butt;
+  filter: none;
 }
 
 .candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-core{
-  width: 108px;
-  height: 108px;
+  width: 200px;
+  height: 200px;
+  background: transparent;
+  box-shadow: none;
+  gap: 0;
 }
 
 .candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-core strong{
-  font-size: 28px;
+  font-size: 56px;
+  color: #ef4aa4;
+  margin-bottom: 6px;
 }
 
 .candidate-stack-summary__radar ::ng-deep .radar-overview__gauge-core span{
-  font-size: 8px;
+  font-size: 14px;
+  color: rgba(217, 227, 27, 0.72);
+  margin-top: 2px;
 }
 
 .candidate-stack-summary__stack-box{
@@ -618,10 +643,10 @@
 .candidate-stack-summary__processes{
   display: grid;
   gap: 12px;
-  padding: 18px 18px 16px;
+  padding: 18px 0 16px;
   border-radius: 22px;
-  border: 1px dashed rgba(15, 23, 42, 0.14);
-  background: rgba(255, 255, 255, 0.32);
+  border: 0;
+  background: transparent;
 }
 
 .candidate-stack-summary__processes-head{
@@ -654,50 +679,7 @@
 .candidate-stack-summary__processes-list{
   display: grid;
   gap: 10px;
-}
-
-.candidate-stack-summary__process-groups{
-  display: grid;
-  gap: 16px;
-}
-
-.candidate-stack-summary__process-group{
-  display: grid;
-  gap: 10px;
-}
-
-.candidate-stack-summary__process-group + .candidate-stack-summary__process-group{
-  padding-top: 16px;
-  border-top: 1px dashed rgba(15, 23, 42, 0.12);
-}
-
-.candidate-stack-summary__process-group-head{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-left: 14px;
-}
-
-.candidate-stack-summary__process-group-head strong{
-  margin: 0;
-  color: rgba(15, 23, 42, 0.78);
-  font-size: 13px;
-  line-height: 1.2;
-  font-weight: 800;
-}
-
-.candidate-stack-summary__process-group-head span{
-  min-width: 24px;
-  height: 24px;
-  padding: 0 8px;
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
-  background: rgba(15, 23, 42, 0.05);
-  color: rgba(15, 23, 42, 0.6);
-  font-size: 11px;
-  font-weight: 700;
+  width: min(100%, 860px);
 }
 
 .candidate-stack-summary__process-card{
@@ -709,6 +691,27 @@
   display: block;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
+  padding: 18px 20px 18px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.84);
+  border-radius: 14px;
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(255, 248, 238, 0.92), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 248, 251, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1px 0 rgba(226, 232, 240, 0.56),
+    0 6px 14px rgba(15, 23, 42, 0.04),
+    0 20px 38px rgba(15, 23, 42, 0.1);
+}
+
+.candidate-stack-summary__process-surface.job-card__surface:hover{
+  border-color: rgba(238, 178, 92, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(226, 232, 240, 0.62),
+    0 10px 22px rgba(15, 23, 42, 0.06),
+    0 24px 44px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
 }
 
 .candidate-stack-summary__process-surface .job-card__main{
@@ -735,6 +738,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.candidate-stack-summary__process-title-row{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
 }
 
 .candidate-stack-summary__process-surface .job-card__footer{
@@ -838,21 +848,6 @@
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, rgba(225, 138, 39, 0.98), rgba(242, 179, 26, 0.92) 52%, rgba(247, 216, 149, 0.94));
-}
-
-.candidate-stack-summary__process-status{
-  min-height: 30px;
-  padding: 0 13px;
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
-  background: linear-gradient(180deg, rgba(238, 240, 244, 0.98), rgba(228, 232, 238, 0.92));
-  color: rgba(67, 75, 89, 0.78);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
-  flex: 0 0 auto;
 }
 
 .candidate-stack-summary__stack-list{
@@ -1327,6 +1322,19 @@
 
 .candidate-applications__list--panel .job-card__surface{
   display: block;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 18px 20px 18px 24px;
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.candidate-applications__list--panel .job-card__surface:hover{
+  border-color: rgba(238, 178, 92, 0.38);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  transform: none;
 }
 
 .candidate-applications__list--panel .job-card__main{

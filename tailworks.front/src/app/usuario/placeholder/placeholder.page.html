@@ -1,51 +1,5 @@
 <section class="candidate-placeholder" [class.candidate-placeholder--applications]="isApplicationsPage">
   <ng-container *ngIf="isApplicationsPage; else defaultPlaceholder">
-    <div class="candidate-applications__intro">
-      <div class="candidate-applications__intro-formation">
-        <img
-          [src]="talentFormationLogoUrl"
-          alt=""
-          class="candidate-applications__intro-formation-logo"
-        />
-
-        <div class="candidate-applications__intro-formation-copy">
-          <strong class="candidate-applications__intro-degree">{{ talentGraduation }}</strong>
-          <span class="candidate-applications__intro-specialization">{{ talentSpecialization }}</span>
-          <span class="candidate-applications__intro-formation-heading">{{ talentFormationHeading }}</span>
-        </div>
-      </div>
-
-      <div class="candidate-applications__intro-profile">
-        <div class="candidate-applications__intro-avatar" aria-hidden="true">
-          <img
-            *ngIf="talentAvatarUrl; else defaultTalentAvatar"
-            [src]="talentAvatarUrl"
-            alt=""
-            class="candidate-applications__intro-avatar-image"
-          />
-
-          <ng-template #defaultTalentAvatar>
-            <span class="material-symbols-rounded">person</span>
-          </ng-template>
-        </div>
-
-        <div class="candidate-applications__intro-identity">
-          <div class="candidate-applications__intro-name">
-            <strong>{{ talentName }}</strong>
-            <span
-              class="candidate-applications__intro-verified material-symbols-rounded"
-              aria-label="Validado no sistema"
-              title="Validado no sistema"
-            >
-              verified
-            </span>
-          </div>
-
-          <span class="candidate-applications__intro-detail">{{ talentEmail }}</span>
-        </div>
-      </div>
-    </div>
-
     <section class="candidate-stack-summary" *ngIf="talentStacks.length">
       <div class="candidate-stack-summary__card">
         <div class="candidate-stack-summary__body">
@@ -59,7 +13,8 @@
                 <app-alcance-radar
                   title=""
                   [score]="talentStackScore"
-                  [showGaugeLabel]="false"
+                  [showGaugeLabel]="true"
+                  gaugeLabel="Radar TailWorks"
                   [items]="talentStackRadarItems"
                 />
               </div>
@@ -86,80 +41,71 @@
           </div>
 
           <section class="candidate-stack-summary__processes" *ngIf="processJobs.length">
-            <div class="candidate-stack-summary__process-groups">
-              <section class="candidate-stack-summary__process-group" *ngFor="let group of processJobGroups">
-                <div class="candidate-stack-summary__process-group-head">
-                  <strong>{{ group.label }}</strong>
-                  <span>{{ group.jobs.length }}</span>
-                </div>
+            <div class="candidate-stack-summary__processes-list">
+              <article class="candidate-stack-summary__process-card job-card" *ngFor="let job of orderedProcessJobs">
+                <div
+                  class="job-card__surface job-card__surface--interactive candidate-stack-summary__process-surface"
+                  role="button"
+                  tabindex="0"
+                  (click)="openJobPanel(job.id)"
+                  (keydown.enter)="openJobPanel(job.id)"
+                  (keydown.space)="openJobPanel(job.id); $event.preventDefault()"
+                >
+                  <div class="job-card__main">
+                    <div class="job-card__creator">
+                      <span
+                        class="job-card__creator-avatar"
+                        [style.backgroundImage]="'url(' + recruiterAvatar + ')'"
+                        aria-hidden="true"
+                      ></span>
 
-                <div class="candidate-stack-summary__processes-list">
-                  <article class="candidate-stack-summary__process-card job-card" *ngFor="let job of group.jobs">
-                    <div
-                      class="job-card__surface job-card__surface--interactive candidate-stack-summary__process-surface"
-                      role="button"
-                      tabindex="0"
-                      (click)="openJobPanel(job.id)"
-                      (keydown.enter)="openJobPanel(job.id)"
-                      (keydown.space)="openJobPanel(job.id); $event.preventDefault()"
-                    >
-                      <div class="job-card__main">
-                        <div class="job-card__creator">
-                          <span
-                            class="job-card__creator-avatar"
-                            [style.backgroundImage]="'url(' + recruiterAvatar + ')'"
-                            aria-hidden="true"
-                          ></span>
-
-                          <div class="job-card__creator-copy">
-                            <div class="job-card__creator-heading">
-                              <div class="job-card__creator-name">
-                                <strong>{{ recruiterName }}</strong>
-                                <span
-                                  class="job-card__creator-verified material-symbols-rounded"
-                                  aria-label="Perfil verificado"
-                                  title="Perfil verificado"
-                                >
-                                  verified
-                                </span>
-                              </div>
-
-                              <span class="job-card__creator-company">{{ job.company }}</span>
-                            </div>
-                            <div class="job-card__creator-meta">
-                              <span class="job-card__creator-role">{{ recruiterRole }}</span>
-                              <span class="job-card__creator-salary" *ngIf="jobCardSalary(job) as salary">{{ salary }}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="job-card__meta">
-                          <span>{{ job.location }}</span>
-                        </div>
-
-                        <div class="job-card__title-row">
-                          <h3 class="job-card__title">{{ job.title }}</h3>
-                        </div>
-
-                        <div class="job-card__footer candidate-stack-summary__process-footer">
-                          <div class="job-card__fit">
-                            <span class="job-card__fit-bar" aria-hidden="true">
-                              <span
-                                class="job-card__fit-bar-fill"
-                                [style.width.%]="job.match"
-                                [style.background]="processJobBarFill(job)"
-                              ></span>
-                            </span>
-                            <span class="job-card__fit-summary">
-                              <span class="job-card__fit-value">{{ job.match }}%</span>
+                      <div class="job-card__creator-copy">
+                        <div class="job-card__creator-heading">
+                          <div class="job-card__creator-name">
+                            <strong>{{ recruiterName }}</strong>
+                            <span
+                              class="job-card__creator-verified material-symbols-rounded"
+                              aria-label="Perfil verificado"
+                              title="Perfil verificado"
+                            >
+                              verified
                             </span>
                           </div>
+
+                          <span class="job-card__creator-company">{{ job.company }}</span>
+                        </div>
+                        <div class="job-card__creator-meta">
+                          <span class="job-card__creator-role">{{ recruiterRole }}</span>
+                          <span class="job-card__creator-salary" *ngIf="jobCardSalary(job) as salary">{{ salary }}</span>
                         </div>
                       </div>
                     </div>
-                  </article>
+
+                    <div class="job-card__meta">
+                      <span>{{ job.location }}</span>
+                    </div>
+
+                    <div class="job-card__title-row candidate-stack-summary__process-title-row">
+                      <h3 class="job-card__title">{{ job.title }}</h3>
+                    </div>
+
+                    <div class="job-card__footer candidate-stack-summary__process-footer">
+                      <div class="job-card__fit">
+                        <span class="job-card__fit-bar" aria-hidden="true">
+                          <span
+                            class="job-card__fit-bar-fill"
+                            [style.width.%]="job.match"
+                            [style.background]="processJobBarFill(job)"
+                          ></span>
+                        </span>
+                        <span class="job-card__fit-summary">
+                          <span class="job-card__fit-value">{{ job.match }}%</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </section>
+              </article>
             </div>
           </section>
         </div>

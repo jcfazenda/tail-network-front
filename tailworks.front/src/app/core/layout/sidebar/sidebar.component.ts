@@ -1,11 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Params, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
-import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.service';
 
 type NavItem = { label: string; route: string; icon: string };
+type CandidateTreeItem = {
+  label: string;
+  icon: string;
+  route?: string;
+  queryParams?: Params;
+};
+type CandidateTreeGroup = {
+  label: string;
+  items: CandidateTreeItem[];
+};
+type CandidateBasicProfile = {
+  name?: string;
+  city?: string;
+  state?: string;
+  location?: string;
+};
+type CandidateBasicDraft = {
+  profile?: CandidateBasicProfile;
+  photoPreviewUrl?: string;
+};
 
 @Component({
   standalone: true,
@@ -16,8 +35,8 @@ type NavItem = { label: string; route: string; icon: string };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
+  private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private readonly router = inject(Router);
-  private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -35,11 +54,37 @@ export class SidebarComponent {
     { label: 'Sair', route: '/home', icon: 'logout' },
   ];
 
-  private readonly candidateItems: NavItem[] = [
-    { label: 'Home', route: '/usuario/ecossistema', icon: 'home' },
-    { label: 'Dados Cadastrais', route: '/usuario/dados-cadastrais', icon: 'badge' },
-    { label: 'Minhas Candidaturas', route: '/usuario/minhas-candidaturas', icon: 'task_alt' },
-    { label: 'Sair', route: '/login', icon: 'logout' },
+  private readonly candidateTreeGroupsValue: CandidateTreeGroup[] = [
+    {
+      label: 'Home',
+      items: [
+        { label: 'Página Principal', icon: 'home', route: '/usuario/ecossistema' },
+        { label: 'Notícias', icon: 'newspaper' },
+        { label: 'Timeline', icon: 'timeline' },
+      ],
+    },
+    {
+      label: 'Meus Dados',
+      items: [
+        { label: 'Dados Básicos', icon: 'badge', route: '/usuario/dados-cadastrais', queryParams: { modal: 'basic' } },
+        { label: 'Documentos', icon: 'description' },
+        { label: 'Minhas Stacks', icon: 'deployed_code', route: '/usuario/dados-cadastrais', queryParams: { section: 'stacks' } },
+        { label: 'Experiências', icon: 'business_center', route: '/usuario/dados-cadastrais', queryParams: { section: 'experiencia' } },
+      ],
+    },
+    {
+      label: 'Minha Rede',
+      items: [
+        { label: 'Candidaturas', icon: 'task_alt', route: '/usuario/minhas-candidaturas' },
+        { label: 'Radar do Ecossistema', icon: 'radar', route: '/usuario/minhas-candidaturas', queryParams: { ecosystem: 'open' } },
+      ],
+    },
+    {
+      label: 'Conta',
+      items: [
+        { label: 'Sair', icon: 'logout', route: '/login' },
+      ],
+    },
   ];
 
   private readonly selectionItems: NavItem[] = [
@@ -51,7 +96,11 @@ export class SidebarComponent {
       return this.selectionItems;
     }
 
-    return this.isCandidateMode ? this.candidateItems : this.recruiterItems;
+    return this.recruiterItems;
+  }
+
+  get candidateTreeGroups(): CandidateTreeGroup[] {
+    return this.candidateTreeGroupsValue;
   }
 
   get profileName(): string {
@@ -89,13 +138,94 @@ export class SidebarComponent {
     return this.currentUrl().startsWith('/usuario');
   }
 
+  get candidateAvatarUrl(): string {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+
+    const rawDraft = window.localStorage.getItem(SidebarComponent.basicDraftStorageKey);
+    if (!rawDraft) {
+      return '';
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
+      return draft.photoPreviewUrl?.trim() || '';
+    } catch {
+      window.localStorage.removeItem(SidebarComponent.basicDraftStorageKey);
+      return '';
+    }
+  }
+
+  get candidateDisplayName(): string {
+    const draft = this.readCandidateDraft();
+    return draft?.profile?.name?.trim() || 'Julio Fazenda';
+  }
+
+  get candidateDisplayLocation(): string {
+    const draft = this.readCandidateDraft();
+    const city = draft?.profile?.city?.trim();
+    const state = draft?.profile?.state?.trim();
+    const location = draft?.profile?.location?.trim();
+
+    if (city && state) {
+      return `${city} ${state} - Brasil`;
+    }
+
+    if (location) {
+      return `${location} - Brasil`;
+    }
+
+    return 'Rio de Janeiro RJ - Brasil';
+  }
+
+  isCandidateTreeItemActive(item: CandidateTreeItem): boolean {
+    if (!item.route) {
+      return false;
+    }
+
+    const current = this.router.parseUrl(this.currentUrl());
+    const currentPath = this.readPrimaryPath(this.currentUrl());
+    const targetPath = item.route;
+
+    if (currentPath !== targetPath) {
+      return false;
+    }
+
+    const currentParams = current.queryParams;
+    const targetParams = item.queryParams ?? {};
+
+    if (!Object.keys(targetParams).length) {
+      return !Object.keys(currentParams).length;
+    }
+
+    return Object.entries(targetParams).every(([key, value]) => `${currentParams[key] ?? ''}` === `${value}`);
+  }
+
   isExactRoute(item: NavItem): boolean {
     return item.route !== '/vagas' && item.route !== '/usuario/dados-cadastrais';
   }
 
-  protected openEcosystem(event: Event): void {
-    event.preventDefault();
-    this.ecosystemEntryService.setMode(this.isCandidateMode ? 'talent' : 'recruiter');
-    void this.router.navigateByUrl('/usuario/ecossistema');
+  private readPrimaryPath(url: string): string {
+    const [path] = url.split('?');
+    return path.split('#')[0];
+  }
+
+  private readCandidateDraft(): CandidateBasicDraft | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    const rawDraft = window.localStorage.getItem(SidebarComponent.basicDraftStorageKey);
+    if (!rawDraft) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawDraft) as CandidateBasicDraft;
+    } catch {
+      window.localStorage.removeItem(SidebarComponent.basicDraftStorageKey);
+      return null;
+    }
   }
 }

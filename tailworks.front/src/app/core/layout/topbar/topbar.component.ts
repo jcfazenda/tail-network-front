@@ -10,6 +10,14 @@ import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.ser
 import { EcosystemPanelService } from '../../../usuario/ecosystem-panel.service';
 import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
 
+type FormationCopyDraft = {
+  endMonth?: string;
+  endYear?: string;
+  graduation?: string;
+  specialization?: string;
+  graduated?: boolean;
+};
+
 type NotificationConfettiPiece = {
   left: string;
   top: string;
@@ -31,6 +39,8 @@ type NotificationConfettiPiece = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent {
+  private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
+  private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
   private readonly vagasMockService = inject(VagasMockService);
   private readonly talentNotificationService = inject(TalentNotificationService);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
@@ -82,6 +92,36 @@ export class TopbarComponent {
 
   get canToggleSidebar(): boolean {
     return !this.isSelectionMode && !this.isCandidateEcosystem;
+  }
+
+  get topbarFormationLogoUrl(): string {
+    if (typeof window === 'undefined') {
+      return '/assets/images/logo-estacio.png';
+    }
+
+    return window.localStorage.getItem(TopbarComponent.formationLogoStorageKey) || '/assets/images/logo-estacio.png';
+  }
+
+  get topbarFormationHeading(): string {
+    const draft = this.readFormationDraft();
+
+    if (draft?.graduated === false) {
+      return 'Em andamento';
+    }
+
+    if (draft?.endMonth?.trim() && draft?.endYear?.trim()) {
+      return `Formado em ${draft.endMonth.trim()} ${draft.endYear.trim()}`;
+    }
+
+    return 'Formado em Dez 2025';
+  }
+
+  get topbarFormationGraduation(): string {
+    return this.readFormationDraft()?.graduation?.trim() || 'Bacharelado em Sistemas de Informação';
+  }
+
+  get topbarFormationSpecialization(): string {
+    return this.readFormationDraft()?.specialization?.trim() || 'Especialização em Arquitetura de Software';
   }
 
   get isSidebarOpen(): boolean {
@@ -268,6 +308,24 @@ export class TopbarComponent {
         notice: Date.now(),
       },
     });
+  }
+
+  private readFormationDraft(): FormationCopyDraft | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    const rawDraft = window.localStorage.getItem(TopbarComponent.formationCopyStorageKey);
+    if (!rawDraft) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawDraft) as FormationCopyDraft;
+    } catch {
+      window.localStorage.removeItem(TopbarComponent.formationCopyStorageKey);
+      return null;
+    }
   }
 
   private shouldLaunchNotificationConfetti(

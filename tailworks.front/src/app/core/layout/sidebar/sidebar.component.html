@@ -1,26 +1,73 @@
 <aside class="sidebar">
   <div class="brand">
-    <img src="/assets/images/logo-tail.png" alt="TailWorks" class="brandImg" />
+    <ng-container *ngIf="isCandidateMode; else defaultBrand">
+      <div class="brandCandidate">
+        <div
+          class="brandAvatar"
+          [class.brandAvatar--image]="!!candidateAvatarUrl"
+          [style.backgroundImage]="candidateAvatarUrl ? 'url(' + candidateAvatarUrl + ')' : null"
+          [attr.aria-label]="candidateDisplayName"
+        >
+          <span *ngIf="!candidateAvatarUrl">JF</span>
+        </div>
+
+        <div class="brandCandidate__copy">
+          <strong>{{ candidateDisplayName }}</strong>
+          <span>{{ candidateDisplayLocation }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #defaultBrand>
+      <img src="/assets/images/logo-tail.png" alt="TailWorks" class="brandImg" />
+    </ng-template>
   </div>
 
-  <nav class="menu" [class.menu--candidate]="isCandidateMode">
-    <a
-      *ngFor="let item of items"
-      class="menuItem"
-      [routerLink]="item.route"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: isExactRoute(item) }"
-    >
-      <span class="activeBar" aria-hidden="true"></span>
-      <span class="material-symbols-rounded icon" aria-hidden="true">{{ item.icon }}</span>
-      <span class="label">{{ item.label }}</span>
-    </a>
-  </nav>
+  <ng-container *ngIf="isCandidateMode; else flatMenu">
+    <nav class="menu menu--tree" aria-label="Navegacao do talento">
+      <section class="menuTree__group" *ngFor="let group of candidateTreeGroups">
+        <strong class="menuTree__groupLabel">{{ group.label }}</strong>
 
-  <div class="profileActions">
-    <a class="cta eco-btn" href="/usuario/ecossistema" (click)="openEcosystem($event)" aria-label="Explorar ecossistema">Ecossistema</a>
-  </div>
+        <div class="menuTree__branch">
+          <ng-container *ngFor="let item of group.items">
+            <a
+              *ngIf="item.route; else placeholderItem"
+              class="menuTree__item"
+              [class.menuTree__item--active]="isCandidateTreeItemActive(item)"
+              [routerLink]="item.route"
+              [queryParams]="item.queryParams ?? null"
+            >
+              <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
+              <span class="menuTree__itemLabel">{{ item.label }}</span>
+            </a>
 
+            <ng-template #placeholderItem>
+              <div class="menuTree__item menuTree__item--placeholder">
+                <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
+                <span class="menuTree__itemLabel">{{ item.label }}</span>
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+      </section>
+    </nav>
+  </ng-container>
+
+  <ng-template #flatMenu>
+    <nav class="menu" [class.menu--candidate]="isCandidateMode">
+      <a
+        *ngFor="let item of items"
+        class="menuItem"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: isExactRoute(item) }"
+      >
+        <span class="activeBar" aria-hidden="true"></span>
+        <span class="material-symbols-rounded icon" aria-hidden="true">{{ item.icon }}</span>
+        <span class="label">{{ item.label }}</span>
+      </a>
+    </nav>
+  </ng-template>
   <div class="profileFooter">
     <div class="divider"></div>
     <div class="profileRow flat">
@@ -33,5 +80,10 @@
     <div class="footer-msg" aria-label="Notificações">
       {{ footerMessage }}
     </div>
+  </div>
+
+  <div class="sidebarFooterBrand" aria-hidden="true">
+    <img src="/assets/images/logo-tail.png" alt="" class="sidebarFooterBrand__image" />
+    <span class="sidebarFooterBrand__copyright">All rights reserved © 2026</span>
   </div>
 </aside>

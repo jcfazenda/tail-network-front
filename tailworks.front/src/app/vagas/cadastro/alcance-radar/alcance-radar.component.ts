@@ -29,6 +29,7 @@ export class AlcanceRadarComponent {
   @Input() title = 'Alcance do radar';
   @Input() score = 89;
   @Input() showGaugeLabel = true;
+  @Input() gaugeLabel = 'Aderencia';
   @Input() embedded = false;
   @Input() items: RadarLegendItem[] = [
     { label: 'Alta compatibilidade', tone: 'high', percent: 76 },

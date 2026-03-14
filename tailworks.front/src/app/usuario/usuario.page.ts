@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CandidateRegistrationStripComponent } from './shared/candidate-registration-strip.component';
 import { DadosCadastraisPage } from './dados-cadastrais/dados-cadastrais.page';
 import { StacksPage } from './stacks/stacks.page';
@@ -36,10 +38,13 @@ type FormationCopyDraft = {
   styleUrls: ['./usuario.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UsuarioPage implements OnInit {
+export class UsuarioPage implements OnInit, OnDestroy {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly subscriptions = new Subscription();
 
   displayName = 'Julio Fazenda';
   displayEmail = 'jfazenda@gmail.com';
@@ -56,6 +61,22 @@ export class UsuarioPage implements OnInit {
 
   ngOnInit(): void {
     this.restoreHeaderData();
+    this.subscriptions.add(
+      this.route.queryParamMap.subscribe((params) => {
+        const modal = params.get('modal');
+        const section = params.get('section');
+
+        this.isBasicDataModalOpen = modal === 'basic';
+
+        if (section) {
+          this.scrollToSection(section);
+        }
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   openBasicDataModal(): void {
@@ -64,6 +85,7 @@ export class UsuarioPage implements OnInit {
 
   closeBasicDataModal(): void {
     this.isBasicDataModalOpen = false;
+    this.clearQueryParam('modal');
   }
 
   handleBasicDataSaved(): void {
@@ -162,5 +184,41 @@ export class UsuarioPage implements OnInit {
     }
 
     return location?.trim() || 'Rio de Janeiro - RJ';
+  }
+
+  private scrollToSection(section: string): void {
+    const sectionId = this.resolveSectionId(section);
+    if (!sectionId || typeof window === 'undefined') {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const target = document.getElementById(sectionId);
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  private resolveSectionId(section: string): string | null {
+    switch (section) {
+      case 'stacks':
+        return 'usuario-stacks';
+      case 'experiencia':
+        return 'usuario-experiencia';
+      case 'formacao':
+        return 'usuario-formacao';
+      default:
+        return null;
+    }
+  }
+
+  private clearQueryParam(param: string): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        [param]: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

@@ -349,6 +349,10 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       .map(([label, jobs]) => ({ label, jobs }));
   }
 
+  get orderedProcessJobs(): MockJobRecord[] {
+    return this.processJobGroups.flatMap((group) => group.jobs);
+  }
+
   radarWorkModelCount(value: WorkModel): number {
     return this.activeTalentJobs
       .filter((job) => this.isRadarJob(job) && job.workModel === value)

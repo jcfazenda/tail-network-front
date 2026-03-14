@@ -8,9 +8,15 @@
   align-items: center;
   gap: 8px;
   padding: 0 16px;
-  background: var(--surface-gradient);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: none;
+  background:
+    radial-gradient(125% 140% at 0% 0%, rgba(255, 247, 232, 0.72), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,255,255,0.992), rgba(247,247,244,0.968));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.84);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.94),
+    inset 0 -1px 0 rgba(226, 232, 240, 0.48),
+    0 10px 24px rgba(15, 23, 42, 0.04),
+    0 18px 42px rgba(15, 23, 42, 0.08);
 }
 
 .topbar__primary{
@@ -20,12 +26,64 @@
   min-width: 0;
 }
 
-.topbar__sidebar-toggle{
-  flex: 0 0 auto;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border-radius: 999px;
+.topbar__primary--candidate{
+  display: grid;
+  grid-template-columns: minmax(620px, 1fr) minmax(300px, 360px) auto;
+  align-items: center;
+  gap: 18px;
+}
+
+.topbar__formation-summary{
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding-right: 8px;
+}
+
+.topbar__formation-logo{
+  width: 88px;
+  height: 88px;
+  border-radius: 0;
+  object-fit: contain;
+  display: block;
+  box-shadow: none;
+}
+
+.topbar__formation-copy{
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.topbar__formation-heading{
+  color: rgba(15, 23, 42, 0.45);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__formation-degree{
+  color: rgba(15, 23, 42, 0.9);
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__formation-specialization{
+  color: rgba(15, 23, 42, 0.54);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search{
@@ -38,9 +96,21 @@
   padding: 13px 18px;
   box-shadow: none;
   min-height: 48px;
-  width: 100%;
+  width: min(100%, 460px);
   min-width: 0;
-  flex: 1;
+  flex: 0 1 460px;
+}
+
+.search--candidate{
+  margin-left: 0;
+  position: relative;
+  justify-content: center;
+  justify-self: center;
+}
+
+.search--candidate .material-symbols-rounded{
+  position: absolute;
+  left: 18px;
 }
 
 .search input{
@@ -49,6 +119,10 @@
   flex: 1;
   font-size: 14px;
   color: var(--muted);
+}
+
+.search--candidate input{
+  text-align: center;
 }
 
 .search input::placeholder{
@@ -77,6 +151,27 @@
   box-shadow: var(--btn-primary-shadow);
   white-space: nowrap;
   text-decoration: none;
+}
+
+.topbar__cta--ecosystem{
+  min-height: 36px;
+  padding: 0 10px;
+  width: fit-content;
+  justify-self: start;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1;
+  gap: 6px;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-border);
+  box-shadow: var(--btn-primary-shadow);
+}
+
+.topbar__cta--ecosystem .material-symbols-rounded{
+  font-size: 17px;
 }
 
 .topbar__cta .material-symbols-rounded{
@@ -202,6 +297,33 @@
   border: 2px solid #fff;
 }
 
+.topbar__avatar-trigger{
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: transform .18s ease;
+}
+
+.topbar__avatar-trigger:hover{
+  transform: translateY(-1px);
+}
+
+.topbar__avatar-trigger:focus-visible{
+  outline: 2px solid rgba(225, 138, 39, 0.42);
+  outline-offset: 4px;
+}
+
+.topbar__avatar-trigger .avatar{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.74),
+    0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
 .topbar-notification-backdrop{
   position: fixed;
   inset: 0;
@@ -210,6 +332,27 @@
   padding: 120px 24px 24px;
   background: rgba(17, 24, 39, 0.12);
   backdrop-filter: blur(6px);
+}
+
+@media (max-width: 1180px){
+  .topbar__primary--candidate{
+    grid-template-columns: minmax(480px, 1fr) minmax(260px, 320px) auto;
+  }
+
+  .topbar__formation-summary{
+    width: 100%;
+  }
+}
+
+@media (max-width: 980px){
+  .topbar__primary--candidate{
+    display: flex;
+    gap: 14px;
+  }
+
+  .topbar__formation-summary{
+    display: none;
+  }
 }
 
 .topbar-notification-list{

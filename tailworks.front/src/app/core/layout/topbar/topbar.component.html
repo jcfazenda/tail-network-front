@@ -1,18 +1,29 @@
 <header class="topbar">
-  <div class="topbar__primary" *ngIf="!isSelectionMode; else selectionTopbar">
-    <button
-      *ngIf="canToggleSidebar"
-      class="iconBtn topbar__sidebar-toggle"
-      type="button"
-      (click)="toggleSidebar()"
-      [attr.aria-label]="isSidebarOpen ? 'Esconder sidebar' : 'Mostrar sidebar'"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">
-        {{ isSidebarOpen ? 'left_panel_close' : 'left_panel_open' }}
-      </span>
-    </button>
+  <div class="topbar__primary" [class.topbar__primary--candidate]="isCandidateMode" *ngIf="!isSelectionMode; else selectionTopbar">
+    <div class="topbar__formation-summary" *ngIf="isCandidateMode">
+      <img
+        [src]="topbarFormationLogoUrl"
+        alt=""
+        class="topbar__formation-logo"
+      />
+      <div class="topbar__formation-copy">
+        <strong class="topbar__formation-degree">{{ topbarFormationGraduation }}</strong>
+        <span class="topbar__formation-specialization">{{ topbarFormationSpecialization }}</span>
+      </div>
+    </div>
 
-    <div class="search">
+    <a
+      *ngIf="isCandidateMode && !isCandidateEcosystem"
+      class="topbar__cta topbar__cta--ecosystem"
+      href="/usuario/minhas-candidaturas"
+      (click)="openCandidateEcosystem($event)"
+      aria-label="Ir para Ecossistema"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">hub</span>
+      <span>Ecossistema</span>
+    </a>
+
+    <div class="search" [class.search--candidate]="isCandidateMode">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
       <input
         type="search"
@@ -41,17 +52,6 @@
       <span>Abrir Vaga</span>
     </a>
 
-    <a
-      *ngIf="isCandidateMode && !isCandidateEcosystem"
-      class="topbar__cta topbar__cta--ecosystem"
-      href="/usuario/minhas-candidaturas"
-      (click)="openCandidateEcosystem($event)"
-      aria-label="Ir para Ecossistema"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">hub</span>
-      <span>Ecossistema</span>
-    </a>
-
     <button
       *ngIf="!isCandidateMode"
       class="topbar__cta topbar__cta--clear"
@@ -77,7 +77,19 @@
         {{ unreadTalentNotifications }}
       </span>
     </button>
-    <div class="avatar" aria-label="Perfil"></div>
+    <button
+      *ngIf="canToggleSidebar; else staticAvatar"
+      class="topbar__avatar-trigger"
+      type="button"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="isSidebarOpen ? 'Esconder sidebar' : 'Mostrar sidebar'"
+    >
+      <div class="avatar" aria-hidden="true"></div>
+    </button>
+
+    <ng-template #staticAvatar>
+      <div class="avatar" aria-label="Perfil"></div>
+    </ng-template>
   </div>
 </header>
 
