@@ -63,30 +63,179 @@
         <p>Que você tenha um ótimo dia de recrutamento.</p>
       </div>
 
-      <section class="radar-card" aria-label="Radar da semana">
-        <header>
-          <div>
-            <h2>Radar da Semana</h2>
-            <div class="subtitle subtitle-row">
-              <span><strong>{{ radarTotal }}</strong> novos talentos encontrados</span>
-              <span class="delta">+{{ radarDelta }} desde ontem</span>
-            </div>
-          </div>
-        </header>
+      <section class="jobs-insights" aria-label="Resumo de mercado">
+        <section class="candidate-week-radar" aria-label="Stacks mais contratadas">
+          <header class="candidate-week-radar__head">
+            <h4>Stacks mais contratadas</h4>
+            <button
+              class="candidate-week-radar__menu"
+              type="button"
+              aria-label="Selecionar stacks para mostrar"
+              (click)="openRadarCategoryPicker()"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+            </button>
+          </header>
 
-        <div class="bars">
-          <div class="bar" *ngFor="let cat of radarCategories; let i = index">
-            <div class="label">
-              <span class="dot" [style.background]="cat.color"></span>
-              {{ cat.label }}
-            </div>
-            <div class="track" [style.--val]="cat.value" [style.--val-pct]="cat.value + '%'" [style.--delay]="(i * 120) + 'ms'">
-              <div class="fill" [style.background]="cat.color"></div>
-              <div class="value">{{ cat.value }}%</div>
+          <div class="candidate-week-radar__subtitle">
+            <span><strong>{{ radarTotal }}</strong> novas contratações</span>
+            <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
+          </div>
+
+          <div class="candidate-week-radar__bars">
+            <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
+              <div class="candidate-week-radar__label">
+                <span class="candidate-week-radar__dot" [style.background]="cat.color"></span>
+                {{ cat.label }}
+              </div>
+
+              <div class="candidate-week-radar__track">
+                <div class="candidate-week-radar__rail" aria-hidden="true">
+                  <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+                </div>
+                <div class="candidate-week-radar__value">{{ cat.value }}%</div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <section class="candidate-hiring-trend" aria-label="Contratações por mês">
+          <header class="candidate-hiring-trend__head">
+            <h4>Contratações por mês</h4>
+            <button class="candidate-hiring-trend__period" type="button">
+              <span>Anual</span>
+              <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+            </button>
+          </header>
+
+          <div class="candidate-hiring-trend__layout">
+            <div class="candidate-hiring-trend__scale" aria-hidden="true">
+              <span *ngFor="let value of hiringTrendScaleValues">{{ value }}</span>
+            </div>
+
+            <div class="candidate-hiring-trend__plot">
+              <svg
+                class="candidate-hiring-trend__svg"
+                viewBox="0 0 820 280"
+                preserveAspectRatio="none"
+                role="img"
+                aria-label="Evolução de contratações por mês"
+              >
+                <defs>
+                  <linearGradient id="recruiterHiringTrendFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#8a8a8a" stop-opacity="0.26"></stop>
+                    <stop offset="100%" stop-color="#8a8a8a" stop-opacity="0.03"></stop>
+                  </linearGradient>
+                </defs>
+
+                <line
+                  *ngFor="let value of hiringTrendScaleValues"
+                  class="candidate-hiring-trend__grid-line"
+                  x1="10"
+                  x2="796"
+                  [attr.y1]="hiringTrendGridY(value)"
+                  [attr.y2]="hiringTrendGridY(value)"
+                ></line>
+
+                <path class="candidate-hiring-trend__area" [attr.d]="hiringTrendAreaPath"></path>
+                <path class="candidate-hiring-trend__line" [attr.d]="hiringTrendLinePath"></path>
+
+                <ng-container *ngIf="hiringTrendActivePoint as activePoint">
+                  <line
+                    class="candidate-hiring-trend__focus-line"
+                    [attr.x1]="activePoint.x"
+                    [attr.x2]="activePoint.x"
+                    [attr.y1]="activePoint.y"
+                    y2="254"
+                  ></line>
+                </ng-container>
+              </svg>
+
+              <div
+                class="candidate-hiring-trend__focus-marker"
+                *ngIf="hiringTrendActivePoint as activePoint"
+                [style.left.%]="activePoint.xPercent"
+                [style.top.%]="activePoint.yPercent"
+                aria-hidden="true"
+              >
+                <span class="candidate-hiring-trend__focus-marker-ring"></span>
+                <span class="candidate-hiring-trend__focus-marker-dot"></span>
+              </div>
+
+              <div
+                class="candidate-hiring-trend__tooltip"
+                *ngIf="hiringTrendActivePoint as activePoint"
+                [style.left.%]="activePoint.xPercent"
+                [style.top.%]="activePoint.yPercent"
+              >
+                <strong>{{ activePoint.fullMonth }} 2026</strong>
+                <span>Contratações <b>{{ activePoint.value }}</b></span>
+              </div>
+
+              <div class="candidate-hiring-trend__months" aria-hidden="true">
+                <span
+                  *ngFor="let point of hiringTrendChartPoints"
+                  [class.candidate-hiring-trend__month--active]="point.month === hiringTrendActivePoint?.month"
+                >
+                  {{ point.month }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
       </section>
+
+      <ng-container *ngIf="showRadarCategoryPicker">
+        <button
+          class="candidate-week-radar__picker-backdrop"
+          type="button"
+          aria-label="Fechar seleção de stacks"
+          (click)="closeRadarCategoryPicker()"
+        ></button>
+
+        <aside
+          class="candidate-week-radar__picker"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Selecionar stacks mais contratadas"
+        >
+          <button
+            class="candidate-week-radar__picker-close"
+            type="button"
+            aria-label="Fechar seleção de stacks"
+            (click)="closeRadarCategoryPicker()"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
+          </button>
+
+          <div class="candidate-week-radar__picker-head">
+            <strong>Stacks mais contratadas</strong>
+            <p>Essas stacks são as que mais contratam no mercado pela ferramenta.</p>
+          </div>
+
+          <div class="candidate-week-radar__picker-list">
+            <button
+              class="candidate-week-radar__picker-option"
+              type="button"
+              *ngFor="let category of allRadarCategories"
+              [class.candidate-week-radar__picker-option--active]="isRadarCategorySelected(category.id)"
+              (click)="toggleRadarCategory(category.id)"
+            >
+              <span class="candidate-week-radar__picker-option-main">
+                <span class="candidate-week-radar__picker-dot" [style.background]="category.color"></span>
+                <span class="candidate-week-radar__picker-option-label">{{ category.label }}</span>
+              </span>
+
+              <span class="candidate-week-radar__picker-option-side">
+                <span class="candidate-week-radar__picker-option-value">{{ category.value }}%</span>
+                <span class="material-symbols-rounded candidate-week-radar__picker-option-icon" aria-hidden="true">
+                  {{ isRadarCategorySelected(category.id) ? 'check_circle' : 'add_circle' }}
+                </span>
+              </span>
+            </button>
+          </div>
+        </aside>
+      </ng-container>
 
       <section class="jobs">
         <div class="jobs__header">
@@ -103,61 +252,110 @@
         </div>
 
         <ng-container *ngIf="filteredJobs.length; else emptyState">
-          <div class="jobs__grid">
+          <div
+            class="jobs__grid"
+            [class.jobs__grid--dragging]="jobsGridDragging"
+            (pointerdown)="jobsGridHandlePointerDown($event)"
+            (pointermove)="jobsGridHandlePointerMove($event)"
+            (pointerup)="jobsGridHandlePointerUp($event)"
+            (pointercancel)="jobsGridHandlePointerUp($event)"
+            (pointerleave)="jobsGridHandlePointerUp($event)"
+          >
             <article class="job-card" [class.job-card--flipped]="isJobRadarFlipped(job.id)" *ngFor="let job of filteredJobs">
               <div class="job-card__flip-stage">
-                <button class="job-card__surface job-card__surface--front" type="button" (click)="openPanel(job)">
+                <div
+                  class="job-card__surface job-card__surface--front"
+                  role="button"
+                  tabindex="0"
+                  (click)="handleJobCardClick(job, $event)"
+                  (keydown.enter)="openPanel(job)"
+                  (keydown.space)="openPanel(job); $event.preventDefault()"
+                >
                   <div class="job-card__main">
-                    <div class="job-card__title-row">
+                    <div class="job-card__hero">
+                      <div
+                        class="job-card__company-logo"
+                        [class.job-card__company-logo--image]="!!jobCompanyLogoUrl(job)"
+                        [style.backgroundImage]="jobCompanyLogoUrl(job) ? 'url(' + jobCompanyLogoUrl(job) + ')' : null"
+                        aria-hidden="true"
+                      >
+                        <span *ngIf="!jobCompanyLogoUrl(job)">{{ jobCompanyLogoLabel(job) }}</span>
+                      </div>
+
+                      <div class="job-card__hero-body">
+                        <div class="job-card__hero-header">
+                          <div class="job-card__company-copy">
+                            <strong>{{ job.company }}</strong>
+                            <span>{{ jobCompanySignal(job) }}</span>
+                          </div>
+
+                          <div class="job-card__top-meta">
+                            <div class="job-card__actions-row">
+                              <div class="job-card__actions">
+                                <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
+                                  <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+                                  <span>Chat</span>
+                                </button>
+
+                                <button
+                                  class="job-card__flip"
+                                  [class.job-card__flip--active]="isJobRadarFlipped(job.id)"
+                                  type="button"
+                                  (click)="toggleJobRadar(job.id, $event)"
+                                  aria-label="Mostrar alcance do radar"
+                                  title="Mostrar alcance do radar"
+                                >
+                                  <span class="material-icons-outlined" aria-hidden="true">cached</span>
+                                </button>
+
+                                <button class="job-card__edit" type="button" (click)="editJob(job, $event)" aria-label="Editar vaga" title="Editar vaga">
+                                  <span class="material-icons-outlined" aria-hidden="true">edit</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            <span class="job-card__top-meta-line job-card__top-meta-chip">
+                              {{ jobCardWorkModel(job) }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="job-card__title-row job-card__title-row--hero">
                       <h3 class="job-card__title">{{ job.title }}</h3>
-                      <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
+                      <span
+                        class="job-card__title-salary"
+                        *ngIf="jobCardSalary(job) as salary"
+                      >
+                        {{ salary }}
+                      </span>
                     </div>
 
-                    <div class="job-card__meta-row">
-                      <div class="job-card__meta">
-                        <span>{{ job.company }}</span>
-                        <span class="job-card__meta-dot" aria-hidden="true"></span>
-                        <span>{{ job.location }}</span>
+                    <div class="job-card__context">
+                      <div class="job-card__context-main">
+                        <span>{{ jobCardLocation(job) }}</span>
                       </div>
-
-                      <div class="job-card__actions">
-                        <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
-                          <span class="material-symbols-outlined" aria-hidden="true">chat</span>
-                          <span>Chat</span>
-                        </button>
-
-                        <button
-                          class="job-card__flip"
-                          [class.job-card__flip--active]="isJobRadarFlipped(job.id)"
-                          type="button"
-                          (click)="toggleJobRadar(job.id, $event)"
-                          aria-label="Mostrar alcance do radar"
-                          title="Mostrar alcance do radar"
-                        >
-                          <span class="material-icons-outlined" aria-hidden="true">cached</span>
-                        </button>
-
-                        <button class="job-card__edit" type="button" (click)="editJob(job, $event)" aria-label="Editar vaga" title="Editar vaga">
-                          <span class="material-icons-outlined" aria-hidden="true">edit</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div class="job-card__offer">
-                      <span>{{ jobCardOfferLine(job) }}</span>
                     </div>
 
                     <div class="job-card__footer">
                       <div class="job-card__fit">
-                        <span class="job-card__fit-label">Compatíveis</span>
                         <span class="job-card__fit-bar" aria-hidden="true">
                           <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
                         </span>
-                        <span class="job-card__fit-value">{{ job.match }}%</span>
+                        <span class="job-card__fit-meta">
+                          <span class="job-card__fit-value">{{ job.match }}%</span>
+                          <span
+                            class="job-card__fit-avatar job-card__fit-avatar--prominent"
+                            *ngIf="jobCardHasTalentInteraction(job)"
+                            [style.backgroundImage]="jobCardTalentAvatarUrl(job) ? 'url(' + jobCardTalentAvatarUrl(job) + ')' : null"
+                            aria-hidden="true"
+                          ></span>
+                        </span>
                       </div>
                     </div>
                   </div>
-                </button>
+                </div>
 
                 <div class="job-card__surface job-card__surface--back">
                   <div class="job-card__back-actions">

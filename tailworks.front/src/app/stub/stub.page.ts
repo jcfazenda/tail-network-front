@@ -4,22 +4,35 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
-import { JobStatus, MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
+import { JobStatus, MockJobCandidate, MockJobRecord, WorkModel } from '../vagas/data/vagas.models';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { AlcanceRadarComponent, RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { Subscription } from 'rxjs';
-
-interface RadarCategory {
-  label: string;
-  value: number;
-  color: string;
-  offset?: number;
-}
 
 type CandidateProfileContext = {
   job: ChatJob;
   candidate: ChatCandidate;
   initialTab: 'journey' | 'curriculum';
+};
+
+type RadarCategory = {
+  id: string;
+  label: string;
+  value: number;
+  color: string;
+};
+
+type HiringTrendPoint = {
+  month: string;
+  fullMonth: string;
+  value: number;
+};
+
+type HiringTrendChartPoint = HiringTrendPoint & {
+  x: number;
+  y: number;
+  xPercent: number;
+  yPercent: number;
 };
 
 @Component({
@@ -31,21 +44,20 @@ type CandidateProfileContext = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StubPage implements OnDestroy {
+  private static readonly radarCategoriesStorageKey = 'tailworks:recruiter-radar-categories-selection:v1';
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly vagasMockService = inject(VagasMockService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
-
-  readonly radarTotal = 87;
-  readonly radarDelta = 12;
-
-  readonly radarCategories: RadarCategory[] = [
-    { label: 'Backend', value: 92, color: 'linear-gradient(90deg, var(--primary), var(--primary-2))' },
-    { label: 'Frontend', value: 81, color: 'linear-gradient(90deg, color-mix(in srgb, var(--primary) 76%, white), var(--primary))' },
-    { label: 'Cloud', value: 66, color: 'rgba(176, 184, 194, 0.9)' },
-    { label: 'DevOps', value: 55, color: 'rgba(198, 203, 211, 0.9)' },
-  ];
+  private readonly hiringTrendChartWidth = 820;
+  private readonly hiringTrendChartHeight = 280;
+  private readonly hiringTrendChartPadding = {
+    top: 26,
+    right: 24,
+    bottom: 26,
+    left: 10,
+  };
 
   readonly stageLabels = [
     'Contratado',
@@ -57,9 +69,39 @@ export class StubPage implements OnDestroy {
     'Talento no radar',
     'Candidatura cancelada',
   ];
+  readonly radarTotal = 87;
+  readonly radarDelta = 12;
+  readonly allRadarCategories: RadarCategory[] = [
+    { id: 'backend', label: 'Backend', value: 92, color: 'linear-gradient(90deg, var(--primary), var(--primary-2))' },
+    { id: 'frontend', label: 'Frontend', value: 81, color: 'linear-gradient(90deg, color-mix(in srgb, var(--primary) 76%, white), var(--primary))' },
+    { id: 'cloud', label: 'Cloud', value: 66, color: 'rgba(176, 184, 194, 0.9)' },
+    { id: 'devops', label: 'DevOps', value: 55, color: 'rgba(198, 203, 211, 0.9)' },
+    { id: 'dados', label: 'Dados', value: 78, color: 'linear-gradient(90deg, rgba(231, 111, 81, 0.96), rgba(244, 162, 97, 0.92))' },
+    { id: 'mobile', label: 'Mobile', value: 64, color: 'linear-gradient(90deg, rgba(94, 96, 206, 0.96), rgba(116, 198, 157, 0.9))' },
+    { id: 'ia', label: 'IA', value: 73, color: 'linear-gradient(90deg, rgba(239, 71, 111, 0.96), rgba(255, 209, 102, 0.9))' },
+    { id: 'seguranca', label: 'Segurança', value: 61, color: 'linear-gradient(90deg, rgba(67, 97, 238, 0.92), rgba(76, 201, 240, 0.88))' },
+  ];
+  readonly hiringTrendSeries: HiringTrendPoint[] = [
+    { month: 'Jan', fullMonth: 'Janeiro', value: 26 },
+    { month: 'Fev', fullMonth: 'Fevereiro', value: 21 },
+    { month: 'Mar', fullMonth: 'Marco', value: 31 },
+    { month: 'Abr', fullMonth: 'Abril', value: 27 },
+    { month: 'Mai', fullMonth: 'Maio', value: 35 },
+    { month: 'Jun', fullMonth: 'Junho', value: 29 },
+    { month: 'Jul', fullMonth: 'Julho', value: 33 },
+    { month: 'Ago', fullMonth: 'Agosto', value: 30 },
+    { month: 'Set', fullMonth: 'Setembro', value: 41 },
+    { month: 'Out', fullMonth: 'Outubro', value: 28 },
+    { month: 'Nov', fullMonth: 'Novembro', value: 25 },
+    { month: 'Dez', fullMonth: 'Dezembro', value: 16 },
+  ];
+  readonly hiringTrendScaleValues = [50, 40, 30, 20, 10, 0];
 
   activeTab: JobStatus = this.resolveInitialTab();
   flippedJobId: string | null = null;
+  jobsGridDragging = false;
+  showRadarCategoryPicker = false;
+  selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
 
   selectedJobPanel: ChatJob | null = null;
   selectedChatJob: ChatJob | null = null;
@@ -67,7 +109,14 @@ export class StubPage implements OnDestroy {
   chatStartIndex = 0;
   candidateProfileContext: CandidateProfileContext | null = null;
 
+  private jobsGridPointerId: number | null = null;
+  private jobsGridPointerStartY = 0;
+  private jobsGridPointerStartScrollTop = 0;
+  private jobsGridSuppressClick = false;
+  private jobsGridSuppressClickTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor() {
+    this.restoreRadarCategorySelection();
     this.subscriptions.add(
       this.vagasMockService.jobsChanged$.subscribe(() => {
         this.refreshOpenedPanels();
@@ -78,6 +127,7 @@ export class StubPage implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    this.clearJobsGridSuppressClickTimer();
   }
 
   setTab(tab: JobStatus) {
@@ -85,8 +135,183 @@ export class StubPage implements OnDestroy {
     this.flippedJobId = null;
   }
 
+  openRadarCategoryPicker(): void {
+    this.showRadarCategoryPicker = true;
+    this.cdr.markForCheck();
+  }
+
+  closeRadarCategoryPicker(): void {
+    this.showRadarCategoryPicker = false;
+    this.cdr.markForCheck();
+  }
+
+  isRadarCategorySelected(categoryId: string): boolean {
+    return this.selectedRadarCategoryIds.includes(categoryId);
+  }
+
+  toggleRadarCategory(categoryId: string): void {
+    const alreadySelected = this.isRadarCategorySelected(categoryId);
+
+    if (alreadySelected && this.selectedRadarCategoryIds.length === 1) {
+      return;
+    }
+
+    const nextSelection = alreadySelected
+      ? this.selectedRadarCategoryIds.filter((id) => id !== categoryId)
+      : [...this.selectedRadarCategoryIds, categoryId];
+
+    this.selectedRadarCategoryIds = this.allRadarCategories
+      .filter((category) => nextSelection.includes(category.id))
+      .map((category) => category.id);
+
+    localStorage.setItem(
+      StubPage.radarCategoriesStorageKey,
+      JSON.stringify(this.selectedRadarCategoryIds),
+    );
+    this.cdr.markForCheck();
+  }
+
   get filteredJobs(): MockJobRecord[] {
     return this.vagasMockService.getJobs().filter((job) => job.status === this.activeTab);
+  }
+
+  get radarCategories(): RadarCategory[] {
+    const selectedIds = new Set(this.selectedRadarCategoryIds);
+
+    return this.allRadarCategories
+      .filter((category) => selectedIds.has(category.id))
+      .sort((left, right) => right.value - left.value || left.label.localeCompare(right.label, 'pt-BR'));
+  }
+
+  get hiringTrendChartPoints(): HiringTrendChartPoint[] {
+    const { top, right, bottom, left } = this.hiringTrendChartPadding;
+    const plotWidth = this.hiringTrendChartWidth - left - right;
+    const plotHeight = this.hiringTrendChartHeight - top - bottom;
+    const maxValue = this.hiringTrendScaleValues[0];
+    const lastIndex = Math.max(this.hiringTrendSeries.length - 1, 1);
+
+    return this.hiringTrendSeries.map((point, index) => {
+      const x = left + (plotWidth / lastIndex) * index;
+      const y = top + ((maxValue - point.value) / maxValue) * plotHeight;
+
+      return {
+        ...point,
+        x,
+        y,
+        xPercent: (x / this.hiringTrendChartWidth) * 100,
+        yPercent: (y / this.hiringTrendChartHeight) * 100,
+      };
+    });
+  }
+
+  get hiringTrendLinePath(): string {
+    return this.buildSmoothChartPath(this.hiringTrendChartPoints);
+  }
+
+  get hiringTrendAreaPath(): string {
+    const points = this.hiringTrendChartPoints;
+    if (!points.length) {
+      return '';
+    }
+
+    const linePath = this.buildSmoothChartPath(points);
+    const last = points[points.length - 1];
+    const first = points[0];
+    const baseline = this.hiringTrendChartHeight - this.hiringTrendChartPadding.bottom;
+
+    return `${linePath} L ${last.x} ${baseline} L ${first.x} ${baseline} Z`;
+  }
+
+  get hiringTrendActivePoint(): HiringTrendChartPoint | null {
+    return this.hiringTrendChartPoints.find((point) => point.month === 'Jun') ?? this.hiringTrendChartPoints[0] ?? null;
+  }
+
+  hiringTrendGridY(value: number): number {
+    const { top, bottom } = this.hiringTrendChartPadding;
+    const plotHeight = this.hiringTrendChartHeight - top - bottom;
+    const maxValue = this.hiringTrendScaleValues[0];
+
+    return top + ((maxValue - value) / maxValue) * plotHeight;
+  }
+
+  jobCompanyLogoUrl(job: MockJobRecord): string {
+    return job.companyLogoUrl?.trim() ?? '';
+  }
+
+  jobCompanyLogoLabel(job: MockJobRecord): string {
+    const initials = job.company
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join('');
+
+    return (initials || job.company.slice(0, 2)).toUpperCase();
+  }
+
+  jobCompanySignal(job: MockJobRecord): string {
+    const mappedTalents = Math.max(job.radarCount, job.talents, job.candidates.length);
+    return `${mappedTalents} ${mappedTalents === 1 ? 'talento mapeado' : 'talentos mapeados'}`;
+  }
+
+  jobCardWorkModel(job: MockJobRecord): string {
+    if (job.workModel === 'Remoto') {
+      return 'HOME';
+    }
+
+    return this.workModelLabel(job.workModel).toUpperCase();
+  }
+
+  jobCardLocation(job: MockJobRecord): string {
+    return job.location.replace(/\s*-\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  jobCardSeniority(job: MockJobRecord): string {
+    const seniority = job.seniority?.trim();
+    if (seniority) {
+      return seniority;
+    }
+
+    const normalizedTitle = job.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    if (normalizedTitle.includes('senior')) {
+      return 'Senior';
+    }
+
+    if (normalizedTitle.includes('pleno')) {
+      return 'Pleno';
+    }
+
+    if (normalizedTitle.includes('junior')) {
+      return 'Junior';
+    }
+
+    return 'Especialista';
+  }
+
+  jobCardSalary(job: MockJobRecord): string | null {
+    return job.showSalaryRangeInCard === false ? null : this.formatJobSalary(job.salaryRange);
+  }
+
+  jobCardInteractionCount(job: MockJobRecord): number {
+    return job.candidates.filter((candidate) => this.vagasMockService.getEffectiveCandidateStage(candidate) !== 'radar').length;
+  }
+
+  jobCardHasTalentInteraction(job: MockJobRecord): boolean {
+    const talentCandidate = this.vagasMockService.findTalentCandidate(job);
+    if (!talentCandidate) {
+      return false;
+    }
+
+    return this.vagasMockService.getEffectiveCandidateStage(talentCandidate) !== 'radar';
+  }
+
+  jobCardTalentAvatarUrl(job: MockJobRecord): string | null {
+    if (!this.jobCardHasTalentInteraction(job)) {
+      return null;
+    }
+
+    const talentCandidate = this.vagasMockService.findTalentCandidate(job);
+    return talentCandidate?.avatar?.trim() || this.vagasMockService.getTalentCandidateIdentity().avatar || null;
   }
 
   findJobById(id: string): MockJobRecord {
@@ -123,6 +348,69 @@ export class StubPage implements OnDestroy {
 
   openJobChat(job: MockJobRecord, event: Event): void {
     event.stopPropagation();
+    this.openPanel(job);
+  }
+
+  jobsGridHandlePointerDown(event: PointerEvent): void {
+    const rail = event.currentTarget as HTMLElement | null;
+    if (!rail || this.isJobsGridInteractiveTarget(event.target)) {
+      return;
+    }
+
+    this.jobsGridPointerId = event.pointerId;
+    this.jobsGridPointerStartY = event.clientY;
+    this.jobsGridPointerStartScrollTop = rail.scrollTop;
+    this.jobsGridDragging = false;
+    rail.setPointerCapture(event.pointerId);
+  }
+
+  jobsGridHandlePointerMove(event: PointerEvent): void {
+    if (this.jobsGridPointerId !== event.pointerId) {
+      return;
+    }
+
+    const rail = event.currentTarget as HTMLElement | null;
+    if (!rail) {
+      return;
+    }
+
+    const delta = event.clientY - this.jobsGridPointerStartY;
+    if (Math.abs(delta) > 3) {
+      this.jobsGridDragging = true;
+    }
+
+    rail.scrollTop = this.jobsGridPointerStartScrollTop - delta;
+  }
+
+  jobsGridHandlePointerUp(event: PointerEvent): void {
+    if (this.jobsGridPointerId !== event.pointerId) {
+      return;
+    }
+
+    const rail = event.currentTarget as HTMLElement | null;
+    if (rail?.hasPointerCapture(event.pointerId)) {
+      rail.releasePointerCapture(event.pointerId);
+    }
+
+    if (this.jobsGridDragging) {
+      this.jobsGridSuppressClick = true;
+      this.clearJobsGridSuppressClickTimer();
+      this.jobsGridSuppressClickTimer = setTimeout(() => {
+        this.jobsGridSuppressClick = false;
+      }, 80);
+    }
+
+    this.jobsGridPointerId = null;
+    this.jobsGridDragging = false;
+  }
+
+  handleJobCardClick(job: MockJobRecord, event: Event): void {
+    if (this.jobsGridSuppressClick) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     this.openPanel(job);
   }
 
@@ -300,6 +588,83 @@ export class StubPage implements OnDestroy {
     }
 
     return normalized.startsWith('R$') ? normalized : `R$ ${normalized}`;
+  }
+
+  private clearJobsGridSuppressClickTimer(): void {
+    if (!this.jobsGridSuppressClickTimer) {
+      return;
+    }
+
+    clearTimeout(this.jobsGridSuppressClickTimer);
+    this.jobsGridSuppressClickTimer = null;
+  }
+
+  private buildSmoothChartPath(points: Array<{ x: number; y: number }>): string {
+    if (!points.length) {
+      return '';
+    }
+
+    if (points.length === 1) {
+      return `M ${points[0].x} ${points[0].y}`;
+    }
+
+    let path = `M ${points[0].x} ${points[0].y}`;
+
+    for (let index = 0; index < points.length - 1; index += 1) {
+      const current = points[index];
+      const next = points[index + 1];
+      const midpointX = (current.x + next.x) / 2;
+      const midpointY = (current.y + next.y) / 2;
+
+      path += ` Q ${current.x} ${current.y} ${midpointX} ${midpointY}`;
+    }
+
+    const last = points[points.length - 1];
+    path += ` T ${last.x} ${last.y}`;
+    return path;
+  }
+
+  private restoreRadarCategorySelection(): void {
+    const rawSelection = localStorage.getItem(StubPage.radarCategoriesStorageKey);
+    if (!rawSelection) {
+      return;
+    }
+
+    try {
+      const parsedSelection = JSON.parse(rawSelection);
+      if (!Array.isArray(parsedSelection)) {
+        return;
+      }
+
+      const availableIds = new Set(this.allRadarCategories.map((category) => category.id));
+      const nextSelection = parsedSelection
+        .filter((categoryId): categoryId is string => typeof categoryId === 'string')
+        .filter((categoryId) => availableIds.has(categoryId));
+
+      if (nextSelection.length) {
+        this.selectedRadarCategoryIds = this.allRadarCategories
+          .filter((category) => nextSelection.includes(category.id))
+          .map((category) => category.id);
+      }
+    } catch {
+      localStorage.removeItem(StubPage.radarCategoriesStorageKey);
+    }
+  }
+
+  private isJobsGridInteractiveTarget(target: EventTarget | null): boolean {
+    return target instanceof HTMLElement && !!target.closest('button, a, input, textarea, select');
+  }
+
+  private workModelLabel(value: WorkModel): string {
+    switch (value) {
+      case 'Remoto':
+        return 'Remoto';
+      case 'Hibrido':
+        return 'Hibrido';
+      case 'Presencial':
+      default:
+        return 'Presencial';
+    }
   }
 
   private asChatJob(job: MockJobRecord): ChatJob {
