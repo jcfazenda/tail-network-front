@@ -4,50 +4,6 @@
       <div class="candidate-stack-summary__card">
         <div class="candidate-stack-summary__body">
           <div class="candidate-stack-summary__hero">
-            <div class="candidate-stack-summary__stack-prelude">
-              <div class="candidate-stack-summary__stack-prelude-head">
-                <div class="candidate-stack-summary__stack-kicker">Empresas com contratações recentes</div>
-                <button class="candidate-stack-summary__stack-prelude-period" type="button">
-                  <span>Atual</span>
-                  <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
-                </button>
-              </div>
-              <section class="candidate-week-radar" aria-label="Radar da semana">
-                <header class="candidate-week-radar__head">
-                  <h4>Stacks mais contratadas</h4>
-                  <button
-                    class="candidate-week-radar__menu"
-                    type="button"
-                    aria-label="Selecionar stacks para mostrar"
-                    (click)="openRadarCategoryPicker()"
-                  >
-                    <span class="material-symbols-rounded" aria-hidden="true">menu</span>
-                  </button>
-                </header>
-
-                <div class="candidate-week-radar__subtitle">
-                  <span><strong>{{ radarTotal }}</strong> novas contratações</span>
-                  <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
-                </div>
-
-                <div class="candidate-week-radar__bars">
-                  <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
-                    <div class="candidate-week-radar__label">
-                      <span class="candidate-week-radar__dot" [style.background]="cat.color"></span>
-                      {{ cat.label }}
-                    </div>
-
-                    <div class="candidate-week-radar__track">
-                      <div class="candidate-week-radar__rail" aria-hidden="true">
-                        <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
-                      </div>
-                      <div class="candidate-week-radar__value">{{ cat.value }}%</div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-
             <div class="candidate-stack-summary__top-shell">
               <div class="candidate-stack-summary__top-shell-bar">
                 <div class="candidate-stack-summary__top-shell-filters" role="tablist" aria-label="Resumo de processos">
@@ -88,14 +44,50 @@
                 </button>
               </div>
 
-              <div class="candidate-stack-summary__stack-prelude-radar candidate-stack-summary__stack-prelude-radar--inline">
-                <app-alcance-radar
-                  [title]="''"
-                  [score]="talentStackScore"
-                  [items]="talentStackRadarItems"
-                  [embedded]="true"
-                ></app-alcance-radar>
-              </div>
+              <section class="candidate-stack-summary__stack-prelude candidate-stack-summary__stack-prelude--section">
+                <div class="candidate-stack-summary__stack-prelude-head">
+                  <div class="candidate-stack-summary__stack-kicker">Empresas com contratações recentes</div>
+                  <button class="candidate-stack-summary__stack-prelude-period" type="button">
+                    <span>Atual</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+                  </button>
+                </div>
+
+                <section class="candidate-week-radar" aria-label="Radar da semana">
+                  <header class="candidate-week-radar__head">
+                    <h4>Stacks mais contratadas</h4>
+                    <button
+                      class="candidate-week-radar__menu"
+                      type="button"
+                      aria-label="Selecionar stacks para mostrar"
+                      (click)="openRadarCategoryPicker()"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+                    </button>
+                  </header>
+
+                  <div class="candidate-week-radar__subtitle">
+                    <span><strong>{{ radarTotal }}</strong> novas contratações</span>
+                    <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
+                  </div>
+
+                  <div class="candidate-week-radar__bars">
+                    <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
+                      <div class="candidate-week-radar__label">
+                        <span class="candidate-week-radar__dot" [style.background]="cat.color"></span>
+                        {{ cat.label }}
+                      </div>
+
+                      <div class="candidate-week-radar__track">
+                        <div class="candidate-week-radar__rail" aria-hidden="true">
+                          <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+                        </div>
+                        <div class="candidate-week-radar__value">{{ cat.value }}%</div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </section>
 
               <section class="candidate-stack-summary__processes" *ngIf="overviewShellJobs.length; else overviewShellEmpty">
                 <div
@@ -153,11 +145,6 @@
                               </div>
                             </div>
 
-                            <div class="candidate-stack-summary__process-radar-context">
-                              <span>{{ processCardLocation(job) }}</span>
-                              <span class="candidate-stack-summary__process-radar-context-separator" aria-hidden="true"></span>
-                              <span>{{ processCardSeniority(job) }}</span>
-                            </div>
                           </div>
                         </div>
 
@@ -165,10 +152,15 @@
                           <h3 class="candidate-stack-summary__process-title candidate-stack-summary__process-title--radar">{{ job.title }}</h3>
                         </div>
 
-                        <div class="candidate-stack-summary__process-radar-match">
-                          <div class="candidate-stack-summary__process-radar-match-head">
-                            <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
+                        <div class="candidate-stack-summary__process-radar-context">
+                          <div class="candidate-stack-summary__process-radar-context-main">
+                            <span>{{ processCardLocation(job) }}</span>
+                            <span class="candidate-stack-summary__process-radar-context-separator" aria-hidden="true"></span>
+                            <span>{{ processCardSeniority(job) }}</span>
                           </div>
+                        </div>
+
+                        <div class="candidate-stack-summary__process-radar-match">
                           <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
                             <span
                               class="candidate-stack-summary__process-match-fill"
@@ -176,6 +168,7 @@
                               [style.background]="processJobBarFill(job)"
                             ></span>
                           </span>
+                          <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
                         </div>
                       </ng-container>
 

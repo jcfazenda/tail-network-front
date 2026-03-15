@@ -421,13 +421,10 @@
 }
 
 .candidate-stack-summary__hero{
-  display: flex;
-  align-items: stretch;
-  gap: 18px;
+  display: block;
 }
 
 .candidate-stack-summary__top-shell{
-  flex: 0.7 1 0;
   min-width: 0;
   min-height: 96px;
   display: grid;
@@ -534,8 +531,9 @@
 }
 
 .candidate-stack-summary__stack-prelude{
-  flex: 0.8 1 0;
+  flex: 0.52 1 360px;
   width: auto;
+  max-width: 460px;
   min-width: 0;
   display: grid;
   grid-template-rows: auto 1fr;
@@ -547,6 +545,13 @@
   background: linear-gradient(180deg, #ededed 0%, #e6e6e6 100%);
   box-shadow: 0 6px 20px rgba(0,0,0,0.05);
   overflow: hidden;
+}
+
+.candidate-stack-summary__stack-prelude--section{
+  width: 100%;
+  max-width: none;
+  flex: none;
+  margin-top: 0;
 }
 
 .candidate-hiring-trend{
@@ -722,10 +727,20 @@
 }
 
 .candidate-hiring-trend__months{
+  position: relative;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 8px;
-  padding: 0 6px 0 10px;
+  padding: 14px 6px 0 10px;
+}
+
+.candidate-hiring-trend__months::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 6px;
+  border-top: 1px dashed rgba(116, 116, 116, 0.34);
 }
 
 .candidate-hiring-trend__months span{
@@ -831,6 +846,7 @@
   margin-left: auto;
   font-size: 13px;
   color: rgba(15, 23, 42, 0.55);
+  white-space: nowrap;
 }
 
 .candidate-week-radar__bars{
@@ -1197,6 +1213,7 @@
   .candidate-stack-summary__stack-prelude{
     order: 2;
     width: 100%;
+    max-width: none;
     min-width: 0;
     flex: 1 1 auto;
     min-height: 0;
@@ -1408,6 +1425,10 @@
 
 .candidate-stack-summary__processes-list--radar{
   --process-card-viewport-height: 152px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  align-items: start;
   max-height: calc((var(--process-card-viewport-height) * 3) + 28px);
 }
 
@@ -1444,6 +1465,18 @@
   }
 }
 
+@container process-shell (max-width: 479px){
+  .candidate-stack-summary__processes-list--radar{
+    grid-template-columns: 1fr;
+  }
+}
+
+@container process-shell (min-width: 480px){
+  .candidate-stack-summary__processes-list--radar{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .candidate-stack-summary__process-card{
   position: relative;
   flex: 0 0 auto;
@@ -1475,11 +1508,13 @@
 
 .candidate-stack-summary__process-card--radar{
   min-height: var(--process-card-viewport-height);
+  width: 100%;
+  min-width: 0;
 }
 
 .candidate-stack-summary__process-radar-shell{
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 12px;
   min-width: 0;
   width: 100%;
@@ -1491,6 +1526,7 @@
   display: grid;
   align-content: stretch;
   gap: 4px;
+  padding-top: 8px;
 }
 
 .candidate-stack-summary__process-radar-header{
@@ -1521,7 +1557,7 @@
 
 .candidate-stack-summary__process-title-row--radar-hero{
   margin-top: 18px;
-  margin-bottom: -1px;
+  margin-bottom: 3px;
   padding-inline-start: 6px;
 }
 
@@ -1533,15 +1569,26 @@
 .candidate-stack-summary__process-radar-context{
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
   min-width: 0;
+  padding-inline-start: 6px;
   color: rgba(92, 92, 92, 0.74);
   font-size: 11px;
   line-height: 1.12;
   font-weight: 500;
 }
 
-.candidate-stack-summary__process-radar-context > span{
+.candidate-stack-summary__process-radar-context-main{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.candidate-stack-summary__process-radar-context-main > span{
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1559,17 +1606,11 @@
 .candidate-stack-summary__process-radar-match{
   width: 100%;
   display: grid;
-  gap: 6px;
-  min-width: 0;
-  margin-top: 0;
-}
-
-.candidate-stack-summary__process-radar-match-head{
-  display: flex;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: flex-end;
   gap: 10px;
   min-width: 0;
+  margin-top: 0;
 }
 
 .candidate-stack-summary__process-top-meta-salary{
@@ -1925,7 +1966,15 @@
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-company-logo{
   width: 72px;
   height: 72px;
+  border: 0;
   border-radius: 18px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04),
+    0 8px 18px rgba(15, 23, 42, 0.14),
+    0 2px 6px rgba(15, 23, 42, 0.08);
   font-size: 16px;
 }
 
@@ -1974,7 +2023,7 @@
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-title-row--radar-hero{
   margin-top: 18px;
-  margin-bottom: -1px;
+  margin-bottom: 3px;
   padding-inline-start: 6px;
 }
 
