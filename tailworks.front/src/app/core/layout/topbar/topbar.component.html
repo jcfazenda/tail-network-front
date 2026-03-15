@@ -2,11 +2,11 @@
   <div
     class="topbar__primary"
     [class.topbar__primary--candidate]="isCandidateMode"
-    [class.topbar__primary--candidate-collapsed]="showSidebarAvatarInPrimary"
+    [class.topbar__primary--candidate-collapsed]="showSidebarProfileInPrimary"
     *ngIf="!isSelectionMode; else selectionTopbar"
   >
     <button
-      *ngIf="showSidebarAvatarInPrimary"
+      *ngIf="showSidebarProfileInPrimary"
       class="topbar__sidebar-profile-trigger"
       type="button"
       (click)="toggleSidebar()"
@@ -14,22 +14,23 @@
     >
       <div class="topbar__sidebar-profile">
         <div
-          class="avatar avatar--candidate topbar__sidebar-profile-avatar"
-          [class.avatar--image]="!!topbarAvatarUrl"
-          [style.backgroundImage]="topbarAvatarUrl ? 'url(' + topbarAvatarUrl + ')' : null"
+          class="avatar topbar__sidebar-profile-avatar"
+          [class.avatar--candidate]="isCandidateMode"
+          [class.avatar--image]="!!topbarProfileAvatarUrl"
+          [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
           aria-hidden="true"
         >
-          <span *ngIf="!topbarAvatarUrl">{{ topbarAvatarInitials }}</span>
+          <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
         </div>
 
         <div class="topbar__sidebar-profile-copy">
-          <strong>{{ topbarCandidateDisplayName }}</strong>
-          <span>{{ topbarCandidateDisplayLocation }}</span>
+          <strong>{{ topbarProfileDisplayName }}</strong>
+          <span>{{ topbarProfileDisplayMeta }}</span>
         </div>
       </div>
     </button>
 
-    <div class="topbar__formation-summary" *ngIf="isCandidateMode">
+    <div class="topbar__formation-summary">
       <img
         [src]="topbarFormationLogoUrl"
         alt=""
@@ -51,26 +52,6 @@
       <span>Voltar</span>
     </a>
 
-    <div *ngIf="isRecruiterEcosystem" class="topbar__mode-pill" aria-label="Modo Recruiter">
-      <span class="material-symbols-rounded" aria-hidden="true">business_center</span>
-      <span>Você está no modo Recruiter</span>
-    </div>
-
-    <a *ngIf="!isCandidateMode" class="topbar__cta" routerLink="/vagas/cadastro" aria-label="Abrir vaga">
-      <span class="material-symbols-rounded" aria-hidden="true">add</span>
-      <span>Abrir Vaga</span>
-    </a>
-
-    <button
-      *ngIf="!isCandidateMode"
-      class="topbar__cta topbar__cta--clear"
-      type="button"
-      (click)="clearPublishedJobsForTesting()"
-      aria-label="Limpar testes"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">ink_eraser</span>
-      <span>Limpar Testes</span>
-    </button>
   </div>
 
   <div class="search" [class.search--candidate]="isCandidateMode" *ngIf="!isSelectionMode">
@@ -114,6 +95,26 @@
       </span>
     </button>
 
+    <a
+      *ngIf="!isCandidateMode"
+      class="topbar__cta"
+      routerLink="/vagas/cadastro"
+      aria-label="Abrir vagas"
+    >
+      <span>Abrir vagas</span>
+    </a>
+
+    <button
+      *ngIf="!isCandidateMode"
+      class="iconBtn topbar__clear-mock"
+      type="button"
+      (click)="clearPublishedJobsForTesting()"
+      aria-label="Limpar mock"
+      title="Limpar mock"
+    >
+      <span class="material-symbols-rounded">ink_eraser</span>
+    </button>
+
     <button
       class="iconBtn topbar__notifications"
       [class.topbar__notifications--active]="unreadTalentNotifications > 0"
@@ -137,11 +138,11 @@
         <div
           class="avatar"
           [class.avatar--candidate]="isCandidateMode"
-          [class.avatar--image]="isCandidateMode && !!topbarAvatarUrl"
-          [style.backgroundImage]="isCandidateMode && topbarAvatarUrl ? 'url(' + topbarAvatarUrl + ')' : null"
+          [class.avatar--image]="!!topbarProfileAvatarUrl"
+          [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
           aria-hidden="true"
         >
-          <span *ngIf="isCandidateMode && !topbarAvatarUrl">{{ topbarAvatarInitials }}</span>
+          <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
         </div>
       </button>
 
@@ -149,11 +150,11 @@
         <div
           class="avatar"
           [class.avatar--candidate]="isCandidateMode"
-          [class.avatar--image]="isCandidateMode && !!topbarAvatarUrl"
-          [style.backgroundImage]="isCandidateMode && topbarAvatarUrl ? 'url(' + topbarAvatarUrl + ')' : null"
+          [class.avatar--image]="!!topbarProfileAvatarUrl"
+          [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
           aria-label="Perfil"
         >
-          <span *ngIf="isCandidateMode && !topbarAvatarUrl">{{ topbarAvatarInitials }}</span>
+          <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
         </div>
       </ng-template>
     </ng-container>

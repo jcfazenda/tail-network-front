@@ -104,68 +104,82 @@
 
         <ng-container *ngIf="filteredJobs.length; else emptyState">
           <div class="jobs__grid">
-            <article class="job-card" *ngFor="let job of filteredJobs">
-              <div class="job-card__actions">
-                <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
-                  <span class="material-symbols-rounded" aria-hidden="true">forum</span>
-                  <span>Chat</span>
-                </button>
-
-                <button class="job-card__edit" type="button" (click)="editJob(job, $event)" aria-label="Editar vaga" title="Editar vaga">
-                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                </button>
-              </div>
-
-              <button class="job-card__surface" type="button" (click)="openPanel(job)">
-                <div class="job-card__main">
-                  <div class="job-card__title-row">
-                    <h3 class="job-card__title">{{ job.title }}</h3>
-                    <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
-                  </div>
-
-                  <div class="job-card__meta">
-                    <span>{{ job.company }}</span>
-                    <span class="job-card__meta-dot" aria-hidden="true"></span>
-                    <span>{{ job.location }}</span>
-                  </div>
-
-                  <div class="job-card__offer">
-                    <span>{{ jobCardOfferLine(job) }}</span>
-                  </div>
-
-                  <div class="job-card__footer">
-                    <div class="job-card__fit">
-                      <span class="job-card__fit-label">Compatíveis</span>
-                      <span class="job-card__fit-bar" aria-hidden="true">
-                        <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
-                      </span>
-                      <span class="job-card__fit-value">{{ job.match }}%</span>
+            <article class="job-card" [class.job-card--flipped]="isJobRadarFlipped(job.id)" *ngFor="let job of filteredJobs">
+              <div class="job-card__flip-stage">
+                <button class="job-card__surface job-card__surface--front" type="button" (click)="openPanel(job)">
+                  <div class="job-card__main">
+                    <div class="job-card__title-row">
+                      <h3 class="job-card__title">{{ job.title }}</h3>
+                      <span class="job-card__chip">{{ job.workModel | uppercase }}</span>
                     </div>
 
-                    <div class="job-card__avatars" *ngIf="job.avatars.length || job.extraCount">
-                      <div class="job-card__avatars-stack">
-                        <ng-container *ngFor="let avatar of job.avatars; let i = index">
-                          <span
-                            class="job-card__avatar"
-                            [style.zIndex]="i + 1"
-                            [style.marginLeft.px]="i === 0 ? 0 : -12"
-                            [style.backgroundImage]="'url(' + avatar + ')'"
-                            aria-hidden="true"
-                          ></span>
-                        </ng-container>
-                        <span class="job-card__avatar job-card__avatar--extra" *ngIf="job.extraCount > 0">+{{ job.extraCount }}</span>
+                    <div class="job-card__meta-row">
+                      <div class="job-card__meta">
+                        <span>{{ job.company }}</span>
+                        <span class="job-card__meta-dot" aria-hidden="true"></span>
+                        <span>{{ job.location }}</span>
+                      </div>
+
+                      <div class="job-card__actions">
+                        <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
+                          <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+                          <span>Chat</span>
+                        </button>
+
+                        <button
+                          class="job-card__flip"
+                          [class.job-card__flip--active]="isJobRadarFlipped(job.id)"
+                          type="button"
+                          (click)="toggleJobRadar(job.id, $event)"
+                          aria-label="Mostrar alcance do radar"
+                          title="Mostrar alcance do radar"
+                        >
+                          <span class="material-icons-outlined" aria-hidden="true">cached</span>
+                        </button>
+
+                        <button class="job-card__edit" type="button" (click)="editJob(job, $event)" aria-label="Editar vaga" title="Editar vaga">
+                          <span class="material-icons-outlined" aria-hidden="true">edit</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="job-card__offer">
+                      <span>{{ jobCardOfferLine(job) }}</span>
+                    </div>
+
+                    <div class="job-card__footer">
+                      <div class="job-card__fit">
+                        <span class="job-card__fit-label">Compatíveis</span>
+                        <span class="job-card__fit-bar" aria-hidden="true">
+                          <span class="job-card__fit-bar-fill" [style.width.%]="job.match"></span>
+                        </span>
+                        <span class="job-card__fit-value">{{ job.match }}%</span>
                       </div>
                     </div>
                   </div>
-                </div>
+                </button>
 
-                <app-alcance-radar
-                  class="job-card__side"
-                  [score]="job.match"
-                  [showGaugeLabel]="false"
-                  [items]="jobRadarItems(job)"
-                ></app-alcance-radar>
-              </button>
+                <div class="job-card__surface job-card__surface--back">
+                  <div class="job-card__back-actions">
+                    <button
+                      class="job-card__flip"
+                      type="button"
+                      (click)="toggleJobRadar(job.id, $event)"
+                      aria-label="Voltar para o card"
+                      title="Voltar para o card"
+                    >
+                      <span class="material-icons-outlined" aria-hidden="true">cached</span>
+                    </button>
+                  </div>
+                  <app-alcance-radar
+                    class="job-card__side"
+                    [embedded]="true"
+                    [score]="job.match"
+                    [showGaugeLabel]="false"
+                    [items]="jobRadarItems(job)"
+                  ></app-alcance-radar>
+                </div>
+              </div>
             </article>
           </div>
         </ng-container>

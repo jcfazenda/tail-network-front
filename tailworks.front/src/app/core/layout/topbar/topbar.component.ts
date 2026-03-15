@@ -54,6 +54,8 @@ export class TopbarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
+  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-rafael.png';
+  private static readonly recruiterFormationLogoAsset = '/assets/images/logo-estacio.png';
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;
   private readonly vagasMockService = inject(VagasMockService);
@@ -97,6 +99,10 @@ export class TopbarComponent {
     return this.currentUrl().startsWith('/usuario');
   }
 
+  get isRecruiterMode(): boolean {
+    return !this.isSelectionMode && !this.isCandidateMode;
+  }
+
   get isCandidateEcosystem(): boolean {
     return this.currentUrl() === '/usuario/ecossistema';
   }
@@ -109,12 +115,12 @@ export class TopbarComponent {
     return !this.isSelectionMode && !this.isCandidateEcosystem;
   }
 
-  get showSidebarAvatarInPrimary(): boolean {
-    return this.isCandidateMode && !this.isCandidateEcosystem && !this.isSidebarOpen;
+  get showSidebarProfileInPrimary(): boolean {
+    return !this.isSelectionMode && !this.isCandidateEcosystem && !this.isSidebarOpen;
   }
 
   get shouldShowTopbarAvatar(): boolean {
-    if (this.isCandidateMode && !this.isCandidateEcosystem) {
+    if (!this.isSelectionMode && !this.isCandidateEcosystem) {
       return false;
     }
 
@@ -148,6 +154,10 @@ export class TopbarComponent {
     }
   }
 
+  get recruiterTopbarAvatarUrl(): string {
+    return TopbarComponent.recruiterAvatarAsset;
+  }
+
   get topbarAvatarInitials(): string {
     if (!this.isCandidateMode) {
       return '';
@@ -167,8 +177,16 @@ export class TopbarComponent {
     return parts.map((part) => part.charAt(0).toUpperCase()).join('');
   }
 
+  get recruiterTopbarAvatarInitials(): string {
+    return 'RS';
+  }
+
   get topbarCandidateDisplayName(): string {
     return this.readCandidateDraft()?.profile?.name?.trim() || 'Julio Fazenda';
+  }
+
+  get recruiterTopbarDisplayName(): string {
+    return 'Rafael Souza';
   }
 
   get topbarCandidateDisplayLocation(): string {
@@ -188,7 +206,31 @@ export class TopbarComponent {
     return 'Rio de Janeiro RJ - Brasil';
   }
 
+  get recruiterTopbarDisplayMeta(): string {
+    return 'Talent Acquisition';
+  }
+
+  get topbarProfileAvatarUrl(): string {
+    return this.isCandidateMode ? this.topbarAvatarUrl : this.recruiterTopbarAvatarUrl;
+  }
+
+  get topbarProfileAvatarInitials(): string {
+    return this.isCandidateMode ? this.topbarAvatarInitials : this.recruiterTopbarAvatarInitials;
+  }
+
+  get topbarProfileDisplayName(): string {
+    return this.isCandidateMode ? this.topbarCandidateDisplayName : this.recruiterTopbarDisplayName;
+  }
+
+  get topbarProfileDisplayMeta(): string {
+    return this.isCandidateMode ? this.topbarCandidateDisplayLocation : this.recruiterTopbarDisplayMeta;
+  }
+
   get topbarFormationLogoUrl(): string {
+    if (!this.isCandidateMode) {
+      return TopbarComponent.recruiterFormationLogoAsset;
+    }
+
     if (typeof window === 'undefined') {
       return '/assets/images/logo-estacio.png';
     }
@@ -211,10 +253,18 @@ export class TopbarComponent {
   }
 
   get topbarFormationGraduation(): string {
+    if (!this.isCandidateMode) {
+      return 'Bacharelado';
+    }
+
     return this.readFormationDraft()?.graduation?.trim() || 'Bacharelado em Sistemas de Informação';
   }
 
   get topbarFormationSpecialization(): string {
+    if (!this.isCandidateMode) {
+      return 'Especialização em Arquitetura de Software';
+    }
+
     return this.readFormationDraft()?.specialization?.trim() || 'Especialização em Arquitetura de Software';
   }
 

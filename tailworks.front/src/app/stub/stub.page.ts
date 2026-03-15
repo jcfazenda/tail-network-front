@@ -59,6 +59,7 @@ export class StubPage implements OnDestroy {
   ];
 
   activeTab: JobStatus = this.resolveInitialTab();
+  flippedJobId: string | null = null;
 
   selectedJobPanel: ChatJob | null = null;
   selectedChatJob: ChatJob | null = null;
@@ -81,6 +82,7 @@ export class StubPage implements OnDestroy {
 
   setTab(tab: JobStatus) {
     this.activeTab = tab;
+    this.flippedJobId = null;
   }
 
   get filteredJobs(): MockJobRecord[] {
@@ -92,10 +94,24 @@ export class StubPage implements OnDestroy {
   }
 
   openPanel(job: MockJobRecord) {
+    if (this.isJobRadarFlipped(job.id)) {
+      return;
+    }
+
+    this.flippedJobId = null;
     this.selectedJobPanel = this.asChatJob(job);
     this.selectedChatJob = null;
     this.selectedCandidateKey = null;
     this.chatStartIndex = 0;
+  }
+
+  toggleJobRadar(jobId: string, event: Event): void {
+    event.stopPropagation();
+    this.flippedJobId = this.flippedJobId === jobId ? null : jobId;
+  }
+
+  isJobRadarFlipped(jobId: string): boolean {
+    return this.flippedJobId === jobId;
   }
 
   editJob(job: MockJobRecord, event: Event): void {

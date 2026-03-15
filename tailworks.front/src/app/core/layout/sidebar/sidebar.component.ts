@@ -37,6 +37,7 @@ type CandidateBasicDraft = {
 })
 export class SidebarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-rafael.png';
   private readonly router = inject(Router);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly currentUrl = toSignal(
@@ -89,6 +90,24 @@ export class SidebarComponent {
     },
   ];
 
+  private readonly recruiterTreeGroupsValue: CandidateTreeGroup[] = [
+    {
+      label: 'Recrutamento',
+      items: [
+        { label: 'Radar', icon: 'radar', route: '/radar' },
+        { label: 'Minhas Vagas', icon: 'work', route: '/vagas' },
+        { label: 'Talentos', icon: 'group', route: '/talentos' },
+        { label: 'Propostas', icon: 'assignment', route: '/propostas' },
+      ],
+    },
+    {
+      label: 'Conta',
+      items: [
+        { label: 'Sair', icon: 'logout', route: '/home' },
+      ],
+    },
+  ];
+
   private readonly selectionItems: NavItem[] = [
     { label: 'Home', route: '/home', icon: 'home' },
   ];
@@ -103,6 +122,14 @@ export class SidebarComponent {
 
   get candidateTreeGroups(): CandidateTreeGroup[] {
     return this.candidateTreeGroupsValue;
+  }
+
+  get recruiterTreeGroups(): CandidateTreeGroup[] {
+    return this.recruiterTreeGroupsValue;
+  }
+
+  get sidebarTreeGroups(): CandidateTreeGroup[] {
+    return this.isCandidateMode ? this.candidateTreeGroups : this.recruiterTreeGroups;
   }
 
   get profileName(): string {
@@ -129,6 +156,14 @@ export class SidebarComponent {
     return this.isCandidateMode
       ? 'Seu perfil esta pronto para novas oportunidades'
       : 'Você tem 5 novas mensagens';
+  }
+
+  get isRecruiterMode(): boolean {
+    return !this.isSelectionMode && !this.isCandidateMode;
+  }
+
+  get isProfileSidebarMode(): boolean {
+    return this.isCandidateMode || this.isRecruiterMode;
   }
 
   get isSelectionMode(): boolean {
@@ -193,6 +228,38 @@ export class SidebarComponent {
     }
 
     return parts.map((part) => part.charAt(0).toUpperCase()).join('');
+  }
+
+  get recruiterAvatarUrl(): string {
+    return SidebarComponent.recruiterAvatarAsset;
+  }
+
+  get recruiterDisplayName(): string {
+    return 'Rafael Souza';
+  }
+
+  get recruiterDisplayMeta(): string {
+    return 'Talent Acquisition';
+  }
+
+  get recruiterDisplayInitials(): string {
+    return 'RS';
+  }
+
+  get sidebarAvatarUrl(): string {
+    return this.isCandidateMode ? this.candidateAvatarUrl : this.recruiterAvatarUrl;
+  }
+
+  get sidebarDisplayName(): string {
+    return this.isCandidateMode ? this.candidateDisplayName : this.recruiterDisplayName;
+  }
+
+  get sidebarDisplayMeta(): string {
+    return this.isCandidateMode ? this.candidateDisplayLocation : this.recruiterDisplayMeta;
+  }
+
+  get sidebarDisplayInitials(): string {
+    return this.isCandidateMode ? this.candidateDisplayInitials : this.recruiterDisplayInitials;
   }
 
   isCandidateTreeItemActive(item: CandidateTreeItem): boolean {

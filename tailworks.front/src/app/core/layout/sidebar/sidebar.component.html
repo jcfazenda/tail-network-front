@@ -1,6 +1,6 @@
 <aside class="sidebar">
   <div class="brand">
-    <ng-container *ngIf="isCandidateMode; else defaultBrand">
+    <ng-container *ngIf="isProfileSidebarMode; else defaultBrand">
       <div class="brandCandidate">
         <button
           class="brandAvatarButton"
@@ -10,17 +10,17 @@
         >
           <div
             class="brandAvatar"
-            [class.brandAvatar--image]="!!candidateAvatarUrl"
-            [style.backgroundImage]="candidateAvatarUrl ? 'url(' + candidateAvatarUrl + ')' : null"
-            [attr.aria-label]="candidateDisplayName"
+            [class.brandAvatar--image]="!!sidebarAvatarUrl"
+            [style.backgroundImage]="sidebarAvatarUrl ? 'url(' + sidebarAvatarUrl + ')' : null"
+            [attr.aria-label]="sidebarDisplayName"
           >
-            <span *ngIf="!candidateAvatarUrl">{{ candidateDisplayInitials }}</span>
+            <span *ngIf="!sidebarAvatarUrl">{{ sidebarDisplayInitials }}</span>
           </div>
         </button>
 
         <div class="brandCandidate__copy">
-          <strong>{{ candidateDisplayName }}</strong>
-          <span>{{ candidateDisplayLocation }}</span>
+          <strong>{{ sidebarDisplayName }}</strong>
+          <span>{{ sidebarDisplayMeta }}</span>
         </div>
       </div>
     </ng-container>
@@ -30,9 +30,12 @@
     </ng-template>
   </div>
 
-  <ng-container *ngIf="isCandidateMode; else flatMenu">
-    <nav class="menu menu--tree" aria-label="Navegacao do talento">
-      <section class="menuTree__group" *ngFor="let group of candidateTreeGroups">
+  <ng-container *ngIf="isProfileSidebarMode; else flatMenu">
+    <nav
+      class="menu menu--tree"
+      [attr.aria-label]="isCandidateMode ? 'Navegacao do talento' : 'Navegacao do recruiter'"
+    >
+      <section class="menuTree__group" *ngFor="let group of sidebarTreeGroups">
         <strong class="menuTree__groupLabel">{{ group.label }}</strong>
 
         <div class="menuTree__branch">
