@@ -71,7 +71,6 @@ export class StacksPage implements OnInit {
 
   private readonly router = inject(Router);
 
-  readonly maxStacks = 10;
   readonly radarPreviewScore = 89;
   readonly radarPreviewItems: RadarLegendItem[] = [
     { label: 'Alta compatibilidade', tone: 'high', percent: 76 },
@@ -436,11 +435,6 @@ export class StacksPage implements OnInit {
       return;
     }
 
-    if (existingIndex < 0 && this.getAllStacks().length >= this.maxStacks) {
-      this.stackError = 'Você pode adicionar até 10 stacks.';
-      return;
-    }
-
     if (existingIndex >= 0) {
       const existing = list[existingIndex];
       existing.name = repoItem.name;
@@ -468,11 +462,6 @@ export class StacksPage implements OnInit {
 
   openCreateStackModal(group: StackGroup, category?: StackCategory): void {
     this.stackError = '';
-
-    if (this.getAllStacks().length >= this.maxStacks) {
-      this.stackError = 'Você pode adicionar até 10 stacks.';
-      return;
-    }
 
     this.editingStackGroup = group;
     this.editingStackIndex = null;
@@ -592,11 +581,6 @@ export class StacksPage implements OnInit {
       ? this.guessCategory(trimmed)
       : this.stackDraftCategory;
     const nextItem = this.createStackChip(trimmed, undefined, description, inferredCategory, this.createStackId(trimmed));
-
-    if (this.getAllStacks().length >= this.maxStacks) {
-      this.stackModalError = 'Você pode adicionar até 10 stacks.';
-      return;
-    }
 
     const list = this.getStacksList(this.editingStackGroup);
     if (this.editingStackGroup === 'primary') {
