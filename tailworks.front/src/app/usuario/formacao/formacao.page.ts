@@ -50,16 +50,16 @@ export class FormacaoPage implements OnInit {
 
   readonly steps: RegistrationStep[] = [
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
-    { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
-    { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao', active: true },
+    { index: 2, label: 'Suas Stacks', route: '/usuario/stacks' },
+    { index: 3, label: 'Experiência', route: '/usuario/experiencia' },
+    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais', active: true },
   ];
 
   readonly monthOptions = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   readonly yearOptions = Array.from({ length: 21 }, (_value, index) => String(2026 - index));
   readonly acceptedLogoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   readonly maxLogoSizeBytes = 5 * 1024 * 1024;
-  readonly defaultIntroLogoUrl = '/assets/images/logo-estacio.png';
+  readonly defaultIntroLogoUrl = '/assets/images/formacao-default.png';
 
   profile: CandidateBasicProfile = {
     name: '',
@@ -222,15 +222,27 @@ export class FormacaoPage implements OnInit {
   private restoreIntroLogo(): void {
     const savedLogo = localStorage.getItem(FormacaoPage.logoDraftStorageKey);
 
-    if (!savedLogo) {
+    if (!savedLogo?.trim()) {
+      this.introLogoUrl = this.defaultIntroLogoUrl;
       return;
     }
 
-    this.introLogoUrl = savedLogo;
+    this.introLogoUrl = savedLogo.trim();
   }
 
   private persistIntroLogo(): void {
-    localStorage.setItem(FormacaoPage.logoDraftStorageKey, this.introLogoUrl);
+    localStorage.setItem(FormacaoPage.logoDraftStorageKey, this.introLogoUrl?.trim() || this.defaultIntroLogoUrl);
+  }
+
+  handleFormationLogoError(event: Event): void {
+    const image = event.target as HTMLImageElement | null;
+    if (!image) {
+      return;
+    }
+
+    this.formationDraftLogoUrl = this.defaultIntroLogoUrl;
+    image.src = this.defaultIntroLogoUrl;
+    this.cdr.markForCheck();
   }
 
   private restoreFormationCopy(): void {

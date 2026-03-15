@@ -843,13 +843,18 @@ p {
 }
 
 .jobs__header {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  display: grid;
   gap: 16px;
   margin-bottom: 0;
   padding-left: 0;
+}
+
+.jobs__header-top{
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
 .jobs__search{
@@ -878,18 +883,12 @@ p {
   outline: none;
 }
 
-.tabs {
-  flex: 0 0 auto;
-  background: var(--tab-shell-bg);
-  border: 1px solid var(--tab-shell-border);
-  border-radius: 9px;
-  padding: 3px;
+.jobs__owner-filters,
+.jobs__view-filters{
   display: inline-flex;
   align-items: center;
-  gap: 1px;
-  margin-left: 0;
-  width: auto;
-  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .jobs__grid{
@@ -919,32 +918,58 @@ p {
   scroll-snap-type: none;
 }
 
-.tab {
-  flex: 0 0 auto;
-  border: 0;
-  background: var(--tab-item-bg);
-  padding: 0 14px;
-  min-height: 28px;
-  border-radius: 7px;
-  text-align: center;
-  font-size: 11.5px;
+.jobs__owner-chip,
+.jobs__view-chip{
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 12px;
   line-height: 1;
-  font-weight: 400;
-  color: var(--tab-text);
+  font-weight: 500;
   cursor: pointer;
-  box-shadow: none;
   white-space: nowrap;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 6px 16px rgba(15, 23, 42, 0.05);
 }
 
-.tab:hover {
-  background: var(--tab-item-bg-hover);
-  color: var(--tab-text-active);
+.jobs__owner-chip strong,
+.jobs__view-chip strong{
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.76);
+  font-size: 11px;
+  font-weight: 700;
 }
 
-.tab.active {
-  background: var(--tab-item-bg-active);
-  box-shadow: none;
-  color: var(--tab-text-active);
+.jobs__owner-chip:hover,
+.jobs__view-chip:hover{
+  border-color: rgba(216, 160, 74, 0.28);
+  color: rgba(30, 30, 30, 0.9);
+}
+
+.jobs__owner-chip--active,
+.jobs__view-chip--active{
+  background: linear-gradient(180deg, rgba(255, 248, 233, 0.96), rgba(250, 238, 215, 0.92));
+  border-color: rgba(226, 153, 49, 0.22);
+  color: rgba(30, 30, 30, 0.92);
+}
+
+.jobs__owner-chip--active strong,
+.jobs__view-chip--active strong{
+  background: rgba(226, 153, 49, 0.14);
+  color: rgba(146, 88, 20, 0.96);
 }
 
 .job-card {

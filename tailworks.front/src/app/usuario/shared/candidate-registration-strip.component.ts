@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 type CandidateBasicDraft = {
   profile?: {
@@ -20,6 +20,7 @@ type CandidateBasicDraft = {
 export class CandidateRegistrationStripComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
+  private static readonly defaultFormationLogoUrl = '/assets/images/formacao-default.png';
 
   @Input() name = '';
   @Input() email = '';
@@ -30,8 +31,6 @@ export class CandidateRegistrationStripComponent {
   @Input() specialization = '';
   @Input() formationLogoUrl = '';
   @Input() photoPreviewUrl = '';
-  @Output() basicDataRequested = new EventEmitter<void>();
-  @Output() formationRequested = new EventEmitter<void>();
 
   readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
   readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
@@ -72,15 +71,16 @@ export class CandidateRegistrationStripComponent {
   }
 
   get displayFormationLogoUrl(): string {
-    return this.formationLogoUrl.trim() || '/assets/images/logo-estacio.png';
+    return this.formationLogoUrl.trim() || CandidateRegistrationStripComponent.defaultFormationLogoUrl;
   }
 
-  openBasicDataDialog(): void {
-    this.basicDataRequested.emit();
-  }
+  handleFormationLogoError(event: Event): void {
+    const image = event.target as HTMLImageElement | null;
+    if (!image) {
+      return;
+    }
 
-  openFormationDialog(): void {
-    this.formationRequested.emit();
+    image.src = CandidateRegistrationStripComponent.defaultFormationLogoUrl;
   }
 
   openPhotoPicker(input: HTMLInputElement): void {

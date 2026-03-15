@@ -1,0 +1,195 @@
+<section class="candidate-documents">
+  <header class="candidate-documents__intro">
+    <div class="candidate-documents__intro-copy">
+      <h1>Documentos</h1>
+      <p>Organize os documentos que podem aparecer quando você aceita uma proposta e autoriza o compartilhamento pela LGPD.</p>
+    </div>
+
+    <button
+      class="candidate-documents__add-button"
+      type="button"
+      (click)="openCreateDocumentModal()"
+      aria-label="Adicionar novo documento"
+      title="Adicionar novo documento"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">add</span>
+      <span>Adicionar documento</span>
+    </button>
+  </header>
+
+  <section class="candidate-documents__form-card">
+    <div class="candidate-documents__editor-area">
+      <div class="candidate-documents__document-box">
+        <div class="candidate-documents__document-list">
+          <div
+            *ngFor="let item of documents; trackBy: trackDocument"
+            class="candidate-documents__document-item"
+          >
+            <div class="candidate-documents__document-item-main">
+              <div class="candidate-documents__document-item-title-row">
+                <button
+                  class="candidate-documents__document-item-edit"
+                  type="button"
+                  (click)="openEditDocumentModal(item)"
+                  [attr.aria-label]="'Editar ' + item.label"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                </button>
+
+                <span class="candidate-documents__document-item-name">{{ item.label }}</span>
+
+                <span
+                  class="candidate-documents__document-item-visibility"
+                  [class.candidate-documents__document-item-visibility--active]="item.isVisibleOnAcceptance"
+                  [attr.aria-label]="item.isVisibleOnAcceptance ? 'Documento ativo para visualização' : 'Documento inativo para visualização'"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">
+                    {{ item.isVisibleOnAcceptance ? 'check_circle' : 'radio_button_unchecked' }}
+                  </span>
+                </span>
+              </div>
+
+              <div
+                class="candidate-documents__document-item-description"
+                *ngIf="item.description"
+              >
+                {{ item.description }}
+              </div>
+            </div>
+
+            <div class="candidate-documents__document-item-side">
+              <span
+                class="candidate-documents__document-item-pill"
+                [class.candidate-documents__document-item-pill--active]="item.isVisibleOnAcceptance"
+              >
+                <span class="candidate-documents__document-item-pill-text">
+                  {{ item.isVisibleOnAcceptance ? 'Ativo para aceite' : 'Oculto no aceite' }}
+                </span>
+                <span
+                  class="candidate-documents__document-item-toggle"
+                  [class.candidate-documents__document-item-toggle--active]="item.isVisibleOnAcceptance"
+                  aria-hidden="true"
+                >
+                  <span class="candidate-documents__document-item-toggle-thumb"></span>
+                </span>
+              </span>
+
+              <div class="candidate-documents__document-item-file-row">
+                <span class="candidate-documents__document-item-file">
+                  {{ item.fileName || 'Sem anexo ainda' }}
+                </span>
+
+                <button
+                  class="candidate-documents__document-item-remove"
+                  type="button"
+                  (click)="removeDocument(item)"
+                  [attr.aria-label]="'Excluir ' + item.label"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="candidate-documents__helper">
+        <span class="material-symbols-rounded" aria-hidden="true">info</span>
+        <span>
+        O recruiter só verá os documentos marcados como ativos depois que você aceitar a proposta e autorizar o fluxo via LGPD.
+        </span>
+      </p>
+    </div>
+  </section>
+</section>
+
+<div
+  class="candidate-documents__modal-backdrop"
+  *ngIf="isDocumentModalOpen"
+  (click)="closeDocumentModal()"
+>
+  <section class="candidate-documents__modal" (click)="$event.stopPropagation()">
+    <div class="candidate-documents__modal-header">
+      <h3 class="candidate-documents__modal-title">{{ documentModalTitle }}</h3>
+      <button class="candidate-documents__modal-close" type="button" (click)="closeDocumentModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="candidate-documents__modal-body">
+      <input
+        #documentFileInput
+        class="candidate-documents__modal-file-input"
+        type="file"
+        [accept]="acceptedDocumentExtensions"
+        (change)="onDraftFileSelected($event)"
+      />
+
+      <label class="candidate-documents__modal-field">
+        <span class="candidate-documents__modal-label">Nome do documento</span>
+        <input
+          type="text"
+          [(ngModel)]="documentDraftLabel"
+          placeholder="Ex: Certificado de graduação"
+        />
+      </label>
+
+      <label
+        class="candidate-documents__modal-toggle"
+        [class.candidate-documents__modal-toggle--active]="documentDraftVisibleOnAcceptance"
+      >
+        <input
+          type="checkbox"
+          [checked]="documentDraftVisibleOnAcceptance"
+          (change)="documentDraftVisibleOnAcceptance = $any($event.target).checked"
+        />
+        <span class="candidate-documents__modal-toggle-chip" aria-hidden="true"></span>
+        <span class="candidate-documents__modal-toggle-text">Ativo para visualização após aceite e LGPD</span>
+      </label>
+
+      <label class="candidate-documents__modal-field">
+        <span class="candidate-documents__modal-label">Anexo</span>
+
+        <button
+          class="candidate-documents__modal-upload"
+          type="button"
+          (click)="openDraftFilePicker(documentFileInput)"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">
+            {{ documentDraftFileName ? 'draft' : 'upload_file' }}
+          </span>
+          <span>{{ documentDraftFileName || 'Selecionar PDF, JPG ou PNG' }}</span>
+        </button>
+
+        <small class="candidate-documents__modal-upload-meta" *ngIf="documentDraftUpdatedAt">
+          Atualizado em {{ documentDraftUpdatedAt }}
+        </small>
+      </label>
+
+      <label class="candidate-documents__modal-field">
+        <span class="candidate-documents__modal-label">Descrição breve</span>
+        <textarea
+          [(ngModel)]="documentDraftDescription"
+          rows="5"
+          placeholder="Explique quando esse documento costuma ser solicitado ou algum detalhe útil para você lembrar."
+        ></textarea>
+      </label>
+
+      <small class="candidate-documents__error" *ngIf="documentModalError">{{ documentModalError }}</small>
+
+      <div class="candidate-documents__modal-actions">
+        <button class="candidate-documents__modal-button candidate-documents__modal-button--ghost" type="button" (click)="closeDocumentModal()">
+          Cancelar
+        </button>
+        <button
+          class="candidate-documents__modal-button candidate-documents__modal-button--primary"
+          type="button"
+          [disabled]="!canSaveDocument"
+          (click)="saveDocument()"
+        >
+          {{ documentModalSubmitLabel }}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

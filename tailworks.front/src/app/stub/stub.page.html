@@ -239,15 +239,52 @@
 
       <section class="jobs">
         <div class="jobs__header">
-          <div class="jobs__search">
-            <span class="jobs__search-icon">search</span>
-            <input type="text" placeholder="Filtrar vagas..." class="jobs__search-input" />
+          <div class="jobs__header-top">
+            <div class="jobs__search">
+              <span class="jobs__search-icon">search</span>
+              <input
+                type="text"
+                placeholder="Filtrar vagas..."
+                class="jobs__search-input"
+                [value]="jobsSearchTerm"
+                (input)="jobsSearchTerm = $any($event.target).value"
+              />
+            </div>
+
+            <div class="jobs__owner-filters" *ngIf="isCurrentRecruiterMaster && ownerFilterOptions.length > 1">
+              <button
+                class="jobs__owner-chip"
+                type="button"
+                *ngFor="let option of ownerFilterOptions"
+                [class.jobs__owner-chip--active]="activeOwnerFilterId === option.id"
+                (click)="setOwnerFilter(option.id)"
+              >
+                <span>{{ option.label }}</span>
+                <strong>{{ option.count }}</strong>
+              </button>
+            </div>
           </div>
-          <div class="tabs">
-            <button class="tab" [class.active]="activeTab==='ativas'" (click)="setTab('ativas')">Ativas</button>
-            <button class="tab" [class.active]="activeTab==='rascunhos'" (click)="setTab('rascunhos')">Rascunhos</button>
-            <button class="tab" [class.active]="activeTab==='pausadas'" (click)="setTab('pausadas')">Pausadas</button>
-            <button class="tab" [class.active]="activeTab==='encerradas'" (click)="setTab('encerradas')">Encerradas</button>
+
+          <div class="jobs__view-filters" role="tablist" aria-label="Recorte das vagas do recruiter">
+            <button
+              class="jobs__view-chip"
+              type="button"
+              [class.jobs__view-chip--active]="activeBoardView === 'radar'"
+              (click)="setBoardView('radar')"
+            >
+              <span>No Radar</span>
+              <strong>{{ recruiterRadarJobsCount }}</strong>
+            </button>
+
+            <button
+              class="jobs__view-chip"
+              type="button"
+              [class.jobs__view-chip--active]="activeBoardView === 'process'"
+              (click)="setBoardView('process')"
+            >
+              <span>Em Processo</span>
+              <strong>{{ recruiterProcessJobsCount }}</strong>
+            </button>
           </div>
         </div>
 
@@ -384,7 +421,7 @@
 
         <ng-template #emptyState>
           <div class="empty">
-            Nenhuma vaga em {{ activeTab }}.
+            {{ emptyStateMessage }}
           </div>
         </ng-template>
       </section>
@@ -402,13 +439,13 @@
           <div class="job-side-panel__avatar-wrap">
             <img
               src="/assets/avatars/avatar-rafael.png"
-              alt="Rafael Souza"
+              [alt]="recruiterDisplayName"
               class="job-side-panel__avatar"
             />
           </div>
           <div class="job-side-panel__profile-text">
-            <div class="job-side-panel__profile-name">Rafael Souza</div>
-            <div class="job-side-panel__profile-role">Talent Acquisition</div>
+            <div class="job-side-panel__profile-name">{{ recruiterDisplayName }}</div>
+            <div class="job-side-panel__profile-role">{{ recruiterDisplayRole }}</div>
           </div>
         </div>
 

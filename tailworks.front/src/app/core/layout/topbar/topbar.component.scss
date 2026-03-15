@@ -109,15 +109,15 @@
   width: 100%;
   min-width: 0;
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: 76px minmax(0, 1fr);
   align-items: center;
   gap: 16px;
   padding-right: 8px;
 }
 
 .topbar__formation-logo{
-  width: 88px;
-  height: 88px;
+  width: 76px;
+  height: 76px;
   border-radius: 0;
   object-fit: contain;
   display: block;

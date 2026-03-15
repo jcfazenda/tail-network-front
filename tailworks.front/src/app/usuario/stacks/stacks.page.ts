@@ -1,15 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
-
-type RegistrationStep = {
-  label: string;
-  index: number | string;
-  route?: string;
-  active?: boolean;
-};
 
 type StackChip = {
   name: string;
@@ -37,7 +30,7 @@ type FormationCopyDraft = {
 @Component({
   standalone: true,
   selector: 'app-stacks-page',
-  imports: [CommonModule, FormsModule, RouterLink, AlcanceRadarComponent],
+  imports: [CommonModule, FormsModule, AlcanceRadarComponent],
   templateUrl: './stacks.page.html',
   styleUrls: ['./stacks.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,18 +39,9 @@ export class StacksPage implements OnInit {
   private static readonly storageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
-  private static readonly ecosystemVisibilityStorageKey = 'tailworks:candidate-experience-ecosystem-visibility:v1';
-  private static readonly candidacyAvailabilityStorageKey = 'tailworks:candidate-experience-candidacy-availability:v1';
   private static readonly stackDescriptionMaxLength = 920;
 
   private readonly router = inject(Router);
-
-  readonly steps: RegistrationStep[] = [
-    { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
-    { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks', active: true },
-    { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia' },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
-  ];
 
   readonly maxStacks = 10;
   readonly radarPreviewScore = 89;
@@ -69,8 +53,6 @@ export class StacksPage implements OnInit {
 
   stackError = '';
   stacks: StackChip[] = [];
-  isVisibleInEcosystem = true;
-  isAvailableForApplications = true;
   isStackModalOpen = false;
   editingStackIndex: number | null = null;
   stackDraftName = '';
@@ -133,7 +115,6 @@ export class StacksPage implements OnInit {
   ngOnInit(): void {
     this.restoreBasicDraft();
     this.restoreFormationCopy();
-    this.restoreControls();
 
     const stored = localStorage.getItem(StacksPage.storageKey);
 
@@ -155,16 +136,6 @@ export class StacksPage implements OnInit {
       this.createStackChip('Azure'),
     ];
     this.persistStacks();
-  }
-
-  updateVisibleInEcosystem(nextValue: boolean): void {
-    this.isVisibleInEcosystem = nextValue;
-    this.persistControls();
-  }
-
-  updateAvailableForApplications(nextValue: boolean): void {
-    this.isAvailableForApplications = nextValue;
-    this.persistControls();
   }
 
   openCreateStackModal(): void {
@@ -339,7 +310,7 @@ export class StacksPage implements OnInit {
     }
 
     this.persistStacks();
-    this.scrollToSection('usuario-experiencia', '/usuario/dados-cadastrais/experiencia');
+    this.scrollToSection('usuario-experiencia', '/usuario/experiencia');
   }
 
   private persistStacks(): void {
@@ -404,24 +375,6 @@ export class StacksPage implements OnInit {
     } catch {
       localStorage.removeItem(StacksPage.formationCopyStorageKey);
     }
-  }
-
-  private restoreControls(): void {
-    const ecosystemVisibility = localStorage.getItem(StacksPage.ecosystemVisibilityStorageKey);
-    const candidacyAvailability = localStorage.getItem(StacksPage.candidacyAvailabilityStorageKey);
-
-    if (ecosystemVisibility !== null) {
-      this.isVisibleInEcosystem = ecosystemVisibility === 'true';
-    }
-
-    if (candidacyAvailability !== null) {
-      this.isAvailableForApplications = candidacyAvailability === 'true';
-    }
-  }
-
-  private persistControls(): void {
-    localStorage.setItem(StacksPage.ecosystemVisibilityStorageKey, String(this.isVisibleInEcosystem));
-    localStorage.setItem(StacksPage.candidacyAvailabilityStorageKey, String(this.isAvailableForApplications));
   }
 
   private createStackChip(name: string, knowledge?: number, description = ''): StackChip {

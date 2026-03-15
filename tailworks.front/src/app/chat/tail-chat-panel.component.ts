@@ -171,6 +171,14 @@ export class TailChatPanelComponent implements OnChanges {
     return this.filteredConversations[this.selectedConversationIndex] ?? this.filteredConversations[0];
   }
 
+  get recruiterDisplayName(): string {
+    return this.vagasMockService.getCurrentRecruiterIdentity().name;
+  }
+
+  get recruiterDisplayRole(): string {
+    return this.vagasMockService.getCurrentRecruiterIdentity().role;
+  }
+
   get selectedAvailabilityLabel(): string | null {
     return this.selectedConversation?.availabilityLabel ?? null;
   }

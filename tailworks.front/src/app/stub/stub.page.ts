@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
-import { JobStatus, MockJobCandidate, MockJobRecord, WorkModel } from '../vagas/data/vagas.models';
+import { JobStatus, MockJobCandidate, MockJobRecord, RecruiterIdentity, WorkModel } from '../vagas/data/vagas.models';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { AlcanceRadarComponent, RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { Subscription } from 'rxjs';
@@ -33,6 +33,14 @@ type HiringTrendChartPoint = HiringTrendPoint & {
   y: number;
   xPercent: number;
   yPercent: number;
+};
+
+type RecruiterBoardView = 'radar' | 'process';
+
+type RecruiterOwnerFilterOption = {
+  id: string;
+  label: string;
+  count: number;
 };
 
 @Component({
@@ -98,8 +106,11 @@ export class StubPage implements OnDestroy {
   readonly hiringTrendScaleValues = [50, 40, 30, 20, 10, 0];
 
   activeTab: JobStatus = this.resolveInitialTab();
+  activeBoardView: RecruiterBoardView = 'radar';
+  activeOwnerFilterId = 'all';
   flippedJobId: string | null = null;
   jobsGridDragging = false;
+  jobsSearchTerm = '';
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
 
@@ -132,6 +143,16 @@ export class StubPage implements OnDestroy {
 
   setTab(tab: JobStatus) {
     this.activeTab = tab;
+    this.flippedJobId = null;
+  }
+
+  setBoardView(view: RecruiterBoardView): void {
+    this.activeBoardView = view;
+    this.flippedJobId = null;
+  }
+
+  setOwnerFilter(filterId: string): void {
+    this.activeOwnerFilterId = filterId;
     this.flippedJobId = null;
   }
 
@@ -171,8 +192,80 @@ export class StubPage implements OnDestroy {
     this.cdr.markForCheck();
   }
 
+  get currentRecruiter(): RecruiterIdentity {
+    return this.vagasMockService.getCurrentRecruiterIdentity();
+  }
+
+  get recruiterDisplayName(): string {
+    return this.currentRecruiter.name;
+  }
+
+  get recruiterDisplayRole(): string {
+    return this.currentRecruiter.role;
+  }
+
+  get isCurrentRecruiterMaster(): boolean {
+    return this.currentRecruiter.isMaster;
+  }
+
+  get ownerFilterOptions(): RecruiterOwnerFilterOption[] {
+    if (!this.isCurrentRecruiterMaster) {
+      return [];
+    }
+
+    const options = new Map<string, RecruiterOwnerFilterOption>();
+    options.set('all', {
+      id: 'all',
+      label: 'Todos',
+      count: this.accessibleJobs.length,
+    });
+
+    for (const recruiter of this.vagasMockService.getRecruitersForCompany(this.currentRecruiter.company)) {
+      const count = this.accessibleJobs.filter((job) => job.createdByRecruiterId === recruiter.id).length;
+      if (count === 0 && recruiter.id !== this.currentRecruiter.id) {
+        continue;
+      }
+
+      options.set(recruiter.id, {
+        id: recruiter.id,
+        label: this.ownerFilterLabel(recruiter),
+        count,
+      });
+    }
+
+    return [...options.values()];
+  }
+
   get filteredJobs(): MockJobRecord[] {
-    return this.vagasMockService.getJobs().filter((job) => job.status === this.activeTab);
+    const normalizedSearch = this.jobsSearchTerm.trim().toLocaleLowerCase('pt-BR');
+
+    return this.scopeJobs
+      .filter((job) => this.jobMatchesBoardView(job, this.activeBoardView))
+      .filter((job) => {
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        return `${job.title} ${job.company} ${job.location}`
+          .toLocaleLowerCase('pt-BR')
+          .includes(normalizedSearch);
+      });
+  }
+
+  get recruiterRadarJobsCount(): number {
+    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'radar')).length;
+  }
+
+  get recruiterProcessJobsCount(): number {
+    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'process')).length;
+  }
+
+  get emptyStateMessage(): string {
+    if (this.activeBoardView === 'process') {
+      return 'Nenhuma vaga com talentos em processo neste recorte.';
+    }
+
+    return 'Nenhuma vaga no radar neste recorte.';
   }
 
   get radarCategories(): RadarCategory[] {
@@ -579,6 +672,43 @@ export class StubPage implements OnDestroy {
     }
 
     return 'ativas';
+  }
+
+  private get accessibleJobs(): MockJobRecord[] {
+    return this.vagasMockService.getJobs().filter((job) =>
+      job.status === this.activeTab && this.vagasMockService.canCurrentRecruiterAccessJob(job),
+    );
+  }
+
+  private get scopeJobs(): MockJobRecord[] {
+    if (!this.isCurrentRecruiterMaster || this.activeOwnerFilterId === 'all') {
+      return this.accessibleJobs;
+    }
+
+    return this.accessibleJobs.filter((job) => job.createdByRecruiterId === this.activeOwnerFilterId);
+  }
+
+  private jobMatchesBoardView(job: MockJobRecord, view: RecruiterBoardView): boolean {
+    if (view === 'process') {
+      return job.candidates.some((candidate) => {
+        const stage = this.vagasMockService.getEffectiveCandidateStage(candidate);
+        return stage === 'candidatura'
+          || stage === 'processo'
+          || stage === 'tecnica'
+          || stage === 'aguardando'
+          || stage === 'aceito'
+          || stage === 'documentacao';
+      });
+    }
+
+    return job.radarCount > 0 || job.candidates.some((candidate) =>
+      this.vagasMockService.getEffectiveCandidateStage(candidate) === 'radar',
+    );
+  }
+
+  private ownerFilterLabel(recruiter: RecruiterIdentity): string {
+    const firstName = recruiter.name.split(' ')[0]?.trim();
+    return firstName || recruiter.name;
   }
 
   private formatJobSalary(value?: string): string | null {

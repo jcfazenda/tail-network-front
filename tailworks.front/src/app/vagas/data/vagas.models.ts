@@ -2,6 +2,14 @@ export type JobStatus = 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas';
 export type WorkModel = 'Presencial' | 'Hibrido' | 'Remoto';
 export type ContractType = 'CLT' | 'PJ' | 'Freelancer';
 export type TalentJobDecision = 'applied' | 'hidden';
+export interface RecruiterIdentity {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  isMaster: boolean;
+}
+
 export type CandidateStage =
   | 'radar'
   | 'aguardando'
@@ -83,6 +91,10 @@ export interface MockJobCandidate {
 
 export interface MockJobRecord extends MockJobDraft {
   id: string;
+  createdByRecruiterId?: string;
+  createdByRecruiterName?: string;
+  createdByRecruiterRole?: string;
+  recruiterWatcherIds?: string[];
   priority: string;
   match: number;
   talents: number;

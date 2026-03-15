@@ -1,0 +1,567 @@
+.recruiter-time {
+  display: grid;
+  gap: 22px;
+}
+
+.recruiter-time__hero,
+.recruiter-time__metrics,
+.recruiter-time__team,
+.recruiter-time__chat {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 251, 0.98));
+  border: 1px solid rgba(212, 219, 228, 0.68);
+  border-radius: 28px;
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.recruiter-time__hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 28px 30px;
+}
+
+.recruiter-time__hero-copy {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+}
+
+.recruiter-time__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(238, 120, 48, 0.12);
+  color: #a84d17;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.recruiter-time__hero h1 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.05;
+  color: #172033;
+}
+
+.recruiter-time__hero p {
+  margin: 0;
+  max-width: 64ch;
+  color: #5e6a7d;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.recruiter-time__hero-side {
+  display: grid;
+  gap: 12px;
+  min-width: min(300px, 100%);
+}
+
+.recruiter-time__workspace,
+.recruiter-time__directory-link {
+  border-radius: 20px;
+  border: 1px solid rgba(222, 228, 236, 0.82);
+  background: rgba(248, 250, 252, 0.88);
+}
+
+.recruiter-time__workspace {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+}
+
+.recruiter-time__workspace strong {
+  color: #172033;
+  font-size: 15px;
+}
+
+.recruiter-time__workspace span {
+  color: #687587;
+  font-size: 13px;
+}
+
+.recruiter-time__directory-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  color: #283447;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.recruiter-time__directory-link:hover {
+  transform: translateY(-1px);
+}
+
+.recruiter-time__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 18px;
+}
+
+.recruiter-time__metric {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(227, 232, 239, 0.9);
+}
+
+.recruiter-time__metric span,
+.recruiter-time__metric small {
+  color: #6a7688;
+}
+
+.recruiter-time__metric strong {
+  color: #182133;
+  font-size: clamp(18px, 2vw, 28px);
+  line-height: 1.2;
+}
+
+.recruiter-time__shell {
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.recruiter-time__team,
+.recruiter-time__chat {
+  padding: 22px;
+}
+
+.recruiter-time__team {
+  display: grid;
+  gap: 16px;
+}
+
+.recruiter-time__team-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recruiter-time__team-head h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 22px;
+}
+
+.recruiter-time__team-head span {
+  color: #718093;
+  font-size: 13px;
+}
+
+.recruiter-time__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 223, 232, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.recruiter-time__search span {
+  color: #7a8698;
+}
+
+.recruiter-time__search input,
+.recruiter-time__composer input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #202a3b;
+  font-size: 14px;
+}
+
+.recruiter-time__team-list {
+  display: grid;
+  gap: 12px;
+}
+
+.team-member {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(224, 230, 238, 0.92);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.team-member:hover,
+.team-member--active {
+  transform: translateY(-1px);
+  border-color: rgba(236, 136, 76, 0.48);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+}
+
+.team-member__avatar,
+.recruiter-time__chat-avatar {
+  object-fit: cover;
+  background: linear-gradient(135deg, rgba(28, 36, 54, 0.96), rgba(82, 95, 122, 0.92));
+}
+
+.team-member__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+}
+
+.team-member__copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.team-member__topline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.team-member__copy strong,
+.team-member__role,
+.team-member__area {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-member__copy strong {
+  color: #172033;
+  font-size: 14px;
+}
+
+.team-member__role,
+.team-member__area {
+  color: #6d7888;
+  font-size: 12px;
+}
+
+.team-member__meta {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+.team-member__status,
+.team-member__master,
+.team-member__you,
+.recruiter-time__chat-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.team-member__status {
+  background: rgba(80, 168, 121, 0.12);
+  color: #2d8353;
+}
+
+.team-member__status--inactive {
+  background: rgba(133, 146, 164, 0.14);
+  color: #687587;
+}
+
+.team-member__master {
+  background: rgba(238, 120, 48, 0.12);
+  color: #a84d17;
+}
+
+.team-member__you {
+  background: rgba(32, 95, 225, 0.1);
+  color: #2856b8;
+}
+
+.recruiter-time__chat {
+  display: grid;
+  grid-template-rows: auto minmax(360px, 1fr) auto;
+  gap: 18px;
+  min-height: 640px;
+}
+
+.recruiter-time__chat-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(228, 233, 240, 0.9);
+}
+
+.recruiter-time__chat-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.recruiter-time__chat-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+}
+
+.recruiter-time__chat-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.recruiter-time__chat-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recruiter-time__chat-copy strong {
+  color: #172033;
+  font-size: 20px;
+}
+
+.recruiter-time__chat-copy span {
+  color: #5f6b7f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.recruiter-time__chat-copy small {
+  color: #7b8798;
+  font-size: 13px;
+}
+
+.recruiter-time__chat-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.recruiter-time__chat-pill {
+  background: rgba(39, 46, 64, 0.96);
+  color: #fff;
+}
+
+.recruiter-time__chat-pill--soft {
+  background: rgba(238, 120, 48, 0.12);
+  color: #a84d17;
+}
+
+.recruiter-time__messages {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding-right: 6px;
+  overflow: auto;
+}
+
+.team-message {
+  display: grid;
+  gap: 8px;
+  max-width: min(78%, 560px);
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: rgba(247, 249, 252, 0.96);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.team-message--me {
+  justify-self: end;
+  background: linear-gradient(135deg, rgba(29, 36, 51, 0.96), rgba(52, 64, 90, 0.92));
+  border-color: rgba(29, 36, 51, 0.92);
+}
+
+.team-message--system {
+  max-width: 100%;
+  background: rgba(238, 120, 48, 0.08);
+  border-style: dashed;
+  border-color: rgba(236, 136, 76, 0.34);
+}
+
+.team-message__author,
+.team-message time {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.team-message__author {
+  color: #7b8798;
+}
+
+.team-message p {
+  margin: 0;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.team-message time {
+  color: #8a95a5;
+}
+
+.team-message--me .team-message__author,
+.team-message--me p,
+.team-message--me time {
+  color: #fff;
+}
+
+.recruiter-time__composer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(224, 230, 238, 0.92);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.recruiter-time__composer button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1d2433, #34405a);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.recruiter-time__empty {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 200px;
+  padding: 26px;
+  border-radius: 24px;
+  border: 1px dashed rgba(214, 221, 230, 0.94);
+  background: rgba(252, 253, 255, 0.88);
+  text-align: center;
+}
+
+.recruiter-time__empty span {
+  color: #7d8898;
+  font-size: 30px;
+}
+
+.recruiter-time__empty strong {
+  color: #172033;
+}
+
+.recruiter-time__empty p {
+  margin: 0;
+  max-width: 32ch;
+  color: #738094;
+  line-height: 1.5;
+}
+
+.recruiter-time__empty--chat {
+  min-height: 640px;
+}
+
+@media (max-width: 1120px) {
+  .recruiter-time__hero,
+  .recruiter-time__chat-head {
+    flex-direction: column;
+  }
+
+  .recruiter-time__hero-side,
+  .recruiter-time__chat-badges {
+    width: 100%;
+  }
+
+  .recruiter-time__chat-badges {
+    justify-content: flex-start;
+  }
+
+  .recruiter-time__metrics,
+  .recruiter-time__shell {
+    grid-template-columns: 1fr;
+  }
+
+  .recruiter-time__chat,
+  .recruiter-time__empty--chat {
+    min-height: 540px;
+  }
+}
+
+@media (max-width: 720px) {
+  .recruiter-time__hero,
+  .recruiter-time__team,
+  .recruiter-time__chat {
+    padding: 20px;
+  }
+
+  .recruiter-time__metrics {
+    padding: 14px;
+  }
+
+  .recruiter-time__metric {
+    padding: 16px;
+  }
+
+  .team-member {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .team-member__meta {
+    grid-column: 1 / -1;
+    justify-items: start;
+    grid-auto-flow: column;
+  }
+
+  .recruiter-time__composer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .recruiter-time__composer button {
+    justify-content: center;
+  }
+
+  .team-message {
+    max-width: 100%;
+  }
+}

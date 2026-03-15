@@ -26,47 +26,6 @@
   border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
 }
 
-.candidate-registration-strip__actions-row{
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 6px;
-}
-
-.candidate-registration-strip__basic-button{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 48px;
-  padding: 0 18px;
-  border: 1px solid var(--btn-primary-border);
-  border-radius: 999px;
-  background: var(--btn-primary-bg);
-  box-shadow: var(--btn-primary-shadow);
-  color: var(--btn-primary-text);
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  line-height: 1;
-  cursor: pointer;
-  justify-self: end;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.candidate-registration-strip__basic-button .material-symbols-rounded{
-  font-size: 20px;
-}
-
-.candidate-registration-strip__basic-button:hover{
-  background: var(--btn-primary-bg-hover);
-  box-shadow: var(--btn-primary-shadow-hover);
-}
-
-.candidate-registration-strip__basic-button:focus-visible{
-  outline: 2px solid rgba(219, 145, 24, 0.32);
-  outline-offset: 4px;
-}
-
 .candidate-registration-strip__avatar{
   width: 86px;
   height: 86px;
@@ -165,7 +124,7 @@
 
 .candidate-registration-strip__formation{
   display: grid;
-  grid-template-columns: 74px minmax(0, 1fr) auto;
+  grid-template-columns: 74px minmax(0, 1fr);
   align-items: center;
   gap: 16px;
   min-width: 0;
@@ -207,25 +166,6 @@
   font-size: 13px;
   line-height: 1.35;
   word-break: break-word;
-}
-
-.candidate-registration-strip__formation-edit{
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 1px solid rgba(217, 176, 86, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  cursor: pointer;
-}
-
-.candidate-registration-strip__formation-edit .material-symbols-rounded{
-  font-size: 18px;
-  color: rgba(219, 145, 24, 0.82);
 }
 
 .candidate-registration-strip__controls{
@@ -327,21 +267,13 @@
     padding-bottom: 24px;
   }
 
-  .candidate-registration-strip__actions-row{
-    justify-content: flex-start;
-  }
-
-  .candidate-registration-strip__basic-button{
-    margin-top: 8px;
-  }
-
   .candidate-registration-strip__identity{
     justify-items: start;
     text-align: left;
   }
 
   .candidate-registration-strip__formation{
-    grid-template-columns: 60px minmax(0, 1fr) auto;
+    grid-template-columns: 60px minmax(0, 1fr);
     padding-left: 0;
     border-left: 0;
   }

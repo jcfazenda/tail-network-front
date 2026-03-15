@@ -9,25 +9,73 @@
     [specialization]="displaySpecialization"
     [formationLogoUrl]="formationLogoUrl"
     [photoPreviewUrl]="photoPreviewUrl"
-    (basicDataRequested)="openBasicDataModal()"
-    (formationRequested)="openFormationEditor()"
   />
 
-  <section class="usuario-page__section usuario-page__section--stacks" id="usuario-stacks">
-    <section class="usuario-page__intro">
-      <h1>Suas Stacks</h1>
-      <p>Adicione abaixo as tecnologias nas quais você tem experiência e prazer em trabalhar.</p>
-    </section>
-    <app-stacks-page />
+  <section class="usuario-page__intro">
+    <h1>Central do Perfil</h1>
+    <p>
+      Agora cada parte do seu perfil do Talento fica separada. Isso deixa a manutenção mais simples
+      e evita misturar dados básicos, documentos, stacks e experiências na mesma tela.
+    </p>
+
+    <div class="usuario-page__chips">
+      <label class="usuario-page__chip" [class.usuario-page__chip--active]="isVisibleInEcosystem">
+        <input
+          type="checkbox"
+          [checked]="isVisibleInEcosystem"
+          (change)="updateVisibleInEcosystem($any($event.target).checked)"
+        />
+        <span class="usuario-page__chip-dot" aria-hidden="true"></span>
+        <span class="usuario-page__chip-text">Quero aparecer no Ecossistema</span>
+      </label>
+
+      <label class="usuario-page__chip" [class.usuario-page__chip--active]="isAvailableForApplications">
+        <input
+          type="checkbox"
+          [checked]="isAvailableForApplications"
+          (change)="updateAvailableForApplications($any($event.target).checked)"
+        />
+        <span class="usuario-page__chip-dot" aria-hidden="true"></span>
+        <span class="usuario-page__chip-text">Disponivel para Contratações</span>
+      </label>
+    </div>
   </section>
 
-  <section class="usuario-page__section" id="usuario-experiencia">
-    <app-experiencia-page />
+  <section class="usuario-page__workspace-grid" aria-label="Áreas do perfil">
+    <ng-container *ngFor="let card of workspaceCards; trackBy: trackWorkspaceCard">
+      <a
+        *ngIf="card.route; else actionCard"
+        class="usuario-page__workspace-card"
+        [routerLink]="card.route"
+      >
+        <span class="usuario-page__workspace-icon material-symbols-rounded" aria-hidden="true">{{ card.icon }}</span>
+        <strong>{{ card.title }}</strong>
+        <p>{{ card.description }}</p>
+        <span class="usuario-page__workspace-link">
+          Abrir
+          <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+        </span>
+      </a>
+
+      <ng-template #actionCard>
+        <button
+          class="usuario-page__workspace-card usuario-page__workspace-card--button"
+          type="button"
+          (click)="openWorkspaceCard(card)"
+        >
+          <span class="usuario-page__workspace-icon material-symbols-rounded" aria-hidden="true">{{ card.icon }}</span>
+          <strong>{{ card.title }}</strong>
+          <p>{{ card.description }}</p>
+          <span class="usuario-page__workspace-link">
+            Editar
+            <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+          </span>
+        </button>
+      </ng-template>
+    </ng-container>
   </section>
 
-  <section class="usuario-page__section" id="usuario-formacao">
-    <app-formacao-page (formationSaved)="handleFormationSaved()" />
-  </section>
+  <app-formacao-page (formationSaved)="handleFormationSaved()" />
 
   <div
     *ngIf="isBasicDataModalOpen"

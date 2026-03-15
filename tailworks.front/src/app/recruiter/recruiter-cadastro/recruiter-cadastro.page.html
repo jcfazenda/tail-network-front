@@ -1,0 +1,263 @@
+<section class="recruiter-cadastro">
+  <header class="recruiter-cadastro__hero">
+    <div class="recruiter-cadastro__hero-copy">
+      <span class="recruiter-cadastro__eyebrow">Governanca do time</span>
+      <h1>{{ pageTitle }}</h1>
+      <p>{{ pageDescription }}</p>
+    </div>
+
+    <div class="recruiter-cadastro__hero-actions">
+      <a class="recruiter-cadastro__ghost-action" routerLink="/recruiter/panel">
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
+        <span>Voltar ao painel</span>
+      </a>
+
+      <button
+        class="recruiter-cadastro__primary-action"
+        type="button"
+        [disabled]="!canSave"
+        (click)="saveRecruiter()"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">save</span>
+        <span>{{ isEditMode ? 'Salvar ajustes' : 'Cadastrar recruiter' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="recruiter-cadastro__layout">
+    <form class="recruiter-cadastro__form" (submit)="$event.preventDefault(); saveRecruiter()">
+      <section class="recruiter-cadastro__section">
+        <header class="recruiter-cadastro__section-head">
+          <strong>Identidade</strong>
+          <span>Nome, cargo e empresa que o recruiter representa. O avatar segue o padrao visual do sistema.</span>
+        </header>
+
+        <div class="recruiter-cadastro__grid recruiter-cadastro__grid--identity">
+          <label class="recruiter-cadastro__field">
+            <span>Nome</span>
+            <input type="text" [(ngModel)]="draft.name" name="name" [disabled]="!canManageDirectory" />
+          </label>
+
+          <label class="recruiter-cadastro__field">
+            <span>Email</span>
+            <input type="email" [(ngModel)]="draft.email" name="email" [disabled]="!canManageDirectory" />
+          </label>
+
+          <label class="recruiter-cadastro__field">
+            <span>Cargo</span>
+            <input type="text" [(ngModel)]="draft.role" name="role" [disabled]="!canManageDirectory" />
+          </label>
+
+          <label class="recruiter-cadastro__field">
+            <span>Empresa</span>
+            <select
+              [(ngModel)]="draft.company"
+              name="company"
+              [disabled]="!canManageDirectory || !hasCompanyCatalog"
+              (ngModelChange)="onPrimaryCompanyChange($event)"
+            >
+              <option *ngFor="let company of companyCatalog" [value]="company.name">{{ company.name }}</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="recruiter-cadastro__toggles">
+          <label class="recruiter-cadastro__toggle">
+            <input
+              type="checkbox"
+              [(ngModel)]="draft.active"
+              name="active"
+              [disabled]="!canManageDirectory"
+            />
+            <span>Recruiter ativo</span>
+          </label>
+
+          <label class="recruiter-cadastro__toggle">
+            <input
+              type="checkbox"
+              [(ngModel)]="draft.isMaster"
+              name="isMaster"
+              [disabled]="!canManageDirectory"
+              (ngModelChange)="onMasterChange()"
+            />
+            <span>Perfil master</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="recruiter-cadastro__section">
+        <header class="recruiter-cadastro__section-head">
+          <strong>Empresas atendidas</strong>
+          <span>Se esse recruiter for hunter ou operar mais de uma empresa, selecione todas aqui. Essas empresas vao aparecer ao criar uma vaga.</span>
+        </header>
+
+        <div class="recruiter-cadastro__company-picker" *ngIf="hasCompanyCatalog; else emptyCompanyCatalog">
+          <button
+            class="recruiter-cadastro__company-card"
+            type="button"
+            *ngFor="let company of companyCatalog"
+            [class.recruiter-cadastro__company-card--primary]="draft.company === company.name"
+            [class.recruiter-cadastro__company-card--active]="isManagedCompanySelected(company.name)"
+            [disabled]="!canManageDirectory"
+            (click)="toggleManagedCompanySelection(company.name)"
+          >
+            <strong>{{ company.name }}</strong>
+            <span>{{ company.sector }}</span>
+            <small>{{ draft.company === company.name ? 'Empresa principal' : isManagedCompanySelected(company.name) ? 'Selecionada' : 'Disponivel' }}</small>
+          </button>
+        </div>
+
+        <ng-template #emptyCompanyCatalog>
+          <div class="recruiter-cadastro__empty-state">
+            <strong>Nenhuma empresa cadastrada</strong>
+            <p>Cadastre uma empresa antes de definir o escopo deste recruiter.</p>
+            <a class="recruiter-cadastro__empty-action" routerLink="/empresa/cadastro">Cadastrar empresa</a>
+          </div>
+        </ng-template>
+      </section>
+
+      <section class="recruiter-cadastro__section">
+        <header class="recruiter-cadastro__section-head">
+          <strong>Area de atuacao</strong>
+          <span>Defina por quais frentes esse recruiter vai responder dentro da empresa.</span>
+        </header>
+
+        <div class="recruiter-cadastro__chips">
+          <button
+            class="recruiter-cadastro__chip"
+            type="button"
+            *ngFor="let area of areaOptions"
+            [class.recruiter-cadastro__chip--active]="isAreaSelected(area)"
+            [disabled]="!canManageDirectory"
+            (click)="toggleArea(area)"
+          >
+            {{ area }}
+          </button>
+        </div>
+      </section>
+
+      <section class="recruiter-cadastro__section">
+        <header class="recruiter-cadastro__section-head">
+          <strong>Escopo de visao</strong>
+          <span>Controle o quanto esse recruiter enxerga da rede e do funil.</span>
+        </header>
+
+        <div class="recruiter-cadastro__scope-grid">
+          <button
+            class="recruiter-cadastro__scope-card"
+            type="button"
+            *ngFor="let option of viewScopeOptions"
+            [class.recruiter-cadastro__scope-card--active]="draft.viewScope === option.value"
+            [disabled]="!canManageDirectory"
+            (click)="setViewScope(option.value)"
+          >
+            <strong>{{ option.label }}</strong>
+            <span>{{ option.description }}</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="recruiter-cadastro__section">
+        <header class="recruiter-cadastro__section-head">
+          <strong>Permissoes operacionais</strong>
+          <span>Marque o que esse recruiter pode fazer no TailWorks.</span>
+        </header>
+
+        <div class="recruiter-cadastro__permission-grid">
+          <button
+            class="recruiter-cadastro__permission-card"
+            type="button"
+            *ngFor="let permission of permissionDefinitions"
+            [class.recruiter-cadastro__permission-card--active]="draft[permission.key]"
+            [disabled]="!canManageDirectory"
+            (click)="togglePermission(permission.key)"
+          >
+            <strong>{{ permission.label }}</strong>
+            <span>{{ permission.description }}</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="recruiter-cadastro__section">
+        <header class="recruiter-cadastro__section-head">
+          <strong>Observacoes</strong>
+          <span>Use este campo para anotar acordos, squad ou foco principal desse recruiter.</span>
+        </header>
+
+        <label class="recruiter-cadastro__field recruiter-cadastro__field--wide">
+          <span>Anotacoes internas</span>
+          <textarea
+            rows="4"
+            [(ngModel)]="draft.notes"
+            name="notes"
+            [disabled]="!canManageDirectory"
+          ></textarea>
+        </label>
+      </section>
+    </form>
+
+    <aside class="recruiter-cadastro__preview">
+      <section class="recruiter-cadastro__preview-card">
+        <div class="recruiter-cadastro__preview-avatar">
+          <div
+            class="recruiter-cadastro__avatar"
+            [class.recruiter-cadastro__avatar--image]="true"
+            [style.backgroundImage]="'url(' + defaultRecruiterAvatarUrl + ')'"
+          ></div>
+
+          <div class="recruiter-cadastro__preview-copy">
+            <strong>{{ draft.name || 'Novo Recruiter' }}</strong>
+            <span>{{ draft.role || 'Talent Acquisition' }}</span>
+            <small>{{ draft.company || currentRecruiter.company }}</small>
+          </div>
+        </div>
+
+        <div class="recruiter-cadastro__preview-pills">
+          <span class="recruiter-cadastro__status-pill" [class.recruiter-cadastro__status-pill--inactive]="!draft.active">
+            {{ draft.active ? 'Ativo' : 'Inativo' }}
+          </span>
+          <span class="recruiter-cadastro__status-pill recruiter-cadastro__status-pill--master" *ngIf="draft.isMaster">
+            Master
+          </span>
+        </div>
+
+        <div class="recruiter-cadastro__preview-block">
+          <span class="recruiter-cadastro__preview-label">Escopo</span>
+          <strong>
+            {{ draft.viewScope === 'company' ? 'Toda a empresa' : draft.viewScope === 'following' ? 'Vagas acompanhadas' : 'Vagas proprias' }}
+          </strong>
+        </div>
+
+        <div class="recruiter-cadastro__preview-block">
+          <span class="recruiter-cadastro__preview-label">Empresas</span>
+          <div class="recruiter-cadastro__preview-tags">
+            <span class="recruiter-cadastro__tag" *ngFor="let company of managedCompanies">{{ company }}</span>
+          </div>
+        </div>
+
+        <div class="recruiter-cadastro__preview-block">
+          <span class="recruiter-cadastro__preview-label">Areas</span>
+          <div class="recruiter-cadastro__preview-tags">
+            <span class="recruiter-cadastro__tag" *ngFor="let area of draft.areas">{{ area }}</span>
+          </div>
+        </div>
+
+        <div class="recruiter-cadastro__preview-block">
+          <span class="recruiter-cadastro__preview-label">Permissoes ligadas</span>
+          <div class="recruiter-cadastro__preview-tags">
+            <span class="recruiter-cadastro__tag recruiter-cadastro__tag--permission" *ngFor="let label of enabledPermissionLabels">
+              {{ label }}
+            </span>
+          </div>
+        </div>
+
+        <p class="recruiter-cadastro__preview-note" *ngIf="draft.notes">{{ draft.notes }}</p>
+      </section>
+
+      <section class="recruiter-cadastro__helper" *ngIf="!canManageDirectory">
+        <strong>Modo somente leitura</strong>
+        <p>Seu perfil atual nao pode manter recruiters. Use um recruiter master para editar este cadastro.</p>
+      </section>
+    </aside>
+  </div>
+</section>

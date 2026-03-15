@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CandidateRegistrationStripComponent } from './shared/candidate-registration-strip.component';
 import { DadosCadastraisPage } from './dados-cadastrais/dados-cadastrais.page';
-import { StacksPage } from './stacks/stacks.page';
-import { ExperienciaPage } from './experiencia/experiencia.page';
 import { FormacaoPage } from './formacao/formacao.page';
+import { CandidateRegistrationStripComponent } from './shared/candidate-registration-strip.component';
 
 type CandidateBasicProfile = {
   name: string;
@@ -30,18 +28,28 @@ type FormationCopyDraft = {
   graduated?: boolean;
 };
 
+type ProfileWorkspaceCard = {
+  icon: string;
+  title: string;
+  description: string;
+  route?: string;
+  action?: 'basic' | 'formation';
+};
+
 @Component({
   standalone: true,
   selector: 'app-usuario-page',
-  imports: [CommonModule, CandidateRegistrationStripComponent, DadosCadastraisPage, StacksPage, ExperienciaPage, FormacaoPage],
+  imports: [CommonModule, RouterLink, CandidateRegistrationStripComponent, DadosCadastraisPage, FormacaoPage],
   templateUrl: './usuario.page.html',
   styleUrls: ['./usuario.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UsuarioPage implements OnInit, OnDestroy {
+export class UsuarioPage implements OnInit, AfterViewInit, OnDestroy {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
+  private static readonly ecosystemVisibilityStorageKey = 'tailworks:candidate-experience-ecosystem-visibility:v1';
+  private static readonly candidacyAvailabilityStorageKey = 'tailworks:candidate-experience-candidacy-availability:v1';
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly subscriptions = new Subscription();
@@ -53,9 +61,45 @@ export class UsuarioPage implements OnInit, OnDestroy {
   displayFormationHeading = 'Formado em Dez 2025';
   displayGraduation = 'Bacharelado em Sistemas de Informação';
   displaySpecialization = 'Especialização em Arquitetura de Software';
-  formationLogoUrl = '/assets/images/logo-estacio.png';
+  formationLogoUrl = '/assets/images/formacao-default.png';
   photoPreviewUrl = '';
   isBasicDataModalOpen = false;
+  isVisibleInEcosystem = true;
+  isAvailableForApplications = true;
+  private shouldOpenFormationModalFromRoute = false;
+
+  readonly workspaceCards: ProfileWorkspaceCard[] = [
+    {
+      icon: 'badge',
+      title: 'Dados Básicos',
+      description: 'Atualize seus dados principais, links profissionais e localização.',
+      action: 'basic',
+    },
+    {
+      icon: 'description',
+      title: 'Documentos',
+      description: 'Separe os documentos que podem ser exigidos ao longo da sua jornada.',
+      route: '/usuario/documentos',
+    },
+    {
+      icon: 'deployed_code',
+      title: 'Minhas Stacks',
+      description: 'Mantenha seu radar técnico em uma tela dedicada e mais simples de evoluir.',
+      route: '/usuario/stacks',
+    },
+    {
+      icon: 'business_center',
+      title: 'Experiências',
+      description: 'Trabalhe seu histórico profissional sem misturar tudo na mesma manutenção.',
+      route: '/usuario/experiencia',
+    },
+    {
+      icon: 'school',
+      title: 'Formação',
+      description: 'Revise graduação, especialização e a identidade acadêmica exibida no perfil.',
+      action: 'formation',
+    },
+  ];
 
   @ViewChild(FormacaoPage) private formacaoPage?: FormacaoPage;
 
@@ -66,13 +110,32 @@ export class UsuarioPage implements OnInit, OnDestroy {
         const modal = params.get('modal');
         const section = params.get('section');
 
-        this.isBasicDataModalOpen = modal === 'basic';
-
-        if (section) {
-          this.scrollToSection(section);
+        if (section === 'stacks') {
+          void this.router.navigate(['/usuario/stacks'], { replaceUrl: true });
+          return;
         }
+
+        if (section === 'experiencia') {
+          void this.router.navigate(['/usuario/experiencia'], { replaceUrl: true });
+          return;
+        }
+
+        if (section === 'formacao') {
+          this.isBasicDataModalOpen = false;
+          this.shouldOpenFormationModalFromRoute = true;
+          this.tryOpenFormationModalFromRoute();
+          return;
+        }
+
+        this.isBasicDataModalOpen = modal === 'basic';
+        this.shouldOpenFormationModalFromRoute = modal === 'formacao';
+        this.tryOpenFormationModalFromRoute();
       }),
     );
+  }
+
+  ngAfterViewInit(): void {
+    this.tryOpenFormationModalFromRoute();
   }
 
   ngOnDestroy(): void {
@@ -101,10 +164,26 @@ export class UsuarioPage implements OnInit, OnDestroy {
     this.formacaoPage?.openFormationModal();
   }
 
+  openWorkspaceCard(card: ProfileWorkspaceCard): void {
+    if (card.action === 'basic') {
+      this.openBasicDataModal();
+      return;
+    }
+
+    if (card.action === 'formation') {
+      this.openFormationEditor();
+    }
+  }
+
+  trackWorkspaceCard(_index: number, card: ProfileWorkspaceCard): string {
+    return card.title;
+  }
+
   private restoreHeaderData(): void {
     this.restoreBasicDraft();
     this.restoreFormationCopy();
     this.restoreFormationLogo();
+    this.restoreAvailabilityControls();
   }
 
   private restoreBasicDraft(): void {
@@ -167,12 +246,12 @@ export class UsuarioPage implements OnInit, OnDestroy {
   private restoreFormationLogo(): void {
     const savedLogo = localStorage.getItem(UsuarioPage.formationLogoStorageKey);
 
-    if (!savedLogo) {
-      this.formationLogoUrl = '/assets/images/logo-estacio.png';
+    if (!savedLogo?.trim()) {
+      this.formationLogoUrl = '/assets/images/formacao-default.png';
       return;
     }
 
-    this.formationLogoUrl = savedLogo;
+    this.formationLogoUrl = savedLogo.trim();
   }
 
   private composeCityState(city?: string, state?: string, location?: string): string {
@@ -186,29 +265,43 @@ export class UsuarioPage implements OnInit, OnDestroy {
     return location?.trim() || 'Rio de Janeiro - RJ';
   }
 
-  private scrollToSection(section: string): void {
-    const sectionId = this.resolveSectionId(section);
-    if (!sectionId || typeof window === 'undefined') {
+  updateVisibleInEcosystem(nextValue: boolean): void {
+    this.isVisibleInEcosystem = nextValue;
+    this.persistAvailabilityControls();
+  }
+
+  updateAvailableForApplications(nextValue: boolean): void {
+    this.isAvailableForApplications = nextValue;
+    this.persistAvailabilityControls();
+  }
+
+  private restoreAvailabilityControls(): void {
+    const ecosystemVisibility = localStorage.getItem(UsuarioPage.ecosystemVisibilityStorageKey);
+    const candidacyAvailability = localStorage.getItem(UsuarioPage.candidacyAvailabilityStorageKey);
+
+    if (ecosystemVisibility !== null) {
+      this.isVisibleInEcosystem = ecosystemVisibility === 'true';
+    }
+
+    if (candidacyAvailability !== null) {
+      this.isAvailableForApplications = candidacyAvailability === 'true';
+    }
+  }
+
+  private persistAvailabilityControls(): void {
+    localStorage.setItem(UsuarioPage.ecosystemVisibilityStorageKey, String(this.isVisibleInEcosystem));
+    localStorage.setItem(UsuarioPage.candidacyAvailabilityStorageKey, String(this.isAvailableForApplications));
+  }
+
+  private tryOpenFormationModalFromRoute(): void {
+    if (!this.shouldOpenFormationModalFromRoute || !this.formacaoPage) {
       return;
     }
 
-    window.requestAnimationFrame(() => {
-      const target = document.getElementById(sectionId);
-      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }
-
-  private resolveSectionId(section: string): string | null {
-    switch (section) {
-      case 'stacks':
-        return 'usuario-stacks';
-      case 'experiencia':
-        return 'usuario-experiencia';
-      case 'formacao':
-        return 'usuario-formacao';
-      default:
-        return null;
-    }
+    this.shouldOpenFormationModalFromRoute = false;
+    this.formacaoPage.openFormationModal();
+    this.clearQueryParam('modal');
+    this.clearQueryParam('section');
   }
 
   private clearQueryParam(param: string): void {

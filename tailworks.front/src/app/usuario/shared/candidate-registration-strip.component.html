@@ -48,6 +48,7 @@
     <div class="candidate-registration-strip__formation">
       <img
         [src]="displayFormationLogoUrl"
+        (error)="handleFormationLogoError($event)"
         alt=""
         class="candidate-registration-strip__formation-logo"
       />
@@ -56,27 +57,7 @@
         <strong class="candidate-registration-strip__formation-degree">{{ displayGraduation }}</strong>
         <span class="candidate-registration-strip__formation-copy">{{ displaySpecialization }}</span>
       </div>
-      <button
-        class="candidate-registration-strip__formation-edit"
-        type="button"
-        (click)="openFormationDialog()"
-        aria-label="Editar formação"
-        title="Editar formação"
-      >
-        <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-      </button>
     </div>
-  </div>
-
-  <div class="candidate-registration-strip__actions-row">
-    <button
-      class="candidate-registration-strip__basic-button"
-      type="button"
-      (click)="openBasicDataDialog()"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">edit_square</span>
-      <span>Dados Básicos</span>
-    </button>
   </div>
 
   <small class="candidate-registration-strip__photo-error" *ngIf="photoError">{{ photoError }}</small>

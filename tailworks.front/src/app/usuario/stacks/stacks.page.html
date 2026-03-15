@@ -1,50 +1,20 @@
 <section class="candidate-stacks">
-  <nav class="candidate-stacks__steps" aria-label="Etapas de cadastro">
-    <ng-container *ngFor="let step of steps">
-      <a
-        *ngIf="step.route; else staticStep"
-        class="candidate-stacks__step"
-        [class.candidate-stacks__step--active]="step.active"
-        [routerLink]="step.route"
-      >
-        <span class="candidate-stacks__step-index">{{ step.index }}</span>
-        <span class="candidate-stacks__step-label">{{ step.label }}</span>
-      </a>
-
-      <ng-template #staticStep>
-        <span
-          class="candidate-stacks__step"
-          [class.candidate-stacks__step--active]="step.active"
-        >
-          <span class="candidate-stacks__step-index">{{ step.index }}</span>
-          <span class="candidate-stacks__step-label">{{ step.label }}</span>
-        </span>
-      </ng-template>
-    </ng-container>
-  </nav>
+  <header class="candidate-stacks__intro">
+    <h1>Suas Stacks</h1>
+    <p>Adicione abaixo as tecnologias nas quais voce tem experiencia e prazer em trabalhar.</p>
+  </header>
 
   <div class="candidate-stacks__form-card">
     <div class="candidate-stacks__main">
-      <div class="candidate-stacks__chips">
-        <label class="candidate-stacks__chip" [class.candidate-stacks__chip--active]="isVisibleInEcosystem">
-          <input
-            type="checkbox"
-            [checked]="isVisibleInEcosystem"
-            (change)="updateVisibleInEcosystem($any($event.target).checked)"
+      <div class="candidate-stacks__toolbar">
+        <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
+          <app-alcance-radar
+            title=""
+            [score]="radarPreviewScore"
+            [showGaugeLabel]="false"
+            [items]="radarPreviewItems"
           />
-          <span class="candidate-stacks__chip-dot" aria-hidden="true"></span>
-          <span class="candidate-stacks__chip-text">Ecossistema</span>
-        </label>
-
-        <label class="candidate-stacks__chip" [class.candidate-stacks__chip--active]="isAvailableForApplications">
-          <input
-            type="checkbox"
-            [checked]="isAvailableForApplications"
-            (change)="updateAvailableForApplications($any($event.target).checked)"
-          />
-          <span class="candidate-stacks__chip-dot" aria-hidden="true"></span>
-          <span class="candidate-stacks__chip-text">Disponivel</span>
-        </label>
+        </div>
       </div>
 
       <div class="candidate-stacks__editor-area">
@@ -132,19 +102,6 @@
         <p class="candidate-stacks__helper">
           Mova os percentuais para ver sua aderência e alcance no Ecossistema.
         </p>
-      </div>
-    </div>
-
-    <div class="candidate-stacks__aside">
-      <div class="candidate-stacks__toolbar">
-        <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
-          <app-alcance-radar
-            title=""
-            [score]="radarPreviewScore"
-            [showGaugeLabel]="false"
-            [items]="radarPreviewItems"
-          />
-        </div>
       </div>
     </div>
   </div>

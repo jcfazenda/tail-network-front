@@ -1,0 +1,161 @@
+<section class="empresa-page">
+  <header class="empresa-page__hero">
+    <div class="empresa-page__hero-copy">
+      <span class="empresa-page__eyebrow">Base de empresas</span>
+      <h1>Empresas do ecossistema</h1>
+      <p>Cadastre, edite e organize as empresas que podem ser usadas por recruiters ao abrir vagas.</p>
+    </div>
+
+    <a class="empresa-page__primary-action" routerLink="/empresa/cadastro">
+      <span class="material-symbols-rounded" aria-hidden="true">domain_add</span>
+      <span>Nova empresa</span>
+    </a>
+  </header>
+
+  <section class="empresa-page__metrics">
+    <article class="empresa-page__metric-card">
+      <span>Empresas</span>
+      <strong>{{ totalCompanies }}</strong>
+      <small>Base total cadastrada</small>
+    </article>
+
+    <article class="empresa-page__metric-card">
+      <span>Ativas</span>
+      <strong>{{ activeCompanies }}</strong>
+      <small>Disponiveis para recruiters</small>
+    </article>
+
+    <article class="empresa-page__metric-card">
+      <span>Inativas</span>
+      <strong>{{ inactiveCompanies }}</strong>
+      <small>Fora da operacao</small>
+    </article>
+
+    <article class="empresa-page__metric-card">
+      <span>Recruiters ligados</span>
+      <strong>{{ linkedRecruiters }}</strong>
+      <small>Operando empresas ativas</small>
+    </article>
+  </section>
+
+  <section class="empresa-page__toolbar">
+    <div class="empresa-page__search">
+      <span class="material-symbols-rounded" aria-hidden="true">search</span>
+      <input type="search" placeholder="Buscar empresa, setor ou localidade" [(ngModel)]="searchTerm" />
+    </div>
+
+    <div class="empresa-page__filters">
+      <button
+        class="empresa-page__filter-chip"
+        type="button"
+        [class.empresa-page__filter-chip--active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todas
+      </button>
+
+      <button
+        class="empresa-page__filter-chip"
+        type="button"
+        [class.empresa-page__filter-chip--active]="statusFilter === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Ativas
+      </button>
+
+      <button
+        class="empresa-page__filter-chip"
+        type="button"
+        [class.empresa-page__filter-chip--active]="statusFilter === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inativas
+      </button>
+    </div>
+  </section>
+
+  <section class="empresa-page__cards">
+    <article class="empresa-card" *ngFor="let company of companies; trackBy: trackCompany">
+      <div class="empresa-card__head">
+        <div class="empresa-card__identity">
+          <div
+            class="empresa-card__avatar"
+            [class.empresa-card__avatar--image]="!!company.logoUrl"
+            [style.backgroundImage]="company.logoUrl ? 'url(' + company.logoUrl + ')' : null"
+          >
+            <span *ngIf="!company.logoUrl">{{ company.logoLabel | uppercase }}</span>
+          </div>
+
+          <div class="empresa-card__copy">
+            <strong>{{ company.name }}</strong>
+            <span>{{ company.sector }}</span>
+          </div>
+        </div>
+
+        <span class="empresa-card__pill" [class.empresa-card__pill--inactive]="!company.active">
+          {{ company.active ? 'Ativa' : 'Inativa' }}
+        </span>
+      </div>
+
+      <div class="empresa-card__meta">
+        <div>
+          <span class="empresa-card__meta-label">Localidade</span>
+          <strong>{{ company.location }}</strong>
+        </div>
+
+        <div>
+          <span class="empresa-card__meta-label">Seguidores</span>
+          <strong>{{ company.followers }}</strong>
+        </div>
+
+        <div>
+          <span class="empresa-card__meta-label">Contratacoes</span>
+          <strong>{{ company.monthlyHiringCount }}/mes</strong>
+        </div>
+      </div>
+
+      <p class="empresa-card__description">{{ company.description }}</p>
+
+      <div class="empresa-card__stats">
+        <span>{{ recruiterCount(company.name) }} recruiters ligados</span>
+        <span>{{ jobCount(company.name) }} vagas no mock</span>
+      </div>
+
+      <div class="empresa-card__actions">
+        <a
+          class="empresa-card__action empresa-card__action--primary"
+          routerLink="/empresa/cadastro"
+          [queryParams]="{ edit: company.id }"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+          <span>Editar</span>
+        </a>
+
+        <button class="empresa-card__action" type="button" (click)="toggleCompanyActive(company)">
+          <span class="material-symbols-rounded" aria-hidden="true">{{ company.active ? 'pause_circle' : 'play_circle' }}</span>
+          <span>{{ company.active ? 'Inativar' : 'Ativar' }}</span>
+        </button>
+
+        <button
+          class="empresa-card__action"
+          type="button"
+          [disabled]="!canDeleteCompany(company)"
+          (click)="deleteCompany(company)"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+          <span>Excluir</span>
+        </button>
+      </div>
+
+      <small class="empresa-card__hint" *ngIf="!canDeleteCompany(company)">
+        So pode excluir empresa sem recruiters e sem vagas ligadas.
+      </small>
+    </article>
+
+    <article class="empresa-page__empty" *ngIf="companies.length === 0">
+      <span class="material-symbols-rounded" aria-hidden="true">domain_disabled</span>
+      <strong>Nenhuma empresa encontrada</strong>
+      <p>Ajuste os filtros ou cadastre uma nova empresa.</p>
+    </article>
+  </section>
+</section>

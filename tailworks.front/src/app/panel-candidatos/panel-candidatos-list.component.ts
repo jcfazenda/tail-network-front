@@ -122,6 +122,14 @@ export class PanelCandidatosListComponent {
     return this.groupedCandidates.some(group => group.stage === 'radar');
   }
 
+  get recruiterDisplayName(): string {
+    return this.vagasMockService.getCurrentRecruiterIdentity().name;
+  }
+
+  get recruiterDisplayRole(): string {
+    return this.vagasMockService.getCurrentRecruiterIdentity().role;
+  }
+
   private normalizeCandidateStage(candidate: PanelCandidate): CandidateStage {
     return this.vagasMockService.getEffectiveCandidateStage(candidate);
   }

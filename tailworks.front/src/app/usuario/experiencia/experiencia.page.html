@@ -6,6 +6,7 @@
         class="candidate-experience__step"
         [class.candidate-experience__step--active]="step.active"
         [routerLink]="step.route"
+        [queryParams]="step.queryParams"
       >
         <span class="candidate-experience__step-index">{{ step.index }}</span>
         <span class="candidate-experience__step-label">{{ step.label }}</span>

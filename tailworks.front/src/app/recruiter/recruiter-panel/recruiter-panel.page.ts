@@ -1,0 +1,165 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { RecruiterDirectoryService } from '../recruiter-directory.service';
+import { RecruiterRecord, RecruiterViewScope } from '../recruiter.models';
+
+type RecruiterStatusFilter = 'all' | 'active' | 'inactive';
+
+@Component({
+  standalone: true,
+  selector: 'app-recruiter-panel-page',
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './recruiter-panel.page.html',
+  styleUrls: ['./recruiter-panel.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class RecruiterPanelPage implements OnDestroy {
+  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-rafael.png';
+  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly subscriptions = new Subscription();
+
+  statusFilter: RecruiterStatusFilter = 'all';
+  searchTerm = '';
+
+  constructor() {
+    this.subscriptions.add(
+      this.recruiterDirectoryService.changes$.subscribe(() => {
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  get currentRecruiter(): RecruiterRecord {
+    return this.recruiterDirectoryService.getCurrentRecruiter();
+  }
+
+  get canManageDirectory(): boolean {
+    return this.currentRecruiter.isMaster;
+  }
+
+  get companyRecruiters(): RecruiterRecord[] {
+    return this.recruiterDirectoryService.listRecruiters(this.currentRecruiter.company);
+  }
+
+  get filteredRecruiters(): RecruiterRecord[] {
+    const normalizedSearch = this.searchTerm.trim().toLocaleLowerCase('pt-BR');
+
+    return this.companyRecruiters.filter((recruiter) => {
+      if (this.statusFilter === 'active' && !recruiter.active) {
+        return false;
+      }
+
+      if (this.statusFilter === 'inactive' && recruiter.active) {
+        return false;
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      return [
+        recruiter.name,
+        recruiter.role,
+        recruiter.email,
+        recruiter.company,
+        recruiter.managedCompanies.join(' '),
+        recruiter.areas.join(' '),
+      ]
+        .join(' ')
+        .toLocaleLowerCase('pt-BR')
+        .includes(normalizedSearch);
+    });
+  }
+
+  get totalRecruiters(): number {
+    return this.companyRecruiters.length;
+  }
+
+  get activeRecruiters(): number {
+    return this.companyRecruiters.filter((recruiter) => recruiter.active).length;
+  }
+
+  get inactiveRecruiters(): number {
+    return this.companyRecruiters.filter((recruiter) => !recruiter.active).length;
+  }
+
+  get masterRecruiters(): number {
+    return this.companyRecruiters.filter((recruiter) => recruiter.isMaster).length;
+  }
+
+  get recruiterCoverageLabel(): string {
+    const scopes = new Set(this.companyRecruiters.map((recruiter) => recruiter.viewScope));
+
+    if (scopes.has('company')) {
+      return 'Cobertura total da empresa';
+    }
+
+    if (scopes.has('following')) {
+      return 'Operacao compartilhada entre squads';
+    }
+
+    return 'Operacao focada por recruiter';
+  }
+
+  setStatusFilter(filter: RecruiterStatusFilter): void {
+    this.statusFilter = filter;
+  }
+
+  toggleRecruiterActive(recruiter: RecruiterRecord): void {
+    if (!this.canManageDirectory || recruiter.id === this.currentRecruiter.id) {
+      return;
+    }
+
+    this.recruiterDirectoryService.toggleRecruiterActive(recruiter.id, recruiter.company);
+    this.cdr.markForCheck();
+  }
+
+  viewScopeLabel(scope: RecruiterViewScope): string {
+    switch (scope) {
+      case 'company':
+        return 'Ve toda a empresa';
+      case 'following':
+        return 'Ve vagas acompanhadas';
+      default:
+        return 'Ve vagas proprias';
+    }
+  }
+
+  permissionBadges(recruiter: RecruiterRecord): string[] {
+    const badges: string[] = [];
+
+    if (recruiter.canCreateJobs) {
+      badges.push('Cria vagas');
+    }
+
+    if (recruiter.canAdvanceCandidates) {
+      badges.push('Move candidatos');
+    }
+
+    if (recruiter.canManageSubordinates) {
+      badges.push('Gerencia time');
+    }
+
+    if (recruiter.canExportData) {
+      badges.push('Exporta dados');
+    }
+
+    if (recruiter.canViewTalentRadar) {
+      badges.push('Ve radar');
+    }
+
+    return badges.slice(0, 4);
+  }
+
+  trackRecruiter(_index: number, recruiter: RecruiterRecord): string {
+    return recruiter.id;
+  }
+}

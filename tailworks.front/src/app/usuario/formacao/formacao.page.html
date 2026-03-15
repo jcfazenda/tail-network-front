@@ -36,6 +36,7 @@
           >
             <img
               [src]="formationDraftLogoUrl"
+              (error)="handleFormationLogoError($event)"
               alt=""
               class="candidate-formation__crest-image"
             />

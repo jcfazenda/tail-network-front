@@ -122,7 +122,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     left: 10,
   };
 
-  readonly recruiterName = 'Rafael Souza';
+  readonly recruiterName = 'Julio Fazenda';
   readonly recruiterRole = 'Talent Acquisition';
   readonly recruiterAvatar = '/assets/avatars/avatar-rafael.png';
   readonly radarTotal = 87;
@@ -235,7 +235,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   talentPhone = '(11) 1111-1111';
   talentCityState = 'Rio de Janeiro - RJ';
   talentAvatarUrl = '';
-  talentFormationLogoUrl = '/assets/images/logo-estacio.png';
+  talentFormationLogoUrl = '/assets/images/formacao-default.png';
   talentFormationHeading = 'Formado em Dez 2025';
   talentGraduation = 'Bacharelado em Sistemas de Informação';
   talentSpecialization = 'Especialização em Arquitetura de Software';
@@ -1171,11 +1171,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   editTalentStacks(): void {
-    void this.router.navigate(['/usuario/dados-cadastrais'], {
-      queryParams: {
-        section: 'stacks',
-      },
-    });
+    void this.router.navigate(['/usuario/stacks']);
   }
 
   openRadarCategoryPicker(): void {

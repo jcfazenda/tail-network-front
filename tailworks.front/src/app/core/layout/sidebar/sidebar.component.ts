@@ -3,7 +3,9 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Params, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
+import { MockAuthService } from '../../../auth/mock-auth.service';
 import { SidebarVisibilityService } from './sidebar-visibility.service';
+import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 
 type NavItem = { label: string; route: string; icon: string };
 type CandidateTreeItem = {
@@ -39,7 +41,9 @@ export class SidebarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-rafael.png';
   private readonly router = inject(Router);
+  private readonly authService = inject(MockAuthService);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
+  private readonly vagasMockService = inject(VagasMockService);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -54,7 +58,7 @@ export class SidebarComponent {
     { label: 'Minhas Vagas', route: '/vagas', icon: 'work' },
     { label: 'Talentos', route: '/talentos', icon: 'group' },
     { label: 'Propostas', route: '/propostas', icon: 'assignment' },
-    { label: 'Sair', route: '/home', icon: 'logout' },
+    { label: 'Sair', route: '/login', icon: 'logout' },
   ];
 
   private readonly candidateTreeGroupsValue: CandidateTreeGroup[] = [
@@ -69,10 +73,10 @@ export class SidebarComponent {
     {
       label: 'Meus Dados',
       items: [
-        { label: 'Dados Básicos', icon: 'badge', route: '/usuario/dados-cadastrais', queryParams: { modal: 'basic' } },
-        { label: 'Documentos', icon: 'description' },
-        { label: 'Minhas Stacks', icon: 'deployed_code', route: '/usuario/dados-cadastrais', queryParams: { section: 'stacks' } },
-        { label: 'Experiências', icon: 'business_center', route: '/usuario/dados-cadastrais', queryParams: { section: 'experiencia' } },
+        { label: 'Dados Básicos', icon: 'badge', route: '/usuario/dados-cadastrais' },
+        { label: 'Documentos', icon: 'description', route: '/usuario/documentos' },
+        { label: 'Minhas Stacks', icon: 'deployed_code', route: '/usuario/stacks' },
+        { label: 'Experiências', icon: 'business_center', route: '/usuario/experiencia' },
       ],
     },
     {
@@ -86,24 +90,6 @@ export class SidebarComponent {
       label: 'Conta',
       items: [
         { label: 'Sair', icon: 'logout', route: '/login' },
-      ],
-    },
-  ];
-
-  private readonly recruiterTreeGroupsValue: CandidateTreeGroup[] = [
-    {
-      label: 'Recrutamento',
-      items: [
-        { label: 'Radar', icon: 'radar', route: '/radar' },
-        { label: 'Minhas Vagas', icon: 'work', route: '/vagas' },
-        { label: 'Talentos', icon: 'group', route: '/talentos' },
-        { label: 'Propostas', icon: 'assignment', route: '/propostas' },
-      ],
-    },
-    {
-      label: 'Conta',
-      items: [
-        { label: 'Sair', icon: 'logout', route: '/home' },
       ],
     },
   ];
@@ -125,7 +111,44 @@ export class SidebarComponent {
   }
 
   get recruiterTreeGroups(): CandidateTreeGroup[] {
-    return this.recruiterTreeGroupsValue;
+    const recruiter = this.vagasMockService.getCurrentRecruiterIdentity();
+    const canManageDirectory = recruiter.isMaster;
+    const canCreateRecruiter = recruiter.isMaster;
+
+    return [
+      {
+        label: 'Recrutamento',
+        items: [
+          { label: 'Radar', icon: 'radar', route: '/radar' },
+          { label: 'Minhas Vagas', icon: 'work', route: '/vagas' },
+          { label: 'Talentos', icon: 'group', route: '/talentos' },
+          { label: 'Propostas', icon: 'assignment', route: '/propostas' },
+        ],
+      },
+      {
+        label: 'Time',
+        items: [
+          { label: 'Chat do Time', icon: 'forum', route: '/recruiter/time' },
+          ...(canManageDirectory ? [{ label: 'Recruiters', icon: 'badge', route: '/recruiter/panel' }] : []),
+          ...(canCreateRecruiter ? [{ label: 'Novo Recruiter', icon: 'person_add', route: '/recruiter/cadastro' }] : []),
+        ],
+      },
+      ...(canManageDirectory
+        ? [{
+            label: 'Empresas',
+            items: [
+              { label: 'Lista de Empresas', icon: 'apartment', route: '/empresa' },
+              { label: 'Nova Empresa', icon: 'domain_add', route: '/empresa/cadastro' },
+            ],
+          } satisfies CandidateTreeGroup]
+        : []),
+      {
+        label: 'Conta',
+        items: [
+          { label: 'Sair', icon: 'logout', route: '/login' },
+        ],
+      },
+    ];
   }
 
   get sidebarTreeGroups(): CandidateTreeGroup[] {
@@ -137,7 +160,7 @@ export class SidebarComponent {
       return 'TailWorks';
     }
 
-    return this.isCandidateMode ? 'Camila Ferreira' : 'Rafael Souza';
+    return this.isCandidateMode ? this.candidateDisplayName : this.recruiterDisplayName;
   }
 
   get profileRole(): string {
@@ -145,7 +168,7 @@ export class SidebarComponent {
       return 'Escolha seu acesso';
     }
 
-    return this.isCandidateMode ? 'Usuario' : 'Talent Acquisition';
+    return this.isCandidateMode ? 'Usuario' : this.recruiterDisplayMeta;
   }
 
   get footerMessage(): string {
@@ -167,12 +190,12 @@ export class SidebarComponent {
   }
 
   get isSelectionMode(): boolean {
-    const url = this.currentUrl();
+    const url = this.primaryPath;
     return url === '/home' || url === '/login';
   }
 
   get isCandidateMode(): boolean {
-    return this.currentUrl().startsWith('/usuario');
+    return this.primaryPath.startsWith('/usuario');
   }
 
   get candidateAvatarUrl(): string {
@@ -235,15 +258,25 @@ export class SidebarComponent {
   }
 
   get recruiterDisplayName(): string {
-    return 'Rafael Souza';
+    return this.vagasMockService.getCurrentRecruiterIdentity().name;
   }
 
   get recruiterDisplayMeta(): string {
-    return 'Talent Acquisition';
+    return this.vagasMockService.getCurrentRecruiterIdentity().role;
   }
 
   get recruiterDisplayInitials(): string {
-    return 'RS';
+    const parts = this.recruiterDisplayName
+      .split(' ')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .slice(0, 2);
+
+    if (!parts.length) {
+      return 'JF';
+    }
+
+    return parts.map((part) => part.charAt(0).toUpperCase()).join('');
   }
 
   get sidebarAvatarUrl(): string {
@@ -289,6 +322,22 @@ export class SidebarComponent {
     return item.route !== '/vagas' && item.route !== '/usuario/dados-cadastrais';
   }
 
+  handleTreeItemClick(item: CandidateTreeItem): void {
+    if (item.icon !== 'logout') {
+      return;
+    }
+
+    this.authService.logout();
+  }
+
+  handleFlatItemClick(item: NavItem): void {
+    if (item.icon !== 'logout') {
+      return;
+    }
+
+    this.authService.logout();
+  }
+
   hideSidebar(): void {
     this.sidebarVisibilityService.hide();
   }
@@ -296,6 +345,10 @@ export class SidebarComponent {
   private readPrimaryPath(url: string): string {
     const [path] = url.split('?');
     return path.split('#')[0];
+  }
+
+  private get primaryPath(): string {
+    return this.readPrimaryPath(this.currentUrl());
   }
 
   private readCandidateDraft(): CandidateBasicDraft | null {

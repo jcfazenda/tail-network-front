@@ -33,6 +33,7 @@
     <div class="topbar__formation-summary">
       <img
         [src]="topbarFormationLogoUrl"
+        (error)="handleTopbarFormationLogoError($event)"
         alt=""
         class="topbar__formation-logo"
       />
@@ -45,7 +46,7 @@
     <a
       *ngIf="isCandidateEcosystem"
       class="topbar__cta topbar__cta--back"
-      routerLink="/usuario/dados-cadastrais/experiencia"
+      routerLink="/usuario/experiencia"
       aria-label="Voltar"
     >
       <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
@@ -245,8 +246,8 @@
     <div class="topbar-notification-modal__recruiter">
       <span class="topbar-notification-modal__recruiter-avatar" aria-hidden="true"></span>
       <span class="topbar-notification-modal__recruiter-copy">
-        <strong>Rafael Souza</strong>
-        <span>Talent Acquisition</span>
+        <strong>{{ recruiterTopbarDisplayName }}</strong>
+        <span>{{ recruiterTopbarDisplayMeta }}</span>
       </span>
     </div>
 

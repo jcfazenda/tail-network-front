@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { VagasMockService } from '../data/vagas-mock.service';
 import { Subscription } from 'rxjs';
+import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
+import { EmpresaDirectoryService } from '../../empresa/empresa-directory.service';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
@@ -55,6 +57,8 @@ export class CadastroPage implements OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly vagasMockService = inject(VagasMockService);
+  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
+  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
   private readonly subscriptions = new Subscription();
   private summaryPanelDragState: {
     pointerId: number;
@@ -80,7 +84,7 @@ export class CadastroPage implements OnDestroy {
   ];
   readonly previewAvatarExtraCount = 18;
   readonly recruiterPreview = {
-    name: 'Rafael Souza',
+    name: 'Julio Fazenda',
     role: 'Talent Acquisition',
     avatar: '/assets/avatars/avatar-rafael.png',
   };
@@ -105,18 +109,6 @@ export class CadastroPage implements OnDestroy {
       sideLabel: 'Abonado',
       description: 'Folga remunerada no mês do aniversario',
     },
-  ];
-  readonly companyOptions = [
-    'Banco Itaú',
-    'Nubank',
-    'Stone',
-    'NTT DATA Latan',
-    'BRQ Solutions TI',
-    'Amazon BR',
-    'Magazine Luiza',
-    'BTG Pactual',
-    'Bradesco',
-    'Stefanini Brasil',
   ];
   readonly locationOptions = [
     'Rio de Janeiro - RJ',
@@ -150,6 +142,7 @@ export class CadastroPage implements OnDestroy {
   ];
 
   constructor() {
+    this.ensureCurrentRecruiterCompanyInDraft();
     this.loadEditingJobIfPresent();
     this.subscriptions.add(
       this.vagasMockService.jobsChanged$.subscribe(() => {
@@ -167,6 +160,13 @@ export class CadastroPage implements OnDestroy {
         this.cdr.markForCheck();
       }),
     );
+  }
+
+  get companyOptions(): string[] {
+    return Array.from(new Set([
+      ...this.recruiterDirectoryService.getRecruiterCompanies(),
+      this.jobDraft.company.trim(),
+    ].filter(Boolean)));
   }
 
   ngOnDestroy(): void {
@@ -952,13 +952,24 @@ export class CadastroPage implements OnDestroy {
   }
 
   get currentCompanyProfile(): CompanySummaryProfile {
-    const profile = this.companyProfiles[this.jobDraft.company] ?? {
+    const directoryProfile = this.companyDirectoryService.getCompanyByName(this.jobDraft.company);
+    const profile = directoryProfile
+      ? {
+          name: directoryProfile.name,
+          followers: directoryProfile.followers,
+          description: directoryProfile.description,
+          linkedinCount: directoryProfile.linkedinCount,
+          logoLabel: directoryProfile.logoLabel,
+          logoUrl: directoryProfile.logoUrl,
+          monthlyHiringCount: directoryProfile.monthlyHiringCount,
+        }
+      : this.companyProfiles[this.jobDraft.company] ?? {
       name: this.jobDraft.company,
       followers: '120.000 seguidores',
       description: 'Empresa em crescimento',
       linkedinCount: '120.000 no LinkedIn',
       logoLabel: this.jobDraft.company.slice(0, 2).toLowerCase(),
-    };
+      };
 
     if (!this.jobDraft.companyLogoUrl) {
       return profile;
@@ -1504,6 +1515,7 @@ export class CadastroPage implements OnDestroy {
   private loadEditingJobIfPresent(): void {
     const editingId = this.route.snapshot.queryParamMap.get('edit');
     if (!editingId) {
+      this.ensureCurrentRecruiterCompanyInDraft();
       return;
     }
 
@@ -1544,6 +1556,17 @@ export class CadastroPage implements OnDestroy {
       items: [...section.items],
     }));
     this.hydrateStatusFromJob(job);
+  }
+
+  private ensureCurrentRecruiterCompanyInDraft(): void {
+    const recruiterCompanies = this.recruiterDirectoryService.getRecruiterCompanies();
+    const nextCompany = recruiterCompanies[0]?.trim() || this.jobDraft.company;
+
+    if (!nextCompany || this.jobDraft.company === nextCompany) {
+      return;
+    }
+
+    this.jobDraft.company = nextCompany;
   }
 
   private hydrateStatusFromJob(job: MockJobRecord): void {

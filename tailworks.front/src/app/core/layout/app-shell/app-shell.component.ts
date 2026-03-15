@@ -28,16 +28,16 @@ export class AppShellComponent {
   );
 
   get isHomeEntry(): boolean {
-    const url = this.currentUrl();
+    const url = this.primaryPath;
     return url === '/home' || url === '/login';
   }
 
   get isCandidateArea(): boolean {
-    return this.currentUrl().startsWith('/usuario');
+    return this.primaryPath.startsWith('/usuario');
   }
 
   get isCandidateEcosystem(): boolean {
-    return this.currentUrl() === '/usuario/ecossistema';
+    return this.primaryPath === '/usuario/ecossistema';
   }
 
   get hasSidebar(): boolean {
@@ -62,5 +62,9 @@ export class AppShellComponent {
 
   hideSidebar(): void {
     this.sidebarVisibilityService.hide();
+  }
+
+  private get primaryPath(): string {
+    return this.currentUrl().split('?')[0]?.split('#')[0] || this.currentUrl();
   }
 }

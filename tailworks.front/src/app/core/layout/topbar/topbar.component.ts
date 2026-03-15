@@ -55,7 +55,7 @@ export class TopbarComponent {
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
   private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-rafael.png';
-  private static readonly recruiterFormationLogoAsset = '/assets/images/logo-estacio.png';
+  private static readonly recruiterFormationLogoAsset = '/assets/images/formacao-default.png';
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;
   private readonly vagasMockService = inject(VagasMockService);
@@ -75,7 +75,7 @@ export class TopbarComponent {
 
   constructor() {
     effect(() => {
-      const url = this.currentUrl();
+      const url = this.primaryPath;
 
       if (url === '/home' || url === '/login' || url === '/usuario/ecossistema') {
         return;
@@ -91,12 +91,12 @@ export class TopbarComponent {
   }
 
   get isSelectionMode(): boolean {
-    const url = this.currentUrl();
+    const url = this.primaryPath;
     return url === '/home' || url === '/login';
   }
 
   get isCandidateMode(): boolean {
-    return this.currentUrl().startsWith('/usuario');
+    return this.primaryPath.startsWith('/usuario');
   }
 
   get isRecruiterMode(): boolean {
@@ -104,7 +104,7 @@ export class TopbarComponent {
   }
 
   get isCandidateEcosystem(): boolean {
-    return this.currentUrl() === '/usuario/ecossistema';
+    return this.primaryPath === '/usuario/ecossistema';
   }
 
   get isRecruiterEcosystem(): boolean {
@@ -178,7 +178,17 @@ export class TopbarComponent {
   }
 
   get recruiterTopbarAvatarInitials(): string {
-    return 'RS';
+    const parts = this.recruiterTopbarDisplayName
+      .split(' ')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .slice(0, 2);
+
+    if (!parts.length) {
+      return 'JF';
+    }
+
+    return parts.map((part) => part.charAt(0).toUpperCase()).join('');
   }
 
   get topbarCandidateDisplayName(): string {
@@ -186,7 +196,7 @@ export class TopbarComponent {
   }
 
   get recruiterTopbarDisplayName(): string {
-    return 'Rafael Souza';
+    return this.vagasMockService.getCurrentRecruiterIdentity().name;
   }
 
   get topbarCandidateDisplayLocation(): string {
@@ -207,7 +217,7 @@ export class TopbarComponent {
   }
 
   get recruiterTopbarDisplayMeta(): string {
-    return 'Talent Acquisition';
+    return this.vagasMockService.getCurrentRecruiterIdentity().role;
   }
 
   get topbarProfileAvatarUrl(): string {
@@ -232,10 +242,19 @@ export class TopbarComponent {
     }
 
     if (typeof window === 'undefined') {
-      return '/assets/images/logo-estacio.png';
+      return '/assets/images/formacao-default.png';
     }
 
-    return window.localStorage.getItem(TopbarComponent.formationLogoStorageKey) || '/assets/images/logo-estacio.png';
+    return window.localStorage.getItem(TopbarComponent.formationLogoStorageKey)?.trim() || '/assets/images/formacao-default.png';
+  }
+
+  handleTopbarFormationLogoError(event: Event): void {
+    const image = event.target as HTMLImageElement | null;
+    if (!image) {
+      return;
+    }
+
+    image.src = TopbarComponent.recruiterFormationLogoAsset;
   }
 
   get topbarFormationHeading(): string {
@@ -318,6 +337,10 @@ export class TopbarComponent {
     }
 
     return company || workModel;
+  }
+
+  private get primaryPath(): string {
+    return this.currentUrl().split('?')[0]?.split('#')[0] || this.currentUrl();
   }
 
   get activeTalentNotificationLocationLine(): string {

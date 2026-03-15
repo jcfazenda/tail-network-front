@@ -21,7 +21,7 @@
   display: grid;
   align-content: center;
   gap: 28px;
-  max-width: 960px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 64px 40px 56px;
   box-sizing: border-box;
@@ -30,6 +30,29 @@
 .entry-home__hero{
   display: grid;
   gap: 14px;
+}
+
+.entry-home__status{
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(245, 158, 11, 0.16);
+  background: rgba(255, 251, 235, 0.82);
+  color: rgba(146, 64, 14, 0.92);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.entry-home__reset{
+  width: fit-content;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .entry-home__hero h1{

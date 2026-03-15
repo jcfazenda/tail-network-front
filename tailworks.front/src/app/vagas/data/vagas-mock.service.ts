@@ -1,7 +1,8 @@
 import { Injectable, NgZone, inject } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, TalentJobDecision } from './vagas.models';
+import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, RecruiterIdentity, TalentJobDecision } from './vagas.models';
 import { TalentNotificationService } from '../../usuario/talent-notification.service';
+import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -42,9 +43,10 @@ export class VagasMockService {
   private readonly syncChannelName = 'tailworks.front.mock-vagas.sync';
   private readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private readonly fallbackTalentAvatar = '/assets/avatars/avatar-rafael.png';
-  private readonly fallbackTalentCandidateName = 'Rafael Oliveira';
+  private readonly fallbackTalentCandidateName = 'Julio Fazenda';
   private readonly zone = inject(NgZone);
   private readonly talentNotificationService = inject(TalentNotificationService);
+  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
@@ -74,6 +76,73 @@ export class VagasMockService {
 
   getTalentCandidateIdentity(): TalentIdentity {
     return this.readTalentIdentity();
+  }
+
+  getCurrentRecruiterIdentity(): RecruiterIdentity {
+    return this.recruiterDirectoryService.getCurrentRecruiterIdentity();
+  }
+
+  signInAsDefaultRecruiter(): RecruiterIdentity {
+    return this.recruiterDirectoryService.signInAsRecruiter('julio-fazenda-recruiter', 'Banco Itaú');
+  }
+
+  signInAsRecruiter(recruiterId: string, companyName?: string): RecruiterIdentity {
+    return this.recruiterDirectoryService.signInAsRecruiter(recruiterId, companyName);
+  }
+
+  signInAsDefaultTalent(): void {
+    this.signInAsTalent('Julio Fazenda');
+  }
+
+  signInAsTalent(name: string, location = 'Rio de Janeiro - RJ'): void {
+    const storage = this.getStorage();
+    if (!storage) {
+      return;
+    }
+
+    const existingDraft = this.readStoredCandidateDraft(storage);
+    const nextDraft: CandidateBasicDraft = {
+      ...existingDraft,
+      profile: {
+        ...existingDraft?.profile,
+        name: name.trim() || 'Talento',
+        location: location.trim() || existingDraft?.profile?.location?.trim() || 'Rio de Janeiro - RJ',
+      },
+    };
+
+    storage.setItem(this.basicDraftStorageKey, JSON.stringify(nextDraft));
+  }
+
+  getRecruitersForCompany(companyName?: string): RecruiterIdentity[] {
+    return this.recruiterDirectoryService
+      .listRecruiters(companyName)
+      .map((recruiter) => ({
+        id: recruiter.id,
+        name: recruiter.name,
+        role: recruiter.role,
+        company: recruiter.company,
+        isMaster: recruiter.isMaster,
+      }));
+  }
+
+  getCurrentRecruiterCompanies(): string[] {
+    return this.recruiterDirectoryService.getRecruiterCompanies();
+  }
+
+  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
+    const recruiter = this.readRecruiterIdentity();
+    const accessibleCompanies = this.getCurrentRecruiterCompanies();
+
+    if (!accessibleCompanies.includes(job.company)) {
+      return false;
+    }
+
+    if (recruiter.isMaster) {
+      return true;
+    }
+
+    return job.createdByRecruiterId === recruiter.id
+      || !!job.recruiterWatcherIds?.includes(recruiter.id);
   }
 
   findTalentCandidate(job: Pick<MockJobRecord, 'candidates'>): MockJobCandidate | undefined {
@@ -245,9 +314,33 @@ export class VagasMockService {
     this.emitJobsChanged();
   }
 
+  clearPublishedJobsForTesting(): void {
+    this.clearJobs();
+  }
+
   deleteJob(id: string): void {
     const jobs = this.loadJobs();
     this.cache = jobs.filter((job) => job.id !== id);
+    this.persist();
+  }
+
+  renameCompany(previousName: string, nextName: string): void {
+    const normalizedPrevious = previousName.trim();
+    const normalizedNext = nextName.trim();
+
+    if (!normalizedPrevious || !normalizedNext || normalizedPrevious === normalizedNext) {
+      return;
+    }
+
+    this.cache = this.loadJobs().map((job) => (
+      job.company === normalizedPrevious
+        ? {
+            ...job,
+            company: normalizedNext,
+            updatedAt: new Date().toISOString(),
+          }
+        : job
+    ));
     this.persist();
   }
 
@@ -358,8 +451,10 @@ export class VagasMockService {
       return undefined;
     }
 
+    const currentRecruiter = this.readRecruiterIdentity();
     const updatedJob: MockJobRecord = this.decorateTalentVisibility({
       ...existing,
+      recruiterWatcherIds: Array.from(new Set([...(existing.recruiterWatcherIds ?? []), currentRecruiter.id])),
       candidates: nextCandidates,
       updatedAt: new Date().toISOString(),
     });
@@ -537,9 +632,18 @@ export class VagasMockService {
     const talents = Math.max(8, command.previewAvatarExtraCount + command.previewAvatars.length);
     const radarCount = Math.max(4, Math.round(talents * 0.72));
     const match = Math.min(99, Math.max(42, Math.round(command.previewAderencia)));
+    const recruiterIdentity = this.syncRecruiterWorkspaceForCompany(command.draft.company);
+    const recruiterWatcherIds = Array.from(new Set([
+      ...(existing?.recruiterWatcherIds ?? []),
+      recruiterIdentity.id,
+    ]));
 
     return this.decorateTalentVisibility({
       id: existing?.id ?? this.createId(),
+      createdByRecruiterId: existing?.createdByRecruiterId ?? recruiterIdentity.id,
+      createdByRecruiterName: existing?.createdByRecruiterName ?? recruiterIdentity.name,
+      createdByRecruiterRole: existing?.createdByRecruiterRole ?? recruiterIdentity.role,
+      recruiterWatcherIds,
       priority: command.draft.location.toUpperCase(),
       match,
       talents,
@@ -589,7 +693,9 @@ export class VagasMockService {
         this.normalizeCandidate(candidate, record.id, index, this.normalizeHiringDocuments(record.hiringDocuments)),
       ),
       avatars: [...record.avatars],
-    })).map((record) => this.decorateTalentVisibility(this.migrateLegacyTalentState(record)));
+    }))
+      .map((record) => this.ensureRecruiterMetadata(record))
+      .map((record) => this.decorateTalentVisibility(this.migrateLegacyTalentState(record)));
   }
 
   private normalizeBenefits(benefits: unknown): JobBenefitItem[] {
@@ -667,6 +773,96 @@ export class VagasMockService {
     }
 
     return `vaga-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+  }
+
+  private ensureRecruiterMetadata(job: MockJobRecord): MockJobRecord {
+    const recruiterIdentity = job.createdByRecruiterId
+      ? this.getRecruitersForCompany(job.company).find((recruiter) => recruiter.id === job.createdByRecruiterId)
+        ?? {
+          id: job.createdByRecruiterId,
+          name: job.createdByRecruiterName?.trim() || 'Recruiter',
+          role: job.createdByRecruiterRole?.trim() || 'Talent Acquisition',
+          company: job.company,
+          isMaster: false,
+        }
+      : this.inferRecruiterForJob(job);
+
+    const recruiterWatcherIds = Array.from(new Set([
+      ...(job.recruiterWatcherIds ?? []).filter((value): value is string => typeof value === 'string' && !!value.trim()),
+      recruiterIdentity.id,
+    ]));
+
+    return {
+      ...job,
+      createdByRecruiterId: recruiterIdentity.id,
+      createdByRecruiterName: job.createdByRecruiterName?.trim() || recruiterIdentity.name,
+      createdByRecruiterRole: job.createdByRecruiterRole?.trim() || recruiterIdentity.role,
+      recruiterWatcherIds,
+    };
+  }
+
+  private inferRecruiterForJob(job: Pick<MockJobRecord, 'company' | 'id' | 'createdAt'>): RecruiterIdentity {
+    const recruiters = this.getRecruitersForCompany(job.company);
+    if (!recruiters.length) {
+      return this.resolveRecruiterIdentityForCompany(job.company);
+    }
+
+    const index = Math.abs(this.hashString(`${job.company}:${job.id}:${job.createdAt}`)) % recruiters.length;
+    return recruiters[index];
+  }
+
+  private resolveRecruiterIdentityForCompany(companyName: string): RecruiterIdentity {
+    const normalizedCompany = companyName.trim();
+    const currentRecruiter = this.readRecruiterIdentity();
+    const accessibleCompanies = this.getCurrentRecruiterCompanies();
+
+    if (!normalizedCompany || currentRecruiter.company === normalizedCompany) {
+      return currentRecruiter;
+    }
+
+    if (accessibleCompanies.includes(normalizedCompany)) {
+      return {
+        ...currentRecruiter,
+        company: normalizedCompany,
+      };
+    }
+
+    const recruiterFromCompany = this.getRecruitersForCompany(normalizedCompany)[0]
+      ?? this.recruiterDirectoryService.ensureMasterForCompany(normalizedCompany);
+
+    return {
+      id: recruiterFromCompany.id,
+      name: recruiterFromCompany.name,
+      role: recruiterFromCompany.role,
+      company: recruiterFromCompany.company,
+      isMaster: recruiterFromCompany.isMaster,
+    };
+  }
+
+  private syncRecruiterWorkspaceForCompany(companyName: string): RecruiterIdentity {
+    const normalizedCompany = companyName.trim();
+    const currentRecruiter = this.readRecruiterIdentity();
+    const accessibleCompanies = this.getCurrentRecruiterCompanies();
+
+    if (!normalizedCompany || currentRecruiter.company === normalizedCompany || accessibleCompanies.includes(normalizedCompany) || !currentRecruiter.isMaster) {
+      return this.resolveRecruiterIdentityForCompany(normalizedCompany || currentRecruiter.company);
+    }
+
+    const recruiterForCompany = this.recruiterDirectoryService.getRecruiterById(currentRecruiter.id, normalizedCompany)
+      ?? this.recruiterDirectoryService.ensureMasterForCompany(normalizedCompany);
+
+    const signedRecruiter = this.recruiterDirectoryService.signInAsRecruiter(
+      recruiterForCompany.id,
+      recruiterForCompany.company,
+    );
+
+    return {
+      id: signedRecruiter.id,
+      name: signedRecruiter.name,
+      role: signedRecruiter.role,
+      company: signedRecruiter.company,
+      isMaster: signedRecruiter.isMaster,
+    };
   }
 
   private buildTalentCandidate(job: MockJobRecord, existingCandidate?: MockJobCandidate): MockJobCandidate {
@@ -919,6 +1115,35 @@ export class VagasMockService {
     return !!avatar?.trim() && avatar !== this.fallbackTalentAvatar;
   }
 
+  private readStoredCandidateDraft(storage: Storage): CandidateBasicDraft | null {
+    const rawDraft = storage.getItem(this.basicDraftStorageKey);
+    if (!rawDraft) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawDraft) as CandidateBasicDraft;
+    } catch {
+      storage.removeItem(this.basicDraftStorageKey);
+      return null;
+    }
+  }
+
+  private readRecruiterIdentity(): RecruiterIdentity {
+    return this.recruiterDirectoryService.getCurrentRecruiterIdentity();
+  }
+
+  private hashString(value: string): number {
+    let hash = 0;
+
+    for (let index = 0; index < value.length; index += 1) {
+      hash = ((hash << 5) - hash) + value.charCodeAt(index);
+      hash |= 0;
+    }
+
+    return hash;
+  }
+
   private readTalentIdentity(): TalentIdentity {
     const storage = this.getStorage();
     const fallback: TalentIdentity = {
@@ -932,27 +1157,20 @@ export class VagasMockService {
       return fallback;
     }
 
-    const rawDraft = storage.getItem(this.basicDraftStorageKey);
-
-    if (!rawDraft) {
+    const draft = this.readStoredCandidateDraft(storage);
+    if (!draft) {
       return fallback;
     }
 
-    try {
-      const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
-      const name = draft.profile?.name?.trim() || fallback.name;
-      const avatar = draft.photoPreviewUrl?.trim() || fallback.avatar;
-      const location = draft.profile?.location?.trim() || fallback.location;
+    const name = draft.profile?.name?.trim() || fallback.name;
+    const avatar = draft.photoPreviewUrl?.trim() || fallback.avatar;
+    const location = draft.profile?.location?.trim() || fallback.location;
 
-      return {
-        name,
-        avatar,
-        location,
-        hasProfileAvatar: this.hasRealProfileAvatar(draft.photoPreviewUrl),
-      };
-    } catch {
-      storage.removeItem(this.basicDraftStorageKey);
-      return fallback;
-    }
+    return {
+      name,
+      avatar,
+      location,
+      hasProfileAvatar: this.hasRealProfileAvatar(draft.photoPreviewUrl),
+    };
   }
 }

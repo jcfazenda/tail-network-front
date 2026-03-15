@@ -1,59 +1,251 @@
 <section class="login-page">
-  <div class="login-page__panel">
+  <div class="login-page__panel" [class.login-page__panel--wide]="accessView === 'register'">
     <div class="login-page__brand">
       <img src="/assets/images/logo-tail.png" alt="TailWorks" class="login-page__logo" />
+      <button class="login-page__reset" type="button" (click)="resetWorkspace()">
+        Limpar ambiente
+      </button>
     </div>
 
     <div class="login-page__copy">
-      <h1>Entre para acessar a plataforma.</h1>
-      <p>Use seu acesso para continuar e escolher como deseja navegar no sistema.</p>
+      <h1>{{ accessView === 'login' ? 'Entre na TailWorks.' : 'Vamos criar sua conta.' }}</h1>
+      <p>
+        {{ accessView === 'login'
+          ? 'Use seu acesso, Google ou LinkedIn. Depois, no Home, voce escolhe se quer usar o sistema como recruiter ou talento.'
+          : 'A conta e da pessoa. Depois de entrar, a escolha de usar como recruiter ou talento acontece no Home.' }}
+      </p>
     </div>
 
-    <div class="login-page__socials">
-      <button class="login-page__button login-page__button--social login-page__button--google" type="button" (click)="login()">
-        <span class="login-page__social-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-.9 2.4-1.9 3.2l3.1 2.4c1.8-1.7 2.9-4.1 2.9-7 0-.7-.1-1.4-.2-2H12z"/>
-            <path fill="#34A853" d="M12 21c2.6 0 4.8-.9 6.4-2.4l-3.1-2.4c-.9.6-2 .9-3.3.9-2.5 0-4.6-1.7-5.4-4H3.4v2.5A9.7 9.7 0 0 0 12 21z"/>
-            <path fill="#4A90E2" d="M6.6 13.1a5.8 5.8 0 0 1 0-3.7V6.9H3.4a9.7 9.7 0 0 0 0 8.7l3.2-2.5z"/>
-            <path fill="#FBBC05" d="M12 6.8c1.4 0 2.6.5 3.5 1.3l2.6-2.6A9.7 9.7 0 0 0 3.4 6.9l3.2 2.5c.8-2.3 2.9-4 5.4-4z"/>
-          </svg>
-        </span>
-        <span>Entrar com Google</span>
+    <div class="login-page__view-switch">
+      <button
+        class="login-page__view-switch-item"
+        type="button"
+        [class.login-page__view-switch-item--active]="accessView === 'login'"
+        (click)="setAccessView('login')"
+      >
+        Entrar
       </button>
-
-      <button class="login-page__button login-page__button--social login-page__button--linkedin" type="button" (click)="login()">
-        <span class="login-page__social-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-            <path fill="currentColor" d="M6.98 8.5a1.74 1.74 0 1 1 0-3.48 1.74 1.74 0 0 1 0 3.48ZM5.5 18.5V10h2.96v8.5H5.5Zm4.64 0V10h2.84v1.16h.04c.4-.75 1.37-1.54 2.82-1.54 3.02 0 3.58 1.99 3.58 4.58v4.3h-2.96v-3.8c0-.91-.02-2.08-1.27-2.08-1.28 0-1.47 1-1.47 2.01v3.87h-2.98Z"/>
-          </svg>
-        </span>
-        <span>Entrar com Linkedin</span>
+      <button
+        class="login-page__view-switch-item"
+        type="button"
+        [class.login-page__view-switch-item--active]="accessView === 'register'"
+        (click)="setAccessView('register')"
+      >
+        Cadastrar
       </button>
     </div>
 
-    <div class="login-page__divider" aria-hidden="true">
-      <span></span>
-      <strong>ou</strong>
-      <span></span>
-    </div>
+    <div class="login-page__banner login-page__banner--error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="login-page__banner login-page__banner--success" *ngIf="successMessage">{{ successMessage }}</div>
 
-    <div class="login-page__form">
+    <form class="login-page__form" *ngIf="accessView === 'login'" (submit)="$event.preventDefault(); login()">
+      <div class="login-page__social-actions">
+        <button class="login-page__social-button login-page__social-button--google" type="button" (click)="continueWithProvider('google')">
+          <span class="login-page__social-mark">G</span>
+          <span>Continuar com Google</span>
+        </button>
+
+        <button class="login-page__social-button login-page__social-button--linkedin" type="button" (click)="continueWithProvider('linkedin')">
+          <span class="login-page__social-mark">in</span>
+          <span>Continuar com LinkedIn</span>
+        </button>
+      </div>
+
+      <div class="login-page__divider" aria-hidden="true"></div>
+
       <label class="login-page__field">
         <span>E-mail</span>
-        <input type="email" [(ngModel)]="email" placeholder="voce@tailworks.com" />
+        <input type="email" [(ngModel)]="email" name="email" placeholder="voce@empresa.com" />
       </label>
 
       <label class="login-page__field">
         <span>Senha</span>
-        <input type="password" [(ngModel)]="password" placeholder="Digite sua senha" />
+        <input type="password" [(ngModel)]="password" name="password" placeholder="Digite sua senha" />
       </label>
 
       <div class="login-page__actions">
-        <button class="login-page__button login-page__button--primary" type="button" (click)="login()">
+        <button class="login-page__button login-page__button--primary" type="submit">
           Entrar
         </button>
       </div>
+    </form>
+
+    <div class="login-page__register-switch" *ngIf="accessView === 'register'">
+      <button
+        class="login-page__register-switch-item"
+        type="button"
+        [class.login-page__register-switch-item--active]="registerFlow === 'organization'"
+        (click)="setRegisterFlow('organization')"
+      >
+        Conta + empresa
+      </button>
+      <button
+        class="login-page__register-switch-item"
+        type="button"
+        [class.login-page__register-switch-item--active]="registerFlow === 'individual'"
+        (click)="setRegisterFlow('individual')"
+      >
+        Conta pessoal
+      </button>
     </div>
+
+    <form
+      class="login-page__form login-page__form--register"
+      *ngIf="accessView === 'register' && registerFlow === 'organization'"
+      (submit)="$event.preventDefault(); registerRecruiter()"
+    >
+      <section class="login-page__section">
+        <header class="login-page__section-head">
+          <strong>Conta principal</strong>
+          <span>Esse sera o primeiro acesso da operacao, com permissao para abrir a empresa e estruturar o time recruiter.</span>
+        </header>
+
+        <div class="login-page__grid">
+          <label class="login-page__field">
+            <span>Nome</span>
+            <input type="text" [(ngModel)]="recruiterSignup.name" name="recruiterName" />
+          </label>
+
+          <label class="login-page__field">
+            <span>Cargo</span>
+            <input type="text" [(ngModel)]="recruiterSignup.role" name="recruiterRole" />
+          </label>
+
+          <label class="login-page__field">
+            <span>E-mail</span>
+            <input type="email" [(ngModel)]="recruiterSignup.email" name="recruiterEmail" />
+          </label>
+
+          <label class="login-page__field">
+            <span>Senha</span>
+            <input type="password" [(ngModel)]="recruiterSignup.password" name="recruiterPassword" />
+          </label>
+        </div>
+      </section>
+
+      <section class="login-page__section">
+        <header class="login-page__section-head">
+          <strong>Empresa</strong>
+          <span>Essa empresa sera criada agora e depois podera ser usada na abertura das vagas.</span>
+        </header>
+
+        <div class="login-page__grid">
+          <label class="login-page__field">
+            <span>Nome da empresa</span>
+            <input type="text" [(ngModel)]="recruiterSignup.companyName" name="companyName" />
+          </label>
+
+          <label class="login-page__field">
+            <span>Setor</span>
+            <input type="text" [(ngModel)]="recruiterSignup.companySector" name="companySector" />
+          </label>
+
+          <label class="login-page__field">
+            <span>Localidade</span>
+            <input type="text" [(ngModel)]="recruiterSignup.companyLocation" name="companyLocation" />
+          </label>
+
+          <label class="login-page__field login-page__field--wide">
+            <span>Descricao</span>
+            <textarea rows="4" [(ngModel)]="recruiterSignup.companyDescription" name="companyDescription"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="login-page__section">
+        <header class="login-page__section-head login-page__section-head--row">
+          <div>
+            <strong>Recruiters subordinados</strong>
+            <span>Se quiser, ja criamos aqui os acessos do seu time com e-mail e senha.</span>
+          </div>
+
+          <button class="login-page__inline-action" type="button" (click)="addSubordinateRecruiter()">
+            Adicionar recruiter
+          </button>
+        </header>
+
+        <div class="login-page__invite-list">
+          <article class="login-page__invite-card" *ngFor="let recruiter of recruiterSignup.subordinateRecruiters; let index = index">
+            <div class="login-page__grid">
+              <label class="login-page__field">
+                <span>Nome</span>
+                <input type="text" [(ngModel)]="recruiter.name" [name]="'inviteName' + index" />
+              </label>
+
+              <label class="login-page__field">
+                <span>Cargo</span>
+                <input type="text" [(ngModel)]="recruiter.role" [name]="'inviteRole' + index" />
+              </label>
+
+              <label class="login-page__field">
+                <span>E-mail</span>
+                <input type="email" [(ngModel)]="recruiter.email" [name]="'inviteEmail' + index" />
+              </label>
+
+              <label class="login-page__field">
+                <span>Senha</span>
+                <input type="password" [(ngModel)]="recruiter.password" [name]="'invitePassword' + index" />
+              </label>
+            </div>
+
+            <button
+              class="login-page__remove-action"
+              type="button"
+              *ngIf="recruiterSignup.subordinateRecruiters.length > 1"
+              (click)="removeSubordinateRecruiter(index)"
+            >
+              Remover
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <div class="login-page__actions">
+        <button class="login-page__button login-page__button--primary" type="submit">
+          Criar conta e empresa
+        </button>
+      </div>
+    </form>
+
+    <form
+      class="login-page__form login-page__form--register"
+      *ngIf="accessView === 'register' && registerFlow === 'individual'"
+      (submit)="$event.preventDefault(); registerTalent()"
+    >
+      <section class="login-page__section">
+        <header class="login-page__section-head">
+          <strong>Conta pessoal</strong>
+          <span>Crie seu acesso principal. Depois, no Home, voce pode entrar como talento.</span>
+        </header>
+
+        <div class="login-page__grid">
+          <label class="login-page__field">
+            <span>Nome</span>
+            <input type="text" [(ngModel)]="talentSignup.name" name="talentName" />
+          </label>
+
+          <label class="login-page__field">
+            <span>Localidade</span>
+            <input type="text" [(ngModel)]="talentSignup.location" name="talentLocation" />
+          </label>
+
+          <label class="login-page__field">
+            <span>E-mail</span>
+            <input type="email" [(ngModel)]="talentSignup.email" name="talentEmail" />
+          </label>
+
+          <label class="login-page__field">
+            <span>Senha</span>
+            <input type="password" [(ngModel)]="talentSignup.password" name="talentPassword" />
+          </label>
+        </div>
+      </section>
+
+      <div class="login-page__actions">
+        <button class="login-page__button login-page__button--primary" type="submit">
+          Criar conta pessoal
+        </button>
+      </div>
+    </form>
   </div>
 </section>

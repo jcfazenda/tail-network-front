@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Params, Router, RouterLink } from '@angular/router';
 
 type RegistrationStep = {
   label: string;
   index: number | string;
   route?: string;
+  queryParams?: Params;
   active?: boolean;
 };
 
@@ -103,9 +104,9 @@ export class ExperienciaPage implements OnInit {
 
   readonly steps: RegistrationStep[] = [
     { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
-    { index: 2, label: 'Suas Stacks', route: '/usuario/dados-cadastrais/stacks' },
-    { index: 3, label: 'Experiência', route: '/usuario/dados-cadastrais/experiencia', active: true },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais/formacao' },
+    { index: 2, label: 'Suas Stacks', route: '/usuario/stacks' },
+    { index: 3, label: 'Experiência', route: '/usuario/experiencia', active: true },
+    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais', queryParams: { modal: 'formacao' } },
   ];
 
   readonly workModelOptions: ExperienceEntry['workModel'][] = ['Presencial', 'Híbrido', 'Remoto'];
@@ -119,7 +120,7 @@ export class ExperienciaPage implements OnInit {
   readonly yearOptions = Array.from({ length: 21 }, (_value, index) => String(2026 - index));
   readonly acceptedLogoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   readonly maxLogoSizeBytes = 5 * 1024 * 1024;
-  readonly defaultIntroLogoUrl = '/assets/images/logo-estacio.png';
+  readonly defaultIntroLogoUrl = '/assets/images/formacao-default.png';
 
   profile: CandidateBasicProfile = {
     name: '',
@@ -782,7 +783,16 @@ export class ExperienciaPage implements OnInit {
   }
 
   continueToFormation(): void {
-    this.scrollToSection('usuario-formacao', '/usuario/dados-cadastrais/formacao');
+    const target = document.getElementById('usuario-formacao');
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    void this.router.navigate(['/usuario/dados-cadastrais'], {
+      queryParams: { modal: 'formacao' },
+    });
   }
 
   updateVisibleInEcosystem(nextValue: boolean): void {
@@ -907,15 +917,16 @@ export class ExperienciaPage implements OnInit {
   private restoreIntroLogo(): void {
     const savedLogo = localStorage.getItem(ExperienciaPage.logoDraftStorageKey);
 
-    if (!savedLogo) {
+    if (!savedLogo?.trim()) {
+      this.introLogoUrl = this.defaultIntroLogoUrl;
       return;
     }
 
-    this.introLogoUrl = savedLogo;
+    this.introLogoUrl = savedLogo.trim();
   }
 
   private persistIntroLogo(): void {
-    localStorage.setItem(ExperienciaPage.logoDraftStorageKey, this.introLogoUrl);
+    localStorage.setItem(ExperienciaPage.logoDraftStorageKey, this.introLogoUrl?.trim() || this.defaultIntroLogoUrl);
   }
 
   private restoreFormationCopy(): void {

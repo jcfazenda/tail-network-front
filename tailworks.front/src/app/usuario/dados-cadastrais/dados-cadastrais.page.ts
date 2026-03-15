@@ -76,7 +76,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   photoPreviewUrl = '';
   photoFileName = '';
   photoError = '';
-  formationLogoUrl = '/assets/images/logo-estacio.png';
+  formationLogoUrl = '/assets/images/formacao-default.png';
   formationCopy: FormationCopyDraft = {
     graduation: 'Bacharelado em Sistemas de Informação',
     specialization: 'Especialização em Arquitetura de Software',
@@ -146,7 +146,9 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   }
 
   openFormationSection(): void {
-    this.scrollToSection('usuario-formacao', '/usuario/dados-cadastrais/formacao');
+    void this.router.navigate(['/usuario/dados-cadastrais'], {
+      queryParams: { modal: 'formacao' },
+    });
   }
 
   private formatPhone(digits: string): string {
@@ -226,11 +228,12 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   private restoreFormationLogo(): void {
     const savedLogo = localStorage.getItem(DadosCadastraisPage.logoDraftStorageKey);
 
-    if (!savedLogo) {
+    if (!savedLogo?.trim()) {
+      this.formationLogoUrl = '/assets/images/formacao-default.png';
       return;
     }
 
-    this.formationLogoUrl = savedLogo;
+    this.formationLogoUrl = savedLogo.trim();
   }
 
   private persistDraft(): void {

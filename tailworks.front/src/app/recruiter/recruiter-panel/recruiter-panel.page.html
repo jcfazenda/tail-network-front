@@ -1,0 +1,189 @@
+<section class="recruiter-panel">
+  <header class="recruiter-panel__hero">
+    <div class="recruiter-panel__hero-copy">
+      <span class="recruiter-panel__eyebrow">Operacao de recruiters</span>
+      <h1>Time de recrutamento</h1>
+      <p>Cadastre, acompanhe e ajuste o nivel de acesso dos recruiters da empresa.</p>
+    </div>
+
+    <div class="recruiter-panel__hero-actions">
+      <a
+        *ngIf="canManageDirectory"
+        class="recruiter-panel__primary-action"
+        routerLink="/recruiter/cadastro"
+        [queryParams]="{ company: currentRecruiter.company }"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">person_add</span>
+        <span>Novo recruiter</span>
+      </a>
+
+      <div class="recruiter-panel__workspace">
+        <strong>{{ currentRecruiter.company }}</strong>
+        <span>{{ currentRecruiter.name }} · {{ currentRecruiter.isMaster ? 'Master' : 'Subordinado' }}</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="recruiter-panel__metrics" aria-label="Resumo do time">
+    <article class="recruiter-panel__metric-card">
+      <span>Total de recruiters</span>
+      <strong>{{ totalRecruiters }}</strong>
+      <small>Base ativa desta empresa</small>
+    </article>
+
+    <article class="recruiter-panel__metric-card">
+      <span>Ativos</span>
+      <strong>{{ activeRecruiters }}</strong>
+      <small>Recruiters operando agora</small>
+    </article>
+
+    <article class="recruiter-panel__metric-card">
+      <span>Masters</span>
+      <strong>{{ masterRecruiters }}</strong>
+      <small>Lideranca com visao ampla</small>
+    </article>
+
+    <article class="recruiter-panel__metric-card">
+      <span>Operacao</span>
+      <strong>{{ inactiveRecruiters }}</strong>
+      <small>{{ recruiterCoverageLabel }}</small>
+    </article>
+  </section>
+
+  <section class="recruiter-panel__toolbar">
+    <div class="recruiter-panel__search">
+      <span class="material-symbols-rounded" aria-hidden="true">search</span>
+      <input
+        type="search"
+        placeholder="Buscar recruiter, email, area ou cargo"
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+
+    <div class="recruiter-panel__filters" aria-label="Filtrar recruiters">
+      <button
+        class="recruiter-panel__filter-chip"
+        type="button"
+        [class.recruiter-panel__filter-chip--active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        Todos
+      </button>
+
+      <button
+        class="recruiter-panel__filter-chip"
+        type="button"
+        [class.recruiter-panel__filter-chip--active]="statusFilter === 'active'"
+        (click)="setStatusFilter('active')"
+      >
+        Ativos
+      </button>
+
+      <button
+        class="recruiter-panel__filter-chip"
+        type="button"
+        [class.recruiter-panel__filter-chip--active]="statusFilter === 'inactive'"
+        (click)="setStatusFilter('inactive')"
+      >
+        Inativos
+      </button>
+    </div>
+  </section>
+
+  <section class="recruiter-panel__cards" aria-label="Lista de recruiters">
+    <article class="recruiter-card" *ngFor="let recruiter of filteredRecruiters; trackBy: trackRecruiter">
+      <div class="recruiter-card__header">
+        <div class="recruiter-card__identity">
+          <div
+            class="recruiter-card__avatar"
+            [class.recruiter-card__avatar--image]="true"
+            [style.backgroundImage]="'url(' + defaultRecruiterAvatarUrl + ')'"
+          ></div>
+
+          <div class="recruiter-card__copy">
+            <strong>{{ recruiter.name }}</strong>
+            <span>{{ recruiter.role }}</span>
+          </div>
+        </div>
+
+        <div class="recruiter-card__status">
+          <span
+            class="recruiter-card__pill"
+            [class.recruiter-card__pill--active]="recruiter.active"
+            [class.recruiter-card__pill--inactive]="!recruiter.active"
+          >
+            {{ recruiter.active ? 'Ativo' : 'Inativo' }}
+          </span>
+
+          <span class="recruiter-card__pill recruiter-card__pill--master" *ngIf="recruiter.isMaster">
+            Master
+          </span>
+        </div>
+      </div>
+
+      <div class="recruiter-card__meta">
+        <div>
+          <span class="recruiter-card__meta-label">Empresa</span>
+          <strong>{{ recruiter.company }}</strong>
+        </div>
+
+        <div>
+          <span class="recruiter-card__meta-label">Visao</span>
+          <strong>{{ viewScopeLabel(recruiter.viewScope) }}</strong>
+        </div>
+
+        <div>
+          <span class="recruiter-card__meta-label">Contato</span>
+          <strong>{{ recruiter.email }}</strong>
+        </div>
+      </div>
+
+      <div class="recruiter-card__areas">
+        <span class="recruiter-card__tag recruiter-card__tag--company" *ngFor="let company of recruiter.managedCompanies">
+          {{ company }}
+        </span>
+      </div>
+
+      <div class="recruiter-card__areas">
+        <span class="recruiter-card__tag" *ngFor="let area of recruiter.areas">{{ area }}</span>
+      </div>
+
+      <div class="recruiter-card__permissions">
+        <span class="recruiter-card__permission" *ngFor="let badge of permissionBadges(recruiter)">
+          {{ badge }}
+        </span>
+      </div>
+
+      <p class="recruiter-card__notes" *ngIf="recruiter.notes">{{ recruiter.notes }}</p>
+
+      <div class="recruiter-card__actions">
+        <a
+          class="recruiter-card__action recruiter-card__action--primary"
+          routerLink="/recruiter/cadastro"
+          [queryParams]="{ edit: recruiter.id, company: recruiter.company }"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+          <span>Editar</span>
+        </a>
+
+        <button
+          class="recruiter-card__action"
+          type="button"
+          [disabled]="!canManageDirectory || recruiter.id === currentRecruiter.id"
+          (click)="toggleRecruiterActive(recruiter)"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">
+            {{ recruiter.active ? 'pause_circle' : 'play_circle' }}
+          </span>
+          <span>{{ recruiter.active ? 'Desativar' : 'Ativar' }}</span>
+        </button>
+      </div>
+    </article>
+
+    <article class="recruiter-panel__empty" *ngIf="filteredRecruiters.length === 0">
+      <span class="material-symbols-rounded" aria-hidden="true">search_off</span>
+      <strong>Nenhum recruiter encontrado</strong>
+      <p>Ajuste os filtros ou cadastre um novo recruiter para esta empresa.</p>
+    </article>
+  </section>
+</section>

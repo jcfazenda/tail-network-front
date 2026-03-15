@@ -1,0 +1,331 @@
+.empresa-page {
+  display: grid;
+  gap: 22px;
+}
+
+.empresa-page__hero,
+.empresa-page__metrics,
+.empresa-page__toolbar,
+.empresa-page__cards {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 251, 0.98));
+  border: 1px solid rgba(212, 219, 228, 0.7);
+  border-radius: 28px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.empresa-page__hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 28px 30px;
+}
+
+.empresa-page__hero-copy {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+}
+
+.empresa-page__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(238, 120, 48, 0.12);
+  color: #a84d17;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.empresa-page__hero h1 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 38px);
+  color: #172033;
+}
+
+.empresa-page__hero p {
+  margin: 0;
+  color: #5f6c7f;
+  line-height: 1.6;
+}
+
+.empresa-page__primary-action,
+.empresa-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(219, 225, 233, 0.92);
+  background: rgba(255, 255, 255, 0.9);
+  color: #283447;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.empresa-page__primary-action,
+.empresa-card__action--primary {
+  background: linear-gradient(135deg, #1d2433, #34405a);
+  border-color: rgba(29, 36, 51, 0.9);
+  color: #fff;
+}
+
+.empresa-page__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 18px;
+}
+
+.empresa-page__metric-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(227, 232, 239, 0.9);
+}
+
+.empresa-page__metric-card span,
+.empresa-page__metric-card small {
+  color: #6a7688;
+}
+
+.empresa-page__metric-card strong {
+  font-size: 28px;
+  color: #182133;
+}
+
+.empresa-page__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.empresa-page__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 360px;
+  min-height: 50px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 223, 232, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.empresa-page__search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+
+.empresa-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.empresa-page__filter-chip {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(215, 222, 231, 0.92);
+  background: rgba(255, 255, 255, 0.94);
+  color: #607085;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.empresa-page__filter-chip--active {
+  background: rgba(39, 46, 64, 0.96);
+  border-color: rgba(39, 46, 64, 0.96);
+  color: #fff;
+}
+
+.empresa-page__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.empresa-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(224, 230, 238, 0.92);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.empresa-card__head,
+.empresa-card__identity,
+.empresa-card__actions {
+  display: flex;
+  align-items: center;
+}
+
+.empresa-card__head,
+.empresa-card__actions {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.empresa-card__identity {
+  gap: 12px;
+}
+
+.empresa-card__avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(28, 36, 54, 0.96), rgba(82, 95, 122, 0.92));
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  background-size: cover;
+  background-position: center;
+}
+
+.empresa-card__avatar--image {
+  color: transparent;
+}
+
+.empresa-card__copy {
+  display: grid;
+  gap: 4px;
+}
+
+.empresa-card__copy strong {
+  color: #172033;
+  font-size: 15px;
+}
+
+.empresa-card__copy span,
+.empresa-card__description,
+.empresa-card__stats,
+.empresa-card__hint {
+  color: #687587;
+}
+
+.empresa-card__pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(80, 168, 121, 0.12);
+  color: #2d8353;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.empresa-card__pill--inactive {
+  background: rgba(133, 146, 164, 0.14);
+  color: #687587;
+}
+
+.empresa-card__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.empresa-card__meta div {
+  display: grid;
+  gap: 4px;
+}
+
+.empresa-card__meta-label {
+  color: #7b8697;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.empresa-card__meta strong {
+  color: #1f2a3c;
+  font-size: 13px;
+}
+
+.empresa-card__description,
+.empresa-card__hint,
+.empresa-page__empty p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.empresa-card__stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.empresa-card__actions {
+  flex-wrap: wrap;
+}
+
+.empresa-card__action:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.empresa-page__empty {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 54px 20px;
+  border-radius: 24px;
+  border: 1px dashed rgba(207, 214, 224, 0.92);
+  color: #687587;
+  text-align: center;
+}
+
+.empresa-page__empty strong {
+  color: #202a3b;
+}
+
+@media (max-width: 1180px) {
+  .empresa-page__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 920px) {
+  .empresa-page__hero,
+  .empresa-page__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .empresa-page__cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .empresa-page__metrics,
+  .empresa-card__meta {
+    grid-template-columns: 1fr;
+  }
+}
