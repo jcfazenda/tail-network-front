@@ -379,7 +379,9 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   get radarCategories(): RadarCategory[] {
     const selectedIds = new Set(this.selectedRadarCategoryIds);
-    return this.allRadarCategories.filter((category) => selectedIds.has(category.id));
+    return this.allRadarCategories
+      .filter((category) => selectedIds.has(category.id))
+      .sort((left, right) => right.value - left.value || left.label.localeCompare(right.label, 'pt-BR'));
   }
 
   get hiringTrendChartPoints(): HiringTrendChartPoint[] {
