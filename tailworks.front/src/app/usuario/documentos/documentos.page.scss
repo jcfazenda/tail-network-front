@@ -1,15 +1,10 @@
 :host{
-  display: block;
-  min-height: 100%;
-  background: transparent;
-}
-
-.candidate-documents{
   display: grid;
   width: 100%;
+  min-height: 100%;
   gap: 24px;
-  max-width: none;
-  margin: 18px 0 0;
+  margin-top: 18px;
+  background: transparent;
 }
 
 .candidate-documents__intro{
@@ -634,7 +629,7 @@
 }
 
 @media (max-width: 720px){
-  .candidate-documents{
+  :host{
     gap: 18px;
     margin-top: 10px;
   }
