@@ -140,35 +140,42 @@
                                 <span>{{ processCompanyFollowers(job) }}</span>
                               </div>
 
-                              <div class="candidate-stack-summary__process-top-meta">
+                              <div class="candidate-stack-summary__process-top-meta candidate-stack-summary__process-top-meta--radar">
                                 <span class="candidate-stack-summary__process-top-meta-line candidate-stack-summary__process-top-meta-chip">
                                   {{ processCardWorkModel(job) }}
                                 </span>
-                                <span class="candidate-stack-summary__process-top-meta-line" *ngIf="jobCardSalary(job) as salary">
+                                <span
+                                  class="candidate-stack-summary__process-top-meta-line candidate-stack-summary__process-top-meta-salary"
+                                  *ngIf="jobCardSalary(job) as salary"
+                                >
                                   {{ salary }}
                                 </span>
                               </div>
                             </div>
 
-                            <div class="candidate-stack-summary__process-radar-location">
+                            <div class="candidate-stack-summary__process-radar-context">
                               <span>{{ processCardLocation(job) }}</span>
-                            </div>
-
-                            <div class="candidate-stack-summary__process-title-row candidate-stack-summary__process-title-row--radar">
-                              <h3 class="candidate-stack-summary__process-title candidate-stack-summary__process-title--radar">{{ job.title }}</h3>
-                            </div>
-
-                            <div class="candidate-stack-summary__process-match candidate-stack-summary__process-match--radar">
-                              <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
-                                <span
-                                  class="candidate-stack-summary__process-match-fill"
-                                  [style.width.%]="job.match"
-                                  [style.background]="processJobBarFill(job)"
-                                ></span>
-                              </span>
-                              <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
+                              <span class="candidate-stack-summary__process-radar-context-separator" aria-hidden="true"></span>
+                              <span>{{ processCardSeniority(job) }}</span>
                             </div>
                           </div>
+                        </div>
+
+                        <div class="candidate-stack-summary__process-title-row candidate-stack-summary__process-title-row--radar candidate-stack-summary__process-title-row--radar-hero">
+                          <h3 class="candidate-stack-summary__process-title candidate-stack-summary__process-title--radar">{{ job.title }}</h3>
+                        </div>
+
+                        <div class="candidate-stack-summary__process-radar-match">
+                          <div class="candidate-stack-summary__process-radar-match-head">
+                            <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
+                          </div>
+                          <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
+                            <span
+                              class="candidate-stack-summary__process-match-fill"
+                              [style.width.%]="job.match"
+                              [style.background]="processJobBarFill(job)"
+                            ></span>
+                          </span>
                         </div>
                       </ng-container>
 

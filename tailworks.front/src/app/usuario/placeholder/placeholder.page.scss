@@ -1224,7 +1224,7 @@
   }
 
   .candidate-stack-summary__processes-list--radar{
-    --process-card-viewport-height: 144px;
+    --process-card-viewport-height: 158px;
   }
 }
 
@@ -1243,7 +1243,7 @@
   }
 
   .candidate-stack-summary__processes-list--radar{
-    --process-card-viewport-height: 140px;
+    --process-card-viewport-height: 154px;
   }
 }
 
@@ -1407,8 +1407,8 @@
 }
 
 .candidate-stack-summary__processes-list--radar{
-  --process-card-viewport-height: 126px;
-  max-height: calc((var(--process-card-viewport-height) * 3) + 24px);
+  --process-card-viewport-height: 152px;
+  max-height: calc((var(--process-card-viewport-height) * 3) + 28px);
 }
 
 .candidate-stack-summary__processes-list::-webkit-scrollbar{
@@ -1479,8 +1479,8 @@
 
 .candidate-stack-summary__process-radar-shell{
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
+  align-items: stretch;
+  gap: 12px;
   min-width: 0;
   width: 100%;
 }
@@ -1489,30 +1489,40 @@
   flex: 1 1 auto;
   min-width: 0;
   display: grid;
-  align-content: start;
-  gap: 6px;
+  align-content: stretch;
+  gap: 4px;
 }
 
 .candidate-stack-summary__process-radar-header{
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .candidate-stack-summary__process-company-copy--radar{
   gap: 2px;
+  min-width: 0;
 }
 
-.candidate-stack-summary__process-radar-location{
-  color: rgba(92, 92, 92, 0.74);
-  font-size: 11px;
-  line-height: 1.1;
-  font-weight: 500;
+.candidate-stack-summary__process-company-copy--radar strong,
+.candidate-stack-summary__process-company-copy--radar span{
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .candidate-stack-summary__process-title-row--radar{
-  margin-top: 0;
+  margin-top: 2px;
+}
+
+.candidate-stack-summary__process-title-row--radar-hero{
+  margin-top: 18px;
+  margin-bottom: -1px;
+  padding-inline-start: 6px;
 }
 
 .candidate-stack-summary__process-title--radar{
@@ -1520,9 +1530,52 @@
   line-height: 1.08;
 }
 
-.candidate-stack-summary__process-match--radar{
-  margin-top: auto;
-  gap: 8px;
+.candidate-stack-summary__process-radar-context{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: rgba(92, 92, 92, 0.74);
+  font-size: 11px;
+  line-height: 1.12;
+  font-weight: 500;
+}
+
+.candidate-stack-summary__process-radar-context > span{
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.candidate-stack-summary__process-radar-context-separator{
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.78);
+  flex: 0 0 auto;
+}
+
+.candidate-stack-summary__process-radar-match{
+  width: 100%;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.candidate-stack-summary__process-radar-match-head{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
+.candidate-stack-summary__process-top-meta-salary{
+  color: rgba(30, 30, 30, 0.94);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .candidate-stack-summary__process-header{
@@ -1825,6 +1878,25 @@
   .candidate-stack-summary__process-match-value{
     font-size: 14px;
   }
+
+  .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-company-logo{
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+
+  .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-top-meta{
+    min-width: 78px;
+  }
+
+  .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-title--radar{
+    font-size: 16px;
+  }
+
+  .candidate-stack-summary__process-radar-context{
+    font-size: 10px;
+  }
+
 }
 
 @container process-card (max-width: 430px){
@@ -1847,14 +1919,14 @@
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-surface{
   gap: 0;
-  padding: 12px 14px;
+  padding: 14px;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-company-logo{
-  width: 88px;
-  height: 88px;
-  border-radius: 20px;
-  font-size: 18px;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  font-size: 16px;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-company-copy{
@@ -1863,21 +1935,22 @@
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-company-copy strong{
   font-size: 13px;
-  line-height: 1.05;
+  line-height: 1.08;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-company-copy span{
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.1;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-top-meta{
-  gap: 6px;
-  min-width: auto;
+  gap: 4px;
+  min-width: 92px;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-top-meta-line{
   font-size: 11px;
+  line-height: 1.05;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-top-meta-chip{
@@ -1891,14 +1964,25 @@
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-match-value{
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-title-row--radar{
   min-width: 0;
+  margin-top: 2px;
+}
+
+.candidate-stack-summary__process-card--radar .candidate-stack-summary__process-title-row--radar-hero{
+  margin-top: 18px;
+  margin-bottom: -1px;
+  padding-inline-start: 6px;
 }
 
 .candidate-stack-summary__process-card--radar .candidate-stack-summary__process-title--radar{
+  font-size: 17px;
+  line-height: 1.08;
+  font-weight: 500;
+  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4188,7 +4272,7 @@
   }
 
   .candidate-stack-summary__processes-list--radar{
-    --process-card-viewport-height: 136px;
+    --process-card-viewport-height: 160px;
   }
 
   .candidate-hiring-trend{
