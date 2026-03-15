@@ -1,107 +1,137 @@
 <section class="candidate-stacks">
   <header class="candidate-stacks__intro">
     <h1>Suas Stacks</h1>
-    <p>Adicione abaixo as tecnologias nas quais voce tem experiencia e prazer em trabalhar.</p>
+    <p class="candidate-stacks__lead">
+      Selecione uma categoria e marque o seu nivel em cada tecnologia. Isso ajuda o Radar a entender seu perfil com mais precisão.
+    </p>
+    <p class="candidate-stacks__hint">
+      Comece pelo que você domina hoje, depois complete com extras que somam na sua atuação.
+    </p>
   </header>
 
-  <div class="candidate-stacks__form-card">
-    <div class="candidate-stacks__main">
-      <div class="candidate-stacks__toolbar">
-        <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
-          <app-alcance-radar
-            title=""
-            [score]="radarPreviewScore"
-            [showGaugeLabel]="false"
-            [items]="radarPreviewItems"
-          />
-        </div>
+  <div class="candidate-stacks__toolbar">
+    <div class="candidate-stacks__radar-preview" aria-label="Prévia do alcance do radar">
+      <app-alcance-radar
+        title=""
+        [score]="radarPreviewScore"
+        [showGaugeLabel]="false"
+        [items]="radarPreviewItems"
+      />
+    </div>
+  </div>
+
+  <div class="candidate-stacks__editor-area">
+    <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
+
+    <div class="candidate-stacks__section">
+      <div class="candidate-stacks__section-head">
+        <h2>Stacks principais</h2>
+        <p>O núcleo do que você faz bem (3 a 10 stacks no total).</p>
       </div>
 
-      <div class="candidate-stacks__editor-area">
-        <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
-
-        <div class="candidate-stacks__stack-box">
-          <div class="candidate-stacks__stack-head">
-            <p class="candidate-stacks__stack-lead">Adicione outras tecnologias (3 a 10 termos).</p>
-
-            <button
-              class="candidate-stacks__add-button"
-              type="button"
-              (click)="openCreateStackModal()"
-              aria-label="Adicionar nova stack"
-              title="Adicionar nova stack"
+      <div class="candidate-stacks__category-layout">
+        <div class="candidate-stacks__category-controls">
+          <div class="candidate-stacks__radio-group" role="radiogroup" aria-label="Categorias de stacks principais">
+            <label
+              class="candidate-stacks__radio"
+              *ngFor="let category of uiCategories"
+              [class.candidate-stacks__radio--checked]="selectedPrimaryCategory === category"
             >
-              <span class="material-symbols-rounded" aria-hidden="true">add</span>
-            </button>
-          </div>
-
-          <div class="candidate-stacks__stack-list">
-            <div
-              *ngFor="let stack of stacks; let index = index; trackBy: trackByStackName"
-              class="candidate-stacks__stack-item"
-            >
-              <div class="candidate-stacks__stack-item-meta">
-                <button
-                  class="candidate-stacks__stack-item-edit"
-                  type="button"
-                  (click)="openEditStackModal(index)"
-                  [attr.aria-label]="'Editar descrição de ' + stack.name"
-                >
-                  <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                </button>
-                <span class="candidate-stacks__stack-item-name">{{ stack.name }}</span>
-                <button
-                  *ngIf="stack.description"
-                  class="candidate-stacks__stack-item-info"
-                  type="button"
-                  (click)="toggleStackDescription(index)"
-                  [class.candidate-stacks__stack-item-info--active]="expandedDescriptionIndex === index"
-                  [attr.aria-label]="(expandedDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
-                >
-                  <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                </button>
-              </div>
-
-              <div class="candidate-stacks__stack-item-progress">
-                <div
-                  class="candidate-stacks__stack-item-slider"
-                  [style.--stack-progress]="stack.knowledge + '%'"
-                >
-                  <input
-                    class="candidate-stacks__stack-item-range"
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="1"
-                    [value]="stack.knowledge"
-                    (input)="updateStackKnowledge(index, $any($event.target).value)"
-                    [attr.aria-label]="'Ajustar percentual de ' + stack.name"
-                  />
-                </div>
-                <span class="candidate-stacks__stack-item-value">{{ stack.knowledge }}%</span>
-                <button
-                  class="candidate-stacks__stack-item-remove"
-                  type="button"
-                  (click)="removeStack(index)"
-                  [attr.aria-label]="'Remover ' + stack.name"
-                >
-                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
-                </button>
-              </div>
-
-              <div
-                class="candidate-stacks__stack-item-description"
-                *ngIf="expandedDescriptionIndex === index && stack.description"
-                [innerHTML]="stack.description"
+              <input
+                type="radio"
+                name="primary-category"
+                [value]="category"
+                [checked]="selectedPrimaryCategory === category"
+                (change)="selectPrimaryCategory(category)"
+              />
+              <span class="candidate-stacks__radio-dot" aria-hidden="true"></span>
+              <span class="candidate-stacks__radio-label">{{ categoryLabels[category] }}</span>
+              <span
+                class="candidate-stacks__radio-count"
+                [class.candidate-stacks__radio-count--zero]="getCategoryCount('primary', category) === 0"
+                [attr.aria-label]="'Stacks nessa categoria: ' + getCategoryCount('primary', category)"
               >
+                {{ getCategoryCount('primary', category) }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="candidate-stacks__category-side">
+          <div class="candidate-stacks__category-topbar" *ngIf="showPrimaryCategoryPanel && selectedPrimaryCategory">
+            <div class="candidate-stacks__category-title">
+              <div class="candidate-stacks__category-title-main">{{ categoryLabels[selectedPrimaryCategory] }}</div>
+              <div class="candidate-stacks__category-title-sub">
+                Ajuste os percentuais abaixo. Tudo acima de 0% entra no seu perfil e passa a contar no Radar.
               </div>
             </div>
           </div>
-        </div>
 
-        <p class="candidate-stacks__helper">
+          <div
+            class="candidate-stacks__category-box candidate-stacks__category-box--dashed"
+            *ngIf="showPrimaryCategoryPanel && selectedPrimaryCategory"
+          >
+            <div class="candidate-stacks__category-head">
+            </div>
+
+            <div class="candidate-stacks__repo" *ngIf="primaryRepoOptions.length; else emptyPrimaryRepo">
+              <div class="candidate-stacks__repo-rows" aria-label="Stacks do repositório">
+                <div *ngFor="let item of primaryRepoOptions" class="candidate-stacks__repo-row">
+                  <div class="candidate-stacks__repo-row-left">
+                  <button
+                    class="candidate-stacks__stack-item-edit"
+                    type="button"
+                    (click)="openRepoStackDescription('primary', item)"
+                    [attr.aria-label]="'Editar descrição de ' + item.name"
+                    title="Editar descrição"
+                  >
+                    <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                  </button>
+                  <span class="candidate-stacks__repo-row-name">{{ item.name }}</span>
+                </div>
+
+                <div class="candidate-stacks__repo-row-right">
+                  <div
+                    class="candidate-stacks__stack-item-slider"
+                    [style.--stack-progress]="getRepoKnowledge('primary', item.id) + '%'"
+                    [class.candidate-stacks__stack-item-slider--muted]="getRepoKnowledge('primary', item.id) < 10"
+                    [class.candidate-stacks__stack-item-slider--cold]="getRepoKnowledge('primary', item.id) >= 10 && getRepoKnowledge('primary', item.id) < 45"
+                    [class.candidate-stacks__stack-item-slider--hot]="getRepoKnowledge('primary', item.id) >= 45"
+                  >
+                    <input
+                      class="candidate-stacks__stack-item-range"
+                      type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        [value]="getRepoKnowledge('primary', item.id)"
+                        (input)="updateRepoKnowledge('primary', item, $any($event.target).value)"
+                        [attr.aria-label]="'Definir percentual de ' + item.name"
+                      />
+                    </div>
+                    <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <ng-template #emptyPrimaryRepo>
+            <div class="candidate-stacks__category-empty">
+              <span class="candidate-stacks__category-empty-dot" aria-hidden="true"></span>
+              <span>Nenhuma sugestão disponível para essa categoria ainda.</span>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="candidate-stacks__helper">
+      <div class="candidate-stacks__helper-left">
+        <span class="material-symbols-rounded" aria-hidden="true">info</span>
+        <span>
           Mova os percentuais para ver sua aderência e alcance no Ecossistema.
-        </p>
+        </span>
       </div>
     </div>
   </div>
@@ -128,6 +158,20 @@
           [(ngModel)]="stackDraftName"
           placeholder="Ex: Kubernetes"
         />
+      </label>
+
+      <label class="candidate-stacks__modal-field">
+        <span class="candidate-stacks__modal-label">Tipo</span>
+        <select [(ngModel)]="stackDraftCategory">
+          <option value="backend">Back-end</option>
+          <option value="frontend">Front-end</option>
+          <option value="database">Banco de dados</option>
+          <option value="cloud">Cloud</option>
+          <option value="devops">DevOps</option>
+          <option value="data">Dados</option>
+          <option value="mobile">Mobile</option>
+          <option value="other">Outros</option>
+        </select>
       </label>
 
       <label class="candidate-stacks__modal-field">

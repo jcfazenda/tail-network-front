@@ -5,11 +5,36 @@ import { Router } from '@angular/router';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 
 type StackChip = {
+  id: string;
   name: string;
   short: string;
   tone: 'gold' | 'slate' | 'azure' | 'orange' | 'neutral';
+  category: StackCategory;
   knowledge: number;
   description: string;
+};
+
+type StackCategory =
+  | 'frontend'
+  | 'backend'
+  | 'database'
+  | 'devops'
+  | 'cloud'
+  | 'mobile'
+  | 'data'
+  | 'other';
+
+type StackGroup = 'primary' | 'extra';
+
+type StoredStacksDraft = {
+  primary: StackChip[];
+  extra: StackChip[];
+};
+
+type StackRepoItem = {
+  id: string;
+  name: string;
+  category: StackCategory;
 };
 
 type CandidateBasicProfile = {
@@ -36,7 +61,10 @@ type FormationCopyDraft = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StacksPage implements OnInit {
-  private static readonly storageKey = 'tailworks:candidate-stacks-draft:v2';
+  private static readonly storageKey = 'tailworks:candidate-stacks-draft:v5';
+  private static readonly legacyV4StorageKey = 'tailworks:candidate-stacks-draft:v4';
+  private static readonly legacyV3StorageKey = 'tailworks:candidate-stacks-draft:v3';
+  private static readonly legacyStorageKey = 'tailworks:candidate-stacks-draft:v2';
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly stackDescriptionMaxLength = 920;
@@ -52,12 +80,16 @@ export class StacksPage implements OnInit {
   ];
 
   stackError = '';
-  stacks: StackChip[] = [];
+  primaryStacks: StackChip[] = [];
+  extraStacks: StackChip[] = [];
   isStackModalOpen = false;
+  editingStackGroup: StackGroup = 'primary';
   editingStackIndex: number | null = null;
   stackDraftName = '';
+  stackDraftCategory: StackCategory = 'other';
   stackDraftDescription = '';
   stackModalError = '';
+  expandedDescriptionGroup: StackGroup = 'primary';
   expandedDescriptionIndex: number | null = null;
   @ViewChild('stackDescriptionEditor') private stackDescriptionEditor?: ElementRef<HTMLDivElement>;
   profile: CandidateBasicProfile = {
@@ -70,7 +102,81 @@ export class StacksPage implements OnInit {
     specialization: 'Especialização em Arquitetura de Software',
   };
 
-  readonly trackByStackName = (_index: number, stack: StackChip): string => stack.name;
+  readonly trackByStackId = (_index: number, stack: StackChip): string => stack.id;
+  readonly trackByStackEntryId = (_index: number, entry: { item: StackChip; index: number }): string => entry.item.id;
+  readonly uiCategories: StackCategory[] = ['backend', 'frontend', 'database', 'cloud', 'devops', 'mobile'];
+  readonly categoryLabels: Record<StackCategory, string> = {
+    frontend: 'Front-End',
+    backend: 'BackEnd .NET',
+    database: 'Banco de Dados',
+    devops: 'Devops',
+    cloud: 'Cloud',
+    mobile: 'Mobile',
+    data: 'Dados',
+    other: 'Outros',
+  };
+
+  selectedPrimaryCategory: StackCategory | null = null;
+  selectedExtraCategory: StackCategory | null = null;
+  showPrimaryCategoryPanel = false;
+  showExtraCategoryPanel = false;
+
+  readonly stackRepository: Partial<Record<StackCategory, StackRepoItem[]>> = {
+    backend: [
+      { id: 'repo:dotnet', name: '.NET', category: 'backend' },
+      { id: 'repo:csharp', name: 'C#', category: 'backend' },
+      { id: 'repo:aspnet-core', name: 'ASP.NET Core', category: 'backend' },
+      { id: 'repo:entity-framework', name: 'Entity Framework', category: 'backend' },
+      { id: 'repo:rest-api', name: 'REST APIs', category: 'backend' },
+      { id: 'repo:microservices', name: 'Microservices', category: 'backend' },
+      { id: 'repo:rabbitmq', name: 'RabbitMQ', category: 'backend' },
+      { id: 'repo:kafka', name: 'Kafka', category: 'backend' },
+    ],
+    frontend: [
+      { id: 'repo:typescript', name: 'TypeScript', category: 'frontend' },
+      { id: 'repo:javascript', name: 'JavaScript', category: 'frontend' },
+      { id: 'repo:angular', name: 'Angular', category: 'frontend' },
+      { id: 'repo:react', name: 'React', category: 'frontend' },
+      { id: 'repo:vue', name: 'Vue', category: 'frontend' },
+      { id: 'repo:nextjs', name: 'Next.js', category: 'frontend' },
+      { id: 'repo:html', name: 'HTML', category: 'frontend' },
+      { id: 'repo:css', name: 'CSS', category: 'frontend' },
+    ],
+    database: [
+      { id: 'repo:sql-server', name: 'SQL Server', category: 'database' },
+      { id: 'repo:postgresql', name: 'PostgreSQL', category: 'database' },
+      { id: 'repo:mysql', name: 'MySQL', category: 'database' },
+      { id: 'repo:mongodb', name: 'MongoDB', category: 'database' },
+      { id: 'repo:redis', name: 'Redis', category: 'database' },
+      { id: 'repo:elasticsearch', name: 'Elasticsearch', category: 'database' },
+    ],
+    cloud: [
+      { id: 'repo:aws', name: 'AWS', category: 'cloud' },
+      { id: 'repo:azure', name: 'Azure', category: 'cloud' },
+      { id: 'repo:gcp', name: 'GCP', category: 'cloud' },
+      { id: 'repo:cloudwatch', name: 'Cloud Monitoring', category: 'cloud' },
+      { id: 'repo:serverless', name: 'Serverless', category: 'cloud' },
+    ],
+    devops: [
+      { id: 'repo:docker', name: 'Docker', category: 'devops' },
+      { id: 'repo:kubernetes', name: 'Kubernetes', category: 'devops' },
+      { id: 'repo:terraform', name: 'Terraform', category: 'devops' },
+      { id: 'repo:github-actions', name: 'GitHub Actions', category: 'devops' },
+      { id: 'repo:gitlab-ci', name: 'GitLab CI', category: 'devops' },
+      { id: 'repo:linux', name: 'Linux', category: 'devops' },
+      { id: 'repo:nginx', name: 'Nginx', category: 'devops' },
+    ],
+    mobile: [
+      { id: 'repo:react-native', name: 'React Native', category: 'mobile' },
+      { id: 'repo:flutter', name: 'Flutter', category: 'mobile' },
+      { id: 'repo:kotlin', name: 'Kotlin', category: 'mobile' },
+      { id: 'repo:swift', name: 'Swift', category: 'mobile' },
+      { id: 'repo:android', name: 'Android', category: 'mobile' },
+      { id: 'repo:ios', name: 'iOS', category: 'mobile' },
+    ],
+  };
+
+  private cachedKnownRepoIds: Set<string> | null = null;
 
   get displayName(): string {
     return this.profile.name.trim() || 'Julio Fazenda';
@@ -112,6 +218,94 @@ export class StacksPage implements OnInit {
     return this.editingStackIndex !== null || this.stackDraftName.trim().length > 0;
   }
 
+  get primarySelectedEntries(): Array<{ item: StackChip; index: number }> {
+    if (!this.selectedPrimaryCategory) {
+      return [];
+    }
+
+    return this.getEntriesForCategory(this.primaryStacks, this.selectedPrimaryCategory);
+  }
+
+  get extraSelectedEntries(): Array<{ item: StackChip; index: number }> {
+    if (!this.selectedExtraCategory) {
+      return [];
+    }
+
+    return this.getEntriesForCategory(this.extraStacks, this.selectedExtraCategory);
+  }
+
+  get primaryRepoOptions(): StackRepoItem[] {
+    if (!this.selectedPrimaryCategory) {
+      return [];
+    }
+
+    return this.stackRepository[this.selectedPrimaryCategory] ?? [];
+  }
+
+  get extraRepoOptions(): StackRepoItem[] {
+    if (!this.selectedExtraCategory) {
+      return [];
+    }
+
+    return this.stackRepository[this.selectedExtraCategory] ?? [];
+  }
+
+  private getKnownRepoIds(): Set<string> {
+    if (this.cachedKnownRepoIds) {
+      return this.cachedKnownRepoIds;
+    }
+
+    const ids = new Set<string>();
+    Object.values(this.stackRepository)
+      .flatMap((items) => items ?? [])
+      .forEach((item) => ids.add(item.id));
+    this.cachedKnownRepoIds = ids;
+    return ids;
+  }
+
+  private sanitizeRestoredStacks(primary: StackChip[], extra: StackChip[]): StoredStacksDraft {
+    const knownRepoIds = this.getKnownRepoIds();
+    const sanitize = (items: StackChip[]): StackChip[] =>
+      items
+        .filter((item) => knownRepoIds.has(item.id))
+        .map((item) => this.normalizeStackChip(item))
+        .filter((item) => item.knowledge > 0);
+
+    return {
+      primary: sanitize(primary),
+      extra: sanitize(extra),
+    };
+  }
+
+  private looksLikeLegacySeedDraft(primary: unknown[], extra: unknown[]): boolean {
+    if (extra.length > 0) {
+      return false;
+    }
+
+    if (primary.length === 0 || primary.length > 10) {
+      return false;
+    }
+
+    const seedIds = new Set([
+      'repo:nodejs',
+      'repo:react',
+      'repo:postgresql',
+      'repo:aws',
+      'repo:docker',
+      'repo:react-native',
+    ]);
+
+    const items = primary as Array<Partial<StackChip> & { name?: string }>;
+
+    // Heurística: todos ids repo:* do seed, knowledge 10, sem descrição.
+    return items.every((item) => {
+      const id = typeof item.id === 'string' ? item.id : '';
+      const knowledge = typeof item.knowledge === 'number' ? item.knowledge : NaN;
+      const description = typeof item.description === 'string' ? item.description.trim() : '';
+      return seedIds.has(id) && knowledge === 10 && description.length === 0;
+    });
+  }
+
   ngOnInit(): void {
     this.restoreBasicDraft();
     this.restoreFormationCopy();
@@ -120,49 +314,194 @@ export class StacksPage implements OnInit {
 
     if (stored) {
       try {
-        const parsedStacks = JSON.parse(stored) as Array<Partial<StackChip> & { name: string }>;
-        this.stacks = parsedStacks.map((item) => this.createStackChip(item.name, item.knowledge, item.description));
+        const parsedDraft = JSON.parse(stored) as Partial<StoredStacksDraft>;
+        const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
+        const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
+        const restoredPrimary = primary
+          .filter((item): item is StackChip => Boolean(item?.name))
+          .map((item) => this.normalizeStackChip(item));
+        const restoredExtra = extra
+          .filter((item): item is StackChip => Boolean(item?.name))
+          .map((item) => this.normalizeStackChip(item));
+        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
+        this.primaryStacks = sanitized.primary;
+        this.extraStacks = sanitized.extra;
+        this.persistStacks();
         return;
       } catch {
         localStorage.removeItem(StacksPage.storageKey);
       }
     }
 
-    this.stacks = [
-      this.createStackChip('.NET / C#'),
-      this.createStackChip('Entity Framework'),
-      this.createStackChip('REST API'),
-      this.createStackChip('SQL Server'),
-      this.createStackChip('Azure'),
-    ];
+    const legacyV4 = localStorage.getItem(StacksPage.legacyV4StorageKey);
+
+    if (legacyV4) {
+      try {
+        const parsedDraft = JSON.parse(legacyV4) as Partial<StoredStacksDraft>;
+        const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
+        const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
+
+        // Versões anteriores semeavam automaticamente stacks em 10%. Se parecer seed, zera.
+        if (this.looksLikeLegacySeedDraft(primary, extra)) {
+          this.primaryStacks = [];
+          this.extraStacks = [];
+          this.persistStacks();
+          return;
+        }
+
+        const restoredPrimary = primary
+          .filter((item): item is StackChip => Boolean(item?.name))
+          .map((item) => this.normalizeStackChip(item));
+        const restoredExtra = extra
+          .filter((item): item is StackChip => Boolean(item?.name))
+          .map((item) => this.normalizeStackChip(item));
+        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
+        this.primaryStacks = sanitized.primary;
+        this.extraStacks = sanitized.extra;
+        this.persistStacks();
+        return;
+      } catch {
+        localStorage.removeItem(StacksPage.legacyV4StorageKey);
+      }
+    }
+
+    const legacyV3 = localStorage.getItem(StacksPage.legacyV3StorageKey);
+
+    if (legacyV3) {
+      try {
+        const parsedDraft = JSON.parse(legacyV3) as Partial<StoredStacksDraft>;
+        const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
+        const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
+        const restoredPrimary = primary
+          .filter((item): item is StackChip => Boolean(item?.name))
+          .map((item) => this.normalizeStackChip(item));
+        const restoredExtra = extra
+          .filter((item): item is StackChip => Boolean(item?.name))
+          .map((item) => this.normalizeStackChip(item));
+        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
+        this.primaryStacks = sanitized.primary;
+        this.extraStacks = sanitized.extra;
+        this.persistStacks();
+        return;
+      } catch {
+        localStorage.removeItem(StacksPage.legacyV3StorageKey);
+      }
+    }
+
+    const legacy = localStorage.getItem(StacksPage.legacyStorageKey);
+
+    if (legacy) {
+      try {
+        const parsedStacks = JSON.parse(legacy) as Array<Partial<StackChip> & { name: string }>;
+        const restoredPrimary = parsedStacks.map((item) => this.normalizeStackChip(item));
+        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, []);
+        this.primaryStacks = sanitized.primary;
+        this.extraStacks = sanitized.extra;
+        this.persistStacks();
+        return;
+      } catch {
+        localStorage.removeItem(StacksPage.legacyStorageKey);
+      }
+    }
+
+    // Início "zerado": o usuário escolhe a categoria e marca o percentual a partir do repositório.
+    this.primaryStacks = [];
+    this.extraStacks = [];
     this.persistStacks();
   }
 
-  openCreateStackModal(): void {
-    this.stackError = '';
+  getRepoKnowledge(group: StackGroup, repoId: string): number {
+    const list = this.getStacksList(group);
+    const found = list.find((item) => item.id === repoId);
+    return found?.knowledge ?? 0;
+  }
 
-    if (this.stacks.length >= this.maxStacks) {
+  getCategoryCount(group: StackGroup, category: StackCategory): number {
+    const list = this.getStacksList(group);
+    return list.reduce((acc, item) => acc + (item.category === category && item.knowledge >= 10 ? 1 : 0), 0);
+  }
+
+  updateRepoKnowledge(group: StackGroup, repoItem: StackRepoItem, rawValue: unknown): void {
+    this.stackError = '';
+    const nextValue = Math.max(0, Math.min(100, Math.round(Number(rawValue))));
+
+    const list = this.getStacksList(group);
+    const existingIndex = list.findIndex((item) => item.id === repoItem.id);
+
+    if (nextValue <= 0) {
+      if (existingIndex >= 0) {
+        list.splice(existingIndex, 1);
+        this.persistStacks();
+      }
+      return;
+    }
+
+    if (existingIndex < 0 && this.getAllStacks().length >= this.maxStacks) {
       this.stackError = 'Você pode adicionar até 10 stacks.';
       return;
     }
 
+    if (existingIndex >= 0) {
+      const existing = list[existingIndex];
+      existing.name = repoItem.name;
+      existing.short = repoItem.name;
+      existing.category = repoItem.category;
+      existing.knowledge = nextValue;
+    } else {
+      list.push(this.createStackChip(repoItem.name, nextValue, '', repoItem.category, repoItem.id));
+    }
+
+    this.persistStacks();
+  }
+
+  openRepoStackDescription(group: StackGroup, repoItem: StackRepoItem): void {
+    const list = this.getStacksList(group);
+    const index = list.findIndex((item) => item.id === repoItem.id);
+
+    if (index < 0) {
+      this.stackError = 'Defina um percentual acima de 0% para editar a descrição.';
+      return;
+    }
+
+    this.openEditStackModal(group, index);
+  }
+
+  openCreateStackModal(group: StackGroup, category?: StackCategory): void {
+    this.stackError = '';
+
+    if (this.getAllStacks().length >= this.maxStacks) {
+      this.stackError = 'Você pode adicionar até 10 stacks.';
+      return;
+    }
+
+    this.editingStackGroup = group;
     this.editingStackIndex = null;
     this.stackDraftName = '';
+    this.stackDraftCategory = category ?? 'other';
     this.stackDraftDescription = '';
     this.stackModalError = '';
     this.isStackModalOpen = true;
     this.scheduleEditorSync();
+
+    if (group === 'primary') {
+      this.showPrimaryCategoryPanel = true;
+    } else {
+      this.showExtraCategoryPanel = true;
+    }
   }
 
-  openEditStackModal(index: number): void {
-    const current = this.stacks[index];
+  openEditStackModal(group: StackGroup, index: number): void {
+    const list = this.getStacksList(group);
+    const current = list[index];
 
     if (!current) {
       return;
     }
 
+    this.editingStackGroup = group;
     this.editingStackIndex = index;
     this.stackDraftName = current.name;
+    this.stackDraftCategory = current.category;
     this.stackDraftDescription = current.description;
     this.stackModalError = '';
     this.isStackModalOpen = true;
@@ -171,8 +510,10 @@ export class StacksPage implements OnInit {
 
   closeStackModal(): void {
     this.isStackModalOpen = false;
+    this.editingStackGroup = 'primary';
     this.editingStackIndex = null;
     this.stackDraftName = '';
+    this.stackDraftCategory = 'other';
     this.stackDraftDescription = '';
     this.stackModalError = '';
   }
@@ -221,12 +562,14 @@ export class StacksPage implements OnInit {
     }
 
     if (this.editingStackIndex !== null) {
-      const current = this.stacks[this.editingStackIndex];
+      const list = this.getStacksList(this.editingStackGroup);
+      const current = list[this.editingStackIndex];
 
       if (!current) {
         return;
       }
 
+      current.category = this.stackDraftCategory;
       current.description = description;
       this.persistStacks();
       this.closeStackModal();
@@ -238,53 +581,75 @@ export class StacksPage implements OnInit {
       return;
     }
 
-    const duplicated = this.stacks.some((item) => item.name.toLowerCase() === trimmed.toLowerCase());
+    const duplicated = this.getAllStacks().some((item) => item.name.toLowerCase() === trimmed.toLowerCase());
 
     if (duplicated) {
       this.stackModalError = 'Essa stack já foi adicionada.';
       return;
     }
 
-    const nextItem = this.createStackChip(trimmed, undefined, description);
+    const inferredCategory = this.stackDraftCategory === 'other'
+      ? this.guessCategory(trimmed)
+      : this.stackDraftCategory;
+    const nextItem = this.createStackChip(trimmed, undefined, description, inferredCategory, this.createStackId(trimmed));
 
-    if (this.stacks.length >= this.maxStacks) {
+    if (this.getAllStacks().length >= this.maxStacks) {
       this.stackModalError = 'Você pode adicionar até 10 stacks.';
       return;
     }
 
-    this.stacks = [...this.stacks, nextItem];
+    const list = this.getStacksList(this.editingStackGroup);
+    if (this.editingStackGroup === 'primary') {
+      this.primaryStacks = [...list, nextItem];
+    } else {
+      this.extraStacks = [...list, nextItem];
+    }
     this.persistStacks();
     this.closeStackModal();
   }
 
-  removeStack(index: number): void {
-    if (!this.stacks[index]) {
+  removeStack(group: StackGroup, index: number): void {
+    const list = this.getStacksList(group);
+
+    if (!list[index]) {
       return;
     }
 
-    this.stacks = this.stacks.filter((_, itemIndex) => itemIndex !== index);
+    if (group === 'primary') {
+      this.primaryStacks = list.filter((_, itemIndex) => itemIndex !== index);
+    } else {
+      this.extraStacks = list.filter((_, itemIndex) => itemIndex !== index);
+    }
 
-    if (this.expandedDescriptionIndex === index) {
+    if (this.expandedDescriptionGroup === group && this.expandedDescriptionIndex === index) {
       this.expandedDescriptionIndex = null;
-    } else if (this.expandedDescriptionIndex !== null && this.expandedDescriptionIndex > index) {
+    } else if (this.expandedDescriptionGroup === group && this.expandedDescriptionIndex !== null && this.expandedDescriptionIndex > index) {
       this.expandedDescriptionIndex -= 1;
     }
 
     this.persistStacks();
   }
 
-  toggleStackDescription(index: number): void {
-    const current = this.stacks[index];
+  toggleStackDescription(group: StackGroup, index: number): void {
+    const list = this.getStacksList(group);
+    const current = list[index];
 
     if (!current?.description.trim()) {
+      return;
+    }
+
+    if (this.expandedDescriptionGroup !== group) {
+      this.expandedDescriptionGroup = group;
+      this.expandedDescriptionIndex = index;
       return;
     }
 
     this.expandedDescriptionIndex = this.expandedDescriptionIndex === index ? null : index;
   }
 
-  updateStackKnowledge(index: number, nextValue: number | string): void {
-    const current = this.stacks[index];
+  updateStackKnowledge(group: StackGroup, index: number, nextValue: number | string): void {
+    const list = this.getStacksList(group);
+    const current = list[index];
 
     if (!current) {
       return;
@@ -304,7 +669,7 @@ export class StacksPage implements OnInit {
   continueToExperience(): void {
     this.stackError = '';
 
-    if (this.stacks.length < 3) {
+    if (this.getAllStacks().length < 3) {
       this.stackError = 'Adicione pelo menos 3 stacks para continuar.';
       return;
     }
@@ -314,7 +679,11 @@ export class StacksPage implements OnInit {
   }
 
   private persistStacks(): void {
-    localStorage.setItem(StacksPage.storageKey, JSON.stringify(this.stacks));
+    const draft: StoredStacksDraft = {
+      primary: this.primaryStacks,
+      extra: this.extraStacks,
+    };
+    localStorage.setItem(StacksPage.storageKey, JSON.stringify(draft));
   }
 
   private scrollToSection(sectionId: string, fallbackRoute: string): void {
@@ -377,36 +746,46 @@ export class StacksPage implements OnInit {
     }
   }
 
-  private createStackChip(name: string, knowledge?: number, description = ''): StackChip {
+  private createStackChip(
+    name: string,
+    knowledge?: number,
+    description?: string,
+    category?: StackCategory,
+    id?: string,
+  ): StackChip {
     const normalized = name.trim();
     const lower = normalized.toLowerCase();
     const resolvedKnowledge = knowledge ?? this.getDefaultKnowledge(lower);
-    const resolvedDescription = description.trim();
+    const resolvedDescription = (description ?? '').trim();
+    const resolvedCategory = category ?? this.guessCategory(normalized);
+    const resolvedId = id?.trim() || this.createStackId(normalized);
 
     if (lower === '.net / c#' || lower === '.net' || lower === 'c#') {
-      return { name: '.NET / C#', short: '.N', tone: 'gold', knowledge: resolvedKnowledge, description: resolvedDescription };
+      return { id: resolvedId, name: '.NET / C#', short: '.N', tone: 'gold', category: resolvedCategory, knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'entity framework') {
-      return { name: 'Entity Framework', short: 'EF', tone: 'slate', knowledge: resolvedKnowledge, description: resolvedDescription };
+      return { id: resolvedId, name: 'Entity Framework', short: 'EF', tone: 'slate', category: resolvedCategory, knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'rest api') {
-      return { name: 'REST API', short: 'API', tone: 'azure', knowledge: resolvedKnowledge, description: resolvedDescription };
+      return { id: resolvedId, name: 'REST API', short: 'API', tone: 'azure', category: resolvedCategory, knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'sql server') {
-      return { name: 'SQL Server', short: 'SQL', tone: 'orange', knowledge: resolvedKnowledge, description: resolvedDescription };
+      return { id: resolvedId, name: 'SQL Server', short: 'SQL', tone: 'orange', category: resolvedCategory, knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     if (lower === 'azure') {
-      return { name: 'Azure', short: 'Az', tone: 'azure', knowledge: resolvedKnowledge, description: resolvedDescription };
+      return { id: resolvedId, name: 'Azure', short: 'Az', tone: 'azure', category: resolvedCategory, knowledge: resolvedKnowledge, description: resolvedDescription };
     }
 
     return {
+      id: resolvedId,
       name: normalized,
       short: this.getShortLabel(normalized),
       tone: 'neutral',
+      category: resolvedCategory,
       knowledge: resolvedKnowledge,
       description: resolvedDescription,
     };
@@ -448,6 +827,71 @@ export class StacksPage implements OnInit {
     return `${parts[0][0]}${parts[1][0]}`;
   }
 
+  private guessCategory(value: string): StackCategory {
+    const lower = value.toLowerCase();
+
+    const hasAny = (tokens: string[]): boolean => tokens.some((token) => lower.includes(token));
+
+    if (hasAny(['react', 'angular', 'vue', 'next', 'nuxt', 'svelte', 'typescript', 'javascript', 'html', 'css', 'sass', 'tailwind'])) {
+      return 'frontend';
+    }
+
+    if (hasAny(['.net', 'c#', 'java', 'kotlin', 'node', 'nestjs', 'express', 'spring', 'python', 'django', 'flask', 'go', 'golang', 'rust', 'php', 'laravel', 'rails', 'ruby', 'api', 'rest'])) {
+      return 'backend';
+    }
+
+    if (hasAny(['sql', 'postgres', 'postgresql', 'mysql', 'mariadb', 'oracle', 'mongodb', 'redis', 'dynamodb', 'cosmos', 'elasticsearch', 'cassandra', 'sqlite'])) {
+      return 'database';
+    }
+
+    if (hasAny(['docker', 'kubernetes', 'k8s', 'helm', 'terraform', 'ansible', 'ci', 'cd', 'jenkins', 'github actions', 'gitlab', 'devops'])) {
+      return 'devops';
+    }
+
+    if (hasAny(['aws', 'azure', 'gcp', 'google cloud', 'cloud', 'lambda', 's3', 'ec2', 'aks', 'eks'])) {
+      return 'cloud';
+    }
+
+    if (hasAny(['android', 'ios', 'swift', 'react native', 'flutter', 'dart', 'xamarin', 'mobile'])) {
+      return 'mobile';
+    }
+
+    if (hasAny(['data', 'etl', 'spark', 'hadoop', 'airflow', 'pandas', 'numpy', 'ml', 'machine learning', 'bi', 'power bi', 'tableau'])) {
+      return 'data';
+    }
+
+    return 'other';
+  }
+
+  private createStackId(label: string): string {
+    const slug = label
+      .toLocaleLowerCase('pt-BR')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    return `user:${slug}-${Math.random().toString(36).slice(2, 6)}`;
+  }
+
+  private normalizeStackChip(item: Partial<StackChip> & { name: string }): StackChip {
+    const inferredCategory = item.category ?? this.guessCategory(item.name);
+    const next = this.createStackChip(
+      item.name,
+      item.knowledge,
+      item.description,
+      inferredCategory,
+      item.id,
+    );
+
+    // Preserva knowledge salvo se vier válido.
+    if (typeof item.knowledge === 'number' && !Number.isNaN(item.knowledge)) {
+      next.knowledge = Math.max(0, Math.min(100, Math.round(item.knowledge)));
+    }
+
+    return next;
+  }
+
   private getDescriptionPlainText(value: string): string {
     if (!value.trim()) {
       return '';
@@ -461,5 +905,34 @@ export class StacksPage implements OnInit {
       .replace(/\u00a0/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
+  }
+
+  private getStacksList(group: StackGroup): StackChip[] {
+    return group === 'primary' ? this.primaryStacks : this.extraStacks;
+  }
+
+  private getAllStacks(): StackChip[] {
+    return [...this.primaryStacks, ...this.extraStacks];
+  }
+
+  selectPrimaryCategory(category: StackCategory): void {
+    this.selectedPrimaryCategory = category;
+    this.showPrimaryCategoryPanel = true;
+  }
+
+  selectExtraCategory(category: StackCategory): void {
+    this.selectedExtraCategory = category;
+    this.showExtraCategoryPanel = true;
+  }
+
+  private getEntriesForCategory(items: StackChip[], category: StackCategory): Array<{ item: StackChip; index: number }> {
+    return items
+      .map((item, index) => {
+        if (!item.category) {
+          item.category = this.guessCategory(item.name);
+        }
+        return { item, index };
+      })
+      .filter((entry) => entry.item.category === category);
   }
 }
