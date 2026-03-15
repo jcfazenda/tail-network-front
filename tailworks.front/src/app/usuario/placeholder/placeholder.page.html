@@ -4,6 +4,50 @@
       <div class="candidate-stack-summary__card">
         <div class="candidate-stack-summary__body">
           <div class="candidate-stack-summary__hero">
+            <div class="candidate-stack-summary__stack-prelude">
+              <div class="candidate-stack-summary__stack-prelude-head">
+                <div class="candidate-stack-summary__stack-kicker">Empresas com contratações recentes</div>
+                <button class="candidate-stack-summary__stack-prelude-period" type="button">
+                  <span>Atual</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+                </button>
+              </div>
+              <section class="candidate-week-radar" aria-label="Radar da semana">
+                <header class="candidate-week-radar__head">
+                  <h4>Stacks mais contratadas</h4>
+                  <button
+                    class="candidate-week-radar__menu"
+                    type="button"
+                    aria-label="Selecionar stacks para mostrar"
+                    (click)="openRadarCategoryPicker()"
+                  >
+                    <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+                  </button>
+                </header>
+
+                <div class="candidate-week-radar__subtitle">
+                  <span><strong>{{ radarTotal }}</strong> novas contratações</span>
+                  <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
+                </div>
+
+                <div class="candidate-week-radar__bars">
+                  <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
+                    <div class="candidate-week-radar__label">
+                      <span class="candidate-week-radar__dot" [style.background]="cat.color"></span>
+                      {{ cat.label }}
+                    </div>
+
+                    <div class="candidate-week-radar__track">
+                      <div class="candidate-week-radar__rail" aria-hidden="true">
+                        <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
+                      </div>
+                      <div class="candidate-week-radar__value">{{ cat.value }}%</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
             <div class="candidate-stack-summary__top-shell">
               <div class="candidate-stack-summary__top-shell-bar">
                 <div class="candidate-stack-summary__top-shell-filters" role="tablist" aria-label="Resumo de processos">
@@ -56,6 +100,7 @@
               <section class="candidate-stack-summary__processes" *ngIf="overviewShellJobs.length; else overviewShellEmpty">
                 <div
                   class="candidate-stack-summary__processes-list"
+                  [class.candidate-stack-summary__processes-list--radar]="activeOverviewShellView === 'radar'"
                   [class.candidate-stack-summary__processes-list--dragging]="processCardsDragging"
                   (pointerdown)="processCardsHandlePointerDown($event)"
                   (pointermove)="processCardsHandlePointerMove($event)"
@@ -63,19 +108,24 @@
                   (pointercancel)="processCardsHandlePointerUp($event)"
                   (pointerleave)="processCardsHandlePointerUp($event)"
                 >
-                  <article class="candidate-stack-summary__process-card" *ngFor="let job of orderedProcessJobs">
+                  <article
+                    class="candidate-stack-summary__process-card"
+                    [class.candidate-stack-summary__process-card--radar]="activeOverviewShellView === 'radar'"
+                    *ngFor="let job of orderedProcessJobs"
+                  >
                     <div
                       class="candidate-stack-summary__process-surface"
+                      [class.candidate-stack-summary__process-surface--radar]="activeOverviewShellView === 'radar'"
                       role="button"
                       tabindex="0"
                       (click)="handleProcessCardClick(job.id, $event)"
                       (keydown.enter)="openJobPanel(job.id)"
                       (keydown.space)="openJobPanel(job.id); $event.preventDefault()"
                     >
-                      <div class="candidate-stack-summary__process-header">
-                        <div class="candidate-stack-summary__process-company">
+                      <ng-container *ngIf="activeOverviewShellView === 'radar'; else processJourneyCard">
+                        <div class="candidate-stack-summary__process-radar-shell">
                           <div
-                            class="candidate-stack-summary__process-company-logo"
+                            class="candidate-stack-summary__process-company-logo candidate-stack-summary__process-company-logo--radar"
                             [class.candidate-stack-summary__process-company-logo--image]="!!processCompanyLogoUrl(job)"
                             [style.backgroundImage]="processCompanyLogoUrl(job) ? 'url(' + processCompanyLogoUrl(job) + ')' : null"
                             aria-hidden="true"
@@ -83,62 +133,113 @@
                             <span *ngIf="!processCompanyLogoUrl(job)">{{ processCompanyLogoLabel(job) }}</span>
                           </div>
 
-                          <div class="candidate-stack-summary__process-company-copy">
-                            <strong>{{ job.company }}</strong>
-                            <span>{{ processCompanyFollowers(job) }}</span>
+                          <div class="candidate-stack-summary__process-radar-body">
+                            <div class="candidate-stack-summary__process-radar-header">
+                              <div class="candidate-stack-summary__process-company-copy candidate-stack-summary__process-company-copy--radar">
+                                <strong>{{ job.company }}</strong>
+                                <span>{{ processCompanyFollowers(job) }}</span>
+                              </div>
+
+                              <div class="candidate-stack-summary__process-top-meta">
+                                <span class="candidate-stack-summary__process-top-meta-line candidate-stack-summary__process-top-meta-chip">
+                                  {{ processCardWorkModel(job) }}
+                                </span>
+                                <span class="candidate-stack-summary__process-top-meta-line" *ngIf="jobCardSalary(job) as salary">
+                                  {{ salary }}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div class="candidate-stack-summary__process-radar-location">
+                              <span>{{ processCardLocation(job) }}</span>
+                            </div>
+
+                            <div class="candidate-stack-summary__process-title-row candidate-stack-summary__process-title-row--radar">
+                              <h3 class="candidate-stack-summary__process-title candidate-stack-summary__process-title--radar">{{ job.title }}</h3>
+                            </div>
+
+                            <div class="candidate-stack-summary__process-match candidate-stack-summary__process-match--radar">
+                              <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
+                                <span
+                                  class="candidate-stack-summary__process-match-fill"
+                                  [style.width.%]="job.match"
+                                  [style.background]="processJobBarFill(job)"
+                                ></span>
+                              </span>
+                              <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+
+                      <ng-template #processJourneyCard>
+                        <div class="candidate-stack-summary__process-header">
+                          <div class="candidate-stack-summary__process-company">
+                            <div
+                              class="candidate-stack-summary__process-company-logo"
+                              [class.candidate-stack-summary__process-company-logo--image]="!!processCompanyLogoUrl(job)"
+                              [style.backgroundImage]="processCompanyLogoUrl(job) ? 'url(' + processCompanyLogoUrl(job) + ')' : null"
+                              aria-hidden="true"
+                            >
+                              <span *ngIf="!processCompanyLogoUrl(job)">{{ processCompanyLogoLabel(job) }}</span>
+                            </div>
+
+                            <div class="candidate-stack-summary__process-company-copy">
+                              <strong>{{ job.company }}</strong>
+                              <span>{{ processCompanyFollowers(job) }}</span>
+                            </div>
+                          </div>
+
+                          <div class="candidate-stack-summary__process-top-meta">
+                            <span class="candidate-stack-summary__process-top-meta-line candidate-stack-summary__process-top-meta-chip">
+                              {{ processCardWorkModel(job) }}
+                            </span>
+                            <span class="candidate-stack-summary__process-top-meta-line" *ngIf="jobCardSalary(job) as salary">
+                              {{ salary }}
+                            </span>
                           </div>
                         </div>
 
-                        <div class="candidate-stack-summary__process-top-meta">
-                          <span class="candidate-stack-summary__process-top-meta-line candidate-stack-summary__process-top-meta-chip">
-                            {{ processCardWorkModel(job) }}
-                          </span>
-                          <span class="candidate-stack-summary__process-top-meta-line" *ngIf="jobCardSalary(job) as salary">
-                            {{ salary }}
-                          </span>
+                        <div class="candidate-stack-summary__process-meta-strip">
+                          <span>{{ processCardLocation(job) }}</span>
                         </div>
 
-                      </div>
+                        <div class="candidate-stack-summary__process-title-row">
+                          <h3 class="candidate-stack-summary__process-title">{{ job.title }}</h3>
+                        </div>
 
-                      <div class="candidate-stack-summary__process-meta-strip">
-                        <span>{{ processCardLocation(job) }}</span>
-                      </div>
-
-                      <div class="candidate-stack-summary__process-title-row">
-                        <h3 class="candidate-stack-summary__process-title">{{ job.title }}</h3>
-                      </div>
-
-                      <div class="candidate-stack-summary__process-journey">
-                        <div class="candidate-stack-summary__process-steps">
-                          <ng-container *ngFor="let step of processCardSteps(job); let last = last">
-                            <span
-                              class="candidate-stack-summary__process-step"
-                              [class.candidate-stack-summary__process-step--done]="step.state === 'done'"
-                              [class.candidate-stack-summary__process-step--active]="step.state === 'active'"
-                            >
-                              <span class="candidate-stack-summary__process-step-badge">
-                                <span
-                                  class="material-symbols-rounded"
-                                  aria-hidden="true"
-                                >{{ step.state === 'done' ? 'check' : step.state === 'active' ? 'schedule' : 'chevron_right' }}</span>
+                        <div class="candidate-stack-summary__process-journey">
+                          <div class="candidate-stack-summary__process-steps">
+                            <ng-container *ngFor="let step of processCardSteps(job); let last = last">
+                              <span
+                                class="candidate-stack-summary__process-step"
+                                [class.candidate-stack-summary__process-step--done]="step.state === 'done'"
+                                [class.candidate-stack-summary__process-step--active]="step.state === 'active'"
+                              >
+                                <span class="candidate-stack-summary__process-step-badge">
+                                  <span
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true"
+                                  >{{ step.state === 'done' ? 'check' : step.state === 'active' ? 'schedule' : 'chevron_right' }}</span>
+                                </span>
+                                <span class="candidate-stack-summary__process-step-label">{{ step.label }}</span>
                               </span>
-                              <span class="candidate-stack-summary__process-step-label">{{ step.label }}</span>
-                            </span>
-                            <span class="candidate-stack-summary__process-step-line" *ngIf="!last"></span>
-                          </ng-container>
+                              <span class="candidate-stack-summary__process-step-line" *ngIf="!last"></span>
+                            </ng-container>
+                          </div>
                         </div>
-                      </div>
 
-                      <div class="candidate-stack-summary__process-match">
-                        <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
-                          <span
-                            class="candidate-stack-summary__process-match-fill"
-                            [style.width.%]="job.match"
-                            [style.background]="processJobBarFill(job)"
-                          ></span>
-                        </span>
-                        <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
-                      </div>
+                        <div class="candidate-stack-summary__process-match">
+                          <span class="candidate-stack-summary__process-match-bar" aria-hidden="true">
+                            <span
+                              class="candidate-stack-summary__process-match-fill"
+                              [style.width.%]="job.match"
+                              [style.background]="processJobBarFill(job)"
+                            ></span>
+                          </span>
+                          <span class="candidate-stack-summary__process-match-value">{{ job.match }}%</span>
+                        </div>
+                      </ng-template>
                     </div>
                   </article>
                 </div>
@@ -147,50 +248,6 @@
               <ng-template #overviewShellEmpty>
                 <div class="empty candidate-stack-summary__processes-empty">{{ overviewShellEmptyMessage }}</div>
               </ng-template>
-            </div>
-
-            <div class="candidate-stack-summary__stack-prelude">
-              <div class="candidate-stack-summary__stack-prelude-head">
-                <div class="candidate-stack-summary__stack-kicker">Empresas com contratações recentes</div>
-                <button class="candidate-stack-summary__stack-prelude-period" type="button">
-                  <span>Atual</span>
-                  <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
-                </button>
-              </div>
-              <section class="candidate-week-radar" aria-label="Radar da semana">
-                <header class="candidate-week-radar__head">
-                  <h4>Stacks mais contratadas</h4>
-                  <button
-                    class="candidate-week-radar__menu"
-                    type="button"
-                    aria-label="Selecionar stacks para mostrar"
-                    (click)="openRadarCategoryPicker()"
-                  >
-                    <span class="material-symbols-rounded" aria-hidden="true">menu</span>
-                  </button>
-                </header>
-
-                <div class="candidate-week-radar__subtitle">
-                  <span><strong>{{ radarTotal }}</strong> novas contratações</span>
-                  <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
-                </div>
-
-                <div class="candidate-week-radar__bars">
-                  <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
-                    <div class="candidate-week-radar__label">
-                      <span class="candidate-week-radar__dot" [style.background]="cat.color"></span>
-                      {{ cat.label }}
-                    </div>
-
-                    <div class="candidate-week-radar__track">
-                      <div class="candidate-week-radar__rail" aria-hidden="true">
-                        <div class="candidate-week-radar__fill" [style.width.%]="cat.value" [style.background]="cat.color"></div>
-                      </div>
-                      <div class="candidate-week-radar__value">{{ cat.value }}%</div>
-                    </div>
-                  </div>
-                </div>
-              </section>
             </div>
           </div>
 
