@@ -7,6 +7,7 @@ type CandidateDocumentItem = {
   label: string;
   description: string;
   requiredByDefault: boolean;
+  isBaseDocument: boolean;
   isVisibleOnAcceptance: boolean;
   fileName: string;
   updatedAt: string;
@@ -46,6 +47,14 @@ export class DocumentosPage {
 
   get canSaveDocument(): boolean {
     return this.documentDraftLabel.trim().length > 0;
+  }
+
+  get basicDocuments(): CandidateDocumentItem[] {
+    return this.documents.filter((item) => item.isBaseDocument);
+  }
+
+  get extraDocuments(): CandidateDocumentItem[] {
+    return this.documents.filter((item) => !item.isBaseDocument);
   }
 
   openCreateDocumentModal(): void {
@@ -126,6 +135,9 @@ export class DocumentosPage {
       label: trimmedLabel,
       description: trimmedDescription,
       requiredByDefault: this.documentDraftRequiredByDefault,
+      isBaseDocument: this.editingDocumentId
+        ? this.documents.find((item) => item.id === this.editingDocumentId)?.isBaseDocument ?? false
+        : false,
       isVisibleOnAcceptance: this.documentDraftVisibleOnAcceptance,
       fileName: this.documentDraftFileName.trim(),
       updatedAt: this.documentDraftUpdatedAt.trim(),
@@ -147,6 +159,10 @@ export class DocumentosPage {
   }
 
   removeDocument(item: CandidateDocumentItem): void {
+    if (item.isBaseDocument) {
+      return;
+    }
+
     const confirmed = window.confirm(`Deseja excluir o documento "${item.label}"?`);
     if (!confirmed) {
       return;
@@ -210,6 +226,7 @@ export class DocumentosPage {
       label,
       description: item.description?.trim() || '',
       requiredByDefault: item.requiredByDefault === true,
+      isBaseDocument: item.isBaseDocument === true,
       isVisibleOnAcceptance: item.isVisibleOnAcceptance === true || item.requiredByDefault === true,
       fileName: item.fileName?.trim() || '',
       updatedAt: item.updatedAt?.trim() || '',
@@ -237,6 +254,7 @@ export class DocumentosPage {
         label: 'RG ou CNH',
         description: 'Documento principal de identificação para etapas finais do processo.',
         requiredByDefault: true,
+        isBaseDocument: true,
         isVisibleOnAcceptance: true,
         fileName: '',
         updatedAt: '',
@@ -246,6 +264,7 @@ export class DocumentosPage {
         label: 'CPF',
         description: 'Pode ser o cartão ou o comprovante oficial com número válido.',
         requiredByDefault: true,
+        isBaseDocument: true,
         isVisibleOnAcceptance: true,
         fileName: '',
         updatedAt: '',
@@ -255,6 +274,7 @@ export class DocumentosPage {
         label: 'Comprovante de residência',
         description: 'Ajuda quando a contratação exige validação cadastral e regional.',
         requiredByDefault: false,
+        isBaseDocument: true,
         isVisibleOnAcceptance: false,
         fileName: '',
         updatedAt: '',
@@ -264,6 +284,7 @@ export class DocumentosPage {
         label: 'Diploma ou declaração',
         description: 'Material acadêmico que o recruiter pode solicitar dependendo da vaga.',
         requiredByDefault: false,
+        isBaseDocument: true,
         isVisibleOnAcceptance: false,
         fileName: '',
         updatedAt: '',
