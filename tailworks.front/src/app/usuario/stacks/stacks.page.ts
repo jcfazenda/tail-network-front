@@ -30,6 +30,14 @@ type StackGroup = 'primary' | 'extra';
 type StoredStacksDraft = {
   primary: StackChip[];
   extra: StackChip[];
+  certificates?: Record<string, CertificateMeta> | null;
+};
+
+type CertificateMeta = {
+  name: string;
+  type: string;
+  size: number;
+  updatedAt: string;
 };
 
 type StackRepoItem = {
@@ -90,6 +98,7 @@ export class StacksPage implements OnInit {
   stackError = '';
   primaryStacks: StackChip[] = [];
   extraStacks: StackChip[] = [];
+  certificates: Record<string, CertificateMeta> = {};
   isStackModalOpen = false;
   isStrategyHelpModalOpen = false;
   activeGuidanceStack: StackRepoItem | null = null;
@@ -516,6 +525,7 @@ export class StacksPage implements OnInit {
         const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
         this.primaryStacks = sanitized.primary;
         this.extraStacks = sanitized.extra;
+        this.certificates = this.normalizeCertificates(parsedDraft.certificates);
         this.persistStacks();
         return;
       } catch {
@@ -547,6 +557,7 @@ export class StacksPage implements OnInit {
         const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
         this.primaryStacks = sanitized.primary;
         this.extraStacks = sanitized.extra;
+        this.certificates = this.normalizeCertificates(parsedDraft.certificates);
         this.persistStacks();
         return;
       } catch {
@@ -570,6 +581,7 @@ export class StacksPage implements OnInit {
         const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
         this.primaryStacks = sanitized.primary;
         this.extraStacks = sanitized.extra;
+        this.certificates = this.normalizeCertificates(parsedDraft.certificates);
         this.persistStacks();
         return;
       } catch {
@@ -586,6 +598,7 @@ export class StacksPage implements OnInit {
         const sanitized = this.sanitizeRestoredStacks(restoredPrimary, []);
         this.primaryStacks = sanitized.primary;
         this.extraStacks = sanitized.extra;
+        this.certificates = {};
         this.persistStacks();
         return;
       } catch {
@@ -596,7 +609,76 @@ export class StacksPage implements OnInit {
     // Início "zerado": o usuário escolhe a categoria e marca o percentual a partir do repositório.
     this.primaryStacks = [];
     this.extraStacks = [];
+    this.certificates = {};
     this.persistStacks();
+  }
+
+  getStackCertificate(repoId: string): CertificateMeta | null {
+    return this.certificates[repoId] ?? null;
+  }
+
+  onStackCertificateSelected(repoId: string, event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.certificates = {
+      ...this.certificates,
+      [repoId]: {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        updatedAt: new Date().toISOString(),
+      },
+    };
+    this.persistStacks();
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  clearStackCertificate(repoId: string): void {
+    if (!this.certificates[repoId]) {
+      return;
+    }
+
+    const next = { ...this.certificates };
+    delete next[repoId];
+    this.certificates = next;
+    this.persistStacks();
+  }
+
+  private normalizeCertificates(value: unknown): Record<string, CertificateMeta> {
+    if (!value || typeof value !== 'object') {
+      return {};
+    }
+
+    const obj = value as Record<string, unknown>;
+    const normalized: Record<string, CertificateMeta> = {};
+
+    for (const [key, raw] of Object.entries(obj)) {
+      if (!raw || typeof raw !== 'object') {
+        continue;
+      }
+      const meta = raw as Partial<CertificateMeta>;
+      const name = typeof meta.name === 'string' ? meta.name.trim() : '';
+      if (!name) {
+        continue;
+      }
+
+      normalized[key] = {
+        name,
+        type: typeof meta.type === 'string' ? meta.type : '',
+        size: typeof meta.size === 'number' ? meta.size : 0,
+        updatedAt: typeof meta.updatedAt === 'string' ? meta.updatedAt : '',
+      };
+    }
+
+    return normalized;
   }
 
   getRepoKnowledge(group: StackGroup, repoId: string): number {
@@ -784,6 +866,24 @@ export class StacksPage implements OnInit {
     }
 
     return this.getInfoBulletsForLevel(repoId, this.mapTierToFallbackLevel(tier));
+  }
+
+  getGuideSignals(repoId: string, percent: number): { inTier: string[]; notYet: string[] } | null {
+    const guide = STACK_KNOWLEDGE_GUIDES[repoId];
+    if (!guide?.signalsByTier) {
+      return null;
+    }
+
+    const tier = this.getExpectationTierFromPercent(percent);
+    const signals = guide.signalsByTier[tier];
+    if (!signals?.inTier?.length && !signals?.notYet?.length) {
+      return null;
+    }
+
+    return {
+      inTier: signals?.inTier ?? [],
+      notYet: signals?.notYet ?? [],
+    };
   }
 
   private getExpectationTierFromPercent(percent: number): StackGuideTier {
@@ -1064,6 +1164,7 @@ export class StacksPage implements OnInit {
     const draft: StoredStacksDraft = {
       primary: this.primaryStacks,
       extra: this.extraStacks,
+      certificates: this.certificates,
     };
     localStorage.setItem(StacksPage.storageKey, JSON.stringify(draft));
   }

@@ -174,17 +174,105 @@
                             </ul>
                           </div>
 
-                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.commonTools?.length">
-                            <div class="candidate-stacks__repo-guide-section-title">Ferramentas comuns</div>
-                            <ul class="candidate-stacks__repo-guide-bullets">
-                              <li *ngFor="let row of guide.commonTools">{{ row }}</li>
-                            </ul>
+                          <ng-container *ngIf="getGuideSignals(item.id, getRepoKnowledge('primary', item.id)) as signals">
+                            <div class="candidate-stacks__repo-guide-section">
+                              <div class="candidate-stacks__repo-guide-section-title">Sinais de que você está nesse nível</div>
+                              <ul class="candidate-stacks__repo-guide-bullets">
+                                <li *ngFor="let row of signals.inTier">{{ row }}</li>
+                              </ul>
+                            </div>
+
+                            <div class="candidate-stacks__repo-guide-section">
+                              <div class="candidate-stacks__repo-guide-section-title">Sinais de que ainda não está</div>
+                              <ul class="candidate-stacks__repo-guide-bullets">
+                                <li *ngFor="let row of signals.notYet">{{ row }}</li>
+                              </ul>
+                            </div>
+                          </ng-container>
+
+                          <div
+                            class="candidate-stacks__repo-guide-split"
+                            *ngIf="(guide.commonTools?.length || 0) > 0 || (guide.usedByCompanies?.length || 0) > 0"
+                          >
+                            <div class="candidate-stacks__repo-guide-split-rule" aria-hidden="true"></div>
+
+                            <div
+                              class="candidate-stacks__repo-guide-split-grid"
+                              [class.candidate-stacks__repo-guide-split-grid--two]="guide.commonTools?.length && guide.usedByCompanies?.length"
+                            >
+                              <div class="candidate-stacks__repo-guide-split-col" *ngIf="guide.commonTools?.length">
+                                <div class="candidate-stacks__repo-guide-section-title">Ferramentas comuns</div>
+                                <ul class="candidate-stacks__repo-guide-bullets">
+                                  <li *ngFor="let row of guide.commonTools">{{ row }}</li>
+                                </ul>
+                              </div>
+
+                              <div
+                                class="candidate-stacks__repo-guide-split-divider"
+                                *ngIf="guide.commonTools?.length && guide.usedByCompanies?.length"
+                                aria-hidden="true"
+                              ></div>
+
+                              <div class="candidate-stacks__repo-guide-split-col candidate-stacks__repo-guide-split-col--right" *ngIf="guide.usedByCompanies?.length">
+                                <div class="candidate-stacks__repo-guide-section-title">Usado em empresas como</div>
+                                <div class="candidate-stacks__repo-guide-companies">
+                                  <span *ngFor="let row of guide.usedByCompanies">{{ row }}</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
 
-                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.usedByCompanies?.length">
-                            <div class="candidate-stacks__repo-guide-section-title">Usado em empresas como</div>
-                            <div class="candidate-stacks__repo-guide-companies">
-                              <span *ngFor="let row of guide.usedByCompanies">{{ row }}</span>
+                          <div class="candidate-stacks__repo-guide-cert">
+                            <div class="candidate-stacks__repo-guide-cert-left">
+                              <div class="candidate-stacks__repo-guide-cert-head">
+                                <span class="material-symbols-rounded" aria-hidden="true">verified</span>
+                                <ng-container *ngIf="getStackCertificate(item.id); else certTitleEmpty">
+                                  <div class="candidate-stacks__repo-guide-cert-text">
+                                    Este certificado vai reforçar você no Radar.
+                                  </div>
+                                </ng-container>
+                                <ng-template #certTitleEmpty>
+                                  <div class="candidate-stacks__repo-guide-section-title">Dica: você tem certificado?</div>
+                                </ng-template>
+                              </div>
+                              <div class="candidate-stacks__repo-guide-cert-details">
+                                <ng-container *ngIf="getStackCertificate(item.id) as cert; else certEmpty">
+                                  <div class="candidate-stacks__repo-guide-cert-file">
+                                    {{ cert.name }}
+                                  </div>
+                                </ng-container>
+                                <ng-template #certEmpty>
+                                  <div class="candidate-stacks__repo-guide-cert-text">
+                                    Anexe um certificado dessa stack para reforçar sua posição no Radar.
+                                  </div>
+                                </ng-template>
+                              </div>
+                            </div>
+
+                            <div class="candidate-stacks__repo-guide-cert-actions">
+                              <input
+                                #stackCertInput
+                                type="file"
+                                accept="application/pdf,image/*"
+                                (change)="onStackCertificateSelected(item.id, $event)"
+                                hidden
+                              />
+                              <button
+                                class="candidate-stacks__repo-guide-cert-button"
+                                type="button"
+                                *ngIf="!getStackCertificate(item.id)"
+                                (click)="stackCertInput.click()"
+                              >
+                                Anexar certificado
+                              </button>
+                              <button
+                                class="candidate-stacks__repo-guide-cert-button candidate-stacks__repo-guide-cert-button--ghost"
+                                type="button"
+                                *ngIf="getStackCertificate(item.id)"
+                                (click)="clearStackCertificate(item.id)"
+                              >
+                                Remover
+                              </button>
                             </div>
                           </div>
                         </ng-container>

@@ -4,6 +4,7 @@ export type StackKnowledgeGuide = {
   tagline: string;
   meaningChecklist: string[];
   expectationsByTier?: Partial<Record<StackGuideTier, string[]>>;
+  signalsByTier?: Partial<Record<StackGuideTier, { inTier: string[]; notYet: string[] }>>;
   commonTools?: string[];
   usedByCompanies?: string[];
 };
@@ -54,6 +55,29 @@ export const STACK_KNOWLEDGE_GUIDES: Record<string, StackKnowledgeGuide> = {
         'Tratar incidentes complexos e evoluir o sistema com foco em confiabilidade.',
         'Ajudar outros devs a entregarem melhor (mentoria, reviews, pareamento).',
       ],
+    },
+    signalsByTier: {
+      avancado: {
+        inTier: [
+          'Voce pega um requisito e propoe uma solucao (camadas, contratos, validacao) sem precisarem desenhar por voce.',
+          'Voce ja diagnosticou bug chato em producao usando logs/metrics/traces e deixou o sistema melhor depois.',
+        ],
+        notYet: [
+          'Voce ainda depende de copiar padroes sem entender o porquê e quebra comportamento sem perceber.',
+          'Voce evita mexer em concorrencia/performance porque nao sabe como diagnosticar com seguranca.',
+        ],
+      },
+      especialista: {
+        inTier: [
+          'Voce define padroes de plataforma (templates, libs internas, guardrails) que melhoram o trabalho de varios times.',
+          'Voce resolve problemas raros de escala/performance com dados (profiling, testes controlados) e reduz recorrencia.',
+          'Voce guia decisoes corporativas de arquitetura e eleva a barra tecnica por onde passa.',
+        ],
+        notYet: [
+          'Voce ainda toma decisoes de performance sem medir e sem validar impacto real.',
+          'Voce ainda nao tem historico de melhorias que escalam para varios times (nao só um servico).',
+        ],
+      },
     },
     commonTools: ['Visual Studio / Rider', 'NuGet', 'xUnit / NUnit'],
     usedByCompanies: ['Microsoft', 'Stack Overflow', 'Itaú', 'Nubank'],
@@ -353,6 +377,29 @@ export const STACK_KNOWLEDGE_GUIDES: Record<string, StackKnowledgeGuide> = {
         'Orientar times em boas praticas (contratos, DLQ, idempotencia, retries).',
         'Desenhar governanca e operar com qualidade (SLOs, incident response).',
       ],
+    },
+    signalsByTier: {
+      avancado: {
+        inTier: [
+          'Voce ja resolveu lag/throughput na pratica (particoes, batch, parallelism) sem quebrar ordering necessario.',
+          'Voce define contratos de eventos (schema/versionamento) e consegue operar com alertas e runbooks.',
+        ],
+        notYet: [
+          'Voce ainda confunde offset/consumer group e depende de alguem para corrigir reprocessamento.',
+          'Voce nao sabe explicar quando e por que ocorre duplicidade e como tornar consumo idempotente.',
+        ],
+      },
+      especialista: {
+        inTier: [
+          'Voce ja desenhou governanca de schemas e padroes de plataforma de eventos para varios times (self-service).',
+          'Voce resolve casos extremos (hot partitions, rebalances, quotas/throttling) com metodo e dados.',
+          'Voce pensa em DR/multi-regiao e confiabilidade do cluster como produto.',
+        ],
+        notYet: [
+          'Voce ainda depende de tentativa-e-erro para tuning e nao consegue prever impacto de mudancas.',
+          'Voce ainda nao operou Kafka em escala ou nao participou de incidentes relevantes envolvendo o cluster.',
+        ],
+      },
     },
     commonTools: ['Kafka CLI', 'Confluent', 'Spring Kafka', 'Kafka Streams'],
     usedByCompanies: ['Netflix', 'Uber', 'LinkedIn', 'Amazon'],
