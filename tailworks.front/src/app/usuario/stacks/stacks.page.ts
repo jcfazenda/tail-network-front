@@ -29,12 +29,28 @@ type StackGroup = 'primary' | 'extra';
 type StoredStacksDraft = {
   primary: StackChip[];
   extra: StackChip[];
+  seniority?: SeniorityLevel;
 };
 
 type StackRepoItem = {
   id: string;
   name: string;
   category: StackCategory;
+};
+
+type SeniorityLevel = 'jr' | 'pleno' | 'senior' | 'especialista';
+
+type GuidanceBand = {
+  label: string;
+  title: string;
+  description: string;
+};
+
+type StructuredStackGuide = {
+  tagline: string;
+  masteryChecklist: string[];
+  commonTools: string[];
+  usedByCompanies: string[];
 };
 
 type CandidateBasicProfile = {
@@ -82,6 +98,11 @@ export class StacksPage implements OnInit {
   primaryStacks: StackChip[] = [];
   extraStacks: StackChip[] = [];
   isStackModalOpen = false;
+  isStrategyHelpModalOpen = false;
+  activeGuidanceStack: StackRepoItem | null = null;
+  activeGuidancePercent = 0;
+  expandedGuideRepoId: string | null = null;
+  profileSeniorityLevel: SeniorityLevel = 'pleno';
   editingStackGroup: StackGroup = 'primary';
   editingStackIndex: number | null = null;
   stackDraftName = '';
@@ -177,6 +198,170 @@ export class StacksPage implements OnInit {
 
   private cachedKnownRepoIds: Set<string> | null = null;
 
+  readonly seniorityOptions: Array<{ value: SeniorityLevel; label: string }> = [
+    { value: 'jr', label: 'Jr' },
+    { value: 'pleno', label: 'Pleno' },
+    { value: 'senior', label: 'Senior' },
+    { value: 'especialista', label: 'Especialista' },
+  ];
+
+  private readonly stackPurposeCopy: Record<string, { summary: string; levels: Record<SeniorityLevel, string[]> }> = {
+    'repo:dotnet': {
+      summary: 'Capacidade de construir e manter APIs e serviços em .NET, com foco em qualidade, performance e boas práticas.',
+      levels: {
+        jr: [
+          'Implementa endpoints simples e corrige bugs com orientação.',
+          'Segue padrões do projeto e aprende por exemplos.',
+        ],
+        pleno: [
+          'Modela camadas e aplica padrões comuns (DI, validação, controllers).',
+          'Escreve testes e faz refactors seguros.',
+          'Entende tradeoffs básicos de performance.',
+        ],
+        senior: [
+          'Desenha soluções e define padrões técnicos do time.',
+          'Melhora observabilidade, resiliência e performance.',
+          'Previne problemas de escala e orienta decisões.',
+        ],
+        especialista: [
+          'Aprofunda em runtime, tuning e arquitetura corporativa.',
+          'Cria padrões reutilizáveis e eleva a barra técnica da organização.',
+        ],
+      },
+    },
+    'repo:csharp': {
+      summary: 'Domínio da linguagem C# e do ecossistema para escrever código claro, seguro e performático.',
+      levels: {
+        jr: [
+          'Conhece sintaxe, tipos, coleções e o básico de async/await.',
+          'Consegue implementar tarefas seguindo padrões do time.',
+        ],
+        pleno: [
+          'Domina async/await, LINQ, exceptions e DI.',
+          'Escreve testes e código mais idiomático e limpo.',
+        ],
+        senior: [
+          'Evita armadilhas de concorrência e orienta o time em decisões.',
+          'Revisa PRs e melhora padrões de qualidade.',
+        ],
+        especialista: [
+          'Profundo em GC, allocations e performance.',
+          'Define padrões e resolve problemas de alto impacto.',
+        ],
+      },
+    },
+    'repo:microservices': {
+      summary: 'Entendimento de sistemas distribuídos: comunicação entre serviços, resiliência, observabilidade e consistência.',
+      levels: {
+        jr: [
+          'Entende o conceito e segue contratos (APIs/eventos) com orientação.',
+          'Contribui em serviços existentes com tarefas bem definidas.',
+        ],
+        pleno: [
+          'Aplica versionamento, retry/timeout e padrões de logs/tracing.',
+          'Evita acoplamentos e entende responsabilidades de cada serviço.',
+        ],
+        senior: [
+          'Define limites de domínio e padrões de integração.',
+          'Opera o sistema com foco em confiabilidade (SLOs, alertas, incidentes).',
+        ],
+        especialista: [
+          'Aprofunda em consistência eventual, saga e idempotência.',
+          'Modela plataformas e escala distribuída com maturidade.',
+        ],
+      },
+    },
+    'repo:aws': {
+      summary: 'Uso prático de serviços AWS para rodar aplicações com segurança, custo-controlado e observável.',
+      levels: {
+        jr: [
+          'Usa serviços básicos seguindo templates e padrões do time.',
+          'Entende permissões no básico e navega no console com segurança.',
+        ],
+        pleno: [
+          'Configura ambientes e IAM com cuidado.',
+          'Monitora, automatiza deploy e entende custo por componente.',
+        ],
+        senior: [
+          'Define arquitetura cloud e boas práticas de segurança.',
+          'Implementa observabilidade e governança (tags, políticas, conta).',
+        ],
+        especialista: [
+          'Profundo em redes, segurança e finops.',
+          'Otimiza e escala com precisão; define padrões de plataforma.',
+        ],
+      },
+    },
+    'repo:serverless': {
+      summary: 'Criação de funções e integrações sem servidor, pensando em cold start, custos, limites e observabilidade.',
+      levels: {
+        jr: [
+          'Implementa funções simples e integrações básicas seguindo padrões.',
+          'Consegue testar e depurar fluxos simples.',
+        ],
+        pleno: [
+          'Projeta handlers, valida eventos e trata erros com consistência.',
+          'Monitora e entende custo por invocação.',
+        ],
+        senior: [
+          'Desenha arquitetura orientada a eventos.',
+          'Define padrões, governança e confiabilidade.',
+        ],
+        especialista: [
+          'Otimiza performance/custo e modela plataformas serverless.',
+          'Aprofunda em limites, escalabilidade e operação.',
+        ],
+      },
+    },
+    'repo:kafka': {
+      summary: 'Mensageria e streaming para integração entre serviços com alta escala e confiabilidade.',
+      levels: {
+        jr: [
+          'Consome eventos.',
+          'Usa Kafka via framework.',
+        ],
+        pleno: [
+          'Configura producers e consumers.',
+          'Entende partições e offset.',
+        ],
+        senior: [
+          'Define arquitetura de eventos.',
+          'Resolve problemas de throughput.',
+          'Escala clusters Kafka.',
+        ],
+        especialista: [
+          'Design de event-driven systems.',
+          'Kafka Streams.',
+          'Multi cluster replication.',
+        ],
+      },
+    },
+  };
+
+  private readonly structuredGuides: Record<string, StructuredStackGuide> = {
+    'repo:kafka': {
+      tagline: 'Event Streaming Platform',
+      masteryChecklist: [
+        'Produzir e consumir eventos',
+        'Entender tópicos e partições',
+        'Trabalhar com consumer groups',
+        'Integrar com microservices',
+      ],
+      commonTools: [
+        'Kafka CLI',
+        'Confluent',
+        'Spring Kafka',
+        'Kafka Streams',
+      ],
+      usedByCompanies: [
+        'Netflix',
+        'Uber',
+        'LinkedIn',
+        'Amazon',
+      ],
+    },
+  };
+
   get displayName(): string {
     return this.profile.name.trim() || 'Julio Fazenda';
   }
@@ -203,6 +388,67 @@ export class StacksPage implements OnInit {
 
   get stackDescriptionMaxLength(): number {
     return StacksPage.stackDescriptionMaxLength;
+  }
+
+  get activeInfoSummary(): string {
+    const stack = this.activeGuidanceStack;
+    if (!stack) {
+      return '';
+    }
+
+    return this.stackPurposeCopy[stack.id]?.summary
+      ?? 'Essa stack representa um conjunto de habilidades e responsabilidades que variam com o contexto da vaga.';
+  }
+
+  get activeInfoBullets(): string[] {
+    const stack = this.activeGuidanceStack;
+    if (!stack) {
+      return [];
+    }
+
+    const fallback: Record<SeniorityLevel, string[]> = {
+      jr: [
+        'Consegue executar tarefas com orientação e evolui rápido seguindo padrões do time.',
+      ],
+      pleno: [
+        'Entrega com autonomia, entende tradeoffs e mantém qualidade com consistência.',
+      ],
+      senior: [
+        'Guia decisões técnicas, melhora a qualidade do sistema e influencia o time.',
+      ],
+      especialista: [
+        'Aprofunda no tema, define padrões e resolve problemas complexos com alta precisão.',
+      ],
+    };
+
+    return this.stackPurposeCopy[stack.id]?.levels[this.profileSeniorityLevel]
+      ?? fallback[this.profileSeniorityLevel];
+  }
+
+  get activeStructuredGuide(): StructuredStackGuide | null {
+    const stack = this.activeGuidanceStack;
+    if (!stack) {
+      return null;
+    }
+
+    return this.structuredGuides[stack.id] ?? null;
+  }
+
+  get activeGuideTagline(): string {
+    const guide = this.activeStructuredGuide;
+    if (guide) {
+      return guide.tagline;
+    }
+
+    return '';
+  }
+
+  get activePercentLevelLabel(): string {
+    return this.getPercentLevelLabel(this.activeGuidancePercent);
+  }
+
+  get guidanceBand(): GuidanceBand {
+    return this.getGuidanceBand(this.activeGuidancePercent);
   }
 
   get isStackDescriptionOverLimit(): boolean {
@@ -316,6 +562,7 @@ export class StacksPage implements OnInit {
         const parsedDraft = JSON.parse(stored) as Partial<StoredStacksDraft>;
         const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
         const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
+        this.restoreSeniority(parsedDraft.seniority);
         const restoredPrimary = primary
           .filter((item): item is StackChip => Boolean(item?.name))
           .map((item) => this.normalizeStackChip(item));
@@ -339,6 +586,7 @@ export class StacksPage implements OnInit {
         const parsedDraft = JSON.parse(legacyV4) as Partial<StoredStacksDraft>;
         const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
         const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
+        this.restoreSeniority(parsedDraft.seniority);
 
         // Versões anteriores semeavam automaticamente stacks em 10%. Se parecer seed, zera.
         if (this.looksLikeLegacySeedDraft(primary, extra)) {
@@ -371,6 +619,7 @@ export class StacksPage implements OnInit {
         const parsedDraft = JSON.parse(legacyV3) as Partial<StoredStacksDraft>;
         const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
         const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
+        this.restoreSeniority(parsedDraft.seniority);
         const restoredPrimary = primary
           .filter((item): item is StackChip => Boolean(item?.name))
           .map((item) => this.normalizeStackChip(item));
@@ -409,6 +658,12 @@ export class StacksPage implements OnInit {
     this.persistStacks();
   }
 
+  private restoreSeniority(value: unknown): void {
+    if (value === 'jr' || value === 'pleno' || value === 'senior' || value === 'especialista') {
+      this.profileSeniorityLevel = value;
+    }
+  }
+
   getRepoKnowledge(group: StackGroup, repoId: string): number {
     const list = this.getStacksList(group);
     const found = list.find((item) => item.id === repoId);
@@ -418,6 +673,16 @@ export class StacksPage implements OnInit {
   getCategoryCount(group: StackGroup, category: StackCategory): number {
     const list = this.getStacksList(group);
     return list.reduce((acc, item) => acc + (item.category === category && item.knowledge >= 10 ? 1 : 0), 0);
+  }
+
+  getCategoryAverage(group: StackGroup, category: StackCategory): number {
+    const list = this.getStacksList(group).filter((item) => item.category === category && item.knowledge >= 10);
+    if (!list.length) {
+      return 0;
+    }
+
+    const total = list.reduce((acc, item) => acc + item.knowledge, 0);
+    return Math.round(total / list.length);
   }
 
   updateRepoKnowledge(group: StackGroup, repoItem: StackRepoItem, rawValue: unknown): void {
@@ -505,6 +770,154 @@ export class StacksPage implements OnInit {
     this.stackDraftCategory = 'other';
     this.stackDraftDescription = '';
     this.stackModalError = '';
+  }
+
+  openStrategyHelpModal(): void {
+    this.isStrategyHelpModalOpen = true;
+  }
+
+  closeStrategyHelpModal(): void {
+    this.isStrategyHelpModalOpen = false;
+  }
+
+  setActiveGuidance(item: StackRepoItem): void {
+    this.activeGuidanceStack = item;
+    this.activeGuidancePercent = this.getRepoKnowledge('primary', item.id);
+  }
+
+  activateStackInfo(item: StackRepoItem): void {
+    this.setActiveGuidance(item);
+  }
+
+  toggleInlineGuide(item: StackRepoItem): void {
+    if (this.expandedGuideRepoId === item.id) {
+      this.expandedGuideRepoId = null;
+      return;
+    }
+
+    this.expandedGuideRepoId = item.id;
+    this.setActiveGuidance(item);
+  }
+
+  getStructuredGuide(repoId: string): StructuredStackGuide | null {
+    return this.structuredGuides[repoId] ?? null;
+  }
+
+  getGuideTagline(repoId: string): string {
+    return this.structuredGuides[repoId]?.tagline ?? '';
+  }
+
+  getInfoSummary(repoId: string): string {
+    return this.stackPurposeCopy[repoId]?.summary
+      ?? 'Essa stack representa um conjunto de habilidades e responsabilidades que variam com o contexto da vaga.';
+  }
+
+  getInfoBullets(repoId: string): string[] {
+    const fallback: Record<SeniorityLevel, string[]> = {
+      jr: [
+        'Consegue executar tarefas com orientação e evolui rápido seguindo padrões do time.',
+      ],
+      pleno: [
+        'Entrega com autonomia, entende tradeoffs e mantém qualidade com consistência.',
+      ],
+      senior: [
+        'Guia decisões técnicas, melhora a qualidade do sistema e influencia o time.',
+      ],
+      especialista: [
+        'Aprofunda no tema, define padrões e resolve problemas complexos com alta precisão.',
+      ],
+    };
+
+    return this.stackPurposeCopy[repoId]?.levels[this.profileSeniorityLevel]
+      ?? fallback[this.profileSeniorityLevel];
+  }
+
+  percentLevelLabel(percent: number): string {
+    return this.getPercentLevelLabel(percent);
+  }
+
+  private getGuidanceBand(percent: number): GuidanceBand {
+    if (percent >= 95) {
+      return {
+        label: '95%',
+        title: 'Especialista',
+        description: 'Define padrões, resolve problemas raros e complexos, e eleva o nível técnico do time.',
+      };
+    }
+
+    if (percent >= 80) {
+      return {
+        label: '80%',
+        title: 'Sênior',
+        description: 'Projeta soluções, revisa código, orienta pessoas e resolve problemas complexos com autonomia.',
+      };
+    }
+
+    if (percent >= 60) {
+      return {
+        label: '60%',
+        title: 'Pleno',
+        description: 'Entrega features, corrige bugs com consistência e entende arquitetura e tradeoffs do dia a dia.',
+      };
+    }
+
+    if (percent >= 40) {
+      return {
+        label: '40%',
+        title: 'Base',
+        description: 'Já trabalhou com isso, entende os conceitos e consegue desenvolver com consulta e apoio.',
+      };
+    }
+
+    if (percent >= 20) {
+      return {
+        label: '20%',
+        title: 'Introdução',
+        description: 'Já estudou, fez cursos ou projetos pessoais. Ainda precisa de prática real para consolidar.',
+      };
+    }
+
+    if (percent >= 10) {
+      return {
+        label: '10%',
+        title: 'Contato inicial',
+        description: 'Conhece o básico e está começando a ganhar confiança. Use para mapear aprendizado ativo.',
+      };
+    }
+
+    return {
+      label: '0%',
+      title: 'Não marcado',
+      description: 'Marque acima de 0% para indicar contato com a tecnologia.',
+    };
+  }
+
+  private getPercentLevelLabel(percent: number): string {
+    if (percent >= 95) {
+      return 'Especialista';
+    }
+
+    if (percent >= 80) {
+      return 'Sênior';
+    }
+
+    if (percent >= 60) {
+      return 'Avançado';
+    }
+
+    if (percent >= 45) {
+      return 'Intermediário';
+    }
+
+    if (percent >= 20) {
+      return 'Básico';
+    }
+
+    if (percent > 0) {
+      return 'Iniciante';
+    }
+
+    return 'Não marcado';
   }
 
   onStackDescriptionInput(event: Event): void {
@@ -666,6 +1079,7 @@ export class StacksPage implements OnInit {
     const draft: StoredStacksDraft = {
       primary: this.primaryStacks,
       extra: this.extraStacks,
+      seniority: this.profileSeniorityLevel,
     };
     localStorage.setItem(StacksPage.storageKey, JSON.stringify(draft));
   }

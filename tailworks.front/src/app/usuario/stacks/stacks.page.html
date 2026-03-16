@@ -25,7 +25,31 @@
 
     <div class="candidate-stacks__section">
       <div class="candidate-stacks__section-head">
-        <h2>Stacks principais</h2>
+        <div class="candidate-stacks__seniority-row" role="radiogroup" aria-label="Seu nível geral">
+          <label class="candidate-stacks__purpose-level" *ngFor="let opt of seniorityOptions">
+            <input
+              type="radio"
+              name="profile-seniority"
+              [value]="opt.value"
+              [checked]="profileSeniorityLevel === opt.value"
+              (change)="profileSeniorityLevel = opt.value"
+            />
+            <span class="candidate-stacks__purpose-pill">{{ opt.label }}</span>
+          </label>
+        </div>
+
+        <div class="candidate-stacks__section-title-row">
+          <h2>Stacks principais</h2>
+          <button
+            class="candidate-stacks__help-button"
+            type="button"
+            (click)="openStrategyHelpModal()"
+            aria-label="Dica de estratégia"
+            title="Dica de estratégia"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">help</span>
+          </button>
+        </div>
         <p>O núcleo do que você faz bem. Marque quantas tecnologias fizer sentido para o seu perfil.</p>
       </div>
 
@@ -36,6 +60,11 @@
               class="candidate-stacks__radio"
               *ngFor="let category of uiCategories"
               [class.candidate-stacks__radio--checked]="selectedPrimaryCategory === category"
+              [class.candidate-stacks__radio--heat-muted]="getCategoryAverage('primary', category) === 0"
+              [class.candidate-stacks__radio--heat-cold]="getCategoryAverage('primary', category) > 0 && getCategoryAverage('primary', category) < 45"
+              [class.candidate-stacks__radio--heat-hot]="getCategoryAverage('primary', category) >= 45"
+              [style.--radio-avg]="getCategoryAverage('primary', category)"
+              [attr.title]="'Média: ' + getCategoryAverage('primary', category) + '%'"
             >
               <input
                 type="radio"
@@ -68,59 +97,132 @@
           </div>
 
           <div
-            class="candidate-stacks__category-box candidate-stacks__category-box--dashed"
+            class="candidate-stacks__repo-layout"
             *ngIf="showPrimaryCategoryPanel && selectedPrimaryCategory"
           >
-            <div class="candidate-stacks__category-head">
-            </div>
+            <div class="candidate-stacks__category-box candidate-stacks__category-box--solid">
+              <div class="candidate-stacks__category-head"></div>
 
-            <div class="candidate-stacks__repo" *ngIf="primaryRepoOptions.length; else emptyPrimaryRepo">
-              <div class="candidate-stacks__repo-rows" aria-label="Stacks do repositório">
-                <div *ngFor="let item of primaryRepoOptions" class="candidate-stacks__repo-row">
-                  <div class="candidate-stacks__repo-row-left">
-                  <button
-                    class="candidate-stacks__stack-item-edit"
-                    type="button"
-                    (click)="openRepoStackDescription('primary', item)"
-                    [attr.aria-label]="'Editar descrição de ' + item.name"
-                    title="Editar descrição"
-                  >
-                    <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                  </button>
-                  <span class="candidate-stacks__repo-row-name">{{ item.name }}</span>
-                </div>
+              <div class="candidate-stacks__repo" *ngIf="primaryRepoOptions.length; else emptyPrimaryRepo">
+                <div class="candidate-stacks__repo-rows" aria-label="Stacks do repositório">
+                  <div *ngFor="let item of primaryRepoOptions" class="candidate-stacks__repo-entry">
+                    <div class="candidate-stacks__repo-row">
+                      <div class="candidate-stacks__repo-row-left">
+                        <button
+                          class="candidate-stacks__stack-item-edit"
+                          type="button"
+                          (click)="openRepoStackDescription('primary', item)"
+                          [attr.aria-label]="'Editar descrição de ' + item.name"
+                          title="Editar descrição"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                        </button>
+                        <span class="candidate-stacks__repo-row-name">{{ item.name }}</span>
+                        <button
+                          class="candidate-stacks__stack-item-help"
+                          type="button"
+                          (click)="toggleInlineGuide(item)"
+                          [class.candidate-stacks__stack-item-help--active]="expandedGuideRepoId === item.id"
+                          [attr.aria-label]="'Entender o propósito de ' + item.name"
+                          title="O que se espera nessa stack"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                        </button>
+                      </div>
 
-                <div class="candidate-stacks__repo-row-right">
-                  <div
-                    class="candidate-stacks__stack-item-slider"
-                    [style.--stack-progress]="getRepoKnowledge('primary', item.id) + '%'"
-                    [class.candidate-stacks__stack-item-slider--muted]="getRepoKnowledge('primary', item.id) < 10"
-                    [class.candidate-stacks__stack-item-slider--cold]="getRepoKnowledge('primary', item.id) >= 10 && getRepoKnowledge('primary', item.id) < 45"
-                    [class.candidate-stacks__stack-item-slider--hot]="getRepoKnowledge('primary', item.id) >= 45"
-                  >
-                    <input
-                      class="candidate-stacks__stack-item-range"
-                      type="range"
-                        min="0"
-                        max="100"
-                        step="1"
-                        [value]="getRepoKnowledge('primary', item.id)"
-                        (input)="updateRepoKnowledge('primary', item, $any($event.target).value)"
-                        [attr.aria-label]="'Definir percentual de ' + item.name"
-                      />
+                      <div class="candidate-stacks__repo-row-right">
+                        <div
+                          class="candidate-stacks__stack-item-slider"
+                          [style.--stack-progress]="getRepoKnowledge('primary', item.id) + '%'"
+                          [class.candidate-stacks__stack-item-slider--muted]="getRepoKnowledge('primary', item.id) < 10"
+                          [class.candidate-stacks__stack-item-slider--cold]="getRepoKnowledge('primary', item.id) >= 10 && getRepoKnowledge('primary', item.id) < 45"
+                          [class.candidate-stacks__stack-item-slider--hot]="getRepoKnowledge('primary', item.id) >= 45"
+                        >
+                          <input
+                            class="candidate-stacks__stack-item-range"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="1"
+                            [value]="getRepoKnowledge('primary', item.id)"
+                            (input)="updateRepoKnowledge('primary', item, $any($event.target).value)"
+                            [attr.aria-label]="'Definir percentual de ' + item.name"
+                          />
+                        </div>
+                        <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                      </div>
                     </div>
-                    <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
+
+                    <div class="candidate-stacks__repo-expand" *ngIf="expandedGuideRepoId === item.id">
+                      <div class="candidate-stacks__repo-guide-body">
+                        <div class="candidate-stacks__repo-guide-top">
+                          <div class="candidate-stacks__repo-guide-top-left">
+                            <span class="candidate-stacks__repo-guide-stack">{{ item.name }}</span>
+                            <span class="candidate-stacks__repo-guide-subtitle" *ngIf="getGuideTagline(item.id)">{{ getGuideTagline(item.id) }}</span>
+                          </div>
+                          <span class="candidate-stacks__repo-guide-percent">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                        </div>
+
+                        <div class="candidate-stacks__repo-guide-rule" aria-hidden="true"></div>
+
+                        <ng-container *ngIf="getStructuredGuide(item.id) as guide; else fallbackGuideInline">
+                          <div class="candidate-stacks__repo-guide-section">
+                            <div class="candidate-stacks__repo-guide-section-title">
+                              O que significa dominar {{ item.name }}
+                            </div>
+                            <ul class="candidate-stacks__repo-guide-checklist">
+                              <li *ngFor="let row of guide.masteryChecklist">{{ row }}</li>
+                            </ul>
+                          </div>
+
+                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.commonTools.length">
+                            <div class="candidate-stacks__repo-guide-section-title">Ferramentas comuns</div>
+                            <ul class="candidate-stacks__repo-guide-bullets">
+                              <li *ngFor="let row of guide.commonTools">{{ row }}</li>
+                            </ul>
+                          </div>
+
+                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.usedByCompanies.length">
+                            <div class="candidate-stacks__repo-guide-section-title">Usado em empresas como</div>
+                            <div class="candidate-stacks__repo-guide-companies">
+                              <span *ngFor="let row of guide.usedByCompanies">{{ row }}</span>
+                            </div>
+                          </div>
+                        </ng-container>
+
+                        <ng-template #fallbackGuideInline>
+                          <div class="candidate-stacks__repo-guide-section">
+                            <div class="candidate-stacks__repo-guide-section-title">O que se espera nessa stack</div>
+                            <div class="candidate-stacks__repo-guide-copy">{{ getInfoSummary(item.id) }}</div>
+                            <ul class="candidate-stacks__purpose-list">
+                              <li *ngFor="let row of getInfoBullets(item.id)">{{ row }}</li>
+                            </ul>
+                          </div>
+                        </ng-template>
+
+                        <div class="candidate-stacks__repo-guide-divider" aria-hidden="true"></div>
+
+                        <div class="candidate-stacks__repo-guide-level">
+                          <div class="candidate-stacks__repo-guide-level-row">
+                            <span class="candidate-stacks__repo-guide-level-title">Nível aproximado</span>
+                            <span class="candidate-stacks__repo-guide-level-value">
+                              {{ getRepoKnowledge('primary', item.id) }}% <span aria-hidden="true">→</span> {{ percentLevelLabel(getRepoKnowledge('primary', item.id)) }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-          <ng-template #emptyPrimaryRepo>
-            <div class="candidate-stacks__category-empty">
-              <span class="candidate-stacks__category-empty-dot" aria-hidden="true"></span>
-              <span>Nenhuma sugestão disponível para essa categoria ainda.</span>
-              </div>
-            </ng-template>
+              <ng-template #emptyPrimaryRepo>
+                <div class="candidate-stacks__category-empty">
+                  <span class="candidate-stacks__category-empty-dot" aria-hidden="true"></span>
+                  <span>Nenhuma sugestão disponível para essa categoria ainda.</span>
+                </div>
+              </ng-template>
+            </div>
           </div>
         </div>
       </div>
@@ -267,6 +369,38 @@
           (click)="saveStack()"
         >
           {{ stackModalSubmitLabel }}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div
+  class="candidate-stacks__modal-backdrop"
+  *ngIf="isStrategyHelpModalOpen"
+  (click)="closeStrategyHelpModal()"
+>
+  <section class="candidate-stacks__modal candidate-stacks__modal--help" (click)="$event.stopPropagation()">
+    <div class="candidate-stacks__modal-header">
+      <h3 class="candidate-stacks__modal-title">Como se destacar no Radar</h3>
+      <button class="candidate-stacks__modal-close" type="button" (click)="closeStrategyHelpModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="candidate-stacks__modal-body">
+      <p class="candidate-stacks__help-copy">
+        O Recruiter geralmente escolhe 3 a 4 stacks onde você pode se destacar na vaga. Então, priorize o que você faz
+        de melhor e marque seus percentuais com sinceridade.
+      </p>
+
+      <div class="candidate-stacks__modal-actions">
+        <button
+          class="candidate-stacks__modal-button candidate-stacks__modal-button--primary"
+          type="button"
+          (click)="closeStrategyHelpModal()"
+        >
+          Entendi
         </button>
       </div>
     </div>
