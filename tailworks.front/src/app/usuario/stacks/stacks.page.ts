@@ -870,20 +870,89 @@ export class StacksPage implements OnInit {
 
   getGuideSignals(repoId: string, percent: number): { inTier: string[]; notYet: string[] } | null {
     const guide = STACK_KNOWLEDGE_GUIDES[repoId];
-    if (!guide?.signalsByTier) {
-      return null;
-    }
-
     const tier = this.getExpectationTierFromPercent(percent);
-    const signals = guide.signalsByTier[tier];
-    if (!signals?.inTier?.length && !signals?.notYet?.length) {
-      return null;
+    const signals = guide?.signalsByTier?.[tier];
+    const hasSpecific = Boolean(signals?.inTier?.length || signals?.notYet?.length);
+
+    if (hasSpecific) {
+      return {
+        inTier: signals?.inTier ?? [],
+        notYet: signals?.notYet ?? [],
+      };
     }
 
-    return {
-      inTier: signals?.inTier ?? [],
-      notYet: signals?.notYet ?? [],
+    return this.getGenericSignalsForTier(tier);
+  }
+
+  private getGenericSignalsForTier(tier: StackGuideTier): { inTier: string[]; notYet: string[] } | null {
+    // Fallback simples para não deixar o bloco "vazio" em stacks sem conteúdo específico.
+    const generic: Record<StackGuideTier, { inTier: string[]; notYet: string[] }> = {
+      iniciante: {
+        inTier: [
+          'Você consegue executar tarefas pequenas com orientação e aprender rápido com exemplos do time.',
+          'Você consegue debugar erros comuns e não trava ao encontrar algo novo.',
+        ],
+        notYet: [
+          'Você costuma ficar preso sem conseguir avançar sem alguém “pegar na mão”.',
+          'Você não consegue explicar o básico do que está fazendo (conceitos e porquê).',
+        ],
+      },
+      basico: {
+        inTier: [
+          'Você entrega tarefas comuns com consistência e entende os conceitos principais.',
+          'Você começa a antecipar erros e consegue manter padrão de qualidade do time.',
+        ],
+        notYet: [
+          'Você entrega, mas com muita fragilidade: quebra fácil, sem testes e sem cuidado com erros.',
+          'Você ainda não consegue diagnosticar problemas simples sem tentativa e erro.',
+        ],
+      },
+      intermediario: {
+        inTier: [
+          'Você entrega com autonomia e entende tradeoffs do dia a dia.',
+          'Você consegue manter qualidade com consistência (refactors seguros, testes, logs).',
+        ],
+        notYet: [
+          'Você ainda depende de “receitas prontas” e se perde quando o cenário muda.',
+          'Você evita áreas importantes (observabilidade, erros, performance) por falta de segurança.',
+        ],
+      },
+      avancado: {
+        inTier: [
+          'Você resolve problemas difíceis com método (dados, diagnóstico) e melhora o sistema depois.',
+          'Você começa a influenciar padrão do time (reviews, boas práticas, decisões técnicas).',
+          'Você previne incidentes com observabilidade, testes e desenho mais robusto.',
+        ],
+        notYet: [
+          'Você até entrega, mas não consegue explicar os tradeoffs nem justificar decisões.',
+          'Você ainda não tem histórico de resolver problemas difíceis em produção com segurança.',
+        ],
+      },
+      senior: {
+        inTier: [
+          'Você guia decisões técnicas e ajuda o time a entregar melhor (mentoria, reviews, padrões).',
+          'Você lidera melhorias de confiabilidade/performance e resposta a incidentes.',
+          'Você desenha soluções pensando em evolução, operação e impacto no negócio.',
+        ],
+        notYet: [
+          'Você faz “coisas avançadas”, mas não consegue elevar o time nem sustentar decisões.',
+          'Você evita responsabilidade de operação/produção e não conduz melhoria contínua.',
+        ],
+      },
+      especialista: {
+        inTier: [
+          'Você define padrões/plataforma que escalam para vários times (guardrails, tooling, templates).',
+          'Você resolve problemas raros e complexos com profundidade e dados (não por tentativa e erro).',
+          'Você influencia arquitetura e governança em nível organizacional.',
+        ],
+        notYet: [
+          'Você ainda não tem evidência de impacto em escala (além de um time/um serviço).',
+          'Você toma decisões de alto risco sem medir e sem validar impacto real.',
+        ],
+      },
     };
+
+    return generic[tier] ?? null;
   }
 
   private getExpectationTierFromPercent(percent: number): StackGuideTier {

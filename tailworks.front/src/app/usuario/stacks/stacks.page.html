@@ -51,7 +51,6 @@
               [class.candidate-stacks__radio--heat-cold]="getCategoryAverage('primary', category) > 0 && getCategoryAverage('primary', category) < 45"
               [class.candidate-stacks__radio--heat-hot]="getCategoryAverage('primary', category) >= 45"
               [style.--radio-avg]="getCategoryAverage('primary', category)"
-              [attr.title]="'Média: ' + getCategoryAverage('primary', category) + '%'"
             >
               <input
                 type="radio"
@@ -64,10 +63,10 @@
               <span class="candidate-stacks__radio-label">{{ categoryLabels[category] }}</span>
               <span
                 class="candidate-stacks__radio-count"
-                [class.candidate-stacks__radio-count--zero]="getCategoryCount('primary', category) === 0"
-                [attr.aria-label]="'Stacks nessa categoria: ' + getCategoryCount('primary', category)"
+                *ngIf="getCategoryAverage('primary', category) > 0"
+                [attr.aria-label]="'Nível nessa categoria: ' + percentLevelLabel(getCategoryAverage('primary', category)) + ' ' + getCategoryAverage('primary', category) + '%'"
               >
-                {{ getCategoryCount('primary', category) }}
+                {{ percentLevelLabel(getCategoryAverage('primary', category)) }} {{ getCategoryAverage('primary', category) }}%
               </span>
             </label>
           </div>
