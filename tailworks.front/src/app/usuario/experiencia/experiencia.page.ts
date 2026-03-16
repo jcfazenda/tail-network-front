@@ -1,15 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Params, Router, RouterLink } from '@angular/router';
-
-type RegistrationStep = {
-  label: string;
-  index: number | string;
-  route?: string;
-  queryParams?: Params;
-  active?: boolean;
-};
+import { Router } from '@angular/router';
 
 type CandidateBasicProfile = {
   name: string;
@@ -60,7 +52,7 @@ type ExperienceStackChip = {
 @Component({
   standalone: true,
   selector: 'app-experiencia-page',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './experiencia.page.html',
   styleUrls: ['./experiencia.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -101,13 +93,6 @@ export class ExperienciaPage implements OnInit {
   ]);
 
   private readonly router = inject(Router);
-
-  readonly steps: RegistrationStep[] = [
-    { index: 1, label: 'Dados Básicos', route: '/usuario/dados-cadastrais' },
-    { index: 2, label: 'Suas Stacks', route: '/usuario/stacks' },
-    { index: 3, label: 'Experiência', route: '/usuario/experiencia', active: true },
-    { index: 4, label: 'Formação', route: '/usuario/dados-cadastrais', queryParams: { modal: 'formacao' } },
-  ];
 
   readonly workModelOptions: ExperienceEntry['workModel'][] = ['Presencial', 'Híbrido', 'Remoto'];
   readonly positionLevelOptions: ExperienceEntry['positionLevel'][] = ['Júnior', 'Pleno', 'Sênior', 'Tech Lead'];

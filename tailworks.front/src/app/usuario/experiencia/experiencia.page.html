@@ -1,29 +1,4 @@
 <section class="candidate-experience">
-  <nav class="candidate-experience__steps" aria-label="Etapas de cadastro">
-    <ng-container *ngFor="let step of steps">
-      <a
-        *ngIf="step.route; else staticStep"
-        class="candidate-experience__step"
-        [class.candidate-experience__step--active]="step.active"
-        [routerLink]="step.route"
-        [queryParams]="step.queryParams"
-      >
-        <span class="candidate-experience__step-index">{{ step.index }}</span>
-        <span class="candidate-experience__step-label">{{ step.label }}</span>
-      </a>
-
-      <ng-template #staticStep>
-        <span
-          class="candidate-experience__step"
-          [class.candidate-experience__step--active]="step.active"
-        >
-          <span class="candidate-experience__step-index">{{ step.index }}</span>
-          <span class="candidate-experience__step-label">{{ step.label }}</span>
-        </span>
-      </ng-template>
-    </ng-container>
-  </nav>
-
   <section class="candidate-experience__card">
     <div class="candidate-experience__form-card">
       <div class="candidate-experience__content-shell">
