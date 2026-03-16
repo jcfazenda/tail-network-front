@@ -25,19 +25,6 @@
 
     <div class="candidate-stacks__section">
       <div class="candidate-stacks__section-head">
-        <div class="candidate-stacks__seniority-row" role="radiogroup" aria-label="Seu nível geral">
-          <label class="candidate-stacks__purpose-level" *ngFor="let opt of seniorityOptions">
-            <input
-              type="radio"
-              name="profile-seniority"
-              [value]="opt.value"
-              [checked]="profileSeniorityLevel === opt.value"
-              (change)="profileSeniorityLevel = opt.value"
-            />
-            <span class="candidate-stacks__purpose-pill">{{ opt.label }}</span>
-          </label>
-        </div>
-
         <div class="candidate-stacks__section-title-row">
           <h2>Stacks principais</h2>
           <button
@@ -156,11 +143,16 @@
                     <div class="candidate-stacks__repo-expand" *ngIf="expandedGuideRepoId === item.id">
                       <div class="candidate-stacks__repo-guide-body">
                         <div class="candidate-stacks__repo-guide-top">
-                          <div class="candidate-stacks__repo-guide-top-left">
-                            <span class="candidate-stacks__repo-guide-stack">{{ item.name }}</span>
-                            <span class="candidate-stacks__repo-guide-subtitle" *ngIf="getGuideTagline(item.id)">{{ getGuideTagline(item.id) }}</span>
+                          <span class="candidate-stacks__repo-guide-stack">{{ item.name }}</span>
+                          <div class="candidate-stacks__repo-guide-meter">
+                            <span class="candidate-stacks__repo-guide-meter-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                            <span aria-hidden="true">→</span>
+                            <span class="candidate-stacks__repo-guide-meter-label">{{ percentLevelLabel(getRepoKnowledge('primary', item.id)) }}</span>
                           </div>
-                          <span class="candidate-stacks__repo-guide-percent">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                        </div>
+
+                        <div class="candidate-stacks__repo-guide-subtitle-row" *ngIf="getGuideTagline(item.id)">
+                          <span class="candidate-stacks__repo-guide-subtitle">{{ getGuideTagline(item.id) }}</span>
                         </div>
 
                         <div class="candidate-stacks__repo-guide-rule" aria-hidden="true"></div>
@@ -171,18 +163,25 @@
                               O que significa dominar {{ item.name }}
                             </div>
                             <ul class="candidate-stacks__repo-guide-checklist">
-                              <li *ngFor="let row of guide.masteryChecklist">{{ row }}</li>
+                              <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
                             </ul>
                           </div>
 
-                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.commonTools.length">
+                          <div class="candidate-stacks__repo-guide-section">
+                            <div class="candidate-stacks__repo-guide-section-title">Esperamos de você</div>
+                            <ul class="candidate-stacks__repo-guide-bullets">
+                              <li *ngFor="let row of getGuideExpectations(item.id, getRepoKnowledge('primary', item.id))">{{ row }}</li>
+                            </ul>
+                          </div>
+
+                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.commonTools?.length">
                             <div class="candidate-stacks__repo-guide-section-title">Ferramentas comuns</div>
                             <ul class="candidate-stacks__repo-guide-bullets">
                               <li *ngFor="let row of guide.commonTools">{{ row }}</li>
                             </ul>
                           </div>
 
-                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.usedByCompanies.length">
+                          <div class="candidate-stacks__repo-guide-section" *ngIf="guide.usedByCompanies?.length">
                             <div class="candidate-stacks__repo-guide-section-title">Usado em empresas como</div>
                             <div class="candidate-stacks__repo-guide-companies">
                               <span *ngFor="let row of guide.usedByCompanies">{{ row }}</span>
@@ -200,16 +199,6 @@
                           </div>
                         </ng-template>
 
-                        <div class="candidate-stacks__repo-guide-divider" aria-hidden="true"></div>
-
-                        <div class="candidate-stacks__repo-guide-level">
-                          <div class="candidate-stacks__repo-guide-level-row">
-                            <span class="candidate-stacks__repo-guide-level-title">Nível aproximado</span>
-                            <span class="candidate-stacks__repo-guide-level-value">
-                              {{ getRepoKnowledge('primary', item.id) }}% <span aria-hidden="true">→</span> {{ percentLevelLabel(getRepoKnowledge('primary', item.id)) }}
-                            </span>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>

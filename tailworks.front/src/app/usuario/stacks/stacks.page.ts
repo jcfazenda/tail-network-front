@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inje
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
+import { STACK_KNOWLEDGE_GUIDES, StackGuideTier, StackKnowledgeGuide } from './stack-knowledge-guides';
 
 type StackChip = {
   id: string;
@@ -29,7 +30,6 @@ type StackGroup = 'primary' | 'extra';
 type StoredStacksDraft = {
   primary: StackChip[];
   extra: StackChip[];
-  seniority?: SeniorityLevel;
 };
 
 type StackRepoItem = {
@@ -44,13 +44,6 @@ type GuidanceBand = {
   label: string;
   title: string;
   description: string;
-};
-
-type StructuredStackGuide = {
-  tagline: string;
-  masteryChecklist: string[];
-  commonTools: string[];
-  usedByCompanies: string[];
 };
 
 type CandidateBasicProfile = {
@@ -102,7 +95,6 @@ export class StacksPage implements OnInit {
   activeGuidanceStack: StackRepoItem | null = null;
   activeGuidancePercent = 0;
   expandedGuideRepoId: string | null = null;
-  profileSeniorityLevel: SeniorityLevel = 'pleno';
   editingStackGroup: StackGroup = 'primary';
   editingStackIndex: number | null = null;
   stackDraftName = '';
@@ -197,13 +189,6 @@ export class StacksPage implements OnInit {
   };
 
   private cachedKnownRepoIds: Set<string> | null = null;
-
-  readonly seniorityOptions: Array<{ value: SeniorityLevel; label: string }> = [
-    { value: 'jr', label: 'Jr' },
-    { value: 'pleno', label: 'Pleno' },
-    { value: 'senior', label: 'Senior' },
-    { value: 'especialista', label: 'Especialista' },
-  ];
 
   private readonly stackPurposeCopy: Record<string, { summary: string; levels: Record<SeniorityLevel, string[]> }> = {
     'repo:dotnet': {
@@ -338,30 +323,6 @@ export class StacksPage implements OnInit {
     },
   };
 
-  private readonly structuredGuides: Record<string, StructuredStackGuide> = {
-    'repo:kafka': {
-      tagline: 'Event Streaming Platform',
-      masteryChecklist: [
-        'Produzir e consumir eventos',
-        'Entender tópicos e partições',
-        'Trabalhar com consumer groups',
-        'Integrar com microservices',
-      ],
-      commonTools: [
-        'Kafka CLI',
-        'Confluent',
-        'Spring Kafka',
-        'Kafka Streams',
-      ],
-      usedByCompanies: [
-        'Netflix',
-        'Uber',
-        'LinkedIn',
-        'Amazon',
-      ],
-    },
-  };
-
   get displayName(): string {
     return this.profile.name.trim() || 'Julio Fazenda';
   }
@@ -405,33 +366,17 @@ export class StacksPage implements OnInit {
     if (!stack) {
       return [];
     }
-
-    const fallback: Record<SeniorityLevel, string[]> = {
-      jr: [
-        'Consegue executar tarefas com orientação e evolui rápido seguindo padrões do time.',
-      ],
-      pleno: [
-        'Entrega com autonomia, entende tradeoffs e mantém qualidade com consistência.',
-      ],
-      senior: [
-        'Guia decisões técnicas, melhora a qualidade do sistema e influencia o time.',
-      ],
-      especialista: [
-        'Aprofunda no tema, define padrões e resolve problemas complexos com alta precisão.',
-      ],
-    };
-
-    return this.stackPurposeCopy[stack.id]?.levels[this.profileSeniorityLevel]
-      ?? fallback[this.profileSeniorityLevel];
+    const tier = this.getExpectationTierFromPercent(this.activeGuidancePercent);
+    return this.getInfoBulletsForLevel(stack.id, this.mapTierToFallbackLevel(tier));
   }
 
-  get activeStructuredGuide(): StructuredStackGuide | null {
+  get activeStructuredGuide(): StackKnowledgeGuide | null {
     const stack = this.activeGuidanceStack;
     if (!stack) {
       return null;
     }
 
-    return this.structuredGuides[stack.id] ?? null;
+    return STACK_KNOWLEDGE_GUIDES[stack.id] ?? null;
   }
 
   get activeGuideTagline(): string {
@@ -562,7 +507,6 @@ export class StacksPage implements OnInit {
         const parsedDraft = JSON.parse(stored) as Partial<StoredStacksDraft>;
         const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
         const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
-        this.restoreSeniority(parsedDraft.seniority);
         const restoredPrimary = primary
           .filter((item): item is StackChip => Boolean(item?.name))
           .map((item) => this.normalizeStackChip(item));
@@ -586,8 +530,6 @@ export class StacksPage implements OnInit {
         const parsedDraft = JSON.parse(legacyV4) as Partial<StoredStacksDraft>;
         const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
         const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
-        this.restoreSeniority(parsedDraft.seniority);
-
         // Versões anteriores semeavam automaticamente stacks em 10%. Se parecer seed, zera.
         if (this.looksLikeLegacySeedDraft(primary, extra)) {
           this.primaryStacks = [];
@@ -619,7 +561,6 @@ export class StacksPage implements OnInit {
         const parsedDraft = JSON.parse(legacyV3) as Partial<StoredStacksDraft>;
         const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
         const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
-        this.restoreSeniority(parsedDraft.seniority);
         const restoredPrimary = primary
           .filter((item): item is StackChip => Boolean(item?.name))
           .map((item) => this.normalizeStackChip(item));
@@ -656,12 +597,6 @@ export class StacksPage implements OnInit {
     this.primaryStacks = [];
     this.extraStacks = [];
     this.persistStacks();
-  }
-
-  private restoreSeniority(value: unknown): void {
-    if (value === 'jr' || value === 'pleno' || value === 'senior' || value === 'especialista') {
-      this.profileSeniorityLevel = value;
-    }
   }
 
   getRepoKnowledge(group: StackGroup, repoId: string): number {
@@ -799,12 +734,12 @@ export class StacksPage implements OnInit {
     this.setActiveGuidance(item);
   }
 
-  getStructuredGuide(repoId: string): StructuredStackGuide | null {
-    return this.structuredGuides[repoId] ?? null;
+  getStructuredGuide(repoId: string): StackKnowledgeGuide | null {
+    return STACK_KNOWLEDGE_GUIDES[repoId] ?? null;
   }
 
   getGuideTagline(repoId: string): string {
-    return this.structuredGuides[repoId]?.tagline ?? '';
+    return STACK_KNOWLEDGE_GUIDES[repoId]?.tagline ?? '';
   }
 
   getInfoSummary(repoId: string): string {
@@ -813,6 +748,10 @@ export class StacksPage implements OnInit {
   }
 
   getInfoBullets(repoId: string): string[] {
+    return this.getInfoBulletsForLevel(repoId, 'pleno');
+  }
+
+  private getInfoBulletsForLevel(repoId: string, level: SeniorityLevel): string[] {
     const fallback: Record<SeniorityLevel, string[]> = {
       jr: [
         'Consegue executar tarefas com orientação e evolui rápido seguindo padrões do time.',
@@ -828,12 +767,58 @@ export class StacksPage implements OnInit {
       ],
     };
 
-    return this.stackPurposeCopy[repoId]?.levels[this.profileSeniorityLevel]
-      ?? fallback[this.profileSeniorityLevel];
+    return this.stackPurposeCopy[repoId]?.levels[level]
+      ?? fallback[level];
   }
 
   percentLevelLabel(percent: number): string {
     return this.getPercentLevelLabel(percent);
+  }
+
+  getGuideExpectations(repoId: string, percent: number): string[] {
+    const guide = STACK_KNOWLEDGE_GUIDES[repoId];
+    const tier = this.getExpectationTierFromPercent(percent);
+    const custom = guide?.expectationsByTier?.[tier];
+    if (custom?.length) {
+      return custom;
+    }
+
+    return this.getInfoBulletsForLevel(repoId, this.mapTierToFallbackLevel(tier));
+  }
+
+  private getExpectationTierFromPercent(percent: number): StackGuideTier {
+    // Mantem alinhado com os rótulos exibidos na UI (percentLevelLabel).
+    if (percent >= 95) {
+      return 'especialista';
+    }
+    if (percent >= 80) {
+      return 'senior';
+    }
+    if (percent >= 60) {
+      return 'avancado';
+    }
+    if (percent >= 45) {
+      return 'intermediario';
+    }
+    if (percent >= 20) {
+      return 'basico';
+    }
+    return 'iniciante';
+  }
+
+  private mapTierToFallbackLevel(tier: StackGuideTier): SeniorityLevel {
+    switch (tier) {
+      case 'iniciante':
+      case 'basico':
+        return 'jr';
+      case 'intermediario':
+        return 'pleno';
+      case 'avancado':
+      case 'senior':
+        return 'senior';
+      case 'especialista':
+        return 'especialista';
+    }
   }
 
   private getGuidanceBand(percent: number): GuidanceBand {
@@ -1079,7 +1064,6 @@ export class StacksPage implements OnInit {
     const draft: StoredStacksDraft = {
       primary: this.primaryStacks,
       extra: this.extraStacks,
-      seniority: this.profileSeniorityLevel,
     };
     localStorage.setItem(StacksPage.storageKey, JSON.stringify(draft));
   }

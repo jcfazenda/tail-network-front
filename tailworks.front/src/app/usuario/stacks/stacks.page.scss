@@ -326,13 +326,6 @@
   padding: 0 4px;
 }
 
-.candidate-stacks__seniority-row{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 4px 0 2px;
-}
-
 .candidate-stacks__section-head .candidate-stacks__purpose-pill{
   min-height: 32px;
   font-size: 12px;
@@ -702,9 +695,13 @@
 
 .candidate-stacks__repo-guide-top{
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
+}
+
+.candidate-stacks__repo-guide-subtitle-row{
+  margin-top: 2px;
 }
 
 .candidate-stacks__repo-guide-top-left{
@@ -725,12 +722,32 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(15, 23, 42, 0.46);
+  white-space: nowrap;
 }
 
 .candidate-stacks__repo-guide-percent{
   font-size: 14px;
   font-weight: 900;
   color: rgba(15, 23, 42, 0.62);
+}
+
+.candidate-stacks__repo-guide-meter{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.candidate-stacks__repo-guide-meter-value{
+  color: rgba(15, 23, 42, 0.76);
+  font-weight: 900;
+}
+
+.candidate-stacks__repo-guide-meter-label{
+  color: rgba(15, 23, 42, 0.76);
+  font-weight: 900;
 }
 
 .candidate-stacks__repo-guide-copy{
@@ -749,7 +766,11 @@
 
 .candidate-stacks__repo-guide-section{
   display: grid;
-  gap: 8px;
+  gap: 10px;
+}
+
+.candidate-stacks__repo-guide-section + .candidate-stacks__repo-guide-section{
+  margin-top: 6px;
 }
 
 .candidate-stacks__repo-guide-section-title{
@@ -757,6 +778,15 @@
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.04em;
+  margin-bottom: -2px;
+}
+
+.candidate-stacks__repo-guide-expect-intro{
+  color: rgba(15, 23, 42, 0.52);
+  font-size: 12px;
+  line-height: 1.45;
+  margin-top: -4px;
+  margin-bottom: -2px;
 }
 
 .candidate-stacks__repo-guide-checklist,
@@ -769,6 +799,14 @@
   color: rgba(15, 23, 42, 0.58);
   font-size: 13px;
   line-height: 1.45;
+}
+
+.candidate-stacks__repo-guide-checklist{
+  padding-top: 6px;
+}
+
+.candidate-stacks__repo-guide-bullets{
+  padding-top: 2px;
 }
 
 .candidate-stacks__repo-guide-checklist li{
@@ -927,60 +965,6 @@
 
 .candidate-stacks__stack-item-help:active{
   transform: translateY(1px);
-}
-
-.candidate-stacks__purpose-levels{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 14px 0 4px;
-}
-
-.candidate-stacks__purpose-level{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.candidate-stacks__purpose-level input{
-  position: absolute;
-  opacity: 0.001;
-  pointer-events: none;
-}
-
-.candidate-stacks__purpose-pill{
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(210, 216, 226, 0.92);
-  background: rgba(255, 255, 255, 0.86);
-  color: rgba(15, 23, 42, 0.68);
-  font-size: 13px;
-  font-weight: 900;
-}
-
-.candidate-stacks__purpose-level input:checked + .candidate-stacks__purpose-pill{
-  border-color: rgba(56, 161, 105, 0.42);
-  background: linear-gradient(180deg, rgba(96, 200, 148, 0.16), rgba(255, 255, 255, 0.92));
-  color: rgba(15, 23, 42, 0.92);
-}
-
-.candidate-stacks__purpose-body{
-  display: grid;
-  gap: 8px;
-  padding-top: 8px;
-}
-
-.candidate-stacks__purpose-kicker{
-  color: rgba(15, 23, 42, 0.52);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .candidate-stacks__purpose-list{
