@@ -47,10 +47,10 @@
               class="candidate-stacks__radio"
               *ngFor="let category of uiCategories"
               [class.candidate-stacks__radio--checked]="selectedPrimaryCategory === category"
-              [class.candidate-stacks__radio--heat-muted]="getCategoryAverage('primary', category) === 0"
-              [class.candidate-stacks__radio--heat-cold]="getCategoryAverage('primary', category) > 0 && getCategoryAverage('primary', category) < 45"
-              [class.candidate-stacks__radio--heat-hot]="getCategoryAverage('primary', category) >= 45"
-              [style.--radio-avg]="getCategoryAverage('primary', category)"
+              [class.candidate-stacks__radio--heat-muted]="getCategoryMax('primary', category) === 0"
+              [class.candidate-stacks__radio--heat-cold]="getCategoryMax('primary', category) > 0 && getCategoryMax('primary', category) < 45"
+              [class.candidate-stacks__radio--heat-hot]="getCategoryMax('primary', category) >= 45"
+              [style.--radio-avg]="getCategoryMax('primary', category)"
             >
               <input
                 type="radio"
@@ -63,10 +63,10 @@
               <span class="candidate-stacks__radio-label">{{ categoryLabels[category] }}</span>
               <span
                 class="candidate-stacks__radio-count"
-                *ngIf="getCategoryAverage('primary', category) > 0"
-                [attr.aria-label]="'Nível nessa categoria: ' + percentLevelLabel(getCategoryAverage('primary', category)) + ' ' + getCategoryAverage('primary', category) + '%'"
+                *ngIf="getCategoryMax('primary', category) > 0"
+                [attr.aria-label]="'Nível nessa categoria: ' + percentLevelLabel(getCategoryMax('primary', category)) + ' ' + getCategoryMax('primary', category) + '%'"
               >
-                {{ percentLevelLabel(getCategoryAverage('primary', category)) }} {{ getCategoryAverage('primary', category) }}%
+                {{ percentLevelLabel(getCategoryMax('primary', category)) }} {{ getCategoryMax('primary', category) }}%
               </span>
             </label>
           </div>

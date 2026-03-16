@@ -702,6 +702,15 @@ export class StacksPage implements OnInit {
     return Math.round(total / list.length);
   }
 
+  getCategoryMax(group: StackGroup, category: StackCategory): number {
+    const list = this.getStacksList(group).filter((item) => item.category === category && item.knowledge >= 10);
+    if (!list.length) {
+      return 0;
+    }
+
+    return list.reduce((acc, item) => Math.max(acc, item.knowledge), 0);
+  }
+
   updateRepoKnowledge(group: StackGroup, repoItem: StackRepoItem, rawValue: unknown): void {
     this.stackError = '';
     const nextValue = Math.max(0, Math.min(100, Math.round(Number(rawValue))));
