@@ -78,15 +78,15 @@ export class CadastroPage implements OnDestroy {
 
   readonly previewAderencia = 89;
   readonly previewAvatars = [
-    '/assets/avatars/avatar-rafael.png',
-    '/assets/avatars/avatar-rafael.png',
-    '/assets/avatars/avatar-rafael.png',
+    '/assets/avatars/avatar-default.svg',
+    '/assets/avatars/avatar-default.svg',
+    '/assets/avatars/avatar-default.svg',
   ];
   readonly previewAvatarExtraCount = 18;
   readonly recruiterPreview = {
     name: 'Julio Fazenda',
     role: 'Talent Acquisition',
-    avatar: '/assets/avatars/avatar-rafael.png',
+    avatar: '/assets/avatars/avatar-default.svg',
   };
   readonly initialDocumentOptions = [
     'Copia do Certificado de conclusão',

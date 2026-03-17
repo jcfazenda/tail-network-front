@@ -37,7 +37,7 @@ type PermissionDefinition = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecruiterCadastroPage implements OnDestroy {
-  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-rafael.png';
+  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-default.svg';
   private readonly companyDirectoryService = inject(EmpresaDirectoryService);
   private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
   private readonly route = inject(ActivatedRoute);

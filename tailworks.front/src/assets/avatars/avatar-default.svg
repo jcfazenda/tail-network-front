@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Avatar">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9eef5"/>
+      <stop offset="1" stop-color="#d9e2ee"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c6d3e3"/>
+      <stop offset="1" stop-color="#b7c7dc"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="128" cy="128" r="124" fill="url(#bg)"/>
+  <circle cx="128" cy="128" r="124" fill="none" stroke="url(#ring)" stroke-width="4"/>
+
+  <!-- Silhouette -->
+  <circle cx="128" cy="104" r="44" fill="#8fa2bb" opacity="0.9"/>
+  <path
+    d="M48 222c12-44 44-72 80-72s68 28 80 72"
+    fill="#8fa2bb"
+    opacity="0.9"
+  />
+
+  <!-- Soft highlight -->
+  <circle cx="94" cy="86" r="18" fill="#ffffff" opacity="0.22"/>
+</svg>
+

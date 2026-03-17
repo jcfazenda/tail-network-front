@@ -54,7 +54,7 @@ export class TopbarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
-  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-rafael.png';
+  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-default.svg';
   private static readonly recruiterFormationLogoAsset = '/assets/images/formacao-default.png';
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;

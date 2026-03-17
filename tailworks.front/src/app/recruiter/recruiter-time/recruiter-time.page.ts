@@ -24,7 +24,7 @@ type TeamChatMessage = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecruiterTimePage implements OnDestroy {
-  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-rafael.png';
+  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-default.svg';
   private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();

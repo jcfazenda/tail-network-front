@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, RecruiterIdentity, TalentJobDecision } from './vagas.models';
 import { TalentNotificationService } from '../../usuario/talent-notification.service';
 import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
+import { TalentDirectoryService, TalentRecord } from '../../talent/talent-directory.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -42,11 +43,12 @@ export class VagasMockService {
   private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
   private readonly syncChannelName = 'tailworks.front.mock-vagas.sync';
   private readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
-  private readonly fallbackTalentAvatar = '/assets/avatars/avatar-rafael.png';
+  private readonly fallbackTalentAvatar = '/assets/avatars/avatar-default.svg';
   private readonly fallbackTalentCandidateName = 'Julio Fazenda';
   private readonly zone = inject(NgZone);
   private readonly talentNotificationService = inject(TalentNotificationService);
   private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
+  private readonly talentDirectoryService = inject(TalentDirectoryService);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
@@ -58,6 +60,7 @@ export class VagasMockService {
       return;
     }
 
+    this.talentDirectoryService.ensureSeeded();
     window.addEventListener('storage', this.handleStorageSync);
 
     if ('BroadcastChannel' in window) {
@@ -67,11 +70,20 @@ export class VagasMockService {
   }
 
   getJobs(): MockJobRecord[] {
-    return [...this.loadJobs()].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+    const jobs = this.loadJobs();
+    const acceptedJobId = this.findTalentAcceptedJobId(jobs);
+    const acceptedCandidateNames = this.findAcceptedCandidateNames(jobs);
+    return jobs
+      .map((job) => this.decorateTalentVisibility(job, { acceptedJobId, acceptedCandidateNames }))
+      .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
   }
 
   getJobById(id: string): MockJobRecord | undefined {
-    return this.loadJobs().find((job) => job.id === id);
+    const jobs = this.loadJobs();
+    const acceptedJobId = this.findTalentAcceptedJobId(jobs);
+    const acceptedCandidateNames = this.findAcceptedCandidateNames(jobs);
+    const found = jobs.find((job) => job.id === id);
+    return found ? this.decorateTalentVisibility(found, { acceptedJobId, acceptedCandidateNames }) : undefined;
   }
 
   getTalentCandidateIdentity(): TalentIdentity {
@@ -471,9 +483,13 @@ export class VagasMockService {
       this.talentNotificationService.pushProcessAdvancedNotification(updatedJob, nextTargetCandidate);
     }
 
-    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    const tentativeJobs = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    const acceptedJobId = this.findTalentAcceptedJobId(tentativeJobs);
+    const acceptedCandidateNames = this.findAcceptedCandidateNames(tentativeJobs);
+    const normalizedJobs = this.enforceTalentExclusivity(tentativeJobs, acceptedJobId);
+    this.cache = normalizedJobs.map((job) => this.decorateTalentVisibility(job, { acceptedJobId, acceptedCandidateNames }));
     this.persist();
-    return updatedJob;
+    return this.cache.find((job) => job.id === jobId);
   }
 
   hideFromTalent(jobId: string): MockJobRecord | undefined {
@@ -569,9 +585,13 @@ export class VagasMockService {
       updatedAt: new Date().toISOString(),
     });
 
-    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    const tentativeJobs = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    const acceptedJobId = this.findTalentAcceptedJobId(tentativeJobs);
+    const acceptedCandidateNames = this.findAcceptedCandidateNames(tentativeJobs);
+    const normalizedJobs = this.enforceTalentExclusivity(tentativeJobs, acceptedJobId);
+    this.cache = normalizedJobs.map((job) => this.decorateTalentVisibility(job, { acceptedJobId, acceptedCandidateNames }));
     this.persist();
-    return updatedJob;
+    return this.cache.find((job) => job.id === jobId);
   }
 
   private findTalentCandidateByJobId(jobId: string): MockJobCandidate | undefined {
@@ -677,7 +697,8 @@ export class VagasMockService {
   }
 
   private normalizeJobs(records: MockJobRecord[]): MockJobRecord[] {
-    return records.map((record) => ({
+    const acceptedJobId = this.findTalentAcceptedJobId(records);
+    const normalized = records.map((record) => ({
       ...record,
       hiringDocuments: this.normalizeHiringDocuments(record.hiringDocuments),
       showSalaryRangeInCard: record.showSalaryRangeInCard ?? true,
@@ -695,7 +716,79 @@ export class VagasMockService {
       avatars: [...record.avatars],
     }))
       .map((record) => this.ensureRecruiterMetadata(record))
-      .map((record) => this.decorateTalentVisibility(this.migrateLegacyTalentState(record)));
+      .map((record) => this.migrateLegacyTalentState(record));
+
+    const enforced = this.enforceTalentExclusivity(normalized, acceptedJobId);
+    const acceptedCandidateNames = this.findAcceptedCandidateNames(enforced);
+    return enforced.map((record) => this.decorateTalentVisibility(record, { acceptedJobId, acceptedCandidateNames }));
+  }
+
+  private findTalentAcceptedJobId(records: Array<Pick<MockJobRecord, 'id' | 'updatedAt' | 'candidates'>>): string | null {
+    const identity = this.readTalentIdentity();
+    const acceptedStages: CandidateStage[] = ['aceito', 'documentacao', 'contratado'];
+    const accepted = records
+      .map((job) => {
+        const talentCandidate = job.candidates.find((candidate) => this.isTalentCandidate(candidate, identity));
+        const stage = this.getEffectiveCandidateStage(talentCandidate);
+        if (!stage || !acceptedStages.includes(stage)) {
+          return null;
+        }
+        return { id: job.id, updatedAt: job.updatedAt };
+      })
+      .filter((value): value is { id: string; updatedAt: string } => !!value);
+
+    if (!accepted.length) {
+      return null;
+    }
+
+    accepted.sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+    return accepted[0].id;
+  }
+
+  private findAcceptedCandidateNames(records: Array<Pick<MockJobRecord, 'candidates'>>): Set<string> {
+    const acceptedStages: CandidateStage[] = ['aceito', 'documentacao', 'contratado'];
+    const names = new Set<string>();
+
+    for (const job of records) {
+      for (const candidate of job.candidates) {
+        const stage = this.getEffectiveCandidateStage(candidate);
+        if (stage && acceptedStages.includes(stage)) {
+          names.add(candidate.name);
+        }
+      }
+    }
+
+    return names;
+  }
+
+  private enforceTalentExclusivity(
+    records: MockJobRecord[],
+    acceptedJobId: string | null,
+  ): MockJobRecord[] {
+    if (!acceptedJobId) {
+      return records;
+    }
+
+    const identity = this.readTalentIdentity();
+
+    return records.map((job) => {
+      if (job.id === acceptedJobId) {
+        return job;
+      }
+
+      const hadTalent = job.candidates.some((candidate) => this.isTalentCandidate(candidate, identity));
+      if (!hadTalent) {
+        return job;
+      }
+
+      return {
+        ...job,
+        candidates: job.candidates.filter((candidate) => !this.isTalentCandidate(candidate, identity)),
+        talentDecision: undefined,
+        talentSubmittedDocuments: [],
+        talentDocumentsConsentAccepted: false,
+      };
+    });
   }
 
   private normalizeBenefits(benefits: unknown): JobBenefitItem[] {
@@ -891,15 +984,21 @@ export class VagasMockService {
     };
   }
 
-  private decorateTalentVisibility(job: MockJobRecord): MockJobRecord {
+  private decorateTalentVisibility(job: MockJobRecord, context?: { acceptedJobId?: string | null; acceptedCandidateNames?: Set<string> }): MockJobRecord {
     const canonicalJob = this.collapseTalentCandidates(job);
     const jobWithTalentState = this.withDerivedTalentState(canonicalJob);
-    const highlightedAvatars = this.collectVisibleSystemAvatars(jobWithTalentState);
+    const acceptedJobId = context?.acceptedJobId ?? null;
+    const acceptedCandidateNames = context?.acceptedCandidateNames ?? new Set<string>();
+    const radarTalents = this.collectRadarTalents(jobWithTalentState, acceptedJobId, acceptedCandidateNames);
+    const highlightedAvatars = radarTalents.map((talent) => talent.avatarUrl.trim()).filter(Boolean);
+    const totalRadar = radarTalents.length;
 
     return {
       ...jobWithTalentState,
+      talents: Math.max(jobWithTalentState.candidates.length, totalRadar),
+      radarCount: totalRadar,
       avatars: highlightedAvatars.slice(0, 3),
-      extraCount: Math.max(0, highlightedAvatars.length - 3),
+      extraCount: Math.max(0, totalRadar - Math.min(3, highlightedAvatars.length)),
     };
   }
 
@@ -952,28 +1051,119 @@ export class VagasMockService {
     };
   }
 
-  private collectVisibleSystemAvatars(job: MockJobRecord): string[] {
-    const identity = this.readTalentIdentity();
-    const systemCandidates = job.candidates.filter((candidate) => this.isTalentCandidate(candidate, identity));
-    const candidatesToShow = systemCandidates.length
-      ? systemCandidates
-      : this.shouldShowTalentAsRadar(job, identity)
-        ? [{ ...this.buildTalentCandidate(job), stage: 'radar' as const, radarOnly: true }]
-        : [];
-
-    return candidatesToShow
-      .filter((candidate) => candidate.hasProfileAvatar && this.shouldShowCandidateAvatar(candidate))
-      .map((candidate) => candidate.avatar.trim())
-      .filter(Boolean)
-      .filter((avatar, index, items) => items.indexOf(avatar) === index);
-  }
-
-  private shouldShowTalentAsRadar(job: MockJobRecord, identity: TalentIdentity): boolean {
-    if (!identity.hasProfileAvatar || job.status !== 'ativas' || job.talentDecision === 'hidden') {
-      return false;
+  private collectRadarTalents(job: MockJobRecord, acceptedJobId: string | null, acceptedCandidateNames: Set<string>): TalentRecord[] {
+    const requiredRepoIds = this.mapJobTechStackToRepoIds(job.techStack.map((item) => item.name));
+    if (requiredRepoIds.length === 0) {
+      return [];
     }
 
-    return !job.candidates.some((candidate) => this.isTalentCandidate(candidate, identity));
+    const acceptedNamesLower = new Set(Array.from(acceptedCandidateNames).map((name) => name.trim().toLocaleLowerCase('pt-BR')));
+
+    const candidates = this.talentDirectoryService.listTalents()
+      .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring)
+      .filter((talent) => !acceptedNamesLower.has(talent.name.trim().toLocaleLowerCase('pt-BR')));
+    const scored = candidates
+      .map((talent) => ({ talent, score: this.scoreTalentForJob(requiredRepoIds, talent) }))
+      .filter((item) => item.score >= 45);
+
+    scored.sort((a, b) => b.score - a.score || a.talent.name.localeCompare(b.talent.name, 'pt-BR'));
+
+    // Cap defensivo: evita listas gigantes no mock.
+    return scored.slice(0, 120).map((item) => item.talent);
+  }
+
+  private mapJobTechStackToRepoIds(items: string[]): string[] {
+    const out: string[] = [];
+
+    const push = (id: string) => {
+      if (!out.includes(id)) {
+        out.push(id);
+      }
+    };
+
+    for (const raw of items) {
+      const normalized = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+
+      if (normalized.includes('.net') || normalized.includes('dotnet')) {
+        push('repo:dotnet');
+      }
+      if (normalized.includes('c#') || normalized.includes('csharp')) {
+        push('repo:csharp');
+      }
+      if (normalized.includes('asp') && normalized.includes('core')) {
+        push('repo:aspnet-core');
+      }
+      if (normalized.includes('entity') && normalized.includes('framework')) {
+        push('repo:entity-framework');
+      }
+      if (normalized.includes('rest')) {
+        push('repo:rest-api');
+      }
+      if (normalized.includes('sql server')) {
+        push('repo:sql-server');
+      }
+      if (normalized.includes('postgres')) {
+        push('repo:postgresql');
+      }
+      if (normalized.includes('mysql')) {
+        push('repo:mysql');
+      }
+      if (normalized.includes('mongodb')) {
+        push('repo:mongodb');
+      }
+      if (normalized.includes('redis')) {
+        push('repo:redis');
+      }
+      if (normalized.includes('elastic')) {
+        push('repo:elasticsearch');
+      }
+      if (normalized.includes('docker')) {
+        push('repo:docker');
+      }
+      if (normalized.includes('kubernetes')) {
+        push('repo:kubernetes');
+      }
+      if (normalized.includes('terraform')) {
+        push('repo:terraform');
+      }
+      if (normalized.includes('aws')) {
+        push('repo:aws');
+      }
+      if (normalized.includes('azure')) {
+        push('repo:azure');
+      }
+      if (normalized.includes('gcp') || normalized.includes('google cloud')) {
+        push('repo:gcp');
+      }
+      if (normalized.includes('serverless')) {
+        push('repo:serverless');
+      }
+      if (normalized.includes('kafka')) {
+        push('repo:kafka');
+      }
+      if (normalized.includes('rabbit')) {
+        push('repo:rabbitmq');
+      }
+      if (normalized.includes('microservice')) {
+        push('repo:microservices');
+      }
+    }
+
+    return out;
+  }
+
+  private scoreTalentForJob(requiredRepoIds: string[], talent: TalentRecord): number {
+    if (!requiredRepoIds.length) {
+      return 0;
+    }
+
+    let total = 0;
+    for (const repoId of requiredRepoIds) {
+      const value = Number(talent.stacks?.[repoId] ?? 0);
+      total += Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
+    }
+
+    return Math.round(total / requiredRepoIds.length);
   }
 
   private shouldShowCandidateAvatar(candidate: MockJobCandidate): boolean {

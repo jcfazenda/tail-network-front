@@ -59,7 +59,7 @@
       </section>
 
       <div class="hello-block">
-        <h1>Olá, Rafael <span aria-hidden="true">👋</span></h1>
+        <h1>Olá, {{ recruiterGreetingName }} <span aria-hidden="true">👋</span></h1>
         <p>Que você tenha um ótimo dia de recrutamento.</p>
       </div>
 
@@ -272,6 +272,7 @@
               [class.jobs__view-chip--active]="activeBoardView === 'radar'"
               (click)="setBoardView('radar')"
             >
+              <span class="material-symbols-rounded jobs__view-icon" aria-hidden="true">radar</span>
               <span>No Radar</span>
               <strong>{{ recruiterRadarJobsCount }}</strong>
             </button>
@@ -279,11 +280,45 @@
             <button
               class="jobs__view-chip"
               type="button"
-              [class.jobs__view-chip--active]="activeBoardView === 'process'"
-              (click)="setBoardView('process')"
+              [class.jobs__view-chip--active]="activeBoardView === 'candidaturas'"
+              (click)="setBoardView('candidaturas')"
             >
+              <span class="material-symbols-rounded jobs__view-icon" aria-hidden="true">task_alt</span>
+              <span>Candidaturas</span>
+              <strong>{{ recruiterCandidaturasJobsCount }}</strong>
+            </button>
+
+            <button
+              class="jobs__view-chip"
+              type="button"
+              [class.jobs__view-chip--active]="activeBoardView === 'processo'"
+              (click)="setBoardView('processo')"
+            >
+              <span class="material-symbols-rounded jobs__view-icon" aria-hidden="true">swap_horiz</span>
               <span>Em Processo</span>
               <strong>{{ recruiterProcessJobsCount }}</strong>
+            </button>
+
+            <button
+              class="jobs__view-chip"
+              type="button"
+              [class.jobs__view-chip--active]="activeBoardView === 'solicitada'"
+              (click)="setBoardView('solicitada')"
+            >
+              <span class="material-symbols-rounded jobs__view-icon" aria-hidden="true">request_quote</span>
+              <span>Contratação solicitada</span>
+              <strong>{{ recruiterHiringRequestedJobsCount }}</strong>
+            </button>
+
+            <button
+              class="jobs__view-chip"
+              type="button"
+              [class.jobs__view-chip--active]="activeBoardView === 'contratados'"
+              (click)="setBoardView('contratados')"
+            >
+              <span class="material-symbols-rounded jobs__view-icon" aria-hidden="true">verified</span>
+              <span>Contratados</span>
+              <strong>{{ recruiterHiredJobsCount }}</strong>
             </button>
           </div>
         </div>
@@ -339,8 +374,9 @@
                                   [class.job-card__flip--active]="isJobRadarFlipped(job.id)"
                                   type="button"
                                   (click)="toggleJobRadar(job.id, $event)"
-                                  aria-label="Mostrar alcance do radar"
-                                  title="Mostrar alcance do radar"
+                                  *ngIf="activeBoardView === 'radar'"
+                                  aria-label="Ver talentos no radar"
+                                  title="Ver talentos no radar"
                                 >
                                   <span class="material-icons-outlined" aria-hidden="true">cached</span>
                                 </button>
@@ -375,6 +411,26 @@
                       </div>
                     </div>
 
+                    <div class="job-card__journey" *ngIf="activeBoardView !== 'radar'">
+                      <div class="job-card__steps">
+                        <ng-container *ngFor="let step of jobCardSteps(job); let last = last">
+                          <span
+                            class="job-card__step"
+                            [class.job-card__step--done]="step.state === 'done'"
+                            [class.job-card__step--active]="step.state === 'active'"
+                          >
+                            <span class="job-card__step-badge">
+                              <span class="material-symbols-rounded" aria-hidden="true">
+                                {{ step.state === 'done' ? 'check' : step.state === 'active' ? 'schedule' : 'chevron_right' }}
+                              </span>
+                            </span>
+                            <span class="job-card__step-label">{{ step.label }}</span>
+                          </span>
+                          <span class="job-card__step-line" *ngIf="!last" aria-hidden="true"></span>
+                        </ng-container>
+                      </div>
+                    </div>
+
                     <div class="job-card__footer">
                       <div class="job-card__fit">
                         <span class="job-card__fit-bar" aria-hidden="true">
@@ -406,13 +462,31 @@
                       <span class="material-icons-outlined" aria-hidden="true">cached</span>
                     </button>
                   </div>
-                  <app-alcance-radar
-                    class="job-card__side"
-                    [embedded]="true"
-                    [score]="job.match"
-                    [showGaugeLabel]="false"
-                    [items]="jobRadarItems(job)"
-                  ></app-alcance-radar>
+
+                  <div class="job-card__radar">
+                    <div class="job-card__radar-head">
+                      <strong>Talentos no radar</strong>
+                      <span>{{ jobCompanySignal(job) }}</span>
+                    </div>
+
+                    <div class="job-card__radar-avatars" aria-label="Avatares de talentos no radar">
+                      <span
+                        class="job-card__radar-avatar"
+                        *ngFor="let avatar of job.avatars"
+                        [style.backgroundImage]="'url(' + avatar + ')'"
+                        aria-hidden="true"
+                      ></span>
+                      <span
+                        class="job-card__radar-avatar job-card__radar-avatar--extra"
+                        *ngIf="job.extraCount > 0"
+                        aria-label="Mais talentos no radar"
+                      >+{{ job.extraCount }}</span>
+                    </div>
+
+                    <div class="job-card__radar-note">
+                      Esses avatares representam talentos disponiveis no radar desta vaga. Assim que um talento aceitar uma proposta, ele deixa de aparecer no radar de outras vagas.
+                    </div>
+                  </div>
                 </div>
               </div>
             </article>
@@ -438,7 +512,7 @@
         <div class="job-side-panel__profile">
           <div class="job-side-panel__avatar-wrap">
             <img
-              src="/assets/avatars/avatar-rafael.png"
+              src="/assets/avatars/avatar-default.svg"
               [alt]="recruiterDisplayName"
               class="job-side-panel__avatar"
             />

@@ -499,7 +499,7 @@
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png'), var(--avatar-gradient);
+  background: center/cover no-repeat url('/assets/avatars/avatar-default.svg'), var(--avatar-gradient);
   color: #fff;
   font-weight: 700;
   display: grid;
@@ -945,7 +945,7 @@
   width: 58px;
   height: 58px;
   border-radius: 999px;
-  background: center/cover no-repeat url('/assets/avatars/avatar-rafael.png');
+  background: center/cover no-repeat url('/assets/avatars/avatar-default.svg');
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
   border: 2px solid rgba(255, 255, 255, 0.96);
   flex: 0 0 auto;

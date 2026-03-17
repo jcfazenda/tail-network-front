@@ -4,9 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
-import { JobStatus, MockJobCandidate, MockJobRecord, RecruiterIdentity, WorkModel } from '../vagas/data/vagas.models';
+import { CandidateStage, JobStatus, MockJobCandidate, MockJobRecord, RecruiterIdentity, WorkModel } from '../vagas/data/vagas.models';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
-import { AlcanceRadarComponent, RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
+import { RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { Subscription } from 'rxjs';
 
 type CandidateProfileContext = {
@@ -35,7 +35,7 @@ type HiringTrendChartPoint = HiringTrendPoint & {
   yPercent: number;
 };
 
-type RecruiterBoardView = 'radar' | 'process';
+type RecruiterBoardView = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
 
 type RecruiterOwnerFilterOption = {
   id: string;
@@ -43,10 +43,15 @@ type RecruiterOwnerFilterOption = {
   count: number;
 };
 
+type ProcessCardStep = {
+  label: string;
+  state: 'done' | 'active' | 'upcoming';
+};
+
 @Component({
   standalone: true,
   selector: 'app-stub-page',
-  imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent, AlcanceRadarComponent, CandidateProfileModalComponent],
+  imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent, CandidateProfileModalComponent],
   templateUrl: './stub.page.html',
   styleUrls: ['./stub.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -134,6 +139,16 @@ export class StubPage implements OnDestroy {
         this.cdr.markForCheck();
       }),
     );
+  }
+
+  get recruiterGreetingName(): string {
+    const fullName = this.vagasMockService.getCurrentRecruiterIdentity().name?.trim();
+    if (!fullName) {
+      return 'Recruiter';
+    }
+
+    const firstName = fullName.split(' ')[0]?.trim();
+    return firstName || fullName;
   }
 
   ngOnDestroy(): void {
@@ -256,16 +271,36 @@ export class StubPage implements OnDestroy {
     return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'radar')).length;
   }
 
+  get recruiterCandidaturasJobsCount(): number {
+    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'candidaturas')).length;
+  }
+
   get recruiterProcessJobsCount(): number {
-    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'process')).length;
+    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'processo')).length;
+  }
+
+  get recruiterHiringRequestedJobsCount(): number {
+    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'solicitada')).length;
+  }
+
+  get recruiterHiredJobsCount(): number {
+    return this.scopeJobs.filter((job) => this.jobMatchesBoardView(job, 'contratados')).length;
   }
 
   get emptyStateMessage(): string {
-    if (this.activeBoardView === 'process') {
-      return 'Nenhuma vaga com talentos em processo neste recorte.';
+    switch (this.activeBoardView) {
+      case 'candidaturas':
+        return 'Nenhuma vaga com candidaturas enviadas neste recorte.';
+      case 'processo':
+        return 'Nenhuma vaga com talentos em processo neste recorte.';
+      case 'solicitada':
+        return 'Nenhuma vaga com contratação solicitada neste recorte.';
+      case 'contratados':
+        return 'Nenhuma vaga com contratados neste recorte.';
+      case 'radar':
+      default:
+        return 'Nenhuma vaga no radar neste recorte.';
     }
-
-    return 'Nenhuma vaga no radar neste recorte.';
   }
 
   get radarCategories(): RadarCategory[] {
@@ -343,8 +378,8 @@ export class StubPage implements OnDestroy {
   }
 
   jobCompanySignal(job: MockJobRecord): string {
-    const mappedTalents = Math.max(job.radarCount, job.talents, job.candidates.length);
-    return `${mappedTalents} ${mappedTalents === 1 ? 'talento mapeado' : 'talentos mapeados'}`;
+    const radarTalents = Math.max(0, job.radarCount);
+    return `${radarTalents} ${radarTalents === 1 ? 'talento no radar' : 'talentos no radar'}`;
   }
 
   jobCardWorkModel(job: MockJobRecord): string {
@@ -665,6 +700,51 @@ export class StubPage implements OnDestroy {
     ];
   }
 
+  jobCardSteps(job: MockJobRecord): ProcessCardStep[] {
+    const stage = this.pickStageForSteps(job);
+
+    switch (stage) {
+      case 'candidatura':
+        return [
+          { label: 'Candidatura enviada', state: 'active' },
+          { label: 'Recruiter movimentou', state: 'upcoming' },
+          { label: 'Entrevista agendada', state: 'upcoming' },
+        ];
+      case 'processo':
+        return [
+          { label: 'Candidatura enviada', state: 'done' },
+          { label: 'Recruiter movimentou', state: 'active' },
+          { label: 'Entrevista agendada', state: 'upcoming' },
+        ];
+      case 'tecnica':
+        return [
+          { label: 'Recruiter movimentou', state: 'done' },
+          { label: 'Entrevista agendada', state: 'active' },
+          { label: 'Entrevista finalizada', state: 'upcoming' },
+        ];
+      case 'aguardando':
+        return [
+          { label: 'Entrevista agendada', state: 'done' },
+          { label: 'Entrevista finalizada', state: 'done' },
+          { label: 'Análise', state: 'active' },
+        ];
+      case 'aceito':
+      case 'documentacao':
+      case 'contratado':
+        return [
+          { label: 'Entrevista agendada', state: 'done' },
+          { label: 'Entrevista finalizada', state: 'done' },
+          { label: 'Análise', state: 'done' },
+        ];
+      default:
+        return [
+          { label: 'Candidatura enviada', state: 'upcoming' },
+          { label: 'Recruiter movimentou', state: 'upcoming' },
+          { label: 'Entrevista agendada', state: 'upcoming' },
+        ];
+    }
+  }
+
   private resolveInitialTab(): JobStatus {
     const queryTab = this.route.snapshot.queryParamMap.get('tab');
     if (queryTab === 'ativas' || queryTab === 'rascunhos' || queryTab === 'pausadas' || queryTab === 'encerradas') {
@@ -689,22 +769,66 @@ export class StubPage implements OnDestroy {
   }
 
   private jobMatchesBoardView(job: MockJobRecord, view: RecruiterBoardView): boolean {
-    if (view === 'process') {
-      return job.candidates.some((candidate) => {
-        const stage = this.vagasMockService.getEffectiveCandidateStage(candidate);
-        return stage === 'candidatura'
-          || stage === 'processo'
-          || stage === 'tecnica'
-          || stage === 'aguardando'
-          || stage === 'aceito'
-          || stage === 'documentacao';
-      });
+    const effectiveStages = job.candidates
+      .map((candidate) => this.vagasMockService.getEffectiveCandidateStage(candidate))
+      .filter((stage): stage is NonNullable<typeof stage> => !!stage);
+
+    // "Em Processo" = existe qualquer interação (qualquer estágio que não seja radar).
+    const hasAnyInteraction = effectiveStages.some((stage) => stage !== 'radar');
+
+    if (view === 'candidaturas') {
+      return effectiveStages.some((stage) => stage === 'candidatura');
     }
 
-    return job.radarCount > 0 || job.candidates.some((candidate) =>
-      this.vagasMockService.getEffectiveCandidateStage(candidate) === 'radar',
-    );
+    if (view === 'solicitada') {
+      return effectiveStages.some((stage) => stage === 'aguardando');
+    }
+
+    if (view === 'contratados') {
+      return effectiveStages.some((stage) => stage === 'contratado');
+    }
+
+    if (view === 'processo') {
+      return effectiveStages.some((stage) =>
+        stage === 'processo'
+        || stage === 'tecnica'
+        || stage === 'aceito'
+        || stage === 'documentacao',
+      );
+    }
+
+    // "No meu Radar" = a vaga tem alcance/radar, mas ainda não tem candidatos avançados no status.
+    if (hasAnyInteraction) {
+      return false;
+    }
+
+    return job.radarCount > 0 || effectiveStages.some((stage) => stage === 'radar');
   }
+
+  private pickStageForSteps(job: MockJobRecord): CandidateStage {
+    const stages = job.candidates
+      .map((candidate) => this.vagasMockService.getEffectiveCandidateStage(candidate))
+      .filter((stage): stage is CandidateStage => !!stage);
+
+    const nonRadarStages = stages.filter((stage) => stage !== 'radar');
+    return this.pickMaxStage(nonRadarStages) ?? this.pickMaxStage(stages) ?? 'radar';
+  }
+
+  private pickMaxStage(stages: CandidateStage[]): CandidateStage | null {
+    if (!stages.length) {
+      return null;
+    }
+
+    const order: CandidateStage[] = ['radar', 'candidatura', 'processo', 'tecnica', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
+    let best = stages[0];
+    for (const stage of stages) {
+      if (order.indexOf(stage) > order.indexOf(best)) {
+        best = stage;
+      }
+    }
+    return best;
+  }
+
 
   private ownerFilterLabel(recruiter: RecruiterIdentity): string {
     const firstName = recruiter.name.split(' ')[0]?.trim();

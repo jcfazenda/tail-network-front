@@ -17,7 +17,7 @@ type RecruiterStatusFilter = 'all' | 'active' | 'inactive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecruiterPanelPage implements OnDestroy {
-  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-rafael.png';
+  readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-default.svg';
   private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();

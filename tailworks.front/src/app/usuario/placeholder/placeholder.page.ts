@@ -124,7 +124,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   readonly recruiterName = 'Julio Fazenda';
   readonly recruiterRole = 'Talent Acquisition';
-  readonly recruiterAvatar = '/assets/avatars/avatar-rafael.png';
+  readonly recruiterAvatar = '/assets/avatars/avatar-default.svg';
   readonly radarTotal = 87;
   readonly radarDelta = 12;
   readonly allRadarCategories: RadarCategory[] = [

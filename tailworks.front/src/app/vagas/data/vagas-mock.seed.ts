@@ -1,6 +1,6 @@
 import { JobBenefitItem, JobResponsibilitySection, MockJobRecord } from './vagas.models';
 
-const avatar = '/assets/avatars/avatar-rafael.png';
+const avatar = '/assets/avatars/avatar-default.svg';
 const now = '2026-03-07T00:00:00.000Z';
 
 function seedJob(

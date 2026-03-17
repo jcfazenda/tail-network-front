@@ -39,7 +39,7 @@ type CandidateBasicDraft = {
 })
 export class SidebarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
-  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-rafael.png';
+  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-default.svg';
   private readonly router = inject(Router);
   private readonly authService = inject(MockAuthService);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
