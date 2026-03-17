@@ -20,6 +20,32 @@
   overflow-y: auto;
 }
 
+.sidebar.sidebar--overlay{
+  top: clamp(170px, 22vh, 300px);
+  left: 14px;
+  right: auto;
+  /* Grow down until close to the hiring chart footer on template landing. */
+  bottom: clamp(380px, 52vh, 720px);
+  height: auto;
+  min-height: 320px;
+  border-radius: 26px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.92),
+    0 18px 34px rgba(0, 0, 0, 0.10);
+  animation: sidebarOverlayIn 240ms cubic-bezier(.2, .9, .2, 1) both;
+}
+
+@keyframes sidebarOverlayIn{
+  from{
+    opacity: 0;
+    transform: translateX(-10px) translateY(-4px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
 .brand{
   display: flex;
   align-items: center;

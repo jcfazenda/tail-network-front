@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" [class.sidebar--overlay]="overlayMode()">
   <div class="brand">
     <ng-container *ngIf="isProfileSidebarMode; else defaultBrand">
       <div class="brandCandidate">

@@ -115,6 +115,12 @@
   z-index: 320;
 }
 
+.shell__sidebar-backdrop--template{
+  /* Keep image crisp behind the overlay sidebar. */
+  background: transparent;
+  backdrop-filter: none;
+}
+
 .shell--sidebar-hidden .shell__topbar{
   left: 0;
 }

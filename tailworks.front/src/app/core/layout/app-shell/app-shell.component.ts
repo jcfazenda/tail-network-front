@@ -45,7 +45,7 @@ export class AppShellComponent {
   }
 
   get hasSidebar(): boolean {
-    return !this.isHomeEntry && !this.isCandidateEcosystem && !this.isTemplateEcosystem;
+    return !this.isHomeEntry && !this.isCandidateEcosystem;
   }
 
   get isSidebarOpen(): boolean {
@@ -57,10 +57,18 @@ export class AppShellComponent {
   }
 
   get shouldReserveSidebarSpace(): boolean {
+    if (this.isTemplateEcosystem) {
+      return false;
+    }
+
     return this.hasSidebar && this.sidebarVisibilityService.shouldReserveLayoutSpace();
   }
 
   get isSidebarOverlayVisible(): boolean {
+    if (this.isTemplateEcosystem) {
+      return this.hasSidebar && this.isSidebarOpen;
+    }
+
     return this.hasSidebar && this.isSidebarOpen && this.isCompactSidebarMode;
   }
 

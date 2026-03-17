@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
+import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
 
 type RadarCategory = {
   id: string;
@@ -31,6 +32,7 @@ type HiringTrendChartPoint = HiringTrendPoint & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EcossistemaPage {
+  private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
@@ -92,9 +94,14 @@ export class EcossistemaPage {
 
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
+  readonly sidebarOpen = this.sidebarVisibilityService.isOpen;
 
   constructor() {
     this.restoreRadarCategorySelection();
+  }
+
+  toggleSidebar(): void {
+    this.sidebarVisibilityService.toggle();
   }
 
   get radarCategories(): RadarCategory[] {

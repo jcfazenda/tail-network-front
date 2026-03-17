@@ -120,14 +120,11 @@ export class TopbarComponent {
   }
 
   get showSidebarProfileInPrimary(): boolean {
-    return !this.isSelectionMode && !this.isCandidateEcosystem && !this.isSidebarOpen;
+    // Keep the avatar/profile block visible even when the sidebar is open.
+    return !this.isSelectionMode && !this.isCandidateEcosystem;
   }
 
   get shouldShowTopbarAvatar(): boolean {
-    if (!this.isSelectionMode && !this.isCandidateEcosystem) {
-      return false;
-    }
-
     return true;
   }
 

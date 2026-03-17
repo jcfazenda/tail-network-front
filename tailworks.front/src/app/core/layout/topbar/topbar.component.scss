@@ -53,6 +53,7 @@
   color: rgba(255, 255, 255, 0.90);
 }
 
+
 .topbar--template .topbar__sidebar-profile-copy strong{
   color: rgba(255, 255, 255, 0.92);
 }
@@ -114,11 +115,11 @@
   cursor: pointer;
   justify-self: start;
   margin-left: 10px;
-  transition: transform .18s ease;
+  transition: none;
 }
 
 .topbar__sidebar-profile-trigger:hover{
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .topbar__sidebar-profile-trigger:focus-visible{

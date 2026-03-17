@@ -5,10 +5,11 @@
   [class.shell--sidebar-hidden]="hasSidebar && !shouldReserveSidebarSpace"
 >
   <ng-container *ngIf="!isHomeEntry">
-    <app-sidebar *ngIf="hasSidebar && isSidebarOpen"></app-sidebar>
+    <app-sidebar *ngIf="hasSidebar && isSidebarOpen" [overlayMode]="isTemplateEcosystem"></app-sidebar>
     <button
       *ngIf="isSidebarOverlayVisible"
       class="shell__sidebar-backdrop"
+      [class.shell__sidebar-backdrop--template]="isTemplateEcosystem"
       type="button"
       aria-label="Fechar sidebar"
       (click)="hideSidebar()"

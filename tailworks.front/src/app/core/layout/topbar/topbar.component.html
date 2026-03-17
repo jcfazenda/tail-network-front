@@ -132,37 +132,6 @@
         {{ unreadTalentNotifications }}
       </span>
     </button>
-    <ng-container *ngIf="shouldShowTopbarAvatar">
-      <button
-        *ngIf="canToggleSidebarFromTopbarAvatar; else staticAvatar"
-        class="topbar__avatar-trigger"
-        type="button"
-        (click)="toggleSidebar()"
-        [attr.aria-label]="isSidebarOpen ? 'Esconder sidebar' : 'Mostrar sidebar'"
-      >
-        <div
-          class="avatar"
-          [class.avatar--candidate]="isCandidateMode"
-          [class.avatar--image]="!!topbarProfileAvatarUrl"
-          [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
-          aria-hidden="true"
-        >
-          <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
-        </div>
-      </button>
-
-      <ng-template #staticAvatar>
-        <div
-          class="avatar"
-          [class.avatar--candidate]="isCandidateMode"
-          [class.avatar--image]="!!topbarProfileAvatarUrl"
-          [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
-          aria-label="Perfil"
-        >
-          <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
-        </div>
-      </ng-template>
-    </ng-container>
   </div>
 </header>
 

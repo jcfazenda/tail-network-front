@@ -1,5 +1,17 @@
 <main class="landing">
   <section class="landing__frame" aria-label="Hero">
+    <button
+      class="landing__sidebar-toggle"
+      type="button"
+      (click)="toggleSidebar()"
+      aria-label="Abrir configuracoes"
+      title="Configuracoes"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">
+        settings
+      </span>
+    </button>
+
     <div class="landing__topbar" aria-label="Topbar">
       <app-topbar></app-topbar>
     </div>
@@ -64,8 +76,86 @@
                 <div class="candidate-week-radar__value">{{ cat.value }}%</div>
               </div>
             </div>
-          </div>
+        </div>
       </section>
+
+      <article class="mini-feature" aria-label="Feature">
+        <div class="mini-feature__media" aria-hidden="true">
+          <div class="mini-feature__toolbar">
+            <div class="mini-feature__toolbar-left">
+              <div class="mini-feature__company-head">
+                <img
+                  class="mini-feature__company-logo"
+                  src="/assets/images/logo-itau.png"
+                  alt="Empresa"
+                  loading="lazy"
+                  decoding="async"
+                />
+
+                <div class="mini-feature__company-copy">
+                  <strong>Itau SA</strong>
+                  <span>Rio de Janeiro - RJ</span>
+                </div>
+              </div>
+
+              <div class="mini-feature__job-title">Backend .NET Sênior</div>
+              <div class="mini-feature__job-offer">
+                <strong>R$ 14.556,22</strong><span>CLT + Beneficios</span>
+              </div>
+            </div>
+
+            <div class="mini-feature__toolbar-right">
+              <span class="mini-feature__pill mini-feature__pill--cta">Hibrido</span>
+            </div>
+          </div>
+
+          <div class="mini-feature__nav">
+            <span class="mini-feature__nav-icon material-symbols-rounded">home</span>
+            <span class="mini-feature__nav-icon material-symbols-rounded">edit</span>
+            <span class="mini-feature__nav-icon material-symbols-rounded">close</span>
+            <span class="mini-feature__nav-spacer"></span>
+            <span class="mini-feature__nav-icon material-symbols-rounded">more_horiz</span>
+          </div>
+        </div>
+
+        <div class="mini-feature__body">
+          <div class="mini-feature__headrow">
+            <strong>Candidatos no Radar</strong>
+            <div class="mini-feature__avatars" aria-label="Candidatos no radar">
+              <span
+                class="mini-feature__avatar"
+                style="background-image: url('/assets/avatars/avatar-rafael.png');"
+                aria-hidden="true"
+              ></span>
+              <span
+                class="mini-feature__avatar"
+                style="background-image: url('/assets/avatars/avatar-default.svg');"
+                aria-hidden="true"
+              ></span>
+              <span
+                class="mini-feature__avatar"
+                style="background-image: url('/assets/avatars/avatar-default.svg');"
+                aria-hidden="true"
+              ></span>
+              <span
+                class="mini-feature__avatar"
+                style="background-image: url('/assets/avatars/avatar-default.svg');"
+                aria-hidden="true"
+              ></span>
+              <span class="mini-feature__avatar mini-feature__avatar--extra" aria-label="Mais 8 candidatos">+8</span>
+            </div>
+          </div>
+
+          <div class="mini-feature__fitrow" aria-label="Aderência 86%">
+            <div class="mini-feature__fit">
+              <span class="mini-feature__fit-bar" aria-hidden="true">
+                <span class="mini-feature__fit-bar-fill" style="width: 86%"></span>
+              </span>
+              <span class="mini-feature__fit-value">86% <span>Aderência</span></span>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
     <section class="landing__footer" aria-label="Contratações por mês">
       <div class="landing__footer-inner">
