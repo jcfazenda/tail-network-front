@@ -21,7 +21,7 @@
       [class.shell__main--ecosystem]="isCandidateEcosystem"
       [class.shell__main--template]="isTemplateEcosystem"
     >
-      <div class="shell__topbar" [class.shell__topbar--template]="isTemplateEcosystem">
+      <div class="shell__topbar" *ngIf="!isTemplateEcosystem">
         <app-topbar></app-topbar>
       </div>
       <section

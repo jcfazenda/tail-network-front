@@ -1,23 +1,330 @@
 .landing{
-  height: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   padding: 10px 12px 12px;
   display: grid;
   place-items: start center;
 }
 
-.landing__shell{
+.landing__frame{
   width: min(1720px, 100%);
+  border-radius: 38px 38px 0 0;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  min-height: calc(100vh - 22px);
+  padding-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing__topbar{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.landing__topbar app-topbar{
+  width: min(1480px, 88vw);
+}
+
+.landing__shell{
+  width: 100%;
   border-radius: 34px;
   padding: clamp(38px, 4.6vw, 74px) clamp(24px, 5.2vw, 84px);
   background: transparent;
   border: 0;
   position: relative;
   overflow: hidden;
-  height: 100%;
-  max-height: 1060px;
+  min-height: 1080px;
   display: grid;
   grid-template-rows: 1fr;
+}
+
+.landing__brand{
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  width: 200px;
+  height: auto;
+  z-index: 2;
+  opacity: 0.92;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.18));
+}
+
+.landing__below{
+  margin-top: 18px;
+}
+
+.candidate-week-radar{
+  display: grid;
+  gap: 12px;
+  width: min(880px, 62%);
+  min-height: 260px;
+  align-content: start;
+  padding: 16px 18px 22px;
+  border-radius: 22px;
+  background:
+    radial-gradient(160% 140% at 10% 0%, rgba(var(--primary-rgb), 0.07), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(246, 242, 236, 0.74));
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow: none;
+}
+
+.candidate-week-radar__head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.candidate-week-radar__head h4{
+  margin: 0;
+  padding-left: 4px;
+  font-size: 16px;
+  line-height: 1.1;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.candidate-week-radar__menu{
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(15, 23, 42, 0.62);
+  box-shadow: none;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.candidate-week-radar__menu .material-symbols-rounded{
+  font-size: 20px;
+  line-height: 1;
+}
+
+.candidate-week-radar__menu:hover{
+  border-color: rgba(238, 178, 92, 0.44);
+  color: rgba(188, 109, 24, 0.92);
+  transform: translateY(-1px);
+}
+
+.candidate-week-radar__subtitle{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(15, 23, 42, 0.78);
+}
+
+.candidate-week-radar__subtitle strong{
+  font-weight: 800;
+  margin-right: 4px;
+}
+
+.candidate-week-radar__delta{
+  margin-left: auto;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.55);
+  white-space: nowrap;
+}
+
+.candidate-week-radar__bars{
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.candidate-week-radar__bar{
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-week-radar__label{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 110px;
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.candidate-week-radar__dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+.candidate-week-radar__track{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.candidate-week-radar__rail{
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0.06));
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.candidate-week-radar__fill{
+  height: 100%;
+  border-radius: inherit;
+  box-shadow: none;
+  transition: width 620ms cubic-bezier(.2, .9, .2, 1), background 320ms ease;
+  will-change: width;
+  /* Feather the right edge so progress "fades out" instead of ending hard. */
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0, rgba(0,0,0,1) calc(100% - 32px), rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 0, rgba(0,0,0,1) calc(100% - 32px), rgba(0,0,0,0) 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.candidate-week-radar__value{
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.8);
+  white-space: nowrap;
+}
+
+.candidate-week-radar__picker-backdrop{
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(5px);
+  z-index: 80;
+}
+
+.candidate-week-radar__picker{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: min(100vw - 32px, 440px);
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: none;
+  display: grid;
+  gap: 16px;
+  transform: translate(-50%, -50%);
+  z-index: 81;
+}
+
+.candidate-week-radar__picker-close{
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  display: grid;
+  place-items: center;
+  color: rgba(15, 23, 42, 0.64);
+}
+
+.candidate-week-radar__picker-head{
+  display: grid;
+  gap: 6px;
+  padding-right: 46px;
+}
+
+.candidate-week-radar__picker-head strong{
+  font-size: 16px;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.candidate-week-radar__picker-head p{
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.candidate-week-radar__picker-list{
+  display: grid;
+  gap: 10px;
+}
+
+.candidate-week-radar__picker-option{
+  width: 100%;
+  padding: 12px 12px;
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.candidate-week-radar__picker-option:hover{
+  border-color: rgba(238, 178, 92, 0.4);
+  transform: translateY(-1px);
+}
+
+.candidate-week-radar__picker-option--active{
+  border-color: rgba(188, 109, 24, 0.32);
+}
+
+.candidate-week-radar__picker-option-main,
+.candidate-week-radar__picker-option-side{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-week-radar__picker-option-main{
+  min-width: 0;
+}
+
+.candidate-week-radar__picker-dot{
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.candidate-week-radar__picker-option-label{
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.86);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.candidate-week-radar__picker-option-side{
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.candidate-week-radar__picker-option-value{
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.candidate-week-radar__picker-option-icon{
+  font-size: 20px;
+  color: rgba(188, 109, 24, 0.9);
 }
 
 .landing__bg{
@@ -45,19 +352,20 @@
 }
 
 .landing__content{
-  margin: clamp(22px, 5vh, 64px) 0 0;
-  max-width: 860px;
+  margin: clamp(46px, 8vh, 110px) 0 0;
+  max-width: 780px;
   text-align: left;
   display: grid;
-  gap: 14px;
+  gap: 10px;
   position: relative;
   z-index: 1;
   align-self: start;
   justify-self: start;
+  margin-left: clamp(34px, 10vw, 220px);
   padding-bottom: clamp(18px, 4vh, 44px);
   padding-inline: clamp(14px, 2vw, 22px);
-  padding-top: clamp(16px, 2.4vw, 26px);
-  padding-bottom: clamp(18px, 4vh, 44px);
+  padding-top: clamp(12px, 1.8vw, 18px);
+  padding-bottom: clamp(14px, 2.6vh, 26px);
   border-radius: 26px;
   border: 0;
   background: rgba(255,255,255,0.16);
@@ -66,18 +374,233 @@
 
 .landing__headline{
   margin: 0;
-  font-size: clamp(40px, 4.8vw, 72px);
+  font-size: clamp(30px, 3.8vw, 54px);
   line-height: 1.02;
   letter-spacing: -0.04em;
-  color: rgba(16,18,22,0.94);
+  color: rgba(188, 109, 24, 0.98);
+  background: linear-gradient(92deg, rgba(188, 109, 24, 0.98), rgba(225, 138, 39, 0.96) 58%, rgba(140, 76, 18, 0.98));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .landing__subhead{
   margin: 0;
-  max-width: 640px;
-  font-size: 15px;
-  line-height: 1.65;
+  max-width: 760px;
+  font-size: 22px;
+  line-height: 1.6;
   color: rgba(16,18,22,0.62);
+}
+
+.landing__footer{
+  margin-top: auto;
+  padding-top: 18px;
+  position: sticky;
+  bottom: 14px;
+}
+
+.landing__footer-inner{
+  width: 100%;
+}
+
+.candidate-hiring-trend{
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px 12px;
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.88));
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: none;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.candidate-hiring-trend__head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.candidate-hiring-trend__head h4{
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.candidate-hiring-trend__period{
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  color: rgba(15, 23, 42, 0.74);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.candidate-hiring-trend__period .material-symbols-rounded{
+  font-size: 18px;
+}
+
+.candidate-hiring-trend__layout{
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.candidate-hiring-trend__scale{
+  display: grid;
+  align-content: stretch;
+  padding: 10px 0 32px;
+}
+
+.candidate-hiring-trend__scale span{
+  display: flex;
+  align-items: center;
+  height: 100%;
+  color: rgba(15, 23, 42, 0.54);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.candidate-hiring-trend__plot{
+  position: relative;
+  display: grid;
+  gap: 8px;
+  min-height: 170px;
+}
+
+.candidate-hiring-trend__svg{
+  width: 100%;
+  height: 150px;
+  display: block;
+  overflow: visible;
+}
+
+.candidate-hiring-trend__grid-line{
+  stroke: rgba(15, 23, 42, 0.18);
+  stroke-width: 1.1;
+  stroke-dasharray: 2 8;
+}
+
+.candidate-hiring-trend__area{
+  fill: url(#recruiterHiringTrendFill);
+}
+
+.candidate-hiring-trend__line{
+  fill: none;
+  stroke: rgba(33, 33, 33, 0.78);
+  stroke-width: 4.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: none;
+}
+
+.candidate-hiring-trend__focus-line{
+  stroke: rgba(15, 23, 42, 0.22);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 8;
+}
+
+.candidate-hiring-trend__focus-marker{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.candidate-hiring-trend__focus-marker-ring,
+.candidate-hiring-trend__focus-marker-dot{
+  position: absolute;
+  border-radius: 999px;
+}
+
+.candidate-hiring-trend__focus-marker-ring{
+  inset: 0;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid rgba(33, 33, 33, 0.58);
+}
+
+.candidate-hiring-trend__focus-marker-dot{
+  width: 12px;
+  height: 12px;
+  background: rgba(33, 33, 33, 0.84);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.88);
+}
+
+.candidate-hiring-trend__tooltip{
+  position: absolute;
+  min-width: 162px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  display: grid;
+  gap: 6px;
+  background: rgba(16, 18, 22, 0.92);
+  color: rgba(255, 255, 255, 0.96);
+  box-shadow: none;
+  transform: translate(-50%, calc(-100% - 18px));
+  pointer-events: none;
+}
+
+.candidate-hiring-trend__tooltip strong{
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.candidate-hiring-trend__tooltip span{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.candidate-hiring-trend__tooltip b{
+  color: rgba(255, 255, 255, 0.98);
+  font-size: 12px;
+}
+
+.candidate-hiring-trend__months{
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px 6px 0 10px;
+}
+
+.candidate-hiring-trend__months::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 6px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.18);
+}
+
+.candidate-hiring-trend__months span{
+  text-align: center;
+  color: rgba(15, 23, 42, 0.58);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.candidate-hiring-trend__month--active{
+  color: rgba(15, 23, 42, 0.9) !important;
+  font-weight: 800 !important;
 }
 
 @media (max-width: 720px){
@@ -85,12 +608,46 @@
     padding: 0 14px 34px;
   }
 
+  .landing__frame{
+    padding: 10px;
+    border-radius: 34px 34px 0 0;
+    min-height: calc(100vh - 34px);
+    padding-bottom: 20px;
+  }
+
+  .landing__topbar{
+    margin-bottom: 10px;
+  }
+
+  .landing__topbar app-topbar{
+    width: min(1480px, 92vw);
+  }
+
   .landing__shell{
     padding: 28px 18px;
-    min-height: min(720px, 82vh);
+    min-height: min(920px, 92vh);
+  }
+
+  .landing__brand{
+    top: 14px;
+    left: 16px;
+    width: 168px;
+  }
+
+  .candidate-week-radar{
+    width: 100%;
   }
 
   .landing__headline{
     font-size: 40px;
+  }
+
+  .landing__content{
+    margin-left: 0;
+    max-width: 520px;
+  }
+
+  .landing__footer{
+    bottom: 10px;
   }
 }

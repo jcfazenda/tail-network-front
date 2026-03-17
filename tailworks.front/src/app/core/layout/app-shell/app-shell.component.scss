@@ -51,21 +51,6 @@
   display: block;
 }
 
-.shell__topbar--template{
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 10px 12px 0;
-  display: flex;
-  justify-content: center;
-  pointer-events: auto;
-}
-
-.shell__topbar--template app-topbar{
-  width: min(1480px, 88vw);
-}
-
 .shell__main--full{
   grid-column: 1 / -1;
 }
@@ -93,9 +78,11 @@
 }
 
 .shell__content--template{
-  padding: 88px 0 0;
-  height: 100vh;
-  overflow: hidden;
+  padding: 0;
+  min-height: 100vh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .shell__main--template{
