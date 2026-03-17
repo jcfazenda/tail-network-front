@@ -114,7 +114,6 @@ export class StubPage implements OnDestroy {
   activeBoardView: RecruiterBoardView = 'radar';
   activeOwnerFilterId = 'all';
   flippedJobId: string | null = null;
-  jobsGridDragging = false;
   jobsSearchTerm = '';
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
@@ -125,11 +124,7 @@ export class StubPage implements OnDestroy {
   chatStartIndex = 0;
   candidateProfileContext: CandidateProfileContext | null = null;
 
-  private jobsGridPointerId: number | null = null;
-  private jobsGridPointerStartY = 0;
-  private jobsGridPointerStartScrollTop = 0;
-  private jobsGridSuppressClick = false;
-  private jobsGridSuppressClickTimer: ReturnType<typeof setTimeout> | null = null;
+  // Drag-to-scroll removed from recruiter cards grid to keep interactions reliable on Safari/macOS.
 
   constructor() {
     this.restoreRadarCategorySelection();
@@ -153,7 +148,6 @@ export class StubPage implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-    this.clearJobsGridSuppressClickTimer();
   }
 
   setTab(tab: JobStatus) {
@@ -474,73 +468,32 @@ export class StubPage implements OnDestroy {
     });
   }
 
+  forceEdit(jobId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const url = `/vagas/cadastro?edit=${encodeURIComponent(jobId)}`;
+
+    void this.router.navigate(['/vagas/cadastro'], { queryParams: { edit: jobId } }).then((ok) => {
+      if (!ok) {
+        window.location.assign(url);
+      }
+    });
+
+    // Safety net: if navigation is canceled by any overlay/gesture, still go.
+    setTimeout(() => {
+      if (this.router.url.startsWith('/vagas')) {
+        window.location.assign(url);
+      }
+    }, 0);
+  }
+
   openJobChat(job: MockJobRecord, event: Event): void {
     event.stopPropagation();
     this.openPanel(job);
   }
 
-  jobsGridHandlePointerDown(event: PointerEvent): void {
-    const rail = event.currentTarget as HTMLElement | null;
-    if (!rail || this.isJobsGridInteractiveTarget(event.target)) {
-      return;
-    }
-
-    this.jobsGridPointerId = event.pointerId;
-    this.jobsGridPointerStartY = event.clientY;
-    this.jobsGridPointerStartScrollTop = rail.scrollTop;
-    this.jobsGridDragging = false;
-    rail.setPointerCapture(event.pointerId);
-  }
-
-  jobsGridHandlePointerMove(event: PointerEvent): void {
-    if (this.jobsGridPointerId !== event.pointerId) {
-      return;
-    }
-
-    const rail = event.currentTarget as HTMLElement | null;
-    if (!rail) {
-      return;
-    }
-
-    const delta = event.clientY - this.jobsGridPointerStartY;
-    if (Math.abs(delta) > 3) {
-      this.jobsGridDragging = true;
-    }
-
-    rail.scrollTop = this.jobsGridPointerStartScrollTop - delta;
-  }
-
-  jobsGridHandlePointerUp(event: PointerEvent): void {
-    if (this.jobsGridPointerId !== event.pointerId) {
-      return;
-    }
-
-    const rail = event.currentTarget as HTMLElement | null;
-    if (rail?.hasPointerCapture(event.pointerId)) {
-      rail.releasePointerCapture(event.pointerId);
-    }
-
-    if (this.jobsGridDragging) {
-      this.jobsGridSuppressClick = true;
-      this.clearJobsGridSuppressClickTimer();
-      this.jobsGridSuppressClickTimer = setTimeout(() => {
-        this.jobsGridSuppressClick = false;
-      }, 80);
-    }
-
-    this.jobsGridPointerId = null;
-    this.jobsGridDragging = false;
-  }
-
-  handleJobCardClick(job: MockJobRecord, event: Event): void {
-    if (this.jobsGridSuppressClick) {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
-
-    this.openPanel(job);
-  }
+  // Card click is intentionally disabled (only action buttons trigger actions).
 
   openCandidate(job: MockJobRecord, index: number) {
     const sortedCandidates = this.sortedCandidatesFor(job);
@@ -663,21 +616,11 @@ export class StubPage implements OnDestroy {
     });
   }
 
-  jobCardOfferLine(job: MockJobRecord): string {
-    const segments: string[] = [job.contractType];
+  jobCardOffer(job: MockJobRecord): { salary: string | null; rest: string } {
     const salary = job.showSalaryRangeInCard === false ? null : this.formatJobSalary(job.salaryRange);
-
-    if (salary) {
-      segments.push(salary);
-    }
-
-    let line = segments.join(' - ');
-
-    if (job.benefits.length > 0) {
-      line = `${line} + Beneficios`;
-    }
-
-    return line;
+    const benefits = job.benefits.length > 0 ? ' + Beneficios' : '';
+    const rest = `${job.contractType}${benefits}.`;
+    return { salary, rest };
   }
 
   jobRadarItems(job: MockJobRecord): RadarLegendItem[] {
@@ -844,14 +787,7 @@ export class StubPage implements OnDestroy {
     return normalized.startsWith('R$') ? normalized : `R$ ${normalized}`;
   }
 
-  private clearJobsGridSuppressClickTimer(): void {
-    if (!this.jobsGridSuppressClickTimer) {
-      return;
-    }
-
-    clearTimeout(this.jobsGridSuppressClickTimer);
-    this.jobsGridSuppressClickTimer = null;
-  }
+  // (no-op) drag helpers removed
 
   private buildSmoothChartPath(points: Array<{ x: number; y: number }>): string {
     if (!points.length) {
@@ -906,7 +842,11 @@ export class StubPage implements OnDestroy {
   }
 
   private isJobsGridInteractiveTarget(target: EventTarget | null): boolean {
-    return target instanceof HTMLElement && !!target.closest('button, a, input, textarea, select');
+    const el =
+      target instanceof HTMLElement
+        ? target
+        : (target as { parentElement?: HTMLElement | null } | null)?.parentElement ?? null;
+    return !!el?.closest('button, a, input, textarea, select');
   }
 
   private workModelLabel(value: WorkModel): string {

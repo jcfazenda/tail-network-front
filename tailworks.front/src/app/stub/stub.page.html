@@ -326,23 +326,10 @@
         <ng-container *ngIf="filteredJobs.length; else emptyState">
           <div
             class="jobs__grid"
-            [class.jobs__grid--dragging]="jobsGridDragging"
-            (pointerdown)="jobsGridHandlePointerDown($event)"
-            (pointermove)="jobsGridHandlePointerMove($event)"
-            (pointerup)="jobsGridHandlePointerUp($event)"
-            (pointercancel)="jobsGridHandlePointerUp($event)"
-            (pointerleave)="jobsGridHandlePointerUp($event)"
           >
             <article class="job-card" [class.job-card--flipped]="isJobRadarFlipped(job.id)" *ngFor="let job of filteredJobs">
-              <div class="job-card__flip-stage">
-                <div
-                  class="job-card__surface job-card__surface--front"
-                  role="button"
-                  tabindex="0"
-                  (click)="handleJobCardClick(job, $event)"
-                  (keydown.enter)="openPanel(job)"
-                  (keydown.space)="openPanel(job); $event.preventDefault()"
-                >
+              <ng-container *ngIf="!isJobRadarFlipped(job.id); else radarBack">
+                <div class="job-card__surface job-card__surface--front">
                   <div class="job-card__main">
                     <div class="job-card__hero">
                       <div
@@ -358,7 +345,7 @@
                         <div class="job-card__hero-header">
                           <div class="job-card__company-copy">
                             <strong>{{ job.company }}</strong>
-                            <span>{{ jobCompanySignal(job) }}</span>
+                            <span>{{ jobCardLocation(job) }}</span>
                           </div>
 
                           <div class="job-card__top-meta">
@@ -366,14 +353,14 @@
                               <div class="job-card__actions">
                                 <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
                                   <span class="material-symbols-outlined" aria-hidden="true">chat</span>
-                                  <span>Chat</span>
+                                  <span>Chat com Candidato</span>
                                 </button>
 
                                 <button
                                   class="job-card__flip"
                                   [class.job-card__flip--active]="isJobRadarFlipped(job.id)"
                                   type="button"
-                                  (click)="toggleJobRadar(job.id, $event)"
+                                  (click)="$event.stopPropagation(); toggleJobRadar(job.id, $event)"
                                   *ngIf="activeBoardView === 'radar'"
                                   aria-label="Ver talentos no radar"
                                   title="Ver talentos no radar"
@@ -381,7 +368,13 @@
                                   <span class="material-icons-outlined" aria-hidden="true">cached</span>
                                 </button>
 
-                                <button class="job-card__edit" type="button" (click)="editJob(job, $event)" aria-label="Editar vaga" title="Editar vaga">
+                                <button
+                                  class="job-card__edit"
+                                  type="button"
+                                  (click)="forceEdit(job.id, $event)"
+                                  aria-label="Editar vaga"
+                                  title="Editar vaga"
+                                >
                                   <span class="material-icons-outlined" aria-hidden="true">edit</span>
                                 </button>
                               </div>
@@ -397,17 +390,24 @@
 
                     <div class="job-card__title-row job-card__title-row--hero">
                       <h3 class="job-card__title">{{ job.title }}</h3>
-                      <span
-                        class="job-card__title-salary"
-                        *ngIf="jobCardSalary(job) as salary"
-                      >
-                        {{ salary }}
-                      </span>
+                      <div class="job-card__title-right">
+                        <span class="job-card__title-chat" aria-hidden="true">
+                          <span class="material-symbols-outlined">chat</span>
+                        </span>
+                      </div>
                     </div>
 
                     <div class="job-card__context">
                       <div class="job-card__context-main">
-                        <span>{{ jobCardLocation(job) }}</span>
+                        <span class="job-card__offer" *ngIf="jobCardOffer(job) as offer">
+                          <ng-container *ngIf="offer.salary; else offerNoSalary">
+                            <strong>{{ offer.salary }}</strong>
+                            <span class="job-card__offer-rest">{{ offer.rest }}</span>
+                          </ng-container>
+                          <ng-template #offerNoSalary>
+                            <span>{{ offer.rest }}</span>
+                          </ng-template>
+                        </span>
                       </div>
                     </div>
 
@@ -449,13 +449,15 @@
                     </div>
                   </div>
                 </div>
+              </ng-container>
 
+              <ng-template #radarBack>
                 <div class="job-card__surface job-card__surface--back">
                   <div class="job-card__back-actions">
                     <button
                       class="job-card__flip"
                       type="button"
-                      (click)="toggleJobRadar(job.id, $event)"
+                      (click)="$event.stopPropagation(); toggleJobRadar(job.id, $event)"
                       aria-label="Voltar para o card"
                       title="Voltar para o card"
                     >
@@ -463,11 +465,10 @@
                     </button>
                   </div>
 
-                  <div class="job-card__radar">
-                    <div class="job-card__radar-head">
-                      <strong>Talentos no radar</strong>
-                      <span>{{ jobCompanySignal(job) }}</span>
-                    </div>
+                    <div class="job-card__radar">
+                      <div class="job-card__radar-head">
+                        <strong>Talentos no radar</strong>
+                      </div>
 
                     <div class="job-card__radar-avatars" aria-label="Avatares de talentos no radar">
                       <span
@@ -488,7 +489,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </ng-template>
             </article>
           </div>
         </ng-container>

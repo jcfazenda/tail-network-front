@@ -20,6 +20,7 @@ export class TalentDirectoryService {
   private readonly defaultAvatarUrl = '/assets/avatars/avatar-default.svg';
 
   listTalents(): TalentRecord[] {
+    this.ensureSeeded();
     return this.load();
   }
 
@@ -54,9 +55,18 @@ export class TalentDirectoryService {
 
   ensureSeeded(): void {
     const existing = this.load();
-    // Se já existe algo (ex: só 1 talento), complementa com seeds para o radar ficar realista.
-    const shouldComplement = existing.length > 0 && existing.length < 8;
-    if (existing.length && !shouldComplement) {
+    if (existing.length) {
+      // Se o usuário já tinha um diretório "seedado" antigo (ex: dezenas de *@tailworks.local),
+      // a intenção agora é refletir somente talentos realmente cadastrados.
+      const hasAnyRealEmail = existing.some((item) => !item.email.toLocaleLowerCase('pt-BR').endsWith('@tailworks.local'));
+      const demoOnly = !hasAnyRealEmail;
+
+      if (demoOnly && existing.length > 1) {
+        const breno = existing.find((item) => item.email.toLocaleLowerCase('pt-BR') === 'breno@tailworks.local')
+          ?? existing[0];
+        this.persist([breno]);
+      }
+
       return;
     }
 
@@ -83,119 +93,9 @@ export class TalentDirectoryService {
         },
         updatedAt: now,
       },
-      ...[
-        'Camila Ribeiro',
-        'Diego Santos',
-        'Fernanda Lima',
-        'Guilherme Rocha',
-        'Helena Duarte',
-        'Igor Martins',
-        'Joana Ferreira',
-        'Kleber Costa',
-        'Larissa Souza',
-        'Marcos Vinicius',
-        'Natalia Araujo',
-        'Otavio Mendes',
-        'Patricia Oliveira',
-        'Renato Almeida',
-        'Sofia Carvalho',
-        'Thiago Pereira',
-      ].map((name, index): TalentRecord => ({
-        id: `talent-dotnet-${index + 1}`,
-        name,
-        email: `dotnet-${index + 1}@tailworks.local`,
-        location: index % 2 === 0 ? 'Rio de Janeiro - RJ' : 'São Paulo - SP',
-        avatarUrl: this.defaultAvatarUrl,
-        visibleInEcosystem: true,
-        availableForHiring: true,
-        stacks: {
-          'repo:dotnet': 62 + (index % 5) * 6,
-          'repo:csharp': 58 + (index % 6) * 6,
-          'repo:aspnet-core': 52 + (index % 7) * 5,
-          'repo:entity-framework': 44 + (index % 6) * 5,
-          'repo:rest-api': 56 + (index % 5) * 6,
-          'repo:microservices': 40 + (index % 6) * 6,
-          'repo:sql-server': 44 + (index % 7) * 5,
-          'repo:azure': 32 + (index % 6) * 6,
-          'repo:docker': 30 + (index % 6) * 6,
-        },
-        updatedAt: now,
-      })),
-      {
-        id: 'talent-ana',
-        name: 'Ana Beatriz',
-        email: 'ana@tailworks.local',
-        location: 'Rio de Janeiro - RJ',
-        avatarUrl: this.defaultAvatarUrl,
-        visibleInEcosystem: true,
-        availableForHiring: true,
-        stacks: {
-          'repo:angular': 72,
-          'repo:typescript': 74,
-          'repo:javascript': 68,
-          'repo:html': 80,
-          'repo:css': 78,
-          'repo:rest-api': 40,
-        },
-        updatedAt: now,
-      },
-      {
-        id: 'talent-carlos',
-        name: 'Carlos Nogueira',
-        email: 'carlos@tailworks.local',
-        location: 'Curitiba - PR',
-        avatarUrl: this.defaultAvatarUrl,
-        visibleInEcosystem: true,
-        availableForHiring: true,
-        stacks: {
-          'repo:aws': 76,
-          'repo:serverless': 70,
-          'repo:docker': 68,
-          'repo:kubernetes': 54,
-          'repo:terraform': 58,
-          'repo:linux': 66,
-        },
-        updatedAt: now,
-      },
-      {
-        id: 'talent-marina',
-        name: 'Marina Dias',
-        email: 'marina@tailworks.local',
-        location: 'Belo Horizonte - MG',
-        avatarUrl: this.defaultAvatarUrl,
-        visibleInEcosystem: true,
-        availableForHiring: true,
-        stacks: {
-          'repo:postgresql': 74,
-          'repo:redis': 52,
-          'repo:elasticsearch': 44,
-          'repo:sql-server': 38,
-          'repo:microservices': 46,
-        },
-        updatedAt: now,
-      },
     ];
 
-    if (!existing.length) {
-      this.persist(seed);
-      return;
-    }
-
-    const byEmail = new Map(existing.map((item) => [item.email.toLocaleLowerCase('pt-BR'), item]));
-    for (const item of seed) {
-      const key = item.email.toLocaleLowerCase('pt-BR');
-      if (!byEmail.has(key)) {
-        byEmail.set(key, item);
-      }
-    }
-
-    // mantém a ordem: existentes primeiro, depois os novos seeds.
-    const merged = [
-      ...existing,
-      ...seed.filter((item) => !existing.some((current) => current.email.toLocaleLowerCase('pt-BR') === item.email.toLocaleLowerCase('pt-BR'))),
-    ].map((item) => ({ ...item, updatedAt: item.updatedAt || now }));
-
-    this.persist(merged);
+    this.persist(seed);
   }
 
   private load(): TalentRecord[] {

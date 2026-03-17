@@ -910,22 +910,24 @@ p {
   align-content: start;
   align-items: start;
   padding-top: 2px;
-  max-height: calc((var(--job-card-viewport-height) * 3) + 54px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  scrollbar-width: none;
-  scroll-snap-type: y mandatory;
-  cursor: grab;
-  user-select: none;
-  touch-action: pan-y;
+  /* Show all cards; page scrolls normally (no internal "drag/scroll" area). */
+  max-height: none;
+  overflow: visible;
+  scrollbar-width: auto;
+  scroll-snap-type: none;
+  /* Important: keep the grid fully clickable (action buttons, flip, edit, etc.).
+     The previous "grab/drag" affordance was canceling clicks in some browsers. */
+  cursor: default;
+  user-select: auto;
+  touch-action: auto;
 }
 
 .jobs__grid::-webkit-scrollbar{
-  display: none;
+  display: initial;
 }
 
 .jobs__grid--dragging{
-  cursor: grabbing;
+  cursor: default;
   scroll-snap-type: none;
 }
 
@@ -1024,26 +1026,14 @@ p {
 .job-card {
   position: relative;
   min-height: var(--job-card-viewport-height);
-  perspective: 1800px;
-  scroll-snap-align: start;
+  scroll-snap-align: none;
   container-type: inline-size;
   container-name: recruiter-card;
 }
 
-.job-card__flip-stage{
-  position: relative;
-  min-height: var(--job-card-viewport-height);
-  transform-style: preserve-3d;
-  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.job-card--flipped .job-card__flip-stage{
-  transform: rotateY(180deg);
-}
-
 .job-card__surface{
-  position: absolute;
-  inset: 0;
+  position: relative;
+  inset: auto;
   display: block;
   width: 100%;
   height: 100%;
@@ -1057,10 +1047,8 @@ p {
     inset 0 0 0 1px rgba(255, 255, 255, 0.24),
     0 4px 12px rgba(15, 23, 42, 0.045),
     0 1px 3px rgba(15, 23, 42, 0.03);
-  cursor: pointer;
+  cursor: default;
   text-align: left;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .job-card__surface:hover{
@@ -1072,29 +1060,24 @@ p {
     0 2px 5px rgba(15, 23, 42, 0.035);
 }
 
-.job-card:not(.job-card--flipped) .job-card__surface--back{
-  pointer-events: none;
-}
-
-.job-card--flipped .job-card__surface--front{
-  pointer-events: none;
-}
-
 .job-card__chat{
   display: inline-flex;
   align-items: center;
   gap: 6px;
   min-height: 34px;
   padding: 0 12px;
-  border: 1px solid var(--btn-secondary-border);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: var(--btn-radius-pill);
-  background: var(--btn-secondary-bg);
-  color: var(--btn-secondary-text);
+  background: transparent;
+  color: rgba(15, 23, 42, 0.72);
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: var(--btn-secondary-shadow);
+  box-shadow: none;
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
 }
 
 .job-card__chat .material-symbols-outlined,
@@ -1104,14 +1087,14 @@ p {
 }
 
 .job-card__chat:hover{
-  border-color: rgba(16, 18, 21, 0.16);
-  background: var(--btn-secondary-bg-hover);
-  box-shadow: var(--btn-secondary-shadow-hover);
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(15, 23, 42, 0.04);
+  box-shadow: none;
 }
 
 .job-card__chat:focus-visible{
   outline: none;
-  box-shadow: var(--btn-focus-ring), var(--btn-secondary-shadow-hover);
+  box-shadow: var(--btn-focus-ring);
 }
 
 .job-card__edit,
@@ -1121,35 +1104,38 @@ p {
   flex: 0 0 auto;
   padding: 0;
   justify-content: center;
-  border: 1px solid var(--btn-icon-border);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 12px;
-  background: var(--btn-icon-bg);
-  color: var(--btn-icon-text);
-  box-shadow: var(--btn-icon-shadow);
+  background: transparent;
+  color: rgba(15, 23, 42, 0.72);
+  box-shadow: none;
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
 }
 
 .job-card__edit:hover,
 .job-card__flip:hover{
-  border-color: rgba(16, 18, 21, 0.16);
-  background: var(--btn-secondary-bg-hover);
-  color: var(--btn-secondary-text);
-  box-shadow: var(--btn-secondary-shadow-hover);
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(15, 23, 42, 0.04);
+  color: rgba(15, 23, 42, 0.78);
+  box-shadow: none;
 }
 
 .job-card__edit:focus-visible,
 .job-card__flip:focus-visible{
   outline: none;
-  box-shadow: var(--btn-focus-ring), var(--btn-secondary-shadow-hover);
+  box-shadow: var(--btn-focus-ring);
 }
 
 .job-card__flip--active{
-  border-color: var(--btn-icon-border);
-  background: var(--btn-icon-bg);
-  color: var(--btn-icon-text);
-  box-shadow: var(--btn-icon-shadow);
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(15, 23, 42, 0.04);
+  color: rgba(15, 23, 42, 0.78);
+  box-shadow: none;
 }
 
 .job-card__flip .material-icons-outlined{
@@ -1164,7 +1150,6 @@ p {
   display: grid;
   align-items: center;
   padding: 16px;
-  transform: rotateY(180deg);
   cursor: default;
 }
 
@@ -1237,6 +1222,7 @@ p {
   justify-content: space-between;
   gap: 10px;
   min-width: 0;
+  position: relative;
 }
 
 .job-card__company-copy{
@@ -1273,6 +1259,8 @@ p {
   gap: 5px;
   flex: 0 0 auto;
   text-align: right;
+  position: relative;
+  z-index: 5;
 }
 
 .job-card__top-meta-line{
@@ -1298,6 +1286,31 @@ p {
   justify-content: space-between;
   gap: 10px;
   min-width: 0;
+}
+
+.job-card__title-right{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.job-card__title-chat{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+}
+
+.job-card__title-chat .material-symbols-outlined{
+  font-size: 26px;
+  line-height: 1;
 }
 
 .job-card__title-row--hero{
@@ -1424,6 +1437,29 @@ p {
   white-space: nowrap;
 }
 
+.job-card__offer{
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.68);
+}
+
+.job-card__offer strong{
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.78);
+}
+
+.job-card__offer-rest{
+  margin-left: 12px;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1;
+}
+
+.job-card__radar-signal{
+  display: none;
+}
+
 .job-card__footer{
   width: 100%;
   margin-top: auto;
@@ -1509,6 +1545,9 @@ p {
   gap: 8px;
   margin-left: 0;
   flex: 0 0 auto;
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
 }
 
 .job-card__top-meta .job-card__actions-row{
