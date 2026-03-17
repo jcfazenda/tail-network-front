@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
+import { MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
+import { VagasMockService } from '../../vagas/data/vagas-mock.service';
+import { Subscription } from 'rxjs';
 
 type RadarCategory = {
   id: string;
@@ -31,13 +34,18 @@ type HiringTrendChartPoint = HiringTrendPoint & {
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EcossistemaPage {
+export class EcossistemaPage implements OnDestroy {
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
+  private readonly vagasMockService = inject(VagasMockService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly subscriptions = new Subscription();
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
   private readonly brandOrangeMid = { r: 188, g: 109, b: 24 };
   private readonly brandOrangeLight = { r: 242, g: 179, b: 26 };
+
+  private jobsSnapshot: MockJobRecord[] = [];
 
   readonly radarTotal = 87;
   readonly radarDelta = 12;
@@ -98,10 +106,98 @@ export class EcossistemaPage {
 
   constructor() {
     this.restoreRadarCategorySelection();
+    this.refreshJobs();
+    this.subscriptions.add(
+      this.vagasMockService.jobsChanged$.subscribe(() => {
+        this.refreshJobs();
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   toggleSidebar(): void {
     this.sidebarVisibilityService.toggle();
+  }
+
+  get featuredJob(): MockJobRecord | null {
+    const accessibleActive = this.jobsSnapshot
+      .filter((job) => job.status === 'ativas' && this.vagasMockService.canCurrentRecruiterAccessJob(job));
+    if (accessibleActive.length) {
+      return accessibleActive[0];
+    }
+
+    const accessibleAny = this.jobsSnapshot
+      .filter((job) => this.vagasMockService.canCurrentRecruiterAccessJob(job));
+    return accessibleAny[0] ?? this.jobsSnapshot[0] ?? null;
+  }
+
+  jobCompanyLogoUrl(job: MockJobRecord): string {
+    return job.companyLogoUrl?.trim() ?? '';
+  }
+
+  jobCompanyLogoLabel(job: MockJobRecord): string {
+    const initials = job.company
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join('');
+
+    return (initials || job.company.slice(0, 2)).toUpperCase();
+  }
+
+  jobCardWorkModel(job: MockJobRecord): string {
+    if (job.workModel === 'Remoto') {
+      return 'HOME';
+    }
+
+    return this.workModelLabel(job.workModel).toUpperCase();
+  }
+
+  jobCardLocation(job: MockJobRecord): string {
+    return job.location.replace(/\s*-\s*/g, ' - ').replace(/\s+/g, ' ').trim();
+  }
+
+  jobCardOffer(job: MockJobRecord): { salary: string | null; rest: string } {
+    const salary = job.showSalaryRangeInCard === false ? null : this.formatJobSalary(job.salaryRange);
+    const benefits = job.benefits.length > 0 ? ' + Beneficios' : '';
+    const rest = `${job.contractType}${benefits}.`;
+    return { salary, rest };
+  }
+
+  private workModelLabel(model: WorkModel): string {
+    switch (model) {
+      case 'Hibrido':
+        return 'Hibrido';
+      case 'Presencial':
+        return 'Presencial';
+      case 'Remoto':
+        return 'Remoto';
+      default:
+        return model;
+    }
+  }
+
+  private formatJobSalary(raw?: string): string | null {
+    const value = raw?.trim();
+    if (!value) {
+      return null;
+    }
+
+    // Keep already-formatted ranges as-is.
+    if (value.includes('R$')) {
+      return value;
+    }
+
+    return `R$ ${value}`;
+  }
+
+  private refreshJobs(): void {
+    this.jobsSnapshot = this.vagasMockService.getJobs();
   }
 
   get radarCategories(): RadarCategory[] {

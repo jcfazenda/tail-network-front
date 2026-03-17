@@ -79,33 +79,38 @@
         </div>
       </section>
 
-      <article class="mini-feature" aria-label="Feature">
+      <article class="mini-feature" aria-label="Preview de vaga" *ngIf="featuredJob as job">
         <div class="mini-feature__media" aria-hidden="true">
           <div class="mini-feature__toolbar">
             <div class="mini-feature__toolbar-left">
               <div class="mini-feature__company-head">
                 <img
                   class="mini-feature__company-logo"
-                  src="/assets/images/logo-itau.png"
-                  alt="Empresa"
+                  [src]="jobCompanyLogoUrl(job) || '/assets/images/logo-itau.png'"
+                  [alt]="job.company"
                   loading="lazy"
                   decoding="async"
                 />
 
                 <div class="mini-feature__company-copy">
-                  <strong>Itau SA</strong>
-                  <span>Rio de Janeiro - RJ</span>
+                  <strong>{{ job.company }}</strong>
+                  <span>{{ jobCardLocation(job) }}</span>
                 </div>
               </div>
 
-              <div class="mini-feature__job-title">Backend .NET Sênior</div>
-              <div class="mini-feature__job-offer">
-                <strong>R$ 14.556,22</strong><span>CLT + Beneficios</span>
+              <div class="mini-feature__job-title">{{ job.title }}</div>
+              <div class="mini-feature__job-offer" *ngIf="jobCardOffer(job) as offer">
+                <ng-container *ngIf="offer.salary as salary">
+                  <strong>{{ salary }}</strong><span>{{ offer.rest }}</span>
+                </ng-container>
+                <ng-container *ngIf="!offer.salary">
+                  <strong>{{ offer.rest }}</strong>
+                </ng-container>
               </div>
             </div>
 
             <div class="mini-feature__toolbar-right">
-              <span class="mini-feature__pill mini-feature__pill--cta">Hibrido</span>
+              <span class="mini-feature__pill mini-feature__pill--cta">{{ jobCardWorkModel(job) }}</span>
             </div>
           </div>
 
@@ -124,34 +129,24 @@
             <div class="mini-feature__avatars" aria-label="Candidatos no radar">
               <span
                 class="mini-feature__avatar"
-                style="background-image: url('/assets/avatars/avatar-rafael.png');"
+                *ngFor="let avatar of job.avatars | slice:0:4"
+                [style.backgroundImage]="'url(' + avatar + ')'"
                 aria-hidden="true"
               ></span>
               <span
-                class="mini-feature__avatar"
-                style="background-image: url('/assets/avatars/avatar-default.svg');"
-                aria-hidden="true"
-              ></span>
-              <span
-                class="mini-feature__avatar"
-                style="background-image: url('/assets/avatars/avatar-default.svg');"
-                aria-hidden="true"
-              ></span>
-              <span
-                class="mini-feature__avatar"
-                style="background-image: url('/assets/avatars/avatar-default.svg');"
-                aria-hidden="true"
-              ></span>
-              <span class="mini-feature__avatar mini-feature__avatar--extra" aria-label="Mais 8 candidatos">+8</span>
+                class="mini-feature__avatar mini-feature__avatar--extra"
+                *ngIf="job.extraCount > 0"
+                [attr.aria-label]="'Mais ' + job.extraCount + ' candidatos'"
+              >+{{ job.extraCount }}</span>
             </div>
           </div>
 
-          <div class="mini-feature__fitrow" aria-label="Aderência 86%">
+          <div class="mini-feature__fitrow" [attr.aria-label]="'Aderência ' + job.match + '%'" >
             <div class="mini-feature__fit">
               <span class="mini-feature__fit-bar" aria-hidden="true">
-                <span class="mini-feature__fit-bar-fill" style="width: 86%"></span>
+                <span class="mini-feature__fit-bar-fill" [style.width.%]="job.match"></span>
               </span>
-              <span class="mini-feature__fit-value">86% <span>Aderência</span></span>
+              <span class="mini-feature__fit-value">{{ job.match }}% <span>Aderência</span></span>
             </div>
           </div>
         </div>
