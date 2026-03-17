@@ -14,6 +14,11 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
     data: { title: 'Principal' },
   },
+  {
+    path: 'home/ecossistema',
+    loadComponent: () => import('./home/ecossistema/ecossistema.page').then((m) => m.EcossistemaPage),
+    data: { title: 'Ecossistema (Template)' },
+  },
   { path: 'usuario', redirectTo: 'usuario/ecossistema', pathMatch: 'full' },
   {
     path: 'usuario/ecossistema',

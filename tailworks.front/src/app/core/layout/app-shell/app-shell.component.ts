@@ -40,8 +40,12 @@ export class AppShellComponent {
     return this.primaryPath === '/usuario/ecossistema';
   }
 
+  get isTemplateEcosystem(): boolean {
+    return this.primaryPath === '/home/ecossistema';
+  }
+
   get hasSidebar(): boolean {
-    return !this.isHomeEntry && !this.isCandidateEcosystem;
+    return !this.isHomeEntry && !this.isCandidateEcosystem && !this.isTemplateEcosystem;
   }
 
   get isSidebarOpen(): boolean {

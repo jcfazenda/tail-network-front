@@ -22,6 +22,61 @@
   gap: 18px;
 }
 
+.topbar--template{
+  min-height: 72px;
+  padding: 8px 10px;
+  border-radius: 22px;
+  background: rgba(16, 18, 22, 0.70);
+  backdrop-filter: blur(14px);
+  border-bottom: 0;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.topbar--template .search{
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.18);
+  min-height: 46px;
+  padding: 0 14px;
+}
+
+.topbar--template .topbar__cta{
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.topbar--template .iconBtn{
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.topbar--template .topbar__sidebar-profile-copy strong{
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.topbar--template .topbar__sidebar-profile-copy span{
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.topbar--template .topbar__sidebar-profile{
+  border-right-color: rgba(255, 255, 255, 0.14);
+}
+
+.topbar--template .search span{
+  color: rgba(255, 255, 255, 0.60);
+}
+
+.topbar--template .search input{
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.topbar--template .search input::placeholder{
+  color: rgba(255, 255, 255, 0.50);
+}
+
 .topbar__primary{
   display: flex;
   align-items: center;

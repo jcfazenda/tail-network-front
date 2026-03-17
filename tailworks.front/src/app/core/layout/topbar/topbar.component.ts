@@ -77,7 +77,7 @@ export class TopbarComponent {
     effect(() => {
       const url = this.primaryPath;
 
-      if (url === '/home' || url === '/login' || url === '/usuario/ecossistema') {
+      if (url === '/home' || url === '/login' || url === '/home/ecossistema' || url === '/usuario/ecossistema') {
         return;
       }
 
@@ -93,6 +93,10 @@ export class TopbarComponent {
   get isSelectionMode(): boolean {
     const url = this.primaryPath;
     return url === '/home' || url === '/login';
+  }
+
+  get isTemplateLanding(): boolean {
+    return this.primaryPath === '/home/ecossistema';
   }
 
   get isCandidateMode(): boolean {
