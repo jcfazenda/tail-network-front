@@ -351,9 +351,14 @@
                           <div class="job-card__top-meta">
                             <div class="job-card__actions-row">
                               <div class="job-card__actions">
-                                <button class="job-card__chat" type="button" (click)="openJobChat(job, $event)">
+                                <button
+                                  class="job-card__chat-icon"
+                                  type="button"
+                                  (click)="openJobChat(job, $event)"
+                                  aria-label="Chat com candidato"
+                                  title="Chat com candidato"
+                                >
                                   <span class="material-symbols-outlined" aria-hidden="true">chat</span>
-                                  <span>Chat com Candidato</span>
                                 </button>
 
                                 <button
@@ -390,11 +395,6 @@
 
                     <div class="job-card__title-row job-card__title-row--hero">
                       <h3 class="job-card__title">{{ job.title }}</h3>
-                      <div class="job-card__title-right">
-                        <span class="job-card__title-chat" aria-hidden="true">
-                          <span class="material-symbols-outlined">chat</span>
-                        </span>
-                      </div>
                     </div>
 
                     <div class="job-card__context">
