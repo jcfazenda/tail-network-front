@@ -40,23 +40,152 @@
     </section>
 
     <section class="landing__below" aria-label="Resumo do ecossistema">
-      <section class="candidate-week-radar" aria-label="Stacks mais contratadas">
-        <header class="candidate-week-radar__head">
-          <h4>Stacks mais contratadas</h4>
-          <button
-            class="candidate-week-radar__menu"
-            type="button"
-            aria-label="Selecionar stacks para mostrar"
-            (click)="openRadarCategoryPicker()"
-          >
-            <span class="material-symbols-rounded" aria-hidden="true">menu</span>
-          </button>
-        </header>
+      <section class="howitworks" aria-label="Como funciona">
+        <div class="howitworks__content">
+          <div class="howitworks__grid" aria-label="Fluxo e painel">
+            <div class="howitworks__bar" aria-label="Indicadores do ecossistema">
+              <div class="howitworks__kpis" aria-label="Indicadores">
+                <div class="howitworks__kpi">
+                  <div class="howitworks__kpi-value">R$ 1B+</div>
+                  <div class="howitworks__kpi-label">
+                    <span>Em ofertas</span>
+                    <span>mapeadas</span>
+                  </div>
+                </div>
 
-        <div class="candidate-week-radar__subtitle">
-          <span><strong>{{ radarTotal }}</strong> novas contratações</span>
-          <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
+                <div class="howitworks__kpi">
+                  <div class="howitworks__kpi-value">21K+</div>
+                  <div class="howitworks__kpi-label">
+                    <span>Contratações</span>
+                    <span>na última semana</span>
+                  </div>
+                </div>
+
+                <div class="howitworks__kpi">
+                  <div class="howitworks__kpi-value">150K+</div>
+                  <div class="howitworks__kpi-label">
+                    <span>Talentos</span>
+                    <span>no ecossistema</span>
+                  </div>
+                </div>
+
+                <div class="howitworks__kpi">
+                  <div class="howitworks__kpi-value">8–12%</div>
+                  <div class="howitworks__kpi-label">
+                    <span>Ganho médio</span>
+                    <span>em eficiência</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="howitworks__bar-copy" aria-label="Resumo de contratações">
+              <div class="howitworks__bar-copy-inner" [class.is-fading]="copyIsFading">
+                <h3>{{ currentHiringCopy.title }}</h3>
+                <p>
+                  <span class="howitworks__quote" aria-hidden="true">"</span>
+                  {{ currentHiringCopy.body }}
+                  <span class="howitworks__quote" aria-hidden="true">"</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="howitworks__main">
+              <section class="hired-strip" aria-label="Contratacoes recentes">
+                <div class="hired-strip__viewport" aria-label="Carrossel">
+                  <button
+                    type="button"
+                    class="hired-strip__arrow hired-strip__arrow--left"
+                    aria-label="Anterior"
+                    (click)="scrollHired(-1)"
+                  >
+                    <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
+                  </button>
+
+                  <div
+                    #hiredTrack
+                  class="hired-strip__track"
+                  (scroll)="onHiredScroll()"
+                  aria-label="Lista de contratacoes"
+                >
+                    <article
+                      class="hired-card"
+                      *ngFor="let card of hiredSpotlights"
+                      aria-label="Contratacao"
+                      [style.--polaroid-tilt]="polaroidTilt(card.name)"
+                    >
+                      <div class="hired-card__photo" aria-hidden="true">
+                        <img class="hired-card__photo-img" [src]="card.avatarUrl" alt="" loading="lazy" decoding="async" />
+                      </div>
+
+                      <div class="hired-card__caption">
+                        <strong class="hired-card__name">{{ card.name }}</strong>
+                        <div class="hired-card__role">{{ card.roleTitle }}</div>
+
+                        <div class="hired-card__company" aria-label="Empresa">
+                          <img
+                            class="hired-card__company-logo"
+                            [src]="card.companyLogoUrl"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <span class="hired-card__company-name">{{ card.company }}</span>
+                        </div>
+                      </div>
+
+                      <div class="hired-card__chips" aria-label="Stacks">
+                        <span
+                          class="hired-card__chip"
+                          *ngFor="let stack of card.stacks"
+                          [class.hired-card__chip--dark]="stack.tone === 'dark'"
+                          [class.hired-card__chip--accent]="stack.tone === 'accent'"
+                        >{{ stack.label }}</span>
+                      </div>
+                    </article>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="hired-strip__arrow hired-strip__arrow--right"
+                    aria-label="Proximo"
+                    (click)="scrollHired(1)"
+                  >
+                    <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
+                  </button>
+                </div>
+
+                <div class="hired-strip__dots" aria-label="Paginacao">
+                  <span
+                    class="hired-strip__dot"
+                    *ngFor="let _ of hiredPages; let i = index"
+                    [class.hired-strip__dot--active]="i === activeHiredIndex"
+                    aria-hidden="true"
+                  ></span>
+                </div>
+              </section>
+            </div>
+          </div>
         </div>
+      </section>
+
+      <div class="landing__row" aria-label="Resumo em cards">
+        <section class="candidate-week-radar" aria-label="Stacks mais contratadas">
+          <header class="candidate-week-radar__head">
+            <h4>Stacks mais contratadas</h4>
+            <button
+              class="candidate-week-radar__menu"
+              type="button"
+              aria-label="Selecionar stacks para mostrar"
+              (click)="openRadarCategoryPicker()"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+            </button>
+          </header>
+
+          <div class="candidate-week-radar__subtitle">
+            <span><strong>{{ radarTotal }}</strong> novas contratações</span>
+            <span class="candidate-week-radar__delta">+{{ radarDelta }} desde ontem</span>
+          </div>
 
           <div class="candidate-week-radar__bars">
             <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
@@ -76,8 +205,13 @@
                 <div class="candidate-week-radar__value">{{ cat.value }}%</div>
               </div>
             </div>
-        </div>
-      </section>
+          </div>
+        </section>
+
+        <section class="eco-kpi" aria-label="Bloco reservado"></section>
+      </div>
+
+      <div class="landing__divider" aria-hidden="true"></div>
 
       <article class="mini-feature" aria-label="Preview de vaga" *ngIf="featuredJob as job">
         <div class="mini-feature__media" aria-hidden="true">

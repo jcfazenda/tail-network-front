@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
 import { MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
@@ -26,6 +26,21 @@ type HiringTrendChartPoint = HiringTrendPoint & {
   yPercent: number;
 };
 
+type HiredSpotlightStack = {
+  label: string;
+  tone?: 'dark' | 'light' | 'accent';
+};
+
+type HiredSpotlightCard = {
+  isNew: boolean;
+  name: string;
+  roleTitle: string;
+  company: string;
+  companyLogoUrl: string;
+  avatarUrl: string;
+  stacks: HiredSpotlightStack[];
+};
+
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
@@ -39,6 +54,10 @@ export class EcossistemaPage implements OnDestroy {
   private readonly vagasMockService = inject(VagasMockService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
+  private copyRotationTimer: number | null = null;
+  private hiredRotationTimer: number | null = null;
+  private hiredAutoScrollInFlight = false;
+  private lastManualHiredInteractionAt = 0;
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
@@ -46,6 +65,131 @@ export class EcossistemaPage implements OnDestroy {
   private readonly brandOrangeLight = { r: 242, g: 179, b: 26 };
 
   private jobsSnapshot: MockJobRecord[] = [];
+  private copyIndex = 0;
+  copyIsFading = false;
+
+  readonly hiringCopy = [
+    {
+      title: 'Olha só quem acabou de ser contratado',
+      body:
+        'Esses cards mostram, em tempo real, quem acabou de entrar no mercado — cargos, stacks e perfis que indicam para onde as oportunidades estão se movendo. Observe os padrões. É aqui que nascem as próximas vagas.',
+    },
+    {
+      title: 'Enquanto você está aqui… novas contratações estão acontecendo',
+      body:
+        'Cada contratação aqui não é só um nome — é um sinal. Stacks, cargos e combinações de habilidades que revelam o comportamento do mercado em tempo real e ajudam a antecipar onde estarão as próximas oportunidades.',
+    },
+    {
+      title: 'O mercado não para',
+      body:
+        'Profissionais sendo contratados agora, mostrando exatamente o que está em alta: tecnologias, cargos e perfis que estão sendo disputados. Se você quer se posicionar melhor, comece observando quem já foi escolhido.',
+    },
+    {
+      title: 'Dá uma olhada nos novos talentos',
+      body:
+        'Esses são os profissionais que acabaram de ser contratados — e que ajudam a revelar, na prática, o que o mercado está valorizando hoje. Repare nos padrões… eles dizem mais do que qualquer tendência.',
+    },
+  ] as const;
+
+  @ViewChild('hiredTrack', { static: false }) hiredTrack?: ElementRef<HTMLDivElement>;
+
+  activeHiredIndex = 0;
+  readonly hiredPageSize = 4;
+
+  get hiredPageCount(): number {
+    return Math.max(1, Math.ceil(this.hiredSpotlights.length / this.hiredPageSize));
+  }
+
+  get hiredPages(): number[] {
+    return Array.from({ length: this.hiredPageCount }, (_, i) => i);
+  }
+
+  readonly hiredSpotlights: HiredSpotlightCard[] = [
+    {
+      isNew: true,
+      name: 'Gabriela Lima',
+      roleTitle: 'Backend .NET',
+      company: 'XP Inc.',
+      companyLogoUrl: '/assets/images/logo-itau.png',
+      avatarUrl: '/assets/images/polaroid/gabriela-lima.png',
+      stacks: [
+        { label: 'C#', tone: 'dark' },
+        { label: '.NET', tone: 'dark' },
+      ],
+    },
+    {
+      isNew: true,
+      name: 'Lucas Pereira',
+      roleTitle: 'Frontend',
+      company: 'iFood',
+      companyLogoUrl: '/assets/images/logo-nubank.png',
+      avatarUrl: '/assets/images/polaroid/lucas-pereira.png',
+      stacks: [
+        { label: 'React', tone: 'accent' },
+        { label: 'TypeScript', tone: 'dark' },
+      ],
+    },
+    {
+      isNew: true,
+      name: 'Daniela Costa',
+      roleTitle: 'Backend Java',
+      company: 'Nubank',
+      companyLogoUrl: '/assets/images/logo-nubank-roxinho.webp',
+      avatarUrl: '/assets/images/polaroid/daniela-costa.png',
+      stacks: [
+        { label: 'Java', tone: 'accent' },
+        { label: 'Spring Boot', tone: 'light' },
+      ],
+    },
+    {
+      isNew: true,
+      name: 'Marcos Oliveira',
+      roleTitle: 'Data Scientist',
+      company: 'Creditas',
+      companyLogoUrl: '/assets/images/logo-itau.png',
+      avatarUrl: '/assets/images/polaroid/marcos-oliveira.png',
+      stacks: [
+        { label: 'Python', tone: 'accent' },
+        { label: 'AWS', tone: 'dark' },
+      ],
+    },
+    {
+      isNew: false,
+      name: 'Cintia Norma',
+      roleTitle: 'Backend Go',
+      company: 'Stone',
+      companyLogoUrl: '/assets/images/logo-itau.png',
+      avatarUrl: '/assets/images/polaroid/cintia-norma.png',
+      stacks: [
+        { label: 'Go', tone: 'accent' },
+        { label: 'Google Cloud', tone: 'light' },
+      ],
+    },
+    {
+      isNew: false,
+      name: 'Juliana Oliveira',
+      roleTitle: 'Mobile',
+      company: 'Mercado Livre',
+      companyLogoUrl: '/assets/images/logo-nubank.png',
+      avatarUrl: '/assets/images/polaroid/juliana-oliveira.png',
+      stacks: [
+        { label: 'Kotlin', tone: 'accent' },
+        { label: 'Flutter', tone: 'dark' },
+      ],
+    },
+    {
+      isNew: false,
+      name: 'Mario Solaro',
+      roleTitle: 'DevOps',
+      company: 'Globo',
+      companyLogoUrl: '/assets/images/logo-nubank-roxinho.webp',
+      avatarUrl: '/assets/images/polaroid/mario-solaro.png',
+      stacks: [
+        { label: 'AWS', tone: 'accent' },
+        { label: 'Terraform', tone: 'dark' },
+      ],
+    },
+  ];
 
   readonly radarTotal = 87;
   readonly radarDelta = 12;
@@ -113,14 +257,110 @@ export class EcossistemaPage implements OnDestroy {
         this.cdr.markForCheck();
       }),
     );
+
+    if (typeof window !== 'undefined') {
+      this.copyRotationTimer = window.setInterval(() => this.rotateHiringCopy(), 9000);
+      this.hiredRotationTimer = window.setInterval(() => this.autoAdvanceHired(), 9000);
+    }
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    if (this.copyRotationTimer) {
+      window.clearInterval(this.copyRotationTimer);
+      this.copyRotationTimer = null;
+    }
+    if (this.hiredRotationTimer) {
+      window.clearInterval(this.hiredRotationTimer);
+      this.hiredRotationTimer = null;
+    }
+  }
+
+  polaroidTilt(seed: string): string {
+    // Deterministico, mas "aleatorio" o suficiente: alguns retos, outros levemente inclinados.
+    let hash = 0;
+    for (let i = 0; i < seed.length; i += 1) {
+      hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    }
+
+    // Alguns ficam retos.
+    if (hash % 5 === 0) {
+      return '0deg';
+    }
+
+    // Tilt mais evidente (polaroid "solto"), mas ainda sutil o suficiente para nao parecer bugado.
+    const tiltSteps = [-3.2, -2.4, -1.6, -0.9, 0.9, 1.6, 2.4, 3.2];
+    const tilt = tiltSteps[hash % tiltSteps.length] ?? 0;
+    return `${tilt}deg`;
+  }
+
+  scrollHired(direction: -1 | 1): void {
+    const el = this.hiredTrack?.nativeElement;
+    if (!el) {
+      return;
+    }
+
+    const pageWidth = Math.max(1, el.clientWidth);
+    const nextPage = Math.min(this.hiredPageCount - 1, Math.max(0, this.activeHiredIndex + direction));
+    this.lastManualHiredInteractionAt = Date.now();
+    el.scrollTo({ left: nextPage * pageWidth, behavior: 'smooth' });
+    if (nextPage !== this.activeHiredIndex) {
+      this.activeHiredIndex = nextPage;
+      this.cdr.markForCheck();
+    }
+  }
+
+  onHiredScroll(): void {
+    const el = this.hiredTrack?.nativeElement;
+    if (!el) {
+      return;
+    }
+
+    const pageWidth = Math.max(1, el.clientWidth);
+    const maxPage = this.hiredPageCount - 1;
+    const bestPage = Math.min(maxPage, Math.max(0, Math.round(el.scrollLeft / pageWidth)));
+
+    if (bestPage !== this.activeHiredIndex) {
+      this.activeHiredIndex = bestPage;
+      this.cdr.markForCheck();
+    }
+
+    if (!this.hiredAutoScrollInFlight) {
+      this.lastManualHiredInteractionAt = Date.now();
+    }
+  }
+
+  private autoAdvanceHired(): void {
+    const el = this.hiredTrack?.nativeElement;
+    if (!el) {
+      return;
+    }
+
+    // Se o usuario mexeu recentemente (scroll/arrow), nao briga com ele.
+    const now = Date.now();
+    if (now - this.lastManualHiredInteractionAt < 4000) {
+      return;
+    }
+
+    const nextPage = (this.activeHiredIndex + 1) % this.hiredPageCount;
+    const pageWidth = Math.max(1, el.clientWidth);
+
+    this.hiredAutoScrollInFlight = true;
+    el.scrollTo({ left: nextPage * pageWidth, behavior: 'smooth' });
+    this.activeHiredIndex = nextPage;
+    this.cdr.markForCheck();
+
+    window.setTimeout(() => {
+      this.hiredAutoScrollInFlight = false;
+    }, 900);
   }
 
   toggleSidebar(): void {
     this.sidebarVisibilityService.toggle();
+  }
+
+  get currentHiringCopy(): { title: string; body: string } {
+    return this.hiringCopy[this.copyIndex % this.hiringCopy.length];
   }
 
   get featuredJob(): MockJobRecord | null {
@@ -198,6 +438,25 @@ export class EcossistemaPage implements OnDestroy {
 
   private refreshJobs(): void {
     this.jobsSnapshot = this.vagasMockService.getJobs();
+  }
+
+  private rotateHiringCopy(): void {
+    if (this.hiringCopy.length <= 1) {
+      return;
+    }
+
+    this.copyIsFading = true;
+    this.cdr.markForCheck();
+
+    window.setTimeout(() => {
+      this.copyIndex = (this.copyIndex + 1) % this.hiringCopy.length;
+      this.cdr.markForCheck();
+
+      window.setTimeout(() => {
+        this.copyIsFading = false;
+        this.cdr.markForCheck();
+      }, 140);
+    }, 220);
   }
 
   get radarCategories(): RadarCategory[] {
