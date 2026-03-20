@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JobsFacade } from '../../core/facades/jobs.facade';
+import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 import { RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { EcosystemPanelService } from '../ecosystem-panel.service';
@@ -95,7 +96,14 @@ type CandidateFormationCopyDraft = {
   selector: 'app-candidate-placeholder-page',
   imports: [CommonModule],
   templateUrl: './placeholder.page.html',
-  styleUrls: ['./placeholder.page.scss'],
+  styleUrls: [
+    './placeholder.page.shell.scss',
+    './placeholder.page.radar.scss',
+    './placeholder.page.process.scss',
+    './placeholder.page.applications.scss',
+    './placeholder.page.panel.scss',
+    './placeholder.page.summary.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlaceholderPage implements OnInit, OnDestroy {
@@ -108,6 +116,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly browserStorage = inject(BrowserStorageService);
   private readonly ecosystemPanelService = inject(EcosystemPanelService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
@@ -338,6 +347,30 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.clearCandidateCelebrationTimer();
     this.clearProcessCardsSuppressClickTimer();
     this.subscriptions.unsubscribe();
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.showRadarCategoryPicker) {
+      this.closeRadarCategoryPicker();
+      return;
+    }
+
+    if (this.advancedFilterOpen) {
+      this.closeAdvancedFilter();
+      return;
+    }
+
+    if (this.selectedJobId) {
+      this.closeJobPanel();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (this.showProcessesPanel) {
+      this.closeProcessesPanel();
+      this.cdr.markForCheck();
+    }
   }
 
   get title(): string {
@@ -788,6 +821,26 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       : `Nenhuma vaga em ${this.workModelLabel(this.workModelFilter)} no seu radar.`;
   }
 
+  get emptyStateHint(): string {
+    if (this.activeView === 'applications') {
+      return this.workModelFilter === 'all'
+        ? 'Quando você se candidatar a uma vaga, ela aparece aqui com o histórico do processo.'
+        : 'Tente voltar para todos os formatos para ver o restante das vagas em andamento.';
+    }
+
+    if (this.activeView === 'declined') {
+      return 'Quando você optar por não seguir em uma oportunidade, o histórico continua acessível aqui.';
+    }
+
+    return this.workModelFilter === 'all'
+      ? 'Novas vagas entram aqui conforme o ecossistema mock evolui e o radar encontra aderência com seu perfil.'
+      : 'Limpe o filtro de formato para voltar a enxergar o radar completo.';
+  }
+
+  get shouldShowEmptyResetAction(): boolean {
+    return this.workModelFilter !== 'all' || this.activeView !== 'radar';
+  }
+
   get selectedJobPanel(): MockJobRecord | null {
     if (!this.selectedJobId) {
       return null;
@@ -1152,6 +1205,14 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.advancedFilterOpen = false;
   }
 
+  resetTalentDiscoveryFilters(): void {
+    this.activeView = 'radar';
+    this.activeOverviewShellView = 'radar';
+    this.workModelFilter = 'all';
+    this.advancedFilterOpen = false;
+    this.closeProcessesPanel();
+  }
+
   setOverviewShellView(view: OverviewShellView): void {
     this.activeOverviewShellView = view;
   }
@@ -1176,10 +1237,12 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   openRadarCategoryPicker(): void {
     this.showRadarCategoryPicker = true;
+    this.cdr.markForCheck();
   }
 
   closeRadarCategoryPicker(): void {
     this.showRadarCategoryPicker = false;
+    this.cdr.markForCheck();
   }
 
   isRadarCategorySelected(categoryId: string): boolean {
@@ -1200,7 +1263,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
     this.selectedRadarCategoryIds = this.allRadarCategories
       .filter((category) => nextSelection.includes(category.id))
       .map((category) => category.id);
-    localStorage.setItem(
+    this.browserStorage.setItem(
       PlaceholderPage.radarCategoriesStorageKey,
       JSON.stringify(this.selectedRadarCategoryIds),
     );
@@ -1472,7 +1535,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   private restoreTalentDraft(): void {
-    const rawDraft = localStorage.getItem(PlaceholderPage.basicDraftStorageKey);
+    const rawDraft = this.browserStorage.getItem(PlaceholderPage.basicDraftStorageKey);
 
     if (!rawDraft) {
       return;
@@ -1490,12 +1553,12 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       );
       this.talentAvatarUrl = draft.photoPreviewUrl ?? '';
     } catch {
-      localStorage.removeItem(PlaceholderPage.basicDraftStorageKey);
+      this.browserStorage.removeItem(PlaceholderPage.basicDraftStorageKey);
     }
   }
 
   private restoreTalentFormationCopy(): void {
-    const rawDraft = localStorage.getItem(PlaceholderPage.formationCopyStorageKey);
+    const rawDraft = this.browserStorage.getItem(PlaceholderPage.formationCopyStorageKey);
 
     if (!rawDraft) {
       return;
@@ -1509,19 +1572,19 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       this.talentGraduation = draft.graduation?.trim() || this.talentGraduation;
       this.talentSpecialization = draft.specialization?.trim() || this.talentSpecialization;
     } catch {
-      localStorage.removeItem(PlaceholderPage.formationCopyStorageKey);
+      this.browserStorage.removeItem(PlaceholderPage.formationCopyStorageKey);
     }
   }
 
   private restoreTalentFormationLogo(): void {
-    const savedLogo = localStorage.getItem(PlaceholderPage.formationLogoStorageKey);
+    const savedLogo = this.browserStorage.getItem(PlaceholderPage.formationLogoStorageKey);
     if (savedLogo?.trim()) {
       this.talentFormationLogoUrl = savedLogo.trim();
     }
   }
 
   private restoreTalentStacks(): void {
-    const rawDraft = localStorage.getItem(PlaceholderPage.stacksStorageKey);
+    const rawDraft = this.browserStorage.getItem(PlaceholderPage.stacksStorageKey);
 
     if (!rawDraft) {
       this.talentStacks = this.defaultStacks();
@@ -1540,13 +1603,13 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
       this.talentStacks = stacks.length ? stacks : this.defaultStacks();
     } catch {
-      localStorage.removeItem(PlaceholderPage.stacksStorageKey);
+      this.browserStorage.removeItem(PlaceholderPage.stacksStorageKey);
       this.talentStacks = this.defaultStacks();
     }
   }
 
   private restoreRadarCategorySelection(): void {
-    const rawSelection = localStorage.getItem(PlaceholderPage.radarCategoriesStorageKey);
+    const rawSelection = this.browserStorage.getItem(PlaceholderPage.radarCategoriesStorageKey);
 
     if (!rawSelection) {
       return;
@@ -1569,7 +1632,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
         .filter((category) => validSelection.includes(category.id))
         .map((category) => category.id);
     } catch {
-      localStorage.removeItem(PlaceholderPage.radarCategoriesStorageKey);
+      this.browserStorage.removeItem(PlaceholderPage.radarCategoriesStorageKey);
     }
   }
 

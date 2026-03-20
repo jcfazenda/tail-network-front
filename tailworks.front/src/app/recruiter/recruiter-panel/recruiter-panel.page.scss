@@ -424,6 +424,19 @@
   margin: 0;
 }
 
+.recruiter-panel__empty-action{
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(31, 42, 60, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #2f3c52;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 @media (max-width: 1180px) {
   .recruiter-panel__metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));

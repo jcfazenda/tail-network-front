@@ -50,7 +50,10 @@ type NotificationConfettiPiece = {
   selector: 'app-topbar',
   imports: [CommonModule, RouterLink],
   templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.scss'],
+  styleUrls: [
+    './topbar.component.shell.scss',
+    './topbar.component.overlay.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent {

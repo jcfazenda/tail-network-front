@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
 import { JobsFacade } from '../core/facades/jobs.facade';
+import { BrowserStorageService } from '../core/storage/browser-storage.service';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
 import { CandidateStage, JobStatus, MockJobCandidate, MockJobRecord, RecruiterIdentity, WorkModel } from '../vagas/data/vagas.models';
 import { RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
@@ -53,7 +54,10 @@ type ProcessCardStep = {
   selector: 'app-stub-page',
   imports: [CommonModule, TailChatPanelComponent, PanelCandidatosListComponent, CandidateProfileModalComponent],
   templateUrl: './stub.page.html',
-  styleUrls: ['./stub.page.scss'],
+  styleUrls: [
+    './stub.page.shell.scss',
+    './stub.page.jobs.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StubPage implements OnDestroy {
@@ -61,6 +65,7 @@ export class StubPage implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly browserStorage = inject(BrowserStorageService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private readonly hiringTrendChartWidth = 820;
@@ -150,6 +155,31 @@ export class StubPage implements OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.showRadarCategoryPicker) {
+      this.closeRadarCategoryPicker();
+      return;
+    }
+
+    if (this.candidateProfileContext) {
+      this.closeCandidateProfile();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (this.selectedChatJob) {
+      this.closeChat();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (this.selectedJobPanel) {
+      this.closePanel();
+      this.cdr.markForCheck();
+    }
+  }
+
   setTab(tab: JobStatus) {
     this.activeTab = tab;
     this.flippedJobId = null;
@@ -194,7 +224,7 @@ export class StubPage implements OnDestroy {
       .filter((category) => nextSelection.includes(category.id))
       .map((category) => category.id);
 
-    localStorage.setItem(
+    this.browserStorage.setItem(
       StubPage.radarCategoriesStorageKey,
       JSON.stringify(this.selectedRadarCategoryIds),
     );
@@ -295,6 +325,22 @@ export class StubPage implements OnDestroy {
       default:
         return 'Nenhuma vaga no radar neste recorte.';
     }
+  }
+
+  get emptyStateHint(): string {
+    if (this.jobsSearchTerm.trim()) {
+      return 'Tente buscar por outro cargo, empresa ou localidade. Você também pode limpar a busca para voltar ao recorte completo.';
+    }
+
+    if (this.activeBoardView !== 'radar') {
+      return 'Volte para "No Radar" para reabrir a visão mais ampla da vaga antes das movimentações do processo.';
+    }
+
+    return 'Assim que novas vagas ou movimentações aparecerem nesse mock, elas entram aqui automaticamente.';
+  }
+
+  get shouldShowEmptyResetAction(): boolean {
+    return this.activeBoardView !== 'radar' || this.activeOwnerFilterId !== 'all' || this.jobsSearchTerm.trim().length > 0;
   }
 
   get radarCategories(): RadarCategory[] {
@@ -815,7 +861,7 @@ export class StubPage implements OnDestroy {
   }
 
   private restoreRadarCategorySelection(): void {
-    const rawSelection = localStorage.getItem(StubPage.radarCategoriesStorageKey);
+    const rawSelection = this.browserStorage.getItem(StubPage.radarCategoriesStorageKey);
     if (!rawSelection) {
       return;
     }
@@ -837,8 +883,16 @@ export class StubPage implements OnDestroy {
           .map((category) => category.id);
       }
     } catch {
-      localStorage.removeItem(StubPage.radarCategoriesStorageKey);
+      this.browserStorage.removeItem(StubPage.radarCategoriesStorageKey);
     }
+  }
+
+  resetRecruiterDiscoveryFilters(): void {
+    this.activeBoardView = 'radar';
+    this.activeOwnerFilterId = 'all';
+    this.jobsSearchTerm = '';
+    this.flippedJobId = null;
+    this.cdr.markForCheck();
   }
 
   private isJobsGridInteractiveTarget(target: EventTarget | null): boolean {

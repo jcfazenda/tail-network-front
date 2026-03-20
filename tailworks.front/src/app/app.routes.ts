@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { StubPage } from './stub/stub.page';
 import { recruiterAuthGuard, recruiterManageDirectoryGuard, recruiterMasterGuard, talentAuthGuard } from './auth/auth.guards';
 
 export const routes: Routes = [
@@ -96,9 +95,29 @@ export const routes: Routes = [
     data: { title: 'Cadastro de Empresa' },
     canActivate: [recruiterAuthGuard, recruiterMasterGuard],
   },
-  { path: 'vagas', component: StubPage, data: { title: 'Minhas Vagas' }, canActivate: [recruiterAuthGuard] },
-  { path: 'radar', component: StubPage, data: { title: 'Radar' }, canActivate: [recruiterAuthGuard] },
-  { path: 'talentos', component: StubPage, data: { title: 'Talentos' }, canActivate: [recruiterAuthGuard] },
-  { path: 'propostas', component: StubPage, data: { title: 'Propostas' }, canActivate: [recruiterAuthGuard] },
+  {
+    path: 'vagas',
+    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
+    data: { title: 'Minhas Vagas' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
+    path: 'radar',
+    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
+    data: { title: 'Radar' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
+    path: 'talentos',
+    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
+    data: { title: 'Talentos' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
+    path: 'propostas',
+    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
+    data: { title: 'Propostas' },
+    canActivate: [recruiterAuthGuard],
+  },
   { path: '**', redirectTo: 'home' },
 ];

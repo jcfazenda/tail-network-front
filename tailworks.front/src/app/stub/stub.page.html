@@ -496,7 +496,16 @@
 
         <ng-template #emptyState>
           <div class="empty">
-            {{ emptyStateMessage }}
+            <strong>{{ emptyStateMessage }}</strong>
+            <p>{{ emptyStateHint }}</p>
+            <button
+              *ngIf="shouldShowEmptyResetAction"
+              class="empty__action"
+              type="button"
+              (click)="resetRecruiterDiscoveryFilters()"
+            >
+              Limpar busca e filtros
+            </button>
           </div>
         </ng-template>
       </section>

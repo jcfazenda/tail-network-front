@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, effect, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild, effect, inject } from '@angular/core';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
@@ -7,6 +7,7 @@ import { CandidateStage, MockJobRecord, WorkModel } from '../../vagas/data/vagas
 import { Subscription } from 'rxjs';
 import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.service';
 import { EcosystemSearchService } from '../../core/layout/ecosystem-search.service';
+import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 
 type TalentEcoFilter = 'radar' | 'applications';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -65,6 +66,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly jobsFacade = inject(JobsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly ecosystemSearchService = inject(EcosystemSearchService);
+  private readonly browserStorage = inject(BrowserStorageService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
@@ -279,6 +281,14 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       this.ecosystemSearchService.query();
       this.cdr.markForCheck();
     });
+
+    effect(() => {
+      this.ecosystemEntryService.mode();
+      if (!this.ecoFilters.some((item) => item.id === this.ecoFilter)) {
+        this.ecoFilter = 'radar';
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   get isTalentEcosystemMode(): boolean {
@@ -369,6 +379,52 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
       return haystack.includes(query);
     });
+  }
+
+  get hasEcoSearch(): boolean {
+    return this.ecosystemSearchService.query().trim().length > 0;
+  }
+
+  get ecoEmptyTitle(): string {
+    if (this.hasEcoSearch) {
+      return 'Nenhuma vaga encontrada para essa busca.';
+    }
+
+    if (this.isTalentEcosystemMode) {
+      return this.ecoFilter === 'applications'
+        ? 'Você ainda nao tem candidaturas nesse recorte.'
+        : 'Nenhuma vaga apareceu nesse radar agora.';
+    }
+
+    if (this.ecoFilter === 'contratados') {
+      return 'Ainda nao ha contratacoes fechadas nesse recorte.';
+    }
+
+    if (this.ecoFilter === 'processo') {
+      return 'Nao existem vagas em andamento nesse momento.';
+    }
+
+    if (this.ecoFilter === 'candidaturas') {
+      return 'Nenhuma candidatura chegou nesse recorte.';
+    }
+
+    return 'Nenhuma vaga encontrada com esse filtro.';
+  }
+
+  get ecoEmptyHint(): string {
+    if (this.hasEcoSearch) {
+      return 'Tente buscar por cargo, empresa ou localidade. Você também pode limpar a busca e voltar para a visão completa.';
+    }
+
+    if (this.ecoFilter !== 'radar') {
+      return 'Volte para "No Radar" para reabrir a visão mais ampla do ecossistema.';
+    }
+
+    return 'Assim que novos movimentos aparecerem no mock do ecossistema, eles entram aqui automaticamente.';
+  }
+
+  get shouldShowEmptyResetAction(): boolean {
+    return this.hasEcoSearch || this.ecoFilter !== 'radar';
   }
 
   ecoJobMeta(job: MockJobRecord): string {
@@ -520,6 +576,18 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     if (this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
       this.resizeListener = undefined;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.showRadarCategoryPicker) {
+      this.closeRadarCategoryPicker();
+      return;
+    }
+
+    if (this.sidebarVisibilityService.isOpen()) {
+      this.sidebarVisibilityService.hide();
     }
   }
 
@@ -739,10 +807,12 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   openRadarCategoryPicker(): void {
     this.showRadarCategoryPicker = true;
+    this.cdr.markForCheck();
   }
 
   closeRadarCategoryPicker(): void {
     this.showRadarCategoryPicker = false;
+    this.cdr.markForCheck();
   }
 
   isRadarCategorySelected(categoryId: string): boolean {
@@ -764,10 +834,11 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       .filter((category) => nextSelection.includes(category.id))
       .map((category) => category.id);
 
-    localStorage.setItem(
+    this.browserStorage.setItem(
       EcossistemaPage.radarCategoriesStorageKey,
       JSON.stringify(this.selectedRadarCategoryIds),
     );
+    this.cdr.markForCheck();
   }
 
   private readonly hiringTrendChartWidth = 820;
@@ -883,7 +954,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private restoreRadarCategorySelection(): void {
-    const rawSelection = localStorage.getItem(EcossistemaPage.radarCategoriesStorageKey);
+    const rawSelection = this.browserStorage.getItem(EcossistemaPage.radarCategoriesStorageKey);
     if (!rawSelection) {
       return;
     }
@@ -905,8 +976,34 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
           .map((category) => category.id);
       }
     } catch {
-      localStorage.removeItem(EcossistemaPage.radarCategoriesStorageKey);
+      this.browserStorage.removeItem(EcossistemaPage.radarCategoriesStorageKey);
     }
+  }
+
+  resetEcoDiscovery(): void {
+    this.ecoFilter = 'radar';
+    this.ecosystemSearchService.setQuery('');
+    this.cdr.markForCheck();
+  }
+
+  trackByEcoFilter(_index: number, item: { id: EcoFilter }): EcoFilter {
+    return item.id;
+  }
+
+  trackByHiredCard(_index: number, item: HiredSpotlightCard): string {
+    return `${item.name}:${item.company}:${item.roleTitle}`;
+  }
+
+  trackByPage(_index: number, item: number): number {
+    return item;
+  }
+
+  trackByRadarCategory(_index: number, item: RadarCategory): string {
+    return item.id;
+  }
+
+  trackByJob(_index: number, item: MockJobRecord): string {
+    return item.id;
   }
 
   private radarTone(value: number): { dark: { r: number; g: number; b: number }; mid: { r: number; g: number; b: number }; light: { r: number; g: number; b: number } } {

@@ -96,7 +96,10 @@
         <article class="recruiter-time__empty">
           <span class="material-symbols-rounded" aria-hidden="true">search_off</span>
           <strong>Nenhum recruiter encontrado</strong>
-          <p>Ajuste a busca para localizar alguem do time.</p>
+          <p>{{ emptyTeamHint }}</p>
+          <button class="recruiter-time__empty-action" type="button" (click)="resetSearch()">
+            Limpar busca
+          </button>
         </article>
       </ng-template>
     </aside>
@@ -148,7 +151,7 @@
           name="messageText"
         />
 
-        <button type="submit">
+        <button type="submit" [disabled]="!canSendMessage">
           <span class="material-symbols-rounded" aria-hidden="true">send</span>
           <span>Enviar</span>
         </button>

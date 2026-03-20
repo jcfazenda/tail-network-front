@@ -1,21 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Type, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
-import { SidebarComponent } from '../sidebar/sidebar.component';
 import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
-import { TopbarComponent } from '../topbar/topbar.component';
 
 @Component({
   standalone: true,
   selector: 'app-shell',
-  imports: [CommonModule, RouterOutlet, SidebarComponent, TopbarComponent],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './app-shell.component.html',
   styleUrls: ['./app-shell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent {
+  readonly topbarComponent = signal<Type<unknown> | null>(null);
+  readonly sidebarComponent = signal<Type<unknown> | null>(null);
   private readonly router = inject(Router);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly currentUrl = toSignal(
@@ -26,6 +26,18 @@ export class AppShellComponent {
     ),
     { initialValue: this.router.url },
   );
+
+  constructor() {
+    effect(() => {
+      if (!this.isHomeEntry && !this.topbarComponent()) {
+        void this.loadTopbarComponent();
+      }
+
+      if (this.hasSidebar && this.isSidebarOpen && !this.sidebarComponent()) {
+        void this.loadSidebarComponent();
+      }
+    });
+  }
 
   get isHomeEntry(): boolean {
     const url = this.primaryPath;
@@ -76,7 +88,21 @@ export class AppShellComponent {
     this.sidebarVisibilityService.hide();
   }
 
+  get sidebarComponentInputs(): { overlayMode: boolean } {
+    return { overlayMode: this.isTemplateEcosystem };
+  }
+
   private get primaryPath(): string {
     return this.currentUrl().split('?')[0]?.split('#')[0] || this.currentUrl();
+  }
+
+  private async loadTopbarComponent(): Promise<void> {
+    const { TopbarComponent } = await import('../topbar/topbar.component');
+    this.topbarComponent.set(TopbarComponent);
+  }
+
+  private async loadSidebarComponent(): Promise<void> {
+    const { SidebarComponent } = await import('../sidebar/sidebar.component');
+    this.sidebarComponent.set(SidebarComponent);
   }
 }

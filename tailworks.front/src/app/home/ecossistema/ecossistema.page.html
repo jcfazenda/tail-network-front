@@ -100,7 +100,7 @@
                 >
                     <article
                       class="hired-card"
-                      *ngFor="let card of hiredSpotlights"
+                      *ngFor="let card of hiredSpotlights; trackBy: trackByHiredCard"
                       aria-label="Contratacao"
                       [style.--polaroid-tilt]="polaroidTilt(card.name)"
                     >
@@ -148,7 +148,7 @@
                 <div class="hired-strip__dots" aria-label="Paginacao">
                   <span
                     class="hired-strip__dot"
-                    *ngFor="let _ of hiredPages; let i = index"
+                    *ngFor="let _ of hiredPages; let i = index; trackBy: trackByPage"
                     [class.hired-strip__dot--active]="i === activeHiredIndex"
                     aria-hidden="true"
                   ></span>
@@ -177,7 +177,9 @@
           <button
             type="button"
             class="eco-filterbar__tab"
-            *ngFor="let opt of ecoTopFilters"
+            *ngFor="let opt of ecoTopFilters; trackBy: trackByEcoFilter"
+            [attr.aria-label]="'Filtrar por ' + opt.label"
+            [attr.aria-pressed]="opt.id === ecoFilter"
             [class.eco-filterbar__tab--active]="opt.id === ecoFilter"
             (click)="setEcoFilter(opt.id)"
           >
@@ -229,7 +231,7 @@
           </div>
 
           <div class="candidate-week-radar__bars">
-            <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories">
+            <div class="candidate-week-radar__bar" *ngFor="let cat of radarCategories; trackBy: trackByRadarCategory">
               <div class="candidate-week-radar__label">
                 <span class="candidate-week-radar__dot" [style.background]="radarDotColor(cat.value)"></span>
                 {{ cat.label }}
@@ -255,7 +257,7 @@
       <div class="landing__divider" aria-hidden="true"></div>
 
       <section class="eco-jobs" aria-label="Cards de vagas">
-        <article class="mini-feature" aria-label="Vaga" *ngFor="let job of ecoFilteredJobs">
+        <article class="mini-feature" aria-label="Vaga" *ngFor="let job of ecoFilteredJobs; trackBy: trackByJob">
           <div class="mini-feature__media" aria-hidden="true">
             <div class="mini-feature__toolbar">
               <div class="mini-feature__toolbar-left">
@@ -329,7 +331,16 @@
         </article>
 
         <div class="eco-jobs__empty" *ngIf="ecoFilteredJobs.length === 0">
-          Nenhuma vaga encontrada com esse filtro.
+          <strong>{{ ecoEmptyTitle }}</strong>
+          <p>{{ ecoEmptyHint }}</p>
+          <button
+            *ngIf="shouldShowEmptyResetAction"
+            class="eco-jobs__empty-action"
+            type="button"
+            (click)="resetEcoDiscovery()"
+          >
+            Limpar busca e filtros
+          </button>
         </div>
       </section>
     </section>
@@ -454,7 +465,7 @@
           <button
             class="candidate-week-radar__picker-option"
             type="button"
-            *ngFor="let category of allRadarCategories"
+            *ngFor="let category of allRadarCategories; trackBy: trackByRadarCategory"
             [class.candidate-week-radar__picker-option--active]="isRadarCategorySelected(category.id)"
             (click)="toggleRadarCategory(category.id)"
           >

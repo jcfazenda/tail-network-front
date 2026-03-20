@@ -74,7 +74,12 @@ type FormationCopyDraft = {
   selector: 'app-stacks-page',
   imports: [CommonModule, FormsModule, AlcanceRadarComponent],
   templateUrl: './stacks.page.html',
-  styleUrls: ['./stacks.page.scss'],
+  styleUrls: [
+    './stacks.page.shell.scss',
+    './stacks.page.repo.scss',
+    './stacks.page.detail.scss',
+    './stacks.page.modal.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StacksPage implements OnInit {

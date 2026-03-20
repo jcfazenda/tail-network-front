@@ -108,6 +108,16 @@ export class RecruiterTimePage implements OnDestroy {
     return Array.from(areas).slice(0, 3).join(' · ') || 'Operacao geral';
   }
 
+  get emptyTeamHint(): string {
+    return this.searchTerm.trim()
+      ? 'Tente buscar por outro nome, area ou e-mail para localizar alguem do time.'
+      : 'Assim que novos recruiters forem adicionados a esta empresa, eles aparecem aqui automaticamente.';
+  }
+
+  get canSendMessage(): boolean {
+    return !!this.selectedRecruiter && this.messageText.trim().length > 0;
+  }
+
   selectRecruiter(recruiter: RecruiterRecord): void {
     this.selectedRecruiterId = recruiter.id;
     this.ensureThread(recruiter);
@@ -147,6 +157,12 @@ export class RecruiterTimePage implements OnDestroy {
     }, 420);
 
     this.responseTimeouts.add(timeoutId);
+  }
+
+  resetSearch(): void {
+    this.searchTerm = '';
+    this.ensureSelection();
+    this.cdr.markForCheck();
   }
 
   isCurrentRecruiter(recruiter: RecruiterRecord): boolean {

@@ -1,0 +1,381 @@
+.candidate-stacks__stack-item{
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(180px, 232px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.46);
+  color: rgba(15, 23, 42, 0.82);
+  border: 0;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.candidate-stacks__stack-item-meta{
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.candidate-stacks__stack-item-edit{
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  cursor: pointer;
+}
+
+.candidate-stacks__stack-item-edit .material-symbols-rounded{
+  font-size: 15px;
+  color: rgba(15, 23, 42, 0.42);
+}
+
+.candidate-stacks__stack-item-name{
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(15, 23, 42, 0.76);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.candidate-stacks__stack-item-info{
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  color: var(--info);
+  cursor: pointer;
+}
+
+.candidate-stacks__stack-item-info .material-symbols-rounded{
+  font-size: 20px;
+}
+
+.candidate-stacks__stack-item-info:disabled{
+  opacity: 0.45;
+  cursor: default;
+}
+
+.candidate-stacks__stack-item-info--active{
+  color: var(--info);
+}
+
+.candidate-stacks__stack-item-remove{
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(15, 23, 42, 0.38);
+  cursor: pointer;
+}
+
+.candidate-stacks__stack-item-remove .material-symbols-rounded{
+  font-size: 18px;
+}
+
+.candidate-stacks__stack-item-progress{
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.candidate-stacks__stack-item-slider{
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 24px;
+  cursor: pointer;
+}
+
+.candidate-stacks__stack-item-slider::before,
+.candidate-stacks__stack-item-slider::after{
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 10px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.candidate-stacks__stack-item-slider::before{
+  background: linear-gradient(90deg, rgba(247, 240, 228, 0.72), rgba(236, 214, 175, 0.34));
+}
+
+.candidate-stacks__stack-item-slider::after{
+  width: var(--stack-progress, 0%);
+  max-width: 100%;
+  background: linear-gradient(90deg, rgba(225, 138, 39, 0.98), rgba(242, 179, 26, 0.92));
+}
+
+.candidate-stacks__stack-item-slider--muted::after{
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.7), rgba(203, 213, 225, 0.5));
+}
+
+.candidate-stacks__stack-item-slider--cold::after{
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.62), rgba(226, 232, 240, 0.46));
+}
+
+.candidate-stacks__stack-item-slider--hot::after{
+  background: linear-gradient(90deg, rgba(225, 138, 39, 0.98), rgba(242, 179, 26, 0.92));
+}
+
+.candidate-stacks__stack-item-range{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  z-index: 2;
+  opacity: 0.001;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+.candidate-stacks__stack-item-range:active{
+  cursor: grabbing;
+}
+
+.candidate-stacks__stack-item-range::-webkit-slider-runnable-track{
+  height: 10px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.candidate-stacks__stack-item-range::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -7px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.001);
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.candidate-stacks__stack-item-range::-moz-range-track{
+  height: 10px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+}
+
+.candidate-stacks__stack-item-range::-moz-range-progress{
+  height: 10px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.candidate-stacks__stack-item-range::-moz-range-thumb{
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.001);
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.candidate-stacks__stack-item-range:focus-visible{
+  outline: none;
+}
+
+.candidate-stacks__stack-item-range:focus-visible::-webkit-slider-thumb{
+  box-shadow: none;
+}
+
+.candidate-stacks__stack-item-range:focus-visible::-moz-range-thumb{
+  box-shadow: none;
+}
+
+.candidate-stacks__stack-item-value{
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.candidate-stacks__stack-item-description{
+  grid-column: 1 / -1;
+  margin: 8px 0 10px;
+  padding-left: 31px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  color: rgba(15, 23, 42, 0.56);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.candidate-stacks__stack-item-description :where(p, ul, ol){
+  margin: 0 0 8px;
+}
+
+.candidate-stacks__stack-item-description :where(ul, ol){
+  padding-left: 18px;
+}
+
+.candidate-stacks__helper{
+  margin: 0;
+  display: flex;
+  width: 100%;
+  max-width: 1240px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  border: 1px dashed rgba(214, 220, 228, 0.96);
+  background: rgba(255, 255, 255, 0.42);
+  color: rgba(15, 23, 42, 0.56);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.candidate-stacks__helper .material-symbols-rounded{
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(102, 186, 104, 0.94), rgba(78, 164, 92, 0.94));
+  color: #fff;
+  font-size: 18px;
+  box-shadow: 0 10px 18px rgba(83, 165, 101, 0.18);
+}
+
+// Certificado por stack (card expandido)
+.candidate-stacks__repo-guide-cert{
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(214, 220, 228, 0.96);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.candidate-stacks__repo-guide-cert-left{
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.candidate-stacks__repo-guide-cert-head{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.candidate-stacks__repo-guide-cert-head .candidate-stacks__repo-guide-section-title{
+  margin-bottom: 0;
+}
+
+.candidate-stacks__repo-guide-cert-head .candidate-stacks__repo-guide-cert-text{
+  margin: 0;
+}
+
+.candidate-stacks__repo-guide-cert-head .material-symbols-rounded{
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(56, 161, 105, 0.94), rgba(24, 132, 79, 0.94));
+  color: #fff;
+  font-size: 18px;
+  box-shadow: 0 10px 18px rgba(83, 165, 101, 0.16);
+  margin-top: 0;
+}
+
+.candidate-stacks__repo-guide-cert-details{
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.candidate-stacks__repo-guide-cert-text{
+  color: rgba(15, 23, 42, 0.56);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.candidate-stacks__repo-guide-cert-file{
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 520px;
+}
+
+.candidate-stacks__repo-guide-cert-actions{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.candidate-stacks__repo-guide-cert-button{
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 161, 105, 0.36);
+  background: linear-gradient(180deg, rgba(96, 200, 148, 0.18), rgba(255, 255, 255, 0.92));
+  color: rgba(15, 23, 42, 0.84);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 10px 18px rgba(83, 165, 101, 0.12);
+}
+
+.candidate-stacks__repo-guide-cert-button:active{
+  transform: translateY(1px);
+}
+
+.candidate-stacks__repo-guide-cert-button--ghost{
+  border-color: rgba(210, 216, 226, 0.92);
+  background: rgba(255, 255, 255, 0.82);
+  color: rgba(15, 23, 42, 0.68);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.05);
+}
+
+@media (max-width: 680px){
+  .candidate-stacks__repo-guide-cert{
+    flex-direction: column;
+  }
+
+  .candidate-stacks__repo-guide-cert-actions{
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+

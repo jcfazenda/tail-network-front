@@ -109,8 +109,30 @@ export class RecruiterPanelPage implements OnDestroy {
     return 'Operacao focada por recruiter';
   }
 
+  get emptyStateHint(): string {
+    if (this.searchTerm.trim()) {
+      return 'Tente buscar por outro nome, e-mail, area ou cargo. Você também pode limpar a busca para voltar ao time completo.';
+    }
+
+    if (this.statusFilter !== 'all') {
+      return 'Volte para "Todos" para reabrir a visao completa do time desta empresa.';
+    }
+
+    return 'Cadastre um novo recruiter para começar a distribuir a operação do time.';
+  }
+
+  get shouldShowEmptyResetAction(): boolean {
+    return this.searchTerm.trim().length > 0 || this.statusFilter !== 'all';
+  }
+
   setStatusFilter(filter: RecruiterStatusFilter): void {
     this.statusFilter = filter;
+  }
+
+  resetFilters(): void {
+    this.statusFilter = 'all';
+    this.searchTerm = '';
+    this.cdr.markForCheck();
   }
 
   toggleRecruiterActive(recruiter: RecruiterRecord): void {

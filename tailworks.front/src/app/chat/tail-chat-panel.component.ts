@@ -117,7 +117,11 @@ interface CandidateJourneyStep {
   selector: 'app-tail-chat-panel',
   imports: [CommonModule, FormsModule],
   templateUrl: './tail-chat-panel.component.html',
-  styleUrls: ['./tail-chat-panel.component.scss'],
+  styleUrls: [
+    './tail-chat-panel.component.panel.scss',
+    './tail-chat-panel.component.active.scss',
+    './tail-chat-panel.component.modal.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TailChatPanelComponent implements OnChanges {

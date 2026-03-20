@@ -1,12 +1,4 @@
-.candidate-placeholder{
-  min-height: calc(100vh - 240px);
-  display: grid;
-  align-content: center;
-  gap: 14px;
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-}
+/* Styles split across placeholder.page.shell.scss, placeholder.page.radar.scss, placeholder.page.process.scss, placeholder.page.applications.scss, placeholder.page.panel.scss and placeholder.page.summary.scss. */
 
 .candidate-placeholder--applications{
   min-height: calc(100vh - 168px);

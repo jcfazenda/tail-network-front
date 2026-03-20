@@ -54,7 +54,11 @@ type ExperienceStackChip = {
   selector: 'app-experiencia-page',
   imports: [CommonModule, FormsModule],
   templateUrl: './experiencia.page.html',
-  styleUrls: ['./experiencia.page.scss'],
+  styleUrls: [
+    './experiencia.page.identity.scss',
+    './experiencia.page.editor.scss',
+    './experiencia.page.modal.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExperienciaPage implements OnInit {

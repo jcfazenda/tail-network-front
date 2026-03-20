@@ -319,7 +319,10 @@
               </section>
 
               <ng-template #overviewShellEmpty>
-                <div class="empty candidate-stack-summary__processes-empty">{{ overviewShellEmptyMessage }}</div>
+                <div class="empty candidate-stack-summary__processes-empty">
+                  <strong>{{ overviewShellEmptyMessage }}</strong>
+                  <p>{{ activeOverviewShellView === 'process' ? 'Assim que alguma vaga avançar no seu fluxo, ela aparece aqui em ordem de etapa.' : 'Mude a visão ou siga explorando o radar para alimentar essa área.' }}</p>
+                </div>
               </ng-template>
             </div>
           </div>
@@ -389,7 +392,18 @@
   </ng-template>
 
   <ng-template #emptyApplications>
-    <div class="empty">{{ emptyStateMessage }}</div>
+    <div class="empty candidate-placeholder__empty-card">
+      <strong>{{ emptyStateMessage }}</strong>
+      <p>{{ emptyStateHint }}</p>
+      <button
+        *ngIf="shouldShowEmptyResetAction"
+        class="candidate-placeholder__empty-action"
+        type="button"
+        (click)="resetTalentDiscoveryFilters()"
+      >
+        Voltar para o radar completo
+      </button>
+    </div>
   </ng-template>
 </section>
 

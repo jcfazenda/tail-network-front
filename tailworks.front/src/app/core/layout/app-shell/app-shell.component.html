@@ -5,7 +5,9 @@
   [class.shell--sidebar-hidden]="hasSidebar && !shouldReserveSidebarSpace"
 >
   <ng-container *ngIf="!isHomeEntry">
-    <app-sidebar *ngIf="hasSidebar && isSidebarOpen" [overlayMode]="isTemplateEcosystem"></app-sidebar>
+    <ng-container *ngIf="hasSidebar && isSidebarOpen && sidebarComponent() as sidebarComponent">
+      <ng-container *ngComponentOutlet="sidebarComponent; inputs: sidebarComponentInputs"></ng-container>
+    </ng-container>
     <button
       *ngIf="isSidebarOverlayVisible"
       class="shell__sidebar-backdrop"
@@ -22,9 +24,11 @@
       [class.shell__main--ecosystem]="isCandidateEcosystem"
       [class.shell__main--template]="isTemplateEcosystem"
     >
-      <div class="shell__topbar" *ngIf="!isTemplateEcosystem">
-        <app-topbar></app-topbar>
-      </div>
+      <ng-container *ngIf="!isTemplateEcosystem && topbarComponent() as topbarComponent">
+        <div class="shell__topbar">
+          <ng-container *ngComponentOutlet="topbarComponent"></ng-container>
+        </div>
+      </ng-container>
       <section
         class="shell__content"
         [class.shell__content--candidate]="isCandidateArea"

@@ -183,7 +183,15 @@
     <article class="recruiter-panel__empty" *ngIf="filteredRecruiters.length === 0">
       <span class="material-symbols-rounded" aria-hidden="true">search_off</span>
       <strong>Nenhum recruiter encontrado</strong>
-      <p>Ajuste os filtros ou cadastre um novo recruiter para esta empresa.</p>
+      <p>{{ emptyStateHint }}</p>
+      <button
+        *ngIf="shouldShowEmptyResetAction"
+        class="recruiter-panel__empty-action"
+        type="button"
+        (click)="resetFilters()"
+      >
+        Limpar filtros
+      </button>
     </article>
   </section>
 </section>
