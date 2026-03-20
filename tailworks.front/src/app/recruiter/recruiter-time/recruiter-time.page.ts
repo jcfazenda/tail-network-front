@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RecruiterDirectoryService } from '../recruiter-directory.service';
+import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { RecruiterRecord } from '../recruiter.models';
 
 type TeamChatSender = 'me' | 'teammate' | 'system';
@@ -25,7 +25,7 @@ type TeamChatMessage = {
 })
 export class RecruiterTimePage implements OnDestroy {
   readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-default.svg';
-  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
+  private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private readonly responseTimeouts = new Set<number>();
@@ -38,7 +38,7 @@ export class RecruiterTimePage implements OnDestroy {
   constructor() {
     this.ensureSelection();
     this.subscriptions.add(
-      this.recruiterDirectoryService.changes$.subscribe(() => {
+      this.recruitersFacade.changes$.subscribe(() => {
         this.ensureSelection();
         this.cdr.markForCheck();
       }),
@@ -52,11 +52,11 @@ export class RecruiterTimePage implements OnDestroy {
   }
 
   get currentRecruiter(): RecruiterRecord {
-    return this.recruiterDirectoryService.getCurrentRecruiter();
+    return this.recruitersFacade.getCurrentRecruiter();
   }
 
   get companyRecruiters(): RecruiterRecord[] {
-    return this.recruiterDirectoryService.listRecruiters(this.currentRecruiter.company);
+    return this.recruitersFacade.listRecruiters(this.currentRecruiter.company);
   }
 
   get filteredRecruiters(): RecruiterRecord[] {

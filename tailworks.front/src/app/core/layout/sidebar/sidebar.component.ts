@@ -3,9 +3,10 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Params, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
-import { MockAuthService } from '../../../auth/mock-auth.service';
+import { AuthFacade } from '../../facades/auth.facade';
+import { JobsFacade } from '../../facades/jobs.facade';
 import { SidebarVisibilityService } from './sidebar-visibility.service';
-import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
+import { BrowserStorageService } from '../../storage/browser-storage.service';
 
 type NavItem = { label: string; route: string; icon: string };
 type CandidateTreeItem = {
@@ -42,9 +43,10 @@ export class SidebarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-default.svg';
   private readonly router = inject(Router);
-  private readonly authService = inject(MockAuthService);
+  private readonly authService = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
+  private readonly browserStorage = inject(BrowserStorageService);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -112,7 +114,7 @@ export class SidebarComponent {
   }
 
   get recruiterTreeGroups(): CandidateTreeGroup[] {
-    const recruiter = this.vagasMockService.getCurrentRecruiterIdentity();
+    const recruiter = this.jobsFacade.getCurrentRecruiterIdentity();
     const canManageDirectory = recruiter.isMaster;
     const canCreateRecruiter = recruiter.isMaster;
 
@@ -200,11 +202,7 @@ export class SidebarComponent {
   }
 
   get candidateAvatarUrl(): string {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-
-    const rawDraft = window.localStorage.getItem(SidebarComponent.basicDraftStorageKey);
+    const rawDraft = this.browserStorage.getItem(SidebarComponent.basicDraftStorageKey);
     if (!rawDraft) {
       return '';
     }
@@ -213,7 +211,7 @@ export class SidebarComponent {
       const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
       return draft.photoPreviewUrl?.trim() || '';
     } catch {
-      window.localStorage.removeItem(SidebarComponent.basicDraftStorageKey);
+      this.browserStorage.removeItem(SidebarComponent.basicDraftStorageKey);
       return '';
     }
   }
@@ -259,11 +257,11 @@ export class SidebarComponent {
   }
 
   get recruiterDisplayName(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().name;
+    return this.jobsFacade.getCurrentRecruiterIdentity().name;
   }
 
   get recruiterDisplayMeta(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().role;
+    return this.jobsFacade.getCurrentRecruiterIdentity().role;
   }
 
   get recruiterDisplayInitials(): string {
@@ -353,11 +351,7 @@ export class SidebarComponent {
   }
 
   private readCandidateDraft(): CandidateBasicDraft | null {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    const rawDraft = window.localStorage.getItem(SidebarComponent.basicDraftStorageKey);
+    const rawDraft = this.browserStorage.getItem(SidebarComponent.basicDraftStorageKey);
     if (!rawDraft) {
       return null;
     }
@@ -365,7 +359,7 @@ export class SidebarComponent {
     try {
       return JSON.parse(rawDraft) as CandidateBasicDraft;
     } catch {
-      window.localStorage.removeItem(SidebarComponent.basicDraftStorageKey);
+      this.browserStorage.removeItem(SidebarComponent.basicDraftStorageKey);
       return null;
     }
   }

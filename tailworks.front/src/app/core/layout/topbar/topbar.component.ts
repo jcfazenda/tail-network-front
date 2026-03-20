@@ -3,12 +3,15 @@ import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
-import { TalentNotification, TalentNotificationService } from '../../../usuario/talent-notification.service';
+import { TalentNotification } from '../../../usuario/talent-notification.service';
+import { JobsFacade } from '../../facades/jobs.facade';
+import { TalentNotificationsFacade } from '../../facades/talent-notifications.facade';
 import { CandidateStage, MockJobRecord } from '../../../vagas/data/vagas.models';
-import { VagasMockService } from '../../../vagas/data/vagas-mock.service';
 import { EcosystemEntryService } from '../../../usuario/home/ecosystem-entry.service';
 import { EcosystemPanelService } from '../../../usuario/ecosystem-panel.service';
 import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
+import { EcosystemSearchService } from '../ecosystem-search.service';
+import { BrowserStorageService } from '../../storage/browser-storage.service';
 
 type FormationCopyDraft = {
   endMonth?: string;
@@ -58,11 +61,13 @@ export class TopbarComponent {
   private static readonly recruiterFormationLogoAsset = '/assets/images/formacao-default.png';
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;
-  private readonly vagasMockService = inject(VagasMockService);
-  private readonly talentNotificationService = inject(TalentNotificationService);
+  private readonly jobsFacade = inject(JobsFacade);
+  private readonly talentNotificationsFacade = inject(TalentNotificationsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly ecosystemPanelService = inject(EcosystemPanelService);
+  private readonly ecosystemSearchService = inject(EcosystemSearchService);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
+  private readonly browserStorage = inject(BrowserStorageService);
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -75,18 +80,7 @@ export class TopbarComponent {
 
   constructor() {
     effect(() => {
-      const url = this.primaryPath;
-
-      if (url === '/home' || url === '/login' || url === '/home/ecossistema' || url === '/usuario/ecossistema') {
-        return;
-      }
-
-      if (url.startsWith('/usuario')) {
-        this.ecosystemEntryService.setMode('talent');
-        return;
-      }
-
-      this.ecosystemEntryService.setMode('recruiter');
+      this.ecosystemEntryService.syncModeFromUrl(this.primaryPath);
     });
   }
 
@@ -132,16 +126,20 @@ export class TopbarComponent {
     return this.canToggleSidebar && (!this.isCandidateMode || !this.isSidebarOpen);
   }
 
+  get templateSearchQuery(): string {
+    return this.ecosystemSearchService.query();
+  }
+
+  set templateSearchQuery(value: string) {
+    this.ecosystemSearchService.setQuery(value);
+  }
+
   get topbarAvatarUrl(): string {
     if (!this.isCandidateMode) {
       return '';
     }
 
-    if (typeof window === 'undefined') {
-      return '';
-    }
-
-    const rawDraft = window.localStorage.getItem(TopbarComponent.basicDraftStorageKey);
+    const rawDraft = this.browserStorage.getItem(TopbarComponent.basicDraftStorageKey);
     if (!rawDraft) {
       return '';
     }
@@ -150,7 +148,7 @@ export class TopbarComponent {
       const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
       return draft.photoPreviewUrl?.trim() || '';
     } catch {
-      window.localStorage.removeItem(TopbarComponent.basicDraftStorageKey);
+      this.browserStorage.removeItem(TopbarComponent.basicDraftStorageKey);
       return '';
     }
   }
@@ -197,7 +195,7 @@ export class TopbarComponent {
   }
 
   get recruiterTopbarDisplayName(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().name;
+    return this.jobsFacade.getCurrentRecruiterIdentity().name;
   }
 
   get topbarCandidateDisplayLocation(): string {
@@ -218,7 +216,7 @@ export class TopbarComponent {
   }
 
   get recruiterTopbarDisplayMeta(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().role;
+    return this.jobsFacade.getCurrentRecruiterIdentity().role;
   }
 
   get topbarProfileAvatarUrl(): string {
@@ -242,11 +240,7 @@ export class TopbarComponent {
       return TopbarComponent.recruiterFormationLogoAsset;
     }
 
-    if (typeof window === 'undefined') {
-      return '/assets/images/formacao-default.png';
-    }
-
-    return window.localStorage.getItem(TopbarComponent.formationLogoStorageKey)?.trim() || '/assets/images/formacao-default.png';
+    return this.browserStorage.getItem(TopbarComponent.formationLogoStorageKey)?.trim() || '/assets/images/formacao-default.png';
   }
 
   handleTopbarFormationLogoError(event: Event): void {
@@ -293,11 +287,11 @@ export class TopbarComponent {
   }
 
   get unreadTalentNotifications(): number {
-    return this.talentNotificationService.unreadCount();
+    return this.talentNotificationsFacade.unreadCount();
   }
 
   get talentNotifications(): TalentNotification[] {
-    return this.isCandidateMode ? this.talentNotificationService.notifications() : [];
+    return this.isCandidateMode ? this.talentNotificationsFacade.notifications() : [];
   }
 
   get hasTalentNotifications(): boolean {
@@ -314,7 +308,7 @@ export class TopbarComponent {
       return null;
     }
 
-    return this.vagasMockService.getJobById(notification.jobId) ?? null;
+    return this.jobsFacade.getJobById(notification.jobId) ?? null;
   }
 
   get activeTalentNotificationStage(): CandidateStage | null {
@@ -323,8 +317,8 @@ export class TopbarComponent {
       return null;
     }
 
-    const candidate = this.vagasMockService.findTalentCandidate(job);
-    return this.vagasMockService.getEffectiveCandidateStage(candidate) ?? null;
+    const candidate = this.jobsFacade.findTalentCandidate(job);
+    return this.jobsFacade.getEffectiveCandidateStage(candidate) ?? null;
   }
 
   get activeTalentNotificationCompanyLine(): string {
@@ -396,7 +390,7 @@ export class TopbarComponent {
   private confettiPieces: NotificationConfettiPiece[] = [];
 
   clearPublishedJobsForTesting(): void {
-    this.vagasMockService.clearJobs();
+    this.jobsFacade.clearJobs();
   }
 
   openCandidateEcosystem(event: Event): void {
@@ -438,7 +432,7 @@ export class TopbarComponent {
   }
 
   openNotificationPreview(notification: TalentNotification): void {
-    this.talentNotificationService.markAsRead(notification.id);
+    this.talentNotificationsFacade.markAsRead(notification.id);
     this.notificationModal = notification;
     this.notificationsOpen = false;
     this.confettiPieces = this.shouldLaunchNotificationConfetti(notification, this.activeTalentNotificationStage)
@@ -479,11 +473,7 @@ export class TopbarComponent {
   }
 
   private readFormationDraft(): FormationCopyDraft | null {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    const rawDraft = window.localStorage.getItem(TopbarComponent.formationCopyStorageKey);
+    const rawDraft = this.browserStorage.getItem(TopbarComponent.formationCopyStorageKey);
     if (!rawDraft) {
       return null;
     }
@@ -491,17 +481,13 @@ export class TopbarComponent {
     try {
       return JSON.parse(rawDraft) as FormationCopyDraft;
     } catch {
-      window.localStorage.removeItem(TopbarComponent.formationCopyStorageKey);
+      this.browserStorage.removeItem(TopbarComponent.formationCopyStorageKey);
       return null;
     }
   }
 
   private readCandidateDraft(): CandidateBasicDraft | null {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    const rawDraft = window.localStorage.getItem(TopbarComponent.basicDraftStorageKey);
+    const rawDraft = this.browserStorage.getItem(TopbarComponent.basicDraftStorageKey);
     if (!rawDraft) {
       return null;
     }
@@ -509,7 +495,7 @@ export class TopbarComponent {
     try {
       return JSON.parse(rawDraft) as CandidateBasicDraft;
     } catch {
-      window.localStorage.removeItem(TopbarComponent.basicDraftStorageKey);
+      this.browserStorage.removeItem(TopbarComponent.basicDraftStorageKey);
       return null;
     }
   }

@@ -4,6 +4,8 @@ import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCo
 import { TalentNotificationService } from '../../usuario/talent-notification.service';
 import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
 import { TalentDirectoryService, TalentRecord } from '../../talent/talent-directory.service';
+import { BrowserStorageService } from '../../core/storage/browser-storage.service';
+import { JobsRepository } from './jobs.repository';
 
 type CandidateBasicProfile = {
   name: string;
@@ -49,6 +51,8 @@ export class VagasMockService {
   private readonly talentNotificationService = inject(TalentNotificationService);
   private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
   private readonly talentDirectoryService = inject(TalentDirectoryService);
+  private readonly browserStorage = inject(BrowserStorageService);
+  private readonly jobsRepository = inject(JobsRepository);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
@@ -501,25 +505,23 @@ export class VagasMockService {
       return this.cache;
     }
 
-    const storage = this.getStorage();
-    if (!storage) {
+    const stored = this.jobsRepository.readAll();
+    if (!stored) {
       this.cache = [];
       return this.cache;
     }
 
-    const raw = storage.getItem(this.storageKey);
-    this.cache = this.parseJobs(raw);
+    this.cache = stored.length ? this.normalizeJobs(stored) : [];
 
     return this.cache;
   }
 
   private persist(): void {
-    const storage = this.getStorage();
-    if (!storage || !this.cache) {
+    if (!this.cache) {
       return;
     }
 
-    storage.setItem(this.storageKey, JSON.stringify(this.cache));
+    this.jobsRepository.writeAll(this.cache);
     this.broadcastSync();
     this.emitJobsChanged();
   }
@@ -626,8 +628,7 @@ export class VagasMockService {
   };
 
   private handleBroadcastSync = (): void => {
-    const storage = this.getStorage();
-    this.cache = this.parseJobs(storage?.getItem(this.storageKey) ?? null);
+    this.cache = this.parseJobs(this.jobsRepository.readRaw());
     this.emitJobsChanged();
   };
 
@@ -640,11 +641,7 @@ export class VagasMockService {
   }
 
   private getStorage(): Storage | null {
-    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
-      return null;
-    }
-
-    return window.localStorage;
+    return this.browserStorage.storage;
   }
 
   private buildRecord(command: SaveMockJobCommand, existing?: MockJobRecord): MockJobRecord {

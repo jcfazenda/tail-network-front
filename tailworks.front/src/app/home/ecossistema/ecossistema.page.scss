@@ -135,6 +135,7 @@
   display: grid;
   gap: 14px;
   align-content: start;
+  margin-top: -45px;
 }
 
 .hired-strip{
@@ -147,11 +148,16 @@
 .hired-strip__viewport{
   width: min(1062px, 100%);
   position: relative;
+  --hired-cols: 4;
+  --hired-gap: 24px;
+  --hired-total-gap: 72px;
+  /* Sobe visualmente os polaroids sem mexer no fluxo/layout do container pai. */
+  transform: translateY(-10px);
 }
 
 .hired-strip__track{
   display: flex;
-  gap: 24px;
+  gap: var(--hired-gap);
   overflow-x: auto;
   padding: 10px 0 14px;
   justify-content: flex-start;
@@ -203,6 +209,28 @@
   right: -54px;
 }
 
+@media (max-width: 1160px){
+  .hired-strip__arrow--left{ left: -26px; }
+  .hired-strip__arrow--right{ right: -26px; }
+}
+
+@media (max-width: 1020px){
+  .hired-strip__viewport{
+    --hired-cols: 2;
+    --hired-gap: 22px;
+    --hired-total-gap: 22px;
+  }
+}
+
+@media (max-width: 580px){
+  .hired-strip__viewport{
+    --hired-cols: 1;
+    --hired-gap: 18px;
+    --hired-total-gap: 0px;
+    transform: translateY(-6px);
+  }
+}
+
 .hired-strip__dots{
   display: flex;
   justify-content: center;
@@ -222,7 +250,7 @@
 }
 
 .hired-card{
-  flex: 0 0 calc((100% - 72px) / 4);
+  flex: 0 0 calc((100% - var(--hired-total-gap)) / var(--hired-cols));
   scroll-snap-align: start;
   scroll-snap-stop: always;
   border-radius: 0;
@@ -677,7 +705,8 @@
 .landing__row{
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* da mais largura para o filtro (chips) e estreita a coluna de stacks */
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 22px;
   align-items: stretch;
 }
@@ -706,25 +735,214 @@
   height: 100%;
 }
 
-.eco-kpi{
+.eco-kpi__kpis{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+.eco-kpi__kpis-left{
+  display: flex;
+  align-items: center;
+}
+.eco-kpi__kpis-left .eco-kpi__kpi{
+  border-right: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.eco-kpi__kpis-left .eco-kpi__kpi:last-child{
+  border-right: none;
+}
+
+.eco-jobs-kpis{
+  width: 100%;
+  display: grid;
+  justify-items: stretch;
+  margin: 2px 0 14px;
+}
+
+.eco-jobs-kpis .eco-kpi__kpis{
+  width: 100%;
+}
+
+.eco-filterbar{
+  width: 100%;
+  display: grid;
+  gap: 6px;
+  margin: 2px 0 2px;
+}
+
+.eco-filterbar__tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.eco-filterbar__tab{
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.66);
+  color: rgba(15, 23, 42, 0.58);
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eco-filterbar__tab:hover{
+  transform: translateY(-1px);
+  border-color: rgba(188, 109, 24, 0.18);
+}
+
+.eco-filterbar__tab--active{
+  background:
+    radial-gradient(140% 120% at 10% 0%, rgba(188, 109, 24, 0.12), rgba(255, 255, 255, 0)),
+    rgba(255, 255, 255, 0.82);
+  border-color: rgba(242, 179, 26, 0.62);
+  color: rgba(188, 109, 24, 0.98);
+}
+
+.eco-filterbar__tab-icon{
+  font-size: 22px;
+  color: rgba(15, 23, 42, 0.46);
+}
+
+.eco-filterbar__tab--active .eco-filterbar__tab-icon{
+  color: rgba(188, 109, 24, 0.96);
+}
+
+.eco-slot{
   border-radius: 22px;
-  padding: 16px 18px 18px;
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(10px);
-  display: grid;
   min-height: 260px;
-  height: 100%;
+}
+
+.eco-kpi__kpi{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  position: relative;
+}
+
+.eco-kpi__kpi:not(:last-child)::after{
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  right: 0;
+  width: 1px;
+  background: rgba(15, 23, 42, 0.10);
+}
+
+.eco-kpi__kpi-icon{
+  font-size: 22px;
+  color: rgba(188, 109, 24, 0.92);
+}
+
+.eco-kpi__kpi-copy{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.eco-kpi__kpi-copy strong{
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.eco-kpi__kpi-copy span{
+  font-size: 18px;
+  font-weight: 650;
+  color: rgba(15, 23, 42, 0.52);
+}
+
+.eco-kpi__search{
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 14px;
+  align-items: center;
+  height: 62px;
+  padding: 0 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  position: relative;
+}
+
+.eco-kpi__search .material-symbols-rounded{
+  font-size: 30px;
+  color: rgba(15, 23, 42, 0.32);
+}
+
+.eco-kpi__search input{
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 520;
+  color: rgba(15, 23, 42, 0.62);
+  width: 100%;
+}
+
+.eco-kpi__search input::placeholder{
+  color: rgba(15, 23, 42, 0.34);
+  font-weight: 520;
+}
+
+.eco-kpi__search::after{
+  content: "";
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: rgba(188, 109, 24, 0.78);
+  opacity: 0.9;
+}
+
+/* Cards ficam abaixo; aqui fica somente o filtro. */
+
+.eco-jobs{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.eco-jobs__empty{
+  grid-column: 1 / -1;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.52);
 }
 
 .mini-feature{
-  width: min(420px, 36%);
+  width: 100%;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(15, 23, 42, 0.08);
   overflow: hidden;
   backdrop-filter: blur(10px);
-  margin-left: clamp(14px, 2.8vw, 44px);
+  margin-left: 0;
 }
 
 .mini-feature__media{
@@ -1280,9 +1498,10 @@
   content: none;
 }
 
+/* AQUI TALENTO NAO PAGA PARA APARECER! */
 .landing__content{
-  margin: clamp(46px, 8vh, 110px) 0 0;
-  max-width: 780px;
+  margin: clamp(5px, 5vh, 110px) 0 0;
+  max-width: 680px;
   text-align: left;
   display: grid;
   gap: 10px;
@@ -1290,7 +1509,7 @@
   z-index: 1;
   align-self: start;
   justify-self: start;
-  margin-left: clamp(34px, 10vw, 220px);
+  margin-left: -39px;
   padding-bottom: clamp(18px, 4vh, 44px);
   padding-inline: clamp(14px, 2vw, 22px);
   padding-top: clamp(12px, 1.8vw, 18px);
@@ -1303,7 +1522,7 @@
 
 .landing__headline{
   margin: 0;
-  font-size: clamp(30px, 3.8vw, 54px);
+  font-size: clamp(24px, 3vw, 42px);
   line-height: 1.02;
   letter-spacing: -0.04em;
   color: rgba(188, 109, 24, 0.98);
@@ -1622,6 +1841,42 @@
   }
 
   .landing__row{
+    grid-template-columns: 1fr;
+  }
+
+  .eco-filterbar__tab{
+    height: 40px;
+    font-size: 16px;
+    padding: 0 14px;
+  }
+
+  .eco-kpi__kpis{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .eco-kpi__kpi:not(:last-child)::after{
+    display: none;
+  }
+
+  .eco-kpi__kpi{
+    padding: 14px 14px;
+  }
+
+  .eco-kpi__search{
+    height: 54px;
+    border-radius: 18px;
+    padding: 0 16px;
+  }
+
+  .eco-kpi__search .material-symbols-rounded{
+    font-size: 26px;
+  }
+
+  .eco-kpi__search input{
+    font-size: 18px;
+  }
+
+  .eco-jobs{
     grid-template-columns: 1fr;
   }
 

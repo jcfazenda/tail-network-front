@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { MockAuthService } from './mock-auth.service';
-import { RecruiterDirectoryService } from '../recruiter/recruiter-directory.service';
+import { AuthFacade } from '../core/facades/auth.facade';
+import { RecruitersFacade } from '../core/facades/recruiters.facade';
 
 export const recruiterAuthGuard: CanActivateFn = (_route, state) => {
-  const authService = inject(MockAuthService);
+  const authService = inject(AuthFacade);
   const router = inject(Router);
 
   authService.bootstrapFreshStart();
@@ -16,7 +16,7 @@ export const recruiterAuthGuard: CanActivateFn = (_route, state) => {
     });
   }
 
-  if (authService.canCurrentSessionUseRecruiter() && authService.activateRecruiterWorkspace()) {
+  if (authService.canUseRecruiter() && authService.activateRecruiterWorkspace()) {
     return true;
   }
 
@@ -24,24 +24,32 @@ export const recruiterAuthGuard: CanActivateFn = (_route, state) => {
 };
 
 export const talentAuthGuard: CanActivateFn = (_route, state) => {
-  const authService = inject(MockAuthService);
+  const authService = inject(AuthFacade);
   const router = inject(Router);
 
   authService.bootstrapFreshStart();
-  if (authService.hasSession()) {
+  if (!authService.hasSession()) {
+    return router.createUrlTree(['/login'], {
+      queryParams: {
+        returnUrl: state.url,
+      },
+    });
+  }
+
+  if (authService.canUseTalent()) {
     return true;
   }
 
-  return router.createUrlTree(['/login'], {
-    queryParams: {
-      returnUrl: state.url,
-    },
-  });
+  if (authService.canUseRecruiter() && authService.activateRecruiterWorkspace()) {
+    return router.createUrlTree(['/radar']);
+  }
+
+  return router.createUrlTree(['/home']);
 };
 
 export const recruiterManageDirectoryGuard: CanActivateFn = () => {
-  const authService = inject(MockAuthService);
-  const recruiterDirectoryService = inject(RecruiterDirectoryService);
+  const authService = inject(AuthFacade);
+  const recruitersFacade = inject(RecruitersFacade);
   const router = inject(Router);
 
   authService.bootstrapFreshStart();
@@ -53,7 +61,7 @@ export const recruiterManageDirectoryGuard: CanActivateFn = () => {
     return router.createUrlTree(['/home']);
   }
 
-  const recruiter = recruiterDirectoryService.getCurrentRecruiter();
+  const recruiter = recruitersFacade.getCurrentRecruiter();
   if (recruiter.isMaster) {
     return true;
   }
@@ -62,8 +70,8 @@ export const recruiterManageDirectoryGuard: CanActivateFn = () => {
 };
 
 export const recruiterMasterGuard: CanActivateFn = () => {
-  const authService = inject(MockAuthService);
-  const recruiterDirectoryService = inject(RecruiterDirectoryService);
+  const authService = inject(AuthFacade);
+  const recruitersFacade = inject(RecruitersFacade);
   const router = inject(Router);
 
   authService.bootstrapFreshStart();
@@ -75,7 +83,7 @@ export const recruiterMasterGuard: CanActivateFn = () => {
     return router.createUrlTree(['/home']);
   }
 
-  if (recruiterDirectoryService.getCurrentRecruiter().isMaster) {
+  if (recruitersFacade.getCurrentRecruiter().isMaster) {
     return true;
   }
 

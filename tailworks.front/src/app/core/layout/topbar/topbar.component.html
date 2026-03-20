@@ -61,11 +61,23 @@
 
   <div class="search" [class.search--candidate]="isCandidateMode" *ngIf="!isSelectionMode">
     <span class="material-symbols-rounded" aria-hidden="true">search</span>
+
     <input
+      *ngIf="isTemplateLanding; else defaultSearch"
       type="search"
-      [placeholder]="isCandidateMode ? 'Buscar vagas' : 'Buscar'"
-      [attr.aria-label]="isCandidateMode ? 'Buscar vagas' : 'Buscar talentos ou vagas'"
+      placeholder="Buscar vaga, empresa ou local..."
+      aria-label="Buscar vaga, empresa ou local"
+      [value]="templateSearchQuery"
+      (input)="templateSearchQuery = ($any($event.target).value || '')"
     />
+
+    <ng-template #defaultSearch>
+      <input
+        type="search"
+        [placeholder]="isCandidateMode ? 'Buscar vagas' : 'Buscar'"
+        [attr.aria-label]="isCandidateMode ? 'Buscar vagas' : 'Buscar talentos ou vagas'"
+      />
+    </ng-template>
   </div>
 
   <div class="actions">

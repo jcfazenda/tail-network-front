@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CompanyDraft, CompanyRecord } from './empresa.models';
+import { EmpresaRepository } from './empresa.repository';
 
 @Injectable({ providedIn: 'root' })
 export class EmpresaDirectoryService {
-  private readonly storageKey = 'tailworks:company-directory:v1';
   private readonly changesSubject = new Subject<void>();
+  private readonly repository = inject(EmpresaRepository);
   private cache: CompanyRecord[] | null = null;
 
   readonly changes$ = this.changesSubject.asObservable();
@@ -92,8 +93,7 @@ export class EmpresaDirectoryService {
 
   resetDirectory(): void {
     this.cache = [];
-    const storage = this.getStorage();
-    storage?.setItem(this.storageKey, '[]');
+    this.repository.clear();
     this.changesSubject.next();
   }
 
@@ -102,40 +102,28 @@ export class EmpresaDirectoryService {
       return this.cache;
     }
 
-    const storage = this.getStorage();
-    if (!storage) {
+    const stored = this.repository.readAll();
+    if (!stored) {
       this.cache = this.defaultCompanies();
       return this.cache;
     }
 
-    const raw = storage.getItem(this.storageKey);
-    if (!raw) {
+    if (!stored.length) {
       this.cache = this.defaultCompanies();
       this.persist(false);
       return this.cache;
     }
 
-    try {
-      const parsed = JSON.parse(raw) as CompanyRecord[];
-      this.cache = Array.isArray(parsed)
-        ? parsed.map((company) => this.normalizeCompany(company))
-        : this.defaultCompanies();
-      return this.cache;
-    } catch {
-      storage.removeItem(this.storageKey);
-      this.cache = this.defaultCompanies();
-      this.persist(false);
-      return this.cache;
-    }
+    this.cache = stored.map((company) => this.normalizeCompany(company));
+    return this.cache;
   }
 
   private persist(emit = true): void {
-    const storage = this.getStorage();
-    if (!storage || !this.cache) {
+    if (!this.cache) {
       return;
     }
 
-    storage.setItem(this.storageKey, JSON.stringify(this.cache));
+    this.repository.writeAll(this.cache);
     if (emit) {
       this.changesSubject.next();
     }
@@ -324,11 +312,4 @@ export class EmpresaDirectoryService {
     return base || `empresa-${Date.now()}`;
   }
 
-  private getStorage(): Storage | null {
-    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
-      return null;
-    }
-
-    return window.localStorage;
-  }
 }

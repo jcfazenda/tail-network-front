@@ -1,19 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { RecruiterIdentity } from '../vagas/data/vagas.models';
 import { RecruiterDraft, RecruiterRecord } from './recruiter.models';
-
-type RecruiterWorkspace = {
-  recruiterId: string;
-  company: string;
-};
+import { RecruiterDirectoryRepository, RecruiterWorkspaceState } from './recruiter-directory.repository';
 
 @Injectable({ providedIn: 'root' })
 export class RecruiterDirectoryService {
-  private readonly storageKey = 'tailworks:recruiter-directory:v1';
-  private readonly workspaceStorageKey = 'tailworks:recruiter-workspace:v1';
   private readonly defaultMasterId = 'julio-fazenda-recruiter';
   private readonly changesSubject = new Subject<void>();
+  private readonly repository = inject(RecruiterDirectoryRepository);
   private cache: RecruiterRecord[] | null = null;
 
   readonly changes$ = this.changesSubject.asObservable();
@@ -98,11 +93,10 @@ export class RecruiterDirectoryService {
         : this.listRecruiters(company)[0]
           ?? this.seedMasterRecruiter(company));
 
-    const storage = this.getStorage();
-    storage?.setItem(this.workspaceStorageKey, JSON.stringify({
+    this.repository.writeWorkspace({
       recruiterId: recruiter.id,
       company: recruiter.company,
-    } satisfies RecruiterWorkspace));
+    } satisfies RecruiterWorkspaceState);
 
     this.emitChanges();
     return recruiter;
@@ -201,12 +195,11 @@ export class RecruiterDirectoryService {
     });
 
     const workspace = this.readWorkspace();
-    const storage = this.getStorage();
-    if (workspace && workspace.company === normalizedPrevious && storage) {
-      storage.setItem(this.workspaceStorageKey, JSON.stringify({
+    if (workspace && workspace.company === normalizedPrevious) {
+      this.repository.writeWorkspace({
         recruiterId: workspace.recruiterId,
         company: normalizedNext,
-      } satisfies RecruiterWorkspace));
+      } satisfies RecruiterWorkspaceState);
     }
 
     this.persist();
@@ -214,15 +207,13 @@ export class RecruiterDirectoryService {
 
   resetDirectory(): void {
     this.cache = [];
-    const storage = this.getStorage();
-    storage?.setItem(this.storageKey, '[]');
-    storage?.removeItem(this.workspaceStorageKey);
+    this.repository.clearDirectory();
+    this.repository.clearWorkspace();
     this.emitChanges();
   }
 
   clearCurrentWorkspace(): void {
-    const storage = this.getStorage();
-    storage?.removeItem(this.workspaceStorageKey);
+    this.repository.clearWorkspace();
     this.emitChanges();
   }
 
@@ -258,38 +249,28 @@ export class RecruiterDirectoryService {
       return this.cache;
     }
 
-    const storage = this.getStorage();
-    if (!storage) {
+    const stored = this.repository.readAll();
+    if (!stored) {
       this.cache = this.defaultCompanySeeds('Banco Itaú');
       return this.cache;
     }
 
-    const raw = storage.getItem(this.storageKey);
-    if (!raw) {
+    if (!stored.length) {
       this.cache = this.defaultCompanySeeds('Banco Itaú');
       this.persist(false);
       return this.cache;
     }
 
-    try {
-      const parsed = JSON.parse(raw) as RecruiterRecord[];
-      this.cache = Array.isArray(parsed) ? parsed.map((recruiter) => this.normalizeRecruiter(recruiter)) : this.defaultCompanySeeds('Banco Itaú');
-      return this.cache;
-    } catch {
-      storage.removeItem(this.storageKey);
-      this.cache = this.defaultCompanySeeds('Banco Itaú');
-      this.persist(false);
-      return this.cache;
-    }
+    this.cache = stored.map((recruiter) => this.normalizeRecruiter(recruiter));
+    return this.cache;
   }
 
   private persist(emit = true): void {
-    const storage = this.getStorage();
-    if (!storage || !this.cache) {
+    if (!this.cache) {
       return;
     }
 
-    storage.setItem(this.storageKey, JSON.stringify(this.cache));
+    this.repository.writeAll(this.cache);
     if (emit) {
       this.emitChanges();
     }
@@ -478,41 +459,19 @@ export class RecruiterDirectoryService {
     ])).sort((left, right) => left.localeCompare(right, 'pt-BR'));
   }
 
-  private readWorkspace(): RecruiterWorkspace | null {
-    const storage = this.getStorage();
-    if (!storage) {
+  private readWorkspace(): RecruiterWorkspaceState | null {
+    const workspace = this.repository.readWorkspace();
+    const recruiterId = workspace?.recruiterId?.trim();
+    const company = workspace?.company?.trim();
+
+    if (!recruiterId || !company) {
+      this.repository.clearWorkspace();
       return null;
     }
 
-    const raw = storage.getItem(this.workspaceStorageKey);
-    if (!raw) {
-      return null;
-    }
-
-    try {
-      const parsed = JSON.parse(raw) as Partial<RecruiterWorkspace>;
-      const recruiterId = parsed.recruiterId?.trim();
-      const company = parsed.company?.trim();
-
-      if (!recruiterId || !company) {
-        return null;
-      }
-
-      return {
-        recruiterId,
-        company,
-      };
-    } catch {
-      storage.removeItem(this.workspaceStorageKey);
-      return null;
-    }
-  }
-
-  private getStorage(): Storage | null {
-    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
-      return null;
-    }
-
-    return window.localStorage;
+    return {
+      recruiterId,
+      company,
+    };
   }
 }

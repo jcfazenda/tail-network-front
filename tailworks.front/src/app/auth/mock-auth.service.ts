@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { EmpresaDirectoryService } from '../empresa/empresa-directory.service';
 import { RecruiterDirectoryService } from '../recruiter/recruiter-directory.service';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
+import { BrowserStorageService } from '../core/storage/browser-storage.service';
 
 export type RecruiterInviteDraft = {
   name: string;
@@ -50,6 +51,7 @@ export class MockAuthService {
   private readonly sessionStorageKey = 'tailworks:auth-session:v1';
   private readonly bootstrapStorageKey = 'tailworks:auth-bootstrap:v1';
   private readonly sessionSubject = new BehaviorSubject<AuthSession | null>(null);
+  private readonly browserStorage = inject(BrowserStorageService);
 
   readonly session$ = this.sessionSubject.asObservable();
 
@@ -425,10 +427,6 @@ export class MockAuthService {
   }
 
   private getStorage(): Storage | null {
-    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
-      return null;
-    }
-
-    return window.localStorage;
+    return this.browserStorage.storage;
   }
 }

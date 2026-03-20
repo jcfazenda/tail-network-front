@@ -10,8 +10,8 @@ import {
   effect,
   inject,
 } from '@angular/core';
+import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MockJobRecord, TechStackItem } from '../../vagas/data/vagas.models';
-import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 import { EcosystemEntryService } from './ecosystem-entry.service';
 import {
   ECOSYSTEM_FALLBACK_COMPATIBLE_JOBS,
@@ -49,7 +49,7 @@ type PointerSnapshot = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements AfterViewInit {
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -490,7 +490,7 @@ export class HomePage implements AfterViewInit {
   }
 
   private resolveCompatibleJobs(): MockJobRecord[] {
-    const jobs = this.vagasMockService.getJobs();
+    const jobs = this.jobsFacade.getJobs();
 
     if (this.ecosystemEntryMode === 'recruiter') {
       if (jobs.length) {

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule, UpperCasePipe, NgClass } from '@angular/common';
-import { VagasMockService } from '../vagas/data/vagas-mock.service';
+import { JobsFacade } from '../core/facades/jobs.facade';
 
 export type CandidateStage =
   | 'radar'
@@ -51,7 +51,7 @@ interface CandidateGroup {
   styleUrls: ['./panel-candidatos-list.component.scss']
 })
 export class PanelCandidatosListComponent {
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
 
   @Input() selectedJobPanel: any = null;
   @Input() sortedCandidatesFor!: (job: any) => any[];
@@ -123,14 +123,14 @@ export class PanelCandidatosListComponent {
   }
 
   get recruiterDisplayName(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().name;
+    return this.jobsFacade.getCurrentRecruiterIdentity().name;
   }
 
   get recruiterDisplayRole(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().role;
+    return this.jobsFacade.getCurrentRecruiterIdentity().role;
   }
 
   private normalizeCandidateStage(candidate: PanelCandidate): CandidateStage {
-    return this.vagasMockService.getEffectiveCandidateStage(candidate);
+    return this.jobsFacade.getEffectiveCandidateStage(candidate);
   }
 }

@@ -1,10 +1,12 @@
 import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { BrowserStorageService } from '../../storage/browser-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class SidebarVisibilityService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly browserStorage = inject(BrowserStorageService);
   private readonly storageKey = 'tailworks.sidebar.open';
   private readonly compactViewportQuery = '(max-width: 1280px)';
   private readonly desktopOpenState = signal(this.readStoredState());
@@ -91,7 +93,7 @@ export class SidebarVisibilityService {
       return true;
     }
 
-    const storedValue = window.localStorage.getItem(this.storageKey);
+    const storedValue = this.browserStorage.getItem(this.storageKey);
     if (storedValue === null) {
       return true;
     }
@@ -112,6 +114,6 @@ export class SidebarVisibilityService {
       return;
     }
 
-    window.localStorage.setItem(this.storageKey, String(value));
+    this.browserStorage.setItem(this.storageKey, String(value));
   }
 }

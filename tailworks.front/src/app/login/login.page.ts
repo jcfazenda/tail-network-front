@@ -3,7 +3,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { MockAuthService, RecruiterInviteDraft, RecruiterSignupDraft, TalentSignupDraft } from '../auth/mock-auth.service';
+import { RecruiterInviteDraft, RecruiterSignupDraft, TalentSignupDraft } from '../auth/mock-auth.service';
+import { AuthFacade } from '../core/facades/auth.facade';
 
 type AccessView = 'login' | 'register';
 type RegisterFlow = 'organization' | 'individual';
@@ -20,7 +21,7 @@ type SocialProvider = 'google' | 'linkedin';
 export class LoginPage implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly authService = inject(MockAuthService);
+  private readonly authService = inject(AuthFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 

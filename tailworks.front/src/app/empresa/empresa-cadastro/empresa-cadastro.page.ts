@@ -3,9 +3,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
-import { VagasMockService } from '../../vagas/data/vagas-mock.service';
-import { EmpresaDirectoryService } from '../empresa-directory.service';
+import { CompaniesFacade } from '../../core/facades/companies.facade';
+import { JobsFacade } from '../../core/facades/jobs.facade';
+import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { CompanyDraft, CompanyRecord } from '../empresa.models';
 
 @Component({
@@ -17,9 +17,9 @@ import { CompanyDraft, CompanyRecord } from '../empresa.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaCadastroPage implements OnDestroy {
-  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
-  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly companiesFacade = inject(CompaniesFacade);
+  private readonly recruitersFacade = inject(RecruitersFacade);
+  private readonly jobsFacade = inject(JobsFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -34,7 +34,7 @@ export class EmpresaCadastroPage implements OnDestroy {
     this.subscriptions.add(
       this.route.queryParamMap.subscribe((params) => {
         const editingId = params.get('edit')?.trim() || null;
-        const company = editingId ? this.companyDirectoryService.getCompanyById(editingId) : undefined;
+        const company = editingId ? this.companiesFacade.getCompanyById(editingId) : undefined;
 
         this.editingCompanyId = company?.id ?? editingId;
         this.editingCompanyName = company?.name ?? '';
@@ -45,13 +45,13 @@ export class EmpresaCadastroPage implements OnDestroy {
     );
 
     this.subscriptions.add(
-      this.companyDirectoryService.changes$.subscribe(() => {
+      this.companiesFacade.changes$.subscribe(() => {
         if (!this.isEditMode || !this.editingCompanyId) {
           this.cdr.markForCheck();
           return;
         }
 
-        const company = this.companyDirectoryService.getCompanyById(this.editingCompanyId);
+        const company = this.companiesFacade.getCompanyById(this.editingCompanyId);
         if (company) {
           this.draft = this.toDraft(company);
         }
@@ -93,7 +93,7 @@ export class EmpresaCadastroPage implements OnDestroy {
     }
 
     const previousCompanyName = this.editingCompanyName;
-    const savedCompany = this.companyDirectoryService.saveCompany({
+    const savedCompany = this.companiesFacade.saveCompany({
       ...this.draft,
       name: this.draft.name.trim(),
       sector: this.draft.sector.trim(),
@@ -109,8 +109,8 @@ export class EmpresaCadastroPage implements OnDestroy {
     });
 
     if (this.isEditMode && previousCompanyName && previousCompanyName !== savedCompany.name) {
-      this.recruiterDirectoryService.replaceCompanyName(previousCompanyName, savedCompany.name);
-      this.vagasMockService.renameCompany(previousCompanyName, savedCompany.name);
+      this.recruitersFacade.replaceCompanyName(previousCompanyName, savedCompany.name);
+      this.jobsFacade.renameCompany(previousCompanyName, savedCompany.name);
     }
 
     void this.router.navigateByUrl('/empresa');

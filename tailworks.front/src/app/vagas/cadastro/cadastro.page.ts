@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CompaniesFacade } from '../../core/facades/companies.facade';
+import { JobsFacade } from '../../core/facades/jobs.facade';
+import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
-import { VagasMockService } from '../data/vagas-mock.service';
 import { Subscription } from 'rxjs';
-import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
-import { EmpresaDirectoryService } from '../../empresa/empresa-directory.service';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
@@ -56,9 +56,9 @@ export class CadastroPage implements OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly vagasMockService = inject(VagasMockService);
-  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
-  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
+  private readonly jobsFacade = inject(JobsFacade);
+  private readonly recruitersFacade = inject(RecruitersFacade);
+  private readonly companiesFacade = inject(CompaniesFacade);
   private readonly subscriptions = new Subscription();
   private summaryPanelDragState: {
     pointerId: number;
@@ -145,13 +145,13 @@ export class CadastroPage implements OnDestroy {
     this.ensureCurrentRecruiterCompanyInDraft();
     this.loadEditingJobIfPresent();
     this.subscriptions.add(
-      this.vagasMockService.jobsChanged$.subscribe(() => {
+      this.jobsFacade.jobsChanged$.subscribe(() => {
         if (!this.editingJobId) {
           this.cdr.markForCheck();
           return;
         }
 
-        const job = this.vagasMockService.getJobById(this.editingJobId);
+        const job = this.jobsFacade.getJobById(this.editingJobId);
         if (!job) {
           return;
         }
@@ -164,7 +164,7 @@ export class CadastroPage implements OnDestroy {
 
   get companyOptions(): string[] {
     return Array.from(new Set([
-      ...this.recruiterDirectoryService.getRecruiterCompanies(),
+      ...this.recruitersFacade.getRecruiterCompanies(),
       this.jobDraft.company.trim(),
     ].filter(Boolean)));
   }
@@ -952,7 +952,7 @@ export class CadastroPage implements OnDestroy {
   }
 
   get currentCompanyProfile(): CompanySummaryProfile {
-    const directoryProfile = this.companyDirectoryService.getCompanyByName(this.jobDraft.company);
+    const directoryProfile = this.companiesFacade.getCompanyByName(this.jobDraft.company);
     const profile = directoryProfile
       ? {
           name: directoryProfile.name,
@@ -1487,7 +1487,7 @@ export class CadastroPage implements OnDestroy {
     }
 
     const currentStatus = this.editingJobStatus;
-    this.vagasMockService.deleteJob(this.editingJobId);
+    this.jobsFacade.deleteJob(this.editingJobId);
     this.closeJobActionsModal();
 
     void this.router.navigate(['/vagas'], {
@@ -1505,11 +1505,11 @@ export class CadastroPage implements OnDestroy {
     } satisfies SaveMockJobCommand;
 
     if (!this.editingJobId) {
-      return this.vagasMockService.saveJob(command);
+      return this.jobsFacade.saveJob(command);
     }
 
     this.editingJobStatus = status;
-    return this.vagasMockService.updateJob(this.editingJobId, command);
+    return this.jobsFacade.updateJob(this.editingJobId, command);
   }
 
   private loadEditingJobIfPresent(): void {
@@ -1519,7 +1519,7 @@ export class CadastroPage implements OnDestroy {
       return;
     }
 
-    const job = this.vagasMockService.getJobById(editingId);
+    const job = this.jobsFacade.getJobById(editingId);
     if (!job) {
       return;
     }
@@ -1559,7 +1559,7 @@ export class CadastroPage implements OnDestroy {
   }
 
   private ensureCurrentRecruiterCompanyInDraft(): void {
-    const recruiterCompanies = this.recruiterDirectoryService.getRecruiterCompanies();
+    const recruiterCompanies = this.recruitersFacade.getRecruiterCompanies();
     const nextCompany = recruiterCompanies[0]?.trim() || this.jobDraft.company;
 
     if (!nextCompany || this.jobDraft.company === nextCompany) {
@@ -1570,8 +1570,8 @@ export class CadastroPage implements OnDestroy {
   }
 
   private hydrateStatusFromJob(job: MockJobRecord): void {
-    const candidate = this.vagasMockService.findTalentCandidate(job);
-    const effectiveStage = this.vagasMockService.getEffectiveCandidateStage(candidate);
+    const candidate = this.jobsFacade.findTalentCandidate(job);
+    const effectiveStage = this.jobsFacade.getEffectiveCandidateStage(candidate);
 
     this.contractDecision = null;
     this.documentsSubmittedByTalent = false;
@@ -1654,7 +1654,7 @@ export class CadastroPage implements OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateRecruiterTalentStage(this.editingJobId, stage, talentDecision);
+    this.jobsFacade.updateRecruiterTalentStage(this.editingJobId, stage, talentDecision);
   }
 
   private buildDraftPayload(): MockJobDraft {

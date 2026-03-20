@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RecruiterDirectoryService } from '../recruiter-directory.service';
+import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { RecruiterRecord, RecruiterViewScope } from '../recruiter.models';
 
 type RecruiterStatusFilter = 'all' | 'active' | 'inactive';
@@ -18,7 +18,7 @@ type RecruiterStatusFilter = 'all' | 'active' | 'inactive';
 })
 export class RecruiterPanelPage implements OnDestroy {
   readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-default.svg';
-  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
+  private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
@@ -27,7 +27,7 @@ export class RecruiterPanelPage implements OnDestroy {
 
   constructor() {
     this.subscriptions.add(
-      this.recruiterDirectoryService.changes$.subscribe(() => {
+      this.recruitersFacade.changes$.subscribe(() => {
         this.cdr.markForCheck();
       }),
     );
@@ -38,7 +38,7 @@ export class RecruiterPanelPage implements OnDestroy {
   }
 
   get currentRecruiter(): RecruiterRecord {
-    return this.recruiterDirectoryService.getCurrentRecruiter();
+    return this.recruitersFacade.getCurrentRecruiter();
   }
 
   get canManageDirectory(): boolean {
@@ -46,7 +46,7 @@ export class RecruiterPanelPage implements OnDestroy {
   }
 
   get companyRecruiters(): RecruiterRecord[] {
-    return this.recruiterDirectoryService.listRecruiters(this.currentRecruiter.company);
+    return this.recruitersFacade.listRecruiters(this.currentRecruiter.company);
   }
 
   get filteredRecruiters(): RecruiterRecord[] {
@@ -118,7 +118,7 @@ export class RecruiterPanelPage implements OnDestroy {
       return;
     }
 
-    this.recruiterDirectoryService.toggleRecruiterActive(recruiter.id, recruiter.company);
+    this.recruitersFacade.toggleRecruiterActive(recruiter.id, recruiter.company);
     this.cdr.markForCheck();
   }
 

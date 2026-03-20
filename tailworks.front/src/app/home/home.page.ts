@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { MockAuthService } from '../auth/mock-auth.service';
+import { AuthFacade } from '../core/facades/auth.facade';
+import { JobsFacade } from '../core/facades/jobs.facade';
 import { EcosystemEntryService } from '../usuario/home/ecosystem-entry.service';
-import { VagasMockService } from '../vagas/data/vagas-mock.service';
 
 @Component({
   standalone: true,
@@ -15,9 +15,9 @@ import { VagasMockService } from '../vagas/data/vagas-mock.service';
 })
 export class HomePage {
   private readonly router = inject(Router);
-  private readonly authService = inject(MockAuthService);
+  private readonly authService = inject(AuthFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
   protected statusMessage = '';
 
   constructor() {
@@ -33,7 +33,7 @@ export class HomePage {
       return;
     }
 
-    if (!this.authService.canCurrentSessionUseRecruiter()) {
+    if (!this.authService.canUseRecruiter()) {
       this.statusMessage = 'Este acesso ainda não tem uma estrutura recruiter vinculada. Entre com um acesso recruiter ou cadastre sua operação primeiro.';
       return;
     }
@@ -58,7 +58,7 @@ export class HomePage {
 
     const session = this.authService.getSession();
     this.ecosystemEntryService.setMode('talent');
-    this.vagasMockService.signInAsTalent(session?.name ?? 'Talento', session?.location);
+    this.jobsFacade.signInAsTalent(session?.name ?? 'Talento', session?.location);
     void this.router.navigateByUrl('/usuario/minhas-candidaturas');
   }
 

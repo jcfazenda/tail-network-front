@@ -3,9 +3,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
-import { VagasMockService } from '../../vagas/data/vagas-mock.service';
-import { EmpresaDirectoryService } from '../empresa-directory.service';
+import { CompaniesFacade } from '../../core/facades/companies.facade';
+import { JobsFacade } from '../../core/facades/jobs.facade';
+import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { CompanyRecord } from '../empresa.models';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
@@ -19,9 +19,9 @@ type CompanyStatusFilter = 'all' | 'active' | 'inactive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaPage implements OnDestroy {
-  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
-  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly companiesFacade = inject(CompaniesFacade);
+  private readonly recruitersFacade = inject(RecruitersFacade);
+  private readonly jobsFacade = inject(JobsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
@@ -29,9 +29,9 @@ export class EmpresaPage implements OnDestroy {
   statusFilter: CompanyStatusFilter = 'all';
 
   constructor() {
-    this.subscriptions.add(this.companyDirectoryService.changes$.subscribe(() => this.cdr.markForCheck()));
-    this.subscriptions.add(this.recruiterDirectoryService.changes$.subscribe(() => this.cdr.markForCheck()));
-    this.subscriptions.add(this.vagasMockService.jobsChanged$.subscribe(() => this.cdr.markForCheck()));
+    this.subscriptions.add(this.companiesFacade.changes$.subscribe(() => this.cdr.markForCheck()));
+    this.subscriptions.add(this.recruitersFacade.changes$.subscribe(() => this.cdr.markForCheck()));
+    this.subscriptions.add(this.jobsFacade.jobsChanged$.subscribe(() => this.cdr.markForCheck()));
   }
 
   ngOnDestroy(): void {
@@ -41,7 +41,7 @@ export class EmpresaPage implements OnDestroy {
   get companies(): CompanyRecord[] {
     const normalizedSearch = this.searchTerm.trim().toLocaleLowerCase('pt-BR');
 
-    return this.companyDirectoryService.listCompanies(true).filter((company) => {
+    return this.companiesFacade.listCompanies(true).filter((company) => {
       if (this.statusFilter === 'active' && !company.active) {
         return false;
       }
@@ -67,19 +67,19 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get totalCompanies(): number {
-    return this.companyDirectoryService.listCompanies(true).length;
+    return this.companiesFacade.listCompanies(true).length;
   }
 
   get activeCompanies(): number {
-    return this.companyDirectoryService.listCompanies(true).filter((company) => company.active).length;
+    return this.companiesFacade.listCompanies(true).filter((company) => company.active).length;
   }
 
   get inactiveCompanies(): number {
-    return this.companyDirectoryService.listCompanies(true).filter((company) => !company.active).length;
+    return this.companiesFacade.listCompanies(true).filter((company) => !company.active).length;
   }
 
   get linkedRecruiters(): number {
-    return this.recruiterDirectoryService.listAllRecruiters().filter((recruiter) => recruiter.active).length;
+    return this.recruitersFacade.listAllRecruiters().filter((recruiter) => recruiter.active).length;
   }
 
   setStatusFilter(filter: CompanyStatusFilter): void {
@@ -87,7 +87,7 @@ export class EmpresaPage implements OnDestroy {
   }
 
   toggleCompanyActive(company: CompanyRecord): void {
-    this.companyDirectoryService.toggleCompanyActive(company.id);
+    this.companiesFacade.toggleCompanyActive(company.id);
   }
 
   deleteCompany(company: CompanyRecord): void {
@@ -95,15 +95,15 @@ export class EmpresaPage implements OnDestroy {
       return;
     }
 
-    this.companyDirectoryService.deleteCompany(company.id);
+    this.companiesFacade.deleteCompany(company.id);
   }
 
   recruiterCount(companyName: string): number {
-    return this.recruiterDirectoryService.listAllRecruiters().filter((recruiter) => recruiter.managedCompanies.includes(companyName)).length;
+    return this.recruitersFacade.listAllRecruiters().filter((recruiter) => recruiter.managedCompanies.includes(companyName)).length;
   }
 
   jobCount(companyName: string): number {
-    return this.vagasMockService.getJobs().filter((job) => job.company === companyName).length;
+    return this.jobsFacade.getJobs().filter((job) => job.company === companyName).length;
   }
 
   canDeleteCompany(company: CompanyRecord): boolean {

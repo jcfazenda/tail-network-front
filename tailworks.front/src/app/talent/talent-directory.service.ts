@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { TalentDirectoryRepository } from './talent-directory.repository';
 
 export type TalentStackProfile = Record<string, number>;
 
@@ -16,8 +17,8 @@ export type TalentRecord = {
 
 @Injectable({ providedIn: 'root' })
 export class TalentDirectoryService {
-  private readonly storageKey = 'tailworks:talent-directory:v1';
   private readonly defaultAvatarUrl = '/assets/avatars/avatar-default.svg';
+  private readonly repository = inject(TalentDirectoryRepository);
 
   listTalents(): TalentRecord[] {
     this.ensureSeeded();
@@ -99,47 +100,32 @@ export class TalentDirectoryService {
   }
 
   private load(): TalentRecord[] {
-    if (typeof window === 'undefined') {
+    const stored = this.repository.readAll();
+    if (!stored) {
       return [];
     }
 
-    const storage = window.localStorage;
-    const raw = storage.getItem(this.storageKey);
-    if (!raw) {
+    if (!stored.length) {
       return [];
     }
 
-    try {
-      const parsed = JSON.parse(raw) as unknown;
-      if (!Array.isArray(parsed)) {
-        return [];
-      }
-
-      return parsed
-        .filter((item): item is Partial<TalentRecord> => !!item && typeof item === 'object')
-        .map((item) => ({
-          id: `${item.id ?? ''}`.trim() || `talent-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-          name: `${item.name ?? ''}`.trim() || 'Talento',
-          email: `${item.email ?? ''}`.trim().toLocaleLowerCase('pt-BR'),
-          location: `${item.location ?? ''}`.trim() || 'Brasil',
-          avatarUrl: `${item.avatarUrl ?? ''}`.trim() || this.defaultAvatarUrl,
-          visibleInEcosystem: item.visibleInEcosystem !== false,
-          availableForHiring: item.availableForHiring !== false,
-          stacks: (item.stacks && typeof item.stacks === 'object') ? (item.stacks as TalentStackProfile) : {},
-          updatedAt: `${item.updatedAt ?? ''}`.trim() || new Date().toISOString(),
-        }))
-        .filter((item) => !!item.email);
-    } catch {
-      storage.removeItem(this.storageKey);
-      return [];
-    }
+    return stored
+      .filter((item) => !!item && typeof item === 'object')
+      .map((item) => ({
+        id: `${item.id ?? ''}`.trim() || `talent-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+        name: `${item.name ?? ''}`.trim() || 'Talento',
+        email: `${item.email ?? ''}`.trim().toLocaleLowerCase('pt-BR'),
+        location: `${item.location ?? ''}`.trim() || 'Brasil',
+        avatarUrl: `${item.avatarUrl ?? ''}`.trim() || this.defaultAvatarUrl,
+        visibleInEcosystem: item.visibleInEcosystem !== false,
+        availableForHiring: item.availableForHiring !== false,
+        stacks: (item.stacks && typeof item.stacks === 'object') ? (item.stacks as TalentStackProfile) : {},
+        updatedAt: `${item.updatedAt ?? ''}`.trim() || new Date().toISOString(),
+      }))
+      .filter((item) => !!item.email);
   }
 
   private persist(list: TalentRecord[]): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    window.localStorage.setItem(this.storageKey, JSON.stringify(list));
+    this.repository.writeAll(list);
   }
 }

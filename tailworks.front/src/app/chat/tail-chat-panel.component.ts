@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnChanges, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { VagasMockService } from '../vagas/data/vagas-mock.service';
+import { JobsFacade } from '../core/facades/jobs.facade';
 
 export interface ChatCandidate {
   id?: string;
@@ -126,7 +126,7 @@ export class TailChatPanelComponent implements OnChanges {
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
 
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
 
   @Input() job!: ChatJob;
   @Input() startIndex = 0;
@@ -172,11 +172,11 @@ export class TailChatPanelComponent implements OnChanges {
   }
 
   get recruiterDisplayName(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().name;
+    return this.jobsFacade.getCurrentRecruiterIdentity().name;
   }
 
   get recruiterDisplayRole(): string {
-    return this.vagasMockService.getCurrentRecruiterIdentity().role;
+    return this.jobsFacade.getCurrentRecruiterIdentity().role;
   }
 
   get selectedAvailabilityLabel(): string | null {
@@ -405,6 +405,6 @@ export class TailChatPanelComponent implements OnChanges {
   }
 
   private normalizeCandidateStage(candidate: ChatCandidate): string {
-    return this.vagasMockService.getEffectiveCandidateStage(candidate) ?? 'radar';
+    return this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar';
   }
 }

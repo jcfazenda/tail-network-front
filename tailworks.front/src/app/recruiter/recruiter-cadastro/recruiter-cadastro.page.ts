@@ -3,9 +3,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { CompaniesFacade } from '../../core/facades/companies.facade';
+import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { CompanyRecord } from '../../empresa/empresa.models';
-import { EmpresaDirectoryService } from '../../empresa/empresa-directory.service';
-import { RecruiterDirectoryService } from '../recruiter-directory.service';
 import { RecruiterDraft, RecruiterRecord, RecruiterViewScope } from '../recruiter.models';
 
 type PermissionKey =
@@ -38,14 +38,14 @@ type PermissionDefinition = {
 })
 export class RecruiterCadastroPage implements OnDestroy {
   readonly defaultRecruiterAvatarUrl = '/assets/avatars/avatar-default.svg';
-  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
-  private readonly recruiterDirectoryService = inject(RecruiterDirectoryService);
+  private readonly companiesFacade = inject(CompaniesFacade);
+  private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
-  readonly areaOptions = this.recruiterDirectoryService.areaOptions;
+  readonly areaOptions = this.recruitersFacade.areaOptions;
   readonly viewScopeOptions: ViewScopeOption[] = [
     {
       value: 'own',
@@ -107,7 +107,7 @@ export class RecruiterCadastroPage implements OnDestroy {
         const company = params.get('company')?.trim() || this.currentRecruiter.company;
         const recruiterId = params.get('edit')?.trim() || null;
         const recruiter = recruiterId
-          ? this.recruiterDirectoryService.getRecruiterById(recruiterId, company)
+          ? this.recruitersFacade.getRecruiterById(recruiterId, company)
           : undefined;
 
         this.editingCompany = company;
@@ -120,13 +120,13 @@ export class RecruiterCadastroPage implements OnDestroy {
     );
 
     this.subscriptions.add(
-      this.recruiterDirectoryService.changes$.subscribe(() => {
+      this.recruitersFacade.changes$.subscribe(() => {
         if (!this.isEditMode || !this.editingRecruiterId) {
           this.cdr.markForCheck();
           return;
         }
 
-        const recruiter = this.recruiterDirectoryService.getRecruiterById(this.editingRecruiterId, this.editingCompany);
+        const recruiter = this.recruitersFacade.getRecruiterById(this.editingRecruiterId, this.editingCompany);
         if (recruiter) {
           this.draft = this.toDraft(recruiter);
           this.applyMasterDefaults();
@@ -136,7 +136,7 @@ export class RecruiterCadastroPage implements OnDestroy {
     );
 
     this.subscriptions.add(
-      this.companyDirectoryService.changes$.subscribe(() => {
+      this.companiesFacade.changes$.subscribe(() => {
         this.cdr.markForCheck();
       }),
     );
@@ -147,7 +147,7 @@ export class RecruiterCadastroPage implements OnDestroy {
   }
 
   get currentRecruiter(): RecruiterRecord {
-    return this.recruiterDirectoryService.getCurrentRecruiter();
+    return this.recruitersFacade.getCurrentRecruiter();
   }
 
   get canManageDirectory(): boolean {
@@ -180,7 +180,7 @@ export class RecruiterCadastroPage implements OnDestroy {
   get companyCatalog(): CompanyRecord[] {
     const selected = new Set(this.managedCompanies);
 
-    return this.companyDirectoryService
+    return this.companiesFacade
       .listCompanies(true)
       .filter((company) => company.active || selected.has(company.name));
   }
@@ -282,7 +282,7 @@ export class RecruiterCadastroPage implements OnDestroy {
       return;
     }
 
-    const savedRecruiter = this.recruiterDirectoryService.saveRecruiter({
+    const savedRecruiter = this.recruitersFacade.saveRecruiter({
       ...this.draft,
       name: this.draft.name.trim(),
       email: this.draft.email.trim(),
@@ -295,7 +295,7 @@ export class RecruiterCadastroPage implements OnDestroy {
     });
 
     if (savedRecruiter.id === this.currentRecruiter.id) {
-      this.recruiterDirectoryService.signInAsRecruiter(savedRecruiter.id, savedRecruiter.company);
+      this.recruitersFacade.signInAsRecruiter(savedRecruiter.id, savedRecruiter.company);
     }
 
     void this.router.navigate(['/recruiter/panel'], {
@@ -304,8 +304,8 @@ export class RecruiterCadastroPage implements OnDestroy {
   }
 
   private createEmptyDraft(company = this.currentRecruiter.company): RecruiterDraft {
-    const fallbackCompany = this.companyDirectoryService.getCompanyByName(company)?.name
-      || this.companyDirectoryService.listCompanies()[0]?.name
+    const fallbackCompany = this.companiesFacade.getCompanyByName(company)?.name
+      || this.companiesFacade.listCompanies()[0]?.name
       || company;
 
     return {

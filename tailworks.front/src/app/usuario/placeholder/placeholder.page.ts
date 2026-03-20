@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { JobsFacade } from '../../core/facades/jobs.facade';
 import { RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { CandidateStage, JobResponsibilitySection, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
-import { VagasMockService } from '../../vagas/data/vagas-mock.service';
 import { EcosystemPanelService } from '../ecosystem-panel.service';
 
 type CandidateView = 'applications' | 'radar' | 'declined';
@@ -107,7 +107,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
   private readonly ecosystemPanelService = inject(EcosystemPanelService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
@@ -284,7 +284,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
           return;
         }
 
-        const job = this.vagasMockService.getJobById(jobId);
+        const job = this.jobsFacade.getJobById(jobId);
         if (!job) {
           return;
         }
@@ -318,7 +318,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       }),
     );
     this.subscriptions.add(
-      this.vagasMockService.jobsChanged$.subscribe(() => {
+      this.jobsFacade.jobsChanged$.subscribe(() => {
         const previousStage = this.selectedJobObservedStage;
         this.syncSelectedJobDocumentState();
         const nextStage = this.selectedJobTalentStage ?? null;
@@ -436,7 +436,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get activeTalentJobs(): MockJobRecord[] {
-    return this.vagasMockService.getJobs()
+    return this.jobsFacade.getJobs()
       .filter((job) => job.status === 'ativas');
   }
 
@@ -793,7 +793,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return null;
     }
 
-    return this.vagasMockService.getJobById(this.selectedJobId) ?? null;
+    return this.jobsFacade.getJobById(this.selectedJobId) ?? null;
   }
 
   get selectedJobCompanyProfile(): CompanySummaryProfile {
@@ -928,18 +928,18 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return false;
     }
 
-    return this.vagasMockService.getTalentWorkflowActions(this.selectedJobTalentStage, job.talentDecision).apply;
+    return this.jobsFacade.getTalentWorkflowActions(this.selectedJobTalentStage, job.talentDecision).apply;
   }
 
   get canCancelSelectedJob(): boolean {
-    return this.vagasMockService.getTalentWorkflowActions(
+    return this.jobsFacade.getTalentWorkflowActions(
       this.selectedJobTalentStage,
       this.selectedJobPanel?.talentDecision,
     ).cancelApplication;
   }
 
   get canRespondToProposalSelectedJob(): boolean {
-    return this.vagasMockService.getTalentWorkflowActions(
+    return this.jobsFacade.getTalentWorkflowActions(
       this.selectedJobTalentStage,
       this.selectedJobPanel?.talentDecision,
     ).respondToProposal;
@@ -950,7 +950,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   get showSelectedJobDocumentsSubmission(): boolean {
-    return this.vagasMockService.getTalentWorkflowActions(
+    return this.jobsFacade.getTalentWorkflowActions(
       this.selectedJobTalentStage,
       this.selectedJobPanel?.talentDecision,
     ).submitDocuments;
@@ -1023,11 +1023,11 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   applyToJob(jobId: string): void {
-    this.vagasMockService.applyAsTalent(jobId);
+    this.jobsFacade.applyAsTalent(jobId);
   }
 
   hideJob(jobId: string): void {
-    this.vagasMockService.hideFromTalent(jobId);
+    this.jobsFacade.hideFromTalent(jobId);
   }
 
   openJobPanel(jobId: string): void {
@@ -1066,7 +1066,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.vagasMockService.applyAsTalent(this.selectedJobId);
+    this.jobsFacade.applyAsTalent(this.selectedJobId);
     this.activeCandidatePanelView = 'status';
   }
 
@@ -1075,7 +1075,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.vagasMockService.acceptOfferAsTalent(this.selectedJobId);
+    this.jobsFacade.acceptOfferAsTalent(this.selectedJobId);
     this.activeCandidatePanelView = 'status';
     this.syncSelectedJobDocumentState();
   }
@@ -1085,7 +1085,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.vagasMockService.keepJobForNextOpportunity(this.selectedJobId);
+    this.jobsFacade.keepJobForNextOpportunity(this.selectedJobId);
     this.activeCandidatePanelView = 'status';
   }
 
@@ -1094,7 +1094,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.vagasMockService.cancelTalentApplication(this.selectedJobId);
+    this.jobsFacade.cancelTalentApplication(this.selectedJobId);
     this.activeCandidatePanelView = 'status';
   }
 
@@ -1123,7 +1123,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.vagasMockService.submitTalentDocuments(
+    this.jobsFacade.submitTalentDocuments(
       this.selectedJobId,
       this.selectedJobCheckedDocuments,
       this.selectedJobDocumentsConsentAccepted,
@@ -1247,7 +1247,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   private get hasAppliedJobs(): boolean {
-    return this.vagasMockService.getJobs()
+    return this.jobsFacade.getJobs()
       .some((job) => job.status === 'ativas' && job.talentDecision === 'applied');
   }
 
@@ -1366,7 +1366,7 @@ export class PlaceholderPage implements OnInit, OnDestroy {
   }
 
   private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
-    return this.vagasMockService.getEffectiveCandidateStage(this.vagasMockService.findTalentCandidate(job));
+    return this.jobsFacade.getEffectiveCandidateStage(this.jobsFacade.findTalentCandidate(job));
   }
 
   private syncSelectedJobDocumentState(): void {

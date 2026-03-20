@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core';
+import { JobsFacade } from '../core/facades/jobs.facade';
 import { ChatCandidate, ChatJob } from './tail-chat-panel.component';
-import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { CandidateStage } from '../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
 
@@ -112,7 +112,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
     ['dez', 12],
     ['dezembro', 12],
   ]);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
@@ -128,7 +128,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
 
   constructor() {
     this.subscriptions.add(
-      this.vagasMockService.jobsChanged$.subscribe(() => {
+      this.jobsFacade.jobsChanged$.subscribe(() => {
         this.refreshFromLatestJob();
       }),
     );
@@ -317,7 +317,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(
+    this.jobsFacade.updateCandidateStage(
       this.job.id,
       this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
       'processo',
@@ -329,7 +329,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(
+    this.jobsFacade.updateCandidateStage(
       this.job.id,
       this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
       'aguardando',
@@ -341,7 +341,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(
+    this.jobsFacade.updateCandidateStage(
       this.job.id,
       this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
       'processo',
@@ -353,7 +353,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateJobStatus(this.job.id, 'encerradas', 'Encerrada a partir do fluxo do candidato');
+    this.jobsFacade.updateJobStatus(this.job.id, 'encerradas', 'Encerrada a partir do fluxo do candidato');
   }
 
   concludeJourneyDocuments(): void {
@@ -361,7 +361,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(
+    this.jobsFacade.updateCandidateStage(
       this.job.id,
       this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
       'contratado',
@@ -373,7 +373,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.vagasMockService.updateCandidateStage(
+    this.jobsFacade.updateCandidateStage(
       this.job.id,
       this.currentCandidateRecord.id ?? this.currentCandidateRecord.name,
       'proxima',
@@ -534,7 +534,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    const latestJob = this.vagasMockService.getJobById(this.job.id);
+    const latestJob = this.jobsFacade.getJobById(this.job.id);
     if (!latestJob) {
       return;
     }
@@ -575,7 +575,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
   }
 
   private resolveCandidateStage(candidate: ChatCandidate): string {
-    return this.vagasMockService.getEffectiveCandidateStage(candidate) ?? 'radar';
+    return this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar';
   }
 
   private get currentCandidateRecord(): ChatCandidate {
@@ -583,13 +583,13 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return this.candidate;
     }
 
-    const latestJob = this.vagasMockService.getJobById(this.job.id);
+    const latestJob = this.jobsFacade.getJobById(this.job.id);
     if (!latestJob) {
       return this.candidate;
     }
 
     if (this.isTalentCandidateSelection(this.candidate)) {
-      const canonicalTalentCandidate = this.vagasMockService.findTalentCandidate(latestJob);
+      const canonicalTalentCandidate = this.jobsFacade.findTalentCandidate(latestJob);
       if (canonicalTalentCandidate) {
         return canonicalTalentCandidate as ChatCandidate;
       }
@@ -604,7 +604,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
   }
 
   private get recruiterWorkflow() {
-    return this.vagasMockService.getRecruiterWorkflowActions(this.currentStage as CandidateStage);
+    return this.jobsFacade.getRecruiterWorkflowActions(this.currentStage as CandidateStage);
   }
 
   private buildFormationHeading(formation: FormationCopyDraft | null): string {
@@ -631,7 +631,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       return true;
     }
 
-    const identity = this.vagasMockService.getTalentCandidateIdentity();
+    const identity = this.jobsFacade.getTalentCandidateIdentity();
     return candidate.name === identity.name;
   }
 

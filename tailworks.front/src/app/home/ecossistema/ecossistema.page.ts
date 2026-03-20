@@ -1,10 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, effect, inject } from '@angular/core';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
+import { JobsFacade } from '../../core/facades/jobs.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
-import { MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
-import { VagasMockService } from '../../vagas/data/vagas-mock.service';
+import { CandidateStage, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
+import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.service';
+import { EcosystemSearchService } from '../../core/layout/ecosystem-search.service';
+
+type TalentEcoFilter = 'radar' | 'applications';
+type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
+type EcoFilter = TalentEcoFilter | RecruiterEcoFilter;
+type EcoKpiItem = {
+  icon: string;
+  value: string;
+  suffix: string;
+};
 
 type RadarCategory = {
   id: string;
@@ -49,15 +60,18 @@ type HiredSpotlightCard = {
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EcossistemaPage implements OnDestroy {
+export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
+  private readonly ecosystemEntryService = inject(EcosystemEntryService);
+  private readonly ecosystemSearchService = inject(EcosystemSearchService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
   private hiredRotationTimer: number | null = null;
   private hiredAutoScrollInFlight = false;
   private lastManualHiredInteractionAt = 0;
+  private resizeListener?: () => void;
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
@@ -94,15 +108,10 @@ export class EcossistemaPage implements OnDestroy {
   @ViewChild('hiredTrack', { static: false }) hiredTrack?: ElementRef<HTMLDivElement>;
 
   activeHiredIndex = 0;
-  readonly hiredPageSize = 4;
-
-  get hiredPageCount(): number {
-    return Math.max(1, Math.ceil(this.hiredSpotlights.length / this.hiredPageSize));
-  }
-
-  get hiredPages(): number[] {
-    return Array.from({ length: this.hiredPageCount }, (_, i) => i);
-  }
+  readonly showHiringTrendFooter = false;
+  hiredPageCount = 1;
+  hiredPages: number[] = [0];
+  ecoFilter: EcoFilter = 'radar';
 
   readonly hiredSpotlights: HiredSpotlightCard[] = [
     {
@@ -252,7 +261,7 @@ export class EcossistemaPage implements OnDestroy {
     this.restoreRadarCategorySelection();
     this.refreshJobs();
     this.subscriptions.add(
-      this.vagasMockService.jobsChanged$.subscribe(() => {
+      this.jobsFacade.jobsChanged$.subscribe(() => {
         this.refreshJobs();
         this.cdr.markForCheck();
       }),
@@ -261,7 +270,241 @@ export class EcossistemaPage implements OnDestroy {
     if (typeof window !== 'undefined') {
       this.copyRotationTimer = window.setInterval(() => this.rotateHiringCopy(), 9000);
       this.hiredRotationTimer = window.setInterval(() => this.autoAdvanceHired(), 9000);
+      this.resizeListener = () => this.syncHiredPagination(true);
+      window.addEventListener('resize', this.resizeListener, { passive: true });
     }
+
+    // Re-render quando a busca da topbar mudar.
+    effect(() => {
+      this.ecosystemSearchService.query();
+      this.cdr.markForCheck();
+    });
+  }
+
+  get isTalentEcosystemMode(): boolean {
+    return this.ecosystemEntryService.getMode() === 'talent';
+  }
+
+  get ecoFilters(): Array<{ id: EcoFilter; label: string }> {
+    if (this.isTalentEcosystemMode) {
+      return [
+        { id: 'radar', label: 'No Radar' },
+        { id: 'applications', label: 'Minhas candidaturas' },
+      ];
+    }
+
+    return [
+      { id: 'radar', label: 'No Radar' },
+      { id: 'candidaturas', label: 'Candidaturas' },
+      { id: 'processo', label: 'Em Progresso' },
+      { id: 'solicitada', label: 'Contratação solicitada' },
+      { id: 'contratados', label: 'Contratados' },
+    ];
+  }
+
+  get ecoTopFilters(): Array<{ id: EcoFilter; label: string }> {
+    if (this.isTalentEcosystemMode) {
+      return this.ecoFilters;
+    }
+
+    // Linha única como na referência (sem "solicitada" por enquanto).
+    return this.ecoFilters.filter((item) =>
+      item.id === 'radar' || item.id === 'candidaturas' || item.id === 'processo' || item.id === 'contratados'
+    );
+  }
+
+  ecoFilterIcon(filter: EcoFilter): string | null {
+    if (filter === 'processo') {
+      return 'autorenew';
+    }
+
+    if (filter === 'contratados') {
+      return 'star';
+    }
+
+    return null; // "No Radar" fica sem icone
+  }
+
+  get ecoKpisLeft(): EcoKpiItem[] {
+    const jobs = this.ecoFilteredJobs;
+    const jobCount = jobs.length;
+    const talents = jobs.reduce((sum, job) => sum + (job.talents ?? 0), 0);
+    const avgSalary = this.computeAverageSalary(jobs);
+
+    return [
+      { icon: 'work', value: `${jobCount}`, suffix: 'vagas abertas' },
+      { icon: 'payments', value: avgSalary ? `R$ ${avgSalary}` : 'R$ --', suffix: 'média' },
+      { icon: 'groups', value: `${talents}`, suffix: 'talentos' },
+    ];
+  }
+
+  get ecoAderenciaKpi(): EcoKpiItem {
+    const jobs = this.ecoFilteredJobs;
+    const jobCount = jobs.length;
+    const avgMatch = jobCount ? Math.round(jobs.reduce((sum, job) => sum + (job.match ?? 0), 0) / jobCount) : 0;
+    return { icon: 'trending_up', value: `${avgMatch}%`, suffix: 'aderência' };
+  }
+
+  setEcoFilter(filter: EcoFilter): void {
+    this.ecoFilter = filter;
+    this.cdr.markForCheck();
+  }
+
+  get ecoFilteredJobs(): MockJobRecord[] {
+    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
+    const base = this.jobsSnapshot.filter((job) => job.status === 'ativas');
+    const scoped = this.isTalentEcosystemMode
+      ? base
+      : base.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
+
+    const filteredByMode = this.isTalentEcosystemMode
+      ? scoped.filter((job) => this.talentJobMatchesFilter(job, this.ecoFilter as TalentEcoFilter))
+      : scoped.filter((job) => this.recruiterJobMatchesFilter(job, this.ecoFilter as RecruiterEcoFilter));
+
+    if (!query) {
+      return filteredByMode;
+    }
+
+    return filteredByMode.filter((job) => {
+      const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
+      return haystack.includes(query);
+    });
+  }
+
+  ecoJobMeta(job: MockJobRecord): string {
+    if (this.isTalentEcosystemMode) {
+      const stage = this.getTalentStage(job);
+      if (this.ecoFilter === 'applications') {
+        return stage === 'candidatura' ? 'Candidatura enviada' : 'Em andamento';
+      }
+      return this.jobCardWorkModel(job) || 'Radar';
+    }
+
+    const view = this.ecoFilter as RecruiterEcoFilter;
+    if (view === 'candidaturas') return 'Candidaturas';
+    if (view === 'processo') return 'Em Processo';
+    if (view === 'solicitada') return 'Contratação solicitada';
+    if (view === 'contratados') return 'Contratados';
+    return `${job.radarCount ?? 0} no radar`;
+  }
+
+  private talentJobMatchesFilter(job: MockJobRecord, filter: TalentEcoFilter): boolean {
+    if (filter === 'applications') {
+      return this.isApplicationsJob(job);
+    }
+    return this.isRadarJob(job);
+  }
+
+  private recruiterJobMatchesFilter(job: MockJobRecord, filter: RecruiterEcoFilter): boolean {
+    return this.jobMatchesBoardView(job, filter);
+  }
+
+  private jobMatchesBoardView(job: MockJobRecord, view: RecruiterEcoFilter): boolean {
+    const effectiveStages = job.candidates
+      .map((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate))
+      .filter((stage): stage is NonNullable<typeof stage> => !!stage);
+
+    const hasAnyInteraction = effectiveStages.some((stage) => stage !== 'radar');
+
+    if (view === 'candidaturas') {
+      return effectiveStages.some((stage) => stage === 'candidatura');
+    }
+
+    if (view === 'solicitada') {
+      return effectiveStages.some((stage) => stage === 'aguardando');
+    }
+
+    if (view === 'contratados') {
+      return effectiveStages.some((stage) => stage === 'contratado');
+    }
+
+    if (view === 'processo') {
+      return effectiveStages.some((stage) =>
+        stage === 'processo'
+        || stage === 'tecnica'
+        || stage === 'aceito'
+        || stage === 'documentacao',
+      );
+    }
+
+    if (hasAnyInteraction) {
+      return false;
+    }
+
+    return job.radarCount > 0 || effectiveStages.some((stage) => stage === 'radar');
+  }
+
+  private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
+    return this.jobsFacade.getEffectiveCandidateStage(this.jobsFacade.findTalentCandidate(job));
+  }
+
+  private isApplicationsJob(job: MockJobRecord): boolean {
+    return job.talentDecision === 'applied' && !this.isDeclinedJob(job);
+  }
+
+  private isRadarJob(job: MockJobRecord): boolean {
+    return !this.isApplicationsJob(job) && !this.isDeclinedJob(job);
+  }
+
+  private isDeclinedJob(job: MockJobRecord): boolean {
+    const stage = this.getTalentStage(job);
+    return stage === 'proxima' || stage === 'cancelado';
+  }
+
+  private computeAverageSalary(jobs: MockJobRecord[]): string | null {
+    const values = jobs
+      .map((job) => this.parseSalaryValue(job.salaryRange))
+      .filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
+
+    if (!values.length) {
+      return null;
+    }
+
+    const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
+    return this.formatCompactMoney(Math.round(avg));
+  }
+
+  private parseSalaryValue(raw?: string): number | null {
+    const value = raw?.trim();
+    if (!value) {
+      return null;
+    }
+
+    // pega o primeiro numero do range (bom o suficiente pro mock).
+    const match = value.match(/(\d[\d.\s]*,\d{2}|\d[\d.\s]*)/);
+    if (!match) {
+      return null;
+    }
+
+    const token = match[1] ?? '';
+    const normalized = token.replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private formatCompactMoney(value: number): string {
+    if (value >= 1_000_000) {
+      return `${Math.round(value / 100_000) / 10}M`;
+    }
+
+    if (value >= 10_000) {
+      return `${Math.round(value / 100) / 10}K`;
+    }
+
+    if (value >= 1000) {
+      return `${Math.round(value / 100) / 10}K`;
+    }
+
+    return `${value}`;
+  }
+
+  ngAfterViewInit(): void {
+    // Espera o template renderizar para medir scrollWidth/clientWidth.
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.setTimeout(() => this.syncHiredPagination(true), 0);
   }
 
   ngOnDestroy(): void {
@@ -273,6 +516,10 @@ export class EcossistemaPage implements OnDestroy {
     if (this.hiredRotationTimer) {
       window.clearInterval(this.hiredRotationTimer);
       this.hiredRotationTimer = null;
+    }
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
+      this.resizeListener = undefined;
     }
   }
 
@@ -300,6 +547,7 @@ export class EcossistemaPage implements OnDestroy {
       return;
     }
 
+    this.syncHiredPagination();
     const pageWidth = Math.max(1, el.clientWidth);
     const nextPage = Math.min(this.hiredPageCount - 1, Math.max(0, this.activeHiredIndex + direction));
     this.lastManualHiredInteractionAt = Date.now();
@@ -316,6 +564,7 @@ export class EcossistemaPage implements OnDestroy {
       return;
     }
 
+    this.syncHiredPagination();
     const pageWidth = Math.max(1, el.clientWidth);
     const maxPage = this.hiredPageCount - 1;
     const bestPage = Math.min(maxPage, Math.max(0, Math.round(el.scrollLeft / pageWidth)));
@@ -336,6 +585,7 @@ export class EcossistemaPage implements OnDestroy {
       return;
     }
 
+    this.syncHiredPagination();
     // Se o usuario mexeu recentemente (scroll/arrow), nao briga com ele.
     const now = Date.now();
     if (now - this.lastManualHiredInteractionAt < 4000) {
@@ -355,6 +605,26 @@ export class EcossistemaPage implements OnDestroy {
     }, 900);
   }
 
+  private syncHiredPagination(force = false): void {
+    const el = this.hiredTrack?.nativeElement;
+    if (!el) {
+      return;
+    }
+
+    const clientWidth = Math.max(1, el.clientWidth);
+    const nextPageCount = Math.max(1, Math.ceil(el.scrollWidth / clientWidth));
+    if (!force && nextPageCount === this.hiredPageCount) {
+      return;
+    }
+
+    this.hiredPageCount = nextPageCount;
+    this.hiredPages = Array.from({ length: nextPageCount }, (_, i) => i);
+    if (this.activeHiredIndex > nextPageCount - 1) {
+      this.activeHiredIndex = nextPageCount - 1;
+    }
+    this.cdr.markForCheck();
+  }
+
   toggleSidebar(): void {
     this.sidebarVisibilityService.toggle();
   }
@@ -365,13 +635,13 @@ export class EcossistemaPage implements OnDestroy {
 
   get featuredJob(): MockJobRecord | null {
     const accessibleActive = this.jobsSnapshot
-      .filter((job) => job.status === 'ativas' && this.vagasMockService.canCurrentRecruiterAccessJob(job));
+      .filter((job) => job.status === 'ativas' && this.jobsFacade.canCurrentRecruiterAccessJob(job));
     if (accessibleActive.length) {
       return accessibleActive[0];
     }
 
     const accessibleAny = this.jobsSnapshot
-      .filter((job) => this.vagasMockService.canCurrentRecruiterAccessJob(job));
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
     return accessibleAny[0] ?? this.jobsSnapshot[0] ?? null;
   }
 
@@ -437,7 +707,7 @@ export class EcossistemaPage implements OnDestroy {
   }
 
   private refreshJobs(): void {
-    this.jobsSnapshot = this.vagasMockService.getJobs();
+    this.jobsSnapshot = this.jobsFacade.getJobs();
   }
 
   private rotateHiringCopy(): void {

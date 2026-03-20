@@ -3,9 +3,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { ActivatedRoute, Router } from '@angular/router';
 import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
+import { JobsFacade } from '../core/facades/jobs.facade';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';
 import { CandidateStage, JobStatus, MockJobCandidate, MockJobRecord, RecruiterIdentity, WorkModel } from '../vagas/data/vagas.models';
-import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { RadarLegendItem } from '../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { Subscription } from 'rxjs';
 
@@ -60,7 +60,7 @@ export class StubPage implements OnDestroy {
   private static readonly radarCategoriesStorageKey = 'tailworks:recruiter-radar-categories-selection:v1';
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly vagasMockService = inject(VagasMockService);
+  private readonly jobsFacade = inject(JobsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private readonly hiringTrendChartWidth = 820;
@@ -129,7 +129,7 @@ export class StubPage implements OnDestroy {
   constructor() {
     this.restoreRadarCategorySelection();
     this.subscriptions.add(
-      this.vagasMockService.jobsChanged$.subscribe(() => {
+      this.jobsFacade.jobsChanged$.subscribe(() => {
         this.refreshOpenedPanels();
         this.cdr.markForCheck();
       }),
@@ -137,7 +137,7 @@ export class StubPage implements OnDestroy {
   }
 
   get recruiterGreetingName(): string {
-    const fullName = this.vagasMockService.getCurrentRecruiterIdentity().name?.trim();
+    const fullName = this.jobsFacade.getCurrentRecruiterIdentity().name?.trim();
     if (!fullName) {
       return 'Recruiter';
     }
@@ -202,7 +202,7 @@ export class StubPage implements OnDestroy {
   }
 
   get currentRecruiter(): RecruiterIdentity {
-    return this.vagasMockService.getCurrentRecruiterIdentity();
+    return this.jobsFacade.getCurrentRecruiterIdentity();
   }
 
   get recruiterDisplayName(): string {
@@ -229,7 +229,7 @@ export class StubPage implements OnDestroy {
       count: this.accessibleJobs.length,
     });
 
-    for (const recruiter of this.vagasMockService.getRecruitersForCompany(this.currentRecruiter.company)) {
+    for (const recruiter of this.jobsFacade.getRecruitersForCompany(this.currentRecruiter.company)) {
       const count = this.accessibleJobs.filter((job) => job.createdByRecruiterId === recruiter.id).length;
       if (count === 0 && recruiter.id !== this.currentRecruiter.id) {
         continue;
@@ -415,16 +415,16 @@ export class StubPage implements OnDestroy {
   }
 
   jobCardInteractionCount(job: MockJobRecord): number {
-    return job.candidates.filter((candidate) => this.vagasMockService.getEffectiveCandidateStage(candidate) !== 'radar').length;
+    return job.candidates.filter((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate) !== 'radar').length;
   }
 
   jobCardHasTalentInteraction(job: MockJobRecord): boolean {
-    const talentCandidate = this.vagasMockService.findTalentCandidate(job);
+    const talentCandidate = this.jobsFacade.findTalentCandidate(job);
     if (!talentCandidate) {
       return false;
     }
 
-    return this.vagasMockService.getEffectiveCandidateStage(talentCandidate) !== 'radar';
+    return this.jobsFacade.getEffectiveCandidateStage(talentCandidate) !== 'radar';
   }
 
   jobCardTalentAvatarUrl(job: MockJobRecord): string | null {
@@ -432,12 +432,12 @@ export class StubPage implements OnDestroy {
       return null;
     }
 
-    const talentCandidate = this.vagasMockService.findTalentCandidate(job);
-    return talentCandidate?.avatar?.trim() || this.vagasMockService.getTalentCandidateIdentity().avatar || null;
+    const talentCandidate = this.jobsFacade.findTalentCandidate(job);
+    return talentCandidate?.avatar?.trim() || this.jobsFacade.getTalentCandidateIdentity().avatar || null;
   }
 
   findJobById(id: string): MockJobRecord {
-    return this.vagasMockService.getJobById(id)!;
+    return this.jobsFacade.getJobById(id)!;
   }
 
   openPanel(job: MockJobRecord) {
@@ -610,8 +610,8 @@ export class StubPage implements OnDestroy {
   sortedCandidatesFor(job: MockJobRecord | ChatJob): MockJobCandidate[] {
     const order = ['radar', 'candidatura', 'tecnica', 'processo', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
     return [...job.candidates as MockJobCandidate[]].sort((left, right) => {
-      const stageLeft = this.vagasMockService.getEffectiveCandidateStage(left) ?? 'radar';
-      const stageRight = this.vagasMockService.getEffectiveCandidateStage(right) ?? 'radar';
+      const stageLeft = this.jobsFacade.getEffectiveCandidateStage(left) ?? 'radar';
+      const stageRight = this.jobsFacade.getEffectiveCandidateStage(right) ?? 'radar';
       return order.indexOf(stageLeft) - order.indexOf(stageRight);
     });
   }
@@ -698,8 +698,8 @@ export class StubPage implements OnDestroy {
   }
 
   private get accessibleJobs(): MockJobRecord[] {
-    return this.vagasMockService.getJobs().filter((job) =>
-      job.status === this.activeTab && this.vagasMockService.canCurrentRecruiterAccessJob(job),
+    return this.jobsFacade.getJobs().filter((job) =>
+      job.status === this.activeTab && this.jobsFacade.canCurrentRecruiterAccessJob(job),
     );
   }
 
@@ -713,7 +713,7 @@ export class StubPage implements OnDestroy {
 
   private jobMatchesBoardView(job: MockJobRecord, view: RecruiterBoardView): boolean {
     const effectiveStages = job.candidates
-      .map((candidate) => this.vagasMockService.getEffectiveCandidateStage(candidate))
+      .map((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate))
       .filter((stage): stage is NonNullable<typeof stage> => !!stage);
 
     // "Em Processo" = existe qualquer interação (qualquer estágio que não seja radar).
@@ -750,7 +750,7 @@ export class StubPage implements OnDestroy {
 
   private pickStageForSteps(job: MockJobRecord): CandidateStage {
     const stages = job.candidates
-      .map((candidate) => this.vagasMockService.getEffectiveCandidateStage(candidate))
+      .map((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate))
       .filter((stage): stage is CandidateStage => !!stage);
 
     const nonRadarStages = stages.filter((stage) => stage !== 'radar');
@@ -887,7 +887,7 @@ export class StubPage implements OnDestroy {
       return;
     }
 
-    const latestJob = this.vagasMockService.getJobById(this.selectedJobPanel.id);
+    const latestJob = this.jobsFacade.getJobById(this.selectedJobPanel.id);
     if (!latestJob) {
       this.closePanel();
       return;
