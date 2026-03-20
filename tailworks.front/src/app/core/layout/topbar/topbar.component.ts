@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -135,6 +135,10 @@ export class TopbarComponent {
 
   set templateSearchQuery(value: string) {
     this.ecosystemSearchService.setQuery(value);
+  }
+
+  get hasTemplateSearchQuery(): boolean {
+    return this.templateSearchQuery.trim().length > 0;
   }
 
   get topbarAvatarUrl(): string {
@@ -392,6 +396,13 @@ export class TopbarComponent {
   private notificationsOpen = false;
   private confettiPieces: NotificationConfettiPiece[] = [];
 
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.notificationsOpen || this.notificationModal) {
+      this.closeNotificationModal();
+    }
+  }
+
   clearPublishedJobsForTesting(): void {
     this.jobsFacade.clearJobs();
   }
@@ -415,6 +426,10 @@ export class TopbarComponent {
 
   toggleSidebar(): void {
     this.sidebarVisibilityService.toggle();
+  }
+
+  clearTemplateSearch(): void {
+    this.templateSearchQuery = '';
   }
 
   openNotifications(): void {

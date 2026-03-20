@@ -4,8 +4,8 @@
       class="landing__sidebar-toggle"
       type="button"
       (click)="toggleSidebar()"
-      aria-label="Abrir configuracoes"
-      title="Configuracoes"
+      aria-label="Abrir configurações"
+      title="Configurações"
     >
       <span class="material-symbols-rounded" aria-hidden="true">
         settings
@@ -81,7 +81,7 @@
               </div>
             </div-->
             <div class="howitworks__main">
-              <section class="hired-strip" aria-label="Contratacoes recentes">
+              <section class="hired-strip" aria-label="Contratações recentes">
                 <div class="hired-strip__viewport" aria-label="Carrossel">
                   <button
                     type="button"
@@ -145,18 +145,19 @@
                   </button>
                 </div>
 
-                <div class="hired-strip__dots" aria-label="Paginacao">
+                <div class="hired-strip__dots" aria-label="Paginação">
                   <span
                     class="hired-strip__dot"
                     *ngFor="let _ of hiredPages; let i = index; trackBy: trackByPage"
                     [class.hired-strip__dot--active]="i === activeHiredIndex"
+                    [attr.aria-label]="'Página ' + (i + 1)"
                     aria-hidden="true"
                   ></span>
                 </div>
               </section>
             </div>
 
-            <div class="howitworks__bar-copy" aria-label="Resumo de contratações">
+            <div class="howitworks__bar-copy" aria-label="Resumo de contratações" aria-live="polite">
               <div class="howitworks__bar-copy-inner" [class.is-fading]="copyIsFading">
                 <h3>{{ currentHiringCopy.title }}</h3>
                 <p>
@@ -339,6 +340,7 @@
             type="button"
             (click)="resetEcoDiscovery()"
           >
+            <span class="material-symbols-rounded" aria-hidden="true">refresh</span>
             Limpar busca e filtros
           </button>
         </div>

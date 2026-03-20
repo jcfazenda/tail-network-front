@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
+import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { Subscription } from 'rxjs';
@@ -59,6 +60,7 @@ export class CadastroPage implements OnDestroy {
   private readonly jobsFacade = inject(JobsFacade);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly companiesFacade = inject(CompaniesFacade);
+  private readonly matchDomainService = inject(MatchDomainService);
   private readonly subscriptions = new Subscription();
   private summaryPanelDragState: {
     pointerId: number;
@@ -76,7 +78,6 @@ export class CadastroPage implements OnDestroy {
   editingJobStatus: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
   editingJobStatusReason = '';
 
-  readonly previewAderencia = 89;
   readonly previewAvatars = [
     '/assets/avatars/avatar-default.svg',
     '/assets/avatars/avatar-default.svg',
@@ -813,6 +814,13 @@ export class CadastroPage implements OnDestroy {
   responsibilityDraftItems: string[] = [];
   selectedDocuments = [...this.initialDocumentOptions];
   selectedTechStackItems = this.initialTechStackItems.map((item) => ({ ...item }));
+
+  get previewAderencia(): number {
+    return Math.max(
+      42,
+      Math.min(99, this.matchDomainService.estimateJobReadinessFromTechStack(this.selectedTechStackItems)),
+    );
+  }
 
   get previewContractType(): ContractType {
     return this.contractType;

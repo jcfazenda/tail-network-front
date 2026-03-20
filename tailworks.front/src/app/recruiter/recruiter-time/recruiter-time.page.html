@@ -3,7 +3,7 @@
     <div class="recruiter-time__hero-copy">
       <span class="recruiter-time__eyebrow">Chat interno do time</span>
       <h1>Time de recruiters</h1>
-      <p>Veja quem esta operando na empresa e abra uma conversa rapida para alinhar radar, vagas e andamento do processo.</p>
+      <p>Veja quem está operando na empresa e abra uma conversa rápida para alinhar radar, vagas e andamento do processo.</p>
     </div>
 
     <div class="recruiter-time__hero-side">
@@ -54,9 +54,18 @@
         <span class="material-symbols-rounded" aria-hidden="true">search</span>
         <input
           type="search"
-          placeholder="Buscar nome, area ou email"
+          placeholder="Buscar nome, área ou e-mail"
           [(ngModel)]="searchTerm"
         />
+        <button
+          *ngIf="hasSearchTerm"
+          class="recruiter-time__search-clear"
+          type="button"
+          aria-label="Limpar busca"
+          (click)="resetSearch()"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+        </button>
       </label>
 
       <div class="recruiter-time__team-list" *ngIf="filteredRecruiters.length; else emptyTeam">
@@ -76,7 +85,7 @@
           <div class="team-member__copy">
             <div class="team-member__topline">
               <strong>{{ recruiter.name }}</strong>
-              <span class="team-member__you" *ngIf="isCurrentRecruiter(recruiter)">Voce</span>
+              <span class="team-member__you" *ngIf="isCurrentRecruiter(recruiter)">Você</span>
             </div>
 
             <span class="team-member__role">{{ recruiter.role }}</span>
@@ -98,6 +107,7 @@
           <strong>Nenhum recruiter encontrado</strong>
           <p>{{ emptyTeamHint }}</p>
           <button class="recruiter-time__empty-action" type="button" (click)="resetSearch()">
+            <span class="material-symbols-rounded" aria-hidden="true">refresh</span>
             Limpar busca
           </button>
         </article>

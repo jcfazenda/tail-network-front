@@ -230,6 +230,25 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.topbar-notification-list__action:hover{
+  transform: translateY(-1px);
+  border-color: rgba(225, 138, 39, 0.26);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.topbar-notification-list__action:focus-visible{
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(225, 138, 39, 0.16),
+    0 10px 20px rgba(15, 23, 42, 0.08);
 }
 
 .topbar-notification-list__empty{
@@ -284,6 +303,22 @@
   justify-content: center;
   cursor: pointer;
   z-index: 1;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.topbar-notification-modal__close:hover{
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+}
+
+.topbar-notification-modal__close:focus-visible,
+.topbar-notification-modal__action:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(225, 138, 39, 0.16);
 }
 
 .topbar-notification-modal__label{
@@ -415,6 +450,11 @@
 .topbar-notification-modal__action--primary{
   background: linear-gradient(180deg, #dd7f24 0%, #b85f12 100%);
   color: #fff;
+}
+
+.topbar-notification-modal__action--primary:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(184, 95, 18, 0.26);
 }
 
 @keyframes topbarNotificationConfetti{
@@ -577,5 +617,71 @@
 
   .topbar-notification-modal__recruiter-copy span{
     font-size: 11px;
+  }
+}
+
+@media (max-width: 560px){
+  .topbar-notification-backdrop{
+    padding: 92px 12px 12px;
+  }
+
+  .topbar-notification-list{
+    top: 86px;
+    left: 12px;
+    right: 12px;
+    border-radius: 18px;
+  }
+
+  .topbar-notification-modal{
+    min-height: auto;
+    padding: 72px 18px 18px;
+    display: grid;
+    gap: 18px;
+  }
+
+  .topbar-notification-modal__label,
+  .topbar-notification-modal__job,
+  .topbar-notification-modal__actions,
+  .topbar-notification-modal__recruiter{
+    position: static;
+  }
+
+  .topbar-notification-modal__label{
+    max-width: none;
+    font-size: 22px;
+    white-space: normal;
+    text-shadow: none;
+  }
+
+  .topbar-notification-modal__job{
+    gap: 8px;
+  }
+
+  .topbar-notification-modal__job-title{
+    font-size: 20px;
+  }
+
+  .topbar-notification-modal__job-company,
+  .topbar-notification-modal__job-location,
+  .topbar-notification-modal__job-offer{
+    font-size: 13px;
+    white-space: normal;
+  }
+
+  .topbar-notification-modal__recruiter{
+    justify-self: start;
+  }
+
+  .topbar-notification-modal__actions{
+    left: auto;
+    right: auto;
+    bottom: auto;
+    justify-content: stretch;
+  }
+
+  .topbar-notification-modal__action{
+    width: 100%;
+    margin-right: 0;
+    min-height: 48px;
   }
 }

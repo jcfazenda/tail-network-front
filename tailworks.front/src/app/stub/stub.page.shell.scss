@@ -59,7 +59,6 @@
   align-items: stretch;
 }
 
-/* TITULOS E TEXTO BASE */
 h1 {
   margin: 0 0 8px;
   font-size: 26px;
@@ -72,7 +71,6 @@ p {
   font-size: 15px;
 }
 
-/* RADAR */
 .radar-card {
   margin: 22px 0 0;
   padding: 20px 22px 24px;
@@ -124,7 +122,6 @@ p {
   gap: 12px;
 }
 
-/* METRIC BAR (acima do Olá, Rafael) */
 .metric-bar{
   display: grid;
   grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
@@ -283,8 +280,6 @@ p {
   background: linear-gradient(135deg, rgba(255, 248, 229, 0.98), rgba(243, 229, 191, 0.9));
 }
 
-/* METRIC CARDS (acima do Olá, Rafael) */
-
 .bar {
   display: grid;
   grid-template-columns: 130px 1fr;
@@ -346,7 +341,6 @@ p {
   to { width: var(--val-pct); }
 }
 
-/* JOBS */
 .jobs {
   margin-top: 24px;
   container-type: inline-size;
@@ -624,6 +618,72 @@ p {
   border-color: rgba(238, 178, 92, 0.44);
   color: rgba(188, 109, 24, 0.92);
   transform: translateY(-1px);
+}
+
+.candidate-week-radar__menu:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 146, 43, 0.16);
+}
+
+@media (max-width: 560px){
+  .layout{
+    gap: 8px;
+  }
+
+  .hello-block{
+    margin-top: 52px;
+  }
+
+  .metric-bar{
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .metric-hero{
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .metric-hero__icon{
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+  }
+
+  .metric-hero__meta strong{
+    font-size: 20px;
+  }
+
+  .metric-stat{
+    gap: 10px;
+  }
+
+  .jobs-insights{
+    gap: 14px;
+  }
+
+  .candidate-week-radar{
+    padding: 16px 16px 18px;
+    border-radius: 18px;
+  }
+
+  .candidate-week-radar__head h4{
+    font-size: 18px;
+  }
+
+  .candidate-week-radar__subtitle{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .subtitle-row{
+    flex-wrap: wrap;
+  }
+
+  .subtitle-row .delta{
+    margin-left: 0;
+  }
 }
 
 .candidate-week-radar__subtitle{
@@ -910,13 +970,10 @@ p {
   align-content: start;
   align-items: start;
   padding-top: 2px;
-  /* Show all cards; page scrolls normally (no internal "drag/scroll" area). */
   max-height: none;
   overflow: visible;
   scrollbar-width: auto;
   scroll-snap-type: none;
-  /* Important: keep the grid fully clickable (action buttons, flip, edit, etc.).
-     The previous "grab/drag" affordance was canceling clicks in some browsers. */
   cursor: default;
   user-select: auto;
   touch-action: auto;
@@ -1030,4 +1087,3 @@ p {
   container-type: inline-size;
   container-name: recruiter-card;
 }
-

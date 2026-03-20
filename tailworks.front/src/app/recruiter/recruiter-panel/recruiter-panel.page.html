@@ -1,7 +1,7 @@
 <section class="recruiter-panel">
   <header class="recruiter-panel__hero">
     <div class="recruiter-panel__hero-copy">
-      <span class="recruiter-panel__eyebrow">Operacao de recruiters</span>
+      <span class="recruiter-panel__eyebrow">Operação de recruiters</span>
       <h1>Time de recrutamento</h1>
       <p>Cadastre, acompanhe e ajuste o nivel de acesso dos recruiters da empresa.</p>
     </div>
@@ -40,11 +40,11 @@
     <article class="recruiter-panel__metric-card">
       <span>Masters</span>
       <strong>{{ masterRecruiters }}</strong>
-      <small>Lideranca com visao ampla</small>
+      <small>Liderança com visão ampla</small>
     </article>
 
     <article class="recruiter-panel__metric-card">
-      <span>Operacao</span>
+      <span>Operação</span>
       <strong>{{ inactiveRecruiters }}</strong>
       <small>{{ recruiterCoverageLabel }}</small>
     </article>
@@ -55,9 +55,19 @@
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
       <input
         type="search"
-        placeholder="Buscar recruiter, email, area ou cargo"
+        placeholder="Buscar recruiter, e-mail, área ou cargo"
         [(ngModel)]="searchTerm"
       />
+      <button
+        *ngIf="hasActiveFilters"
+        class="recruiter-panel__search-clear"
+        type="button"
+        aria-label="Limpar busca e filtros"
+        (click)="resetFilters()"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+        <span>Limpar</span>
+      </button>
     </div>
 
     <div class="recruiter-panel__filters" aria-label="Filtrar recruiters">
@@ -190,6 +200,7 @@
         type="button"
         (click)="resetFilters()"
       >
+        <span class="material-symbols-rounded" aria-hidden="true">refresh</span>
         Limpar filtros
       </button>
     </article>

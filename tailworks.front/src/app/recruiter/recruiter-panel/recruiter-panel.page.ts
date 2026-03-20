@@ -103,19 +103,19 @@ export class RecruiterPanelPage implements OnDestroy {
     }
 
     if (scopes.has('following')) {
-      return 'Operacao compartilhada entre squads';
+      return 'Operação compartilhada entre squads';
     }
 
-    return 'Operacao focada por recruiter';
+    return 'Operação focada por recruiter';
   }
 
   get emptyStateHint(): string {
     if (this.searchTerm.trim()) {
-      return 'Tente buscar por outro nome, e-mail, area ou cargo. Você também pode limpar a busca para voltar ao time completo.';
+      return 'Tente buscar por outro nome, e-mail, área ou cargo. Você também pode limpar a busca para voltar ao time completo.';
     }
 
     if (this.statusFilter !== 'all') {
-      return 'Volte para "Todos" para reabrir a visao completa do time desta empresa.';
+      return 'Volte para "Todos" para reabrir a visão completa do time desta empresa.';
     }
 
     return 'Cadastre um novo recruiter para começar a distribuir a operação do time.';
@@ -123,6 +123,10 @@ export class RecruiterPanelPage implements OnDestroy {
 
   get shouldShowEmptyResetAction(): boolean {
     return this.searchTerm.trim().length > 0 || this.statusFilter !== 'all';
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.shouldShowEmptyResetAction;
   }
 
   setStatusFilter(filter: RecruiterStatusFilter): void {
@@ -151,7 +155,7 @@ export class RecruiterPanelPage implements OnDestroy {
       case 'following':
         return 'Ve vagas acompanhadas';
       default:
-        return 'Ve vagas proprias';
+        return 'Vê vagas próprias';
     }
   }
 

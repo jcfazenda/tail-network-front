@@ -55,6 +55,11 @@
   transform: translateY(-1px);
 }
 
+.candidate-week-radar__menu:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 146, 43, 0.16);
+}
+
 .candidate-week-radar__subtitle{
   display: flex;
   align-items: center;
@@ -736,4 +741,3 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-

@@ -6,6 +6,7 @@ import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.s
 import { TalentDirectoryService, TalentRecord } from '../../talent/talent-directory.service';
 import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 import { JobsRepository } from './jobs.repository';
+import { MatchDomainService } from '../../core/matching/match-domain.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -53,6 +54,7 @@ export class VagasMockService {
   private readonly talentDirectoryService = inject(TalentDirectoryService);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly jobsRepository = inject(JobsRepository);
+  private readonly matchDomainService = inject(MatchDomainService);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
@@ -648,7 +650,7 @@ export class VagasMockService {
     const now = new Date().toISOString();
     const talents = Math.max(8, command.previewAvatarExtraCount + command.previewAvatars.length);
     const radarCount = Math.max(4, Math.round(talents * 0.72));
-    const match = Math.min(99, Math.max(42, Math.round(command.previewAderencia)));
+    const match = Math.min(99, Math.max(42, this.matchDomainService.clampScore(command.previewAderencia)));
     const recruiterIdentity = this.syncRecruiterWorkspaceForCompany(command.draft.company);
     const recruiterWatcherIds = Array.from(new Set([
       ...(existing?.recruiterWatcherIds ?? []),
@@ -1049,8 +1051,12 @@ export class VagasMockService {
   }
 
   private collectRadarTalents(job: MockJobRecord, acceptedJobId: string | null, acceptedCandidateNames: Set<string>): TalentRecord[] {
-    const requiredRepoIds = this.mapJobTechStackToRepoIds(job.techStack.map((item) => item.name));
-    if (requiredRepoIds.length === 0) {
+    const jobProfile = this.matchDomainService.buildJobProfile({
+      techStack: job.techStack,
+      seniority: job.seniority,
+      responsibilitySections: job.responsibilitySections,
+    });
+    if (jobProfile.requiredRepoIds.length === 0) {
       return [];
     }
 
@@ -1060,107 +1066,18 @@ export class VagasMockService {
       .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring)
       .filter((talent) => !acceptedNamesLower.has(talent.name.trim().toLocaleLowerCase('pt-BR')));
     const scored = candidates
-      .map((talent) => ({ talent, score: this.scoreTalentForJob(requiredRepoIds, talent) }))
+      .map((talent) => ({
+        talent,
+        score: this.matchDomainService.scoreTalentAgainstJob(jobProfile, {
+          stackScores: talent.stacks,
+        }).overallScore,
+      }))
       .filter((item) => item.score >= 45);
 
     scored.sort((a, b) => b.score - a.score || a.talent.name.localeCompare(b.talent.name, 'pt-BR'));
 
     // Cap defensivo: evita listas gigantes no mock.
     return scored.slice(0, 120).map((item) => item.talent);
-  }
-
-  private mapJobTechStackToRepoIds(items: string[]): string[] {
-    const out: string[] = [];
-
-    const push = (id: string) => {
-      if (!out.includes(id)) {
-        out.push(id);
-      }
-    };
-
-    for (const raw of items) {
-      const normalized = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
-
-      if (normalized.includes('.net') || normalized.includes('dotnet')) {
-        push('repo:dotnet');
-      }
-      if (normalized.includes('c#') || normalized.includes('csharp')) {
-        push('repo:csharp');
-      }
-      if (normalized.includes('asp') && normalized.includes('core')) {
-        push('repo:aspnet-core');
-      }
-      if (normalized.includes('entity') && normalized.includes('framework')) {
-        push('repo:entity-framework');
-      }
-      if (normalized.includes('rest')) {
-        push('repo:rest-api');
-      }
-      if (normalized.includes('sql server')) {
-        push('repo:sql-server');
-      }
-      if (normalized.includes('postgres')) {
-        push('repo:postgresql');
-      }
-      if (normalized.includes('mysql')) {
-        push('repo:mysql');
-      }
-      if (normalized.includes('mongodb')) {
-        push('repo:mongodb');
-      }
-      if (normalized.includes('redis')) {
-        push('repo:redis');
-      }
-      if (normalized.includes('elastic')) {
-        push('repo:elasticsearch');
-      }
-      if (normalized.includes('docker')) {
-        push('repo:docker');
-      }
-      if (normalized.includes('kubernetes')) {
-        push('repo:kubernetes');
-      }
-      if (normalized.includes('terraform')) {
-        push('repo:terraform');
-      }
-      if (normalized.includes('aws')) {
-        push('repo:aws');
-      }
-      if (normalized.includes('azure')) {
-        push('repo:azure');
-      }
-      if (normalized.includes('gcp') || normalized.includes('google cloud')) {
-        push('repo:gcp');
-      }
-      if (normalized.includes('serverless')) {
-        push('repo:serverless');
-      }
-      if (normalized.includes('kafka')) {
-        push('repo:kafka');
-      }
-      if (normalized.includes('rabbit')) {
-        push('repo:rabbitmq');
-      }
-      if (normalized.includes('microservice')) {
-        push('repo:microservices');
-      }
-    }
-
-    return out;
-  }
-
-  private scoreTalentForJob(requiredRepoIds: string[], talent: TalentRecord): number {
-    if (!requiredRepoIds.length) {
-      return 0;
-    }
-
-    let total = 0;
-    for (const repoId of requiredRepoIds) {
-      const value = Number(talent.stacks?.[repoId] ?? 0);
-      total += Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
-    }
-
-    return Math.round(total / requiredRepoIds.length);
   }
 
   private shouldShowCandidateAvatar(candidate: MockJobCandidate): boolean {

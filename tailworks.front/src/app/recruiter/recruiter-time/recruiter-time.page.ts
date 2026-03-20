@@ -105,13 +105,17 @@ export class RecruiterTimePage implements OnDestroy {
       this.companyRecruiters.flatMap((recruiter) => recruiter.areas),
     );
 
-    return Array.from(areas).slice(0, 3).join(' · ') || 'Operacao geral';
+    return Array.from(areas).slice(0, 3).join(' · ') || 'Operação geral';
   }
 
   get emptyTeamHint(): string {
     return this.searchTerm.trim()
-      ? 'Tente buscar por outro nome, area ou e-mail para localizar alguem do time.'
+      ? 'Tente buscar por outro nome, área ou e-mail para localizar alguém do time.'
       : 'Assim que novos recruiters forem adicionados a esta empresa, eles aparecem aqui automaticamente.';
+  }
+
+  get hasSearchTerm(): boolean {
+    return this.searchTerm.trim().length > 0;
   }
 
   get canSendMessage(): boolean {
@@ -177,16 +181,17 @@ export class RecruiterTimePage implements OnDestroy {
     switch (recruiter.viewScope) {
       case 'company':
         return 'Ve toda a empresa';
+        
       case 'following':
         return 'Acompanha vagas compartilhadas';
       default:
-        return 'Opera vagas proprias';
+        return 'Opera vagas próprias';
     }
   }
 
   messageAuthorLabel(message: TeamChatMessage): string {
     if (message.sender === 'me') {
-      return 'Voce';
+      return 'Você';
     }
 
     if (message.sender === 'system') {
@@ -245,14 +250,14 @@ export class RecruiterTimePage implements OnDestroy {
       {
         id: this.createMessageId('system'),
         sender: 'system',
-        text: `Canal interno do time ${company}. Use este espaco para alinhar vagas, radar e andamento do processo.`,
+        text: `Canal interno do time ${company}. Use este espaço para alinhar vagas, radar e andamento do processo.`,
         time: '09:00',
       },
       {
         id: this.createMessageId('seed'),
         sender: isCurrentUser ? 'me' : 'teammate',
         text: isCurrentUser
-          ? 'Canal aberto. Este espaco pode servir como bloco rapido para combinados internos.'
+          ? 'Canal aberto. Este espaço pode servir como bloco rápido para combinados internos.'
           : `Estou cobrindo a frente de ${recruiterArea.toLocaleLowerCase('pt-BR')} hoje. Se surgir algo do radar, me chama por aqui.`,
         time: '09:12',
       },

@@ -71,6 +71,16 @@
       (input)="templateSearchQuery = ($any($event.target).value || '')"
     />
 
+    <button
+      *ngIf="isTemplateLanding && hasTemplateSearchQuery"
+      class="search__clear"
+      type="button"
+      aria-label="Limpar busca"
+      (click)="clearTemplateSearch()"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
+    </button>
+
     <ng-template #defaultSearch>
       <input
         type="search"
@@ -151,11 +161,15 @@
   class="topbar-notification-backdrop"
   *ngIf="isNotificationListOpen || activeTalentNotification"
   (click)="closeNotificationModal()"
+  aria-hidden="true"
 >
   <section
     class="topbar-notification-list"
     *ngIf="isNotificationListOpen"
     (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Lista de notificações"
   >
     <header class="topbar-notification-list__head">
       <strong>Notificações</strong>
@@ -185,13 +199,20 @@
     </div>
 
     <ng-template #emptyNotifications>
-      <div class="topbar-notification-list__empty">
+      <div class="topbar-notification-list__empty" aria-live="polite">
         Nenhuma notificação por aqui.
       </div>
     </ng-template>
   </section>
 
-  <section class="topbar-notification-modal" *ngIf="activeTalentNotification" (click)="$event.stopPropagation()">
+  <section
+    class="topbar-notification-modal"
+    *ngIf="activeTalentNotification"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Detalhes da notificação"
+  >
     <div class="topbar-notification-modal__confetti" *ngIf="notificationConfettiPieces.length > 0" aria-hidden="true">
       <span
         class="topbar-notification-modal__confetti-piece"

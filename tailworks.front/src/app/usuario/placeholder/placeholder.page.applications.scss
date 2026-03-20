@@ -85,6 +85,17 @@
     0 16px 30px rgba(15, 23, 42, 0.08);
 }
 
+.candidate-applications__filter-button:focus-visible,
+.candidate-applications__view:focus-visible,
+.candidate-applications__filter-chip:focus-visible,
+.candidate-applications__filter-reset:focus-visible,
+.candidate-applications__filter-popover-close:focus-visible,
+.candidate-application-card__dismiss:focus-visible,
+.candidate-application-card__action:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 146, 43, 0.16);
+}
+
 .candidate-applications__filter-button .material-symbols-rounded{
   font-size: 20px;
   line-height: 1;
@@ -299,6 +310,18 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.candidate-applications__filter-reset:hover{
+  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
 }
 
 .candidate-applications__filter-backdrop{
@@ -555,6 +578,73 @@
 
 .candidate-application-card__dismiss:hover{
   color: rgba(15, 23, 42, 0.76);
+}
+
+@media (max-width: 560px){
+  .candidate-applications__filter-anchor{
+    width: 100%;
+  }
+
+  .candidate-applications__filter-popover{
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+
+  .candidate-applications__filter-options--centered{
+    flex-wrap: wrap;
+  }
+
+  .candidate-applications__list--panel .job-card__surface{
+    padding: 16px;
+  }
+
+  .candidate-applications__list--panel .job-card__side--creator{
+    align-items: stretch;
+  }
+
+  .candidate-applications__list--panel .job-card__creator-action{
+    min-width: 0;
+    width: 100%;
+  }
+
+  .candidate-application-card__actions{
+    position: static;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .candidate-application-card__controls{
+    justify-content: space-between;
+  }
+
+  .candidate-application-card__action{
+    flex: 1 1 0;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px){
+  .candidate-applications__view{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .candidate-applications__filter-button{
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .candidate-applications__filter-reset{
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .candidate-application-card__controls{
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .candidate-application-card__action--ghost{
@@ -851,4 +941,3 @@
 .job-card__creator-hidden{
   justify-self: center;
 }
-
