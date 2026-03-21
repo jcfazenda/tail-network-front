@@ -123,6 +123,7 @@ export class SidebarComponent {
         label: 'Recrutamento',
         items: [
           { label: 'Radar', icon: 'radar', route: '/radar' },
+          { label: 'Novo Card', icon: 'add_box', route: '/vagas/cadastro' },
           { label: 'Minhas Vagas', icon: 'work', route: '/vagas' },
           { label: 'Talentos', icon: 'group', route: '/talentos' },
           { label: 'Propostas', icon: 'assignment', route: '/propostas' },

@@ -673,6 +673,16 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return `${tilt}deg`;
   }
 
+  mobileHireMatch(seed: string): number {
+    let hash = 0;
+    const compositeSeed = `${seed}:match`;
+    for (let i = 0; i < compositeSeed.length; i += 1) {
+      hash = (hash * 37 + compositeSeed.charCodeAt(i)) >>> 0;
+    }
+
+    return 84 + (hash % 15);
+  }
+
   scrollHired(direction: -1 | 1): void {
     const el = this.hiredTrack?.nativeElement;
     if (!el) {

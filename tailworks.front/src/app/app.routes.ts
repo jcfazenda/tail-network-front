@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { recruiterAuthGuard, recruiterManageDirectoryGuard, recruiterMasterGuard, talentAuthGuard } from './auth/auth.guards';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'login',
     loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),

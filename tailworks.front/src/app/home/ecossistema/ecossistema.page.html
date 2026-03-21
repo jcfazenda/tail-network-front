@@ -25,6 +25,7 @@
             >
               <div class="hired-card__photo">
                 <img class="hired-card__photo-img" [src]="card.avatarUrl" [alt]="card.name" loading="eager" decoding="async" />
+                <div class="landing__mobile-match">{{ mobileHireMatch(card.name + card.company + card.roleTitle) }}%</div>
               </div>
 
               <div class="hired-card__caption">
@@ -45,7 +46,7 @@
 
     <section class="landing__mobile-radar" aria-label="Stacks mais contratadas">
       <div class="landing__mobile-radar-head">
-        <span class="landing__mobile-radar-delta">+ {{ radarDelta }} contratacoes desde ontem</span>
+        <span class="landing__mobile-radar-delta">+ {{ radarDelta }} contratações desde ontem</span>
       </div>
       <div class="landing__mobile-radar-bars">
         <div
@@ -72,5 +73,17 @@
         </div>
       </div>
     </section>
+
+    <div class="landing__mobile-empty-cta" aria-label="Criar card">
+      <div class="landing__mobile-empty-cta-head">
+        <p>Você não tem nenhum card criado.</p>
+        <a class="landing__mobile-empty-cta-button" href="/vagas/cadastro">criar</a>
+      </div>
+      <p class="landing__mobile-empty-cta-copy">
+        Ao começar a criar cards, eles aparecerão aqui e você poderá ver os candidatos no radar com seus % de compatibilidade e aderência.
+      </p>
+    </div>
+
+    <footer class="landing__mobile-footer">CRIATTI Technologies @direitos 2026</footer>
   </section>
 </main>

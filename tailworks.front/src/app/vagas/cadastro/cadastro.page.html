@@ -2,9 +2,9 @@
   <div class="job-create">
     <section class="job-create__hero">
       <div class="job-create__hero-copy">
-        <h1 class="job-create__title">{{ isEditingJob ? 'Editar Vaga' : 'Criar Nova Vaga' }}</h1>
+        <h1 class="job-create__title">{{ isEditingJob ? 'Editar Card' : 'Criar Novo Card' }}</h1>
         <p class="job-create__description">
-          Veja o card da vaga sendo montado conforme o preenchimento
+          Veja o card sendo montado conforme o preenchimento
         </p>
       </div>
 
@@ -20,7 +20,7 @@
           </button>
           <button class="job-create__hero-button job-create__hero-button--ghost" type="button" (click)="saveAsDraft()">Salvar Rascunho</button>
           <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">
-            {{ isEditingJob ? 'Salvar' : 'Publicar Vaga' }}
+            {{ isEditingJob ? 'Salvar Card' : 'Publicar Card' }}
           </button>
         </div>
       </div>
@@ -141,7 +141,7 @@
         </section>
 
         <section class="job-info-block">
-        <h2 class="job-info-block__title">Informações da Vaga</h2>
+        <h2 class="job-info-block__title">Informações do Card</h2>
 
         <div class="job-info-card">
           <div class="job-info-card__grid">
