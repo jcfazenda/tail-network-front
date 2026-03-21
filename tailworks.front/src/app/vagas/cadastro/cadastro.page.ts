@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
-type SummaryView = 'status' | 'benefits' | 'details';
+type SummaryView = 'benefits' | 'details' | 'requirements';
 type ResponsibilitySection = JobResponsibilitySection;
 
 type CompanySummaryProfile = {
@@ -258,7 +258,7 @@ export class CadastroPage implements OnDestroy {
   };
   statusStageIndex = 0;
   expandedStatusPreviewIndex = 0;
-  summaryPanelOpen = true;
+  summaryPanelOpen = false;
   contractDecision: ContractDecision = null;
   documentsSubmittedByTalent = false;
   documentsSent = false;
@@ -615,6 +615,12 @@ export class CadastroPage implements OnDestroy {
     this.summaryPanelOpen = true;
   }
 
+  @HostListener('window:tailworks:open-cadastro-simulator')
+  onOpenCadastroSimulatorShortcut(): void {
+    this.openSummaryPanel();
+    this.cdr.markForCheck();
+  }
+
   startSummaryPanelDrag(event: PointerEvent): void {
     if (event.pointerType && event.pointerType !== 'mouse') {
       return;
@@ -839,7 +845,7 @@ export class CadastroPage implements OnDestroy {
   }
 
   get canAddSummarySection(): boolean {
-    return this.activeSummaryView !== 'status';
+    return true;
   }
 
   get frontResponsibilitySections(): ResponsibilitySection[] {
@@ -913,7 +919,7 @@ export class CadastroPage implements OnDestroy {
   }
 
   get techStackModalSubmitLabel(): string {
-    return this.editingTechStackIndex === null ? 'Adicionar habilidade' : 'Salvar habilidade';
+    return 'Salvar';
   }
 
   get summaryPanelDescription(): string {
@@ -1443,11 +1449,9 @@ export class CadastroPage implements OnDestroy {
   }
 
   publishJob(): void {
-    const savedJob = this.persistJob(this.isEditingJob ? this.editingJobStatus : 'ativas');
+    this.persistJob(this.isEditingJob ? this.editingJobStatus : 'ativas');
 
-    void this.router.navigate(['/vagas'], {
-      queryParams: { tab: savedJob.status, created: savedJob.id },
-    });
+    void this.router.navigate(['/home/ecossistema']);
   }
 
   openJobActionsModal(): void {

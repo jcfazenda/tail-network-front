@@ -2117,6 +2117,172 @@
     border: 1px dashed rgba(156, 163, 175, 0.9);
   }
 
+  .landing__mobile-job-card{
+    width: min(100%, 420px);
+    margin: 18px auto 0;
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
+  }
+
+  .landing__mobile-job-card-head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .landing__mobile-job-card-brand{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .landing__mobile-job-card-logo{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    object-fit: cover;
+    background: rgba(243, 244, 246, 0.96);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    flex: 0 0 auto;
+  }
+
+  .landing__mobile-job-card-logo--fallback{
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.72);
+  }
+
+  .landing__mobile-job-card-brand-copy{
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .landing__mobile-job-card-brand-line{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .landing__mobile-job-card-brand-copy strong{
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.86);
+  }
+
+  .landing__mobile-job-card-workmodel{
+    min-height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    background: rgba(243, 244, 246, 0.96);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    color: rgba(15, 23, 42, 0.68);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .landing__mobile-job-card-brand-copy span{
+    font-size: 11px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.52);
+  }
+
+  .landing__mobile-job-card-action{
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(188, 109, 24, 0.12);
+    color: rgba(140, 76, 18, 0.94);
+    font-size: 11px;
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: lowercase;
+    flex: 0 0 auto;
+  }
+
+  .landing__mobile-job-card-title-row{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .landing__mobile-job-card-title{
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.9);
+    letter-spacing: -0.02em;
+  }
+
+  .landing__mobile-job-card-salary{
+    text-align: right;
+    white-space: nowrap;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.9);
+    letter-spacing: -0.02em;
+  }
+
+  .landing__mobile-job-card-summary{
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.6);
+  }
+
+  .landing__mobile-job-card-chips-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.14);
+  }
+
+  .landing__mobile-job-card-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .landing__mobile-job-card-chip{
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    background: rgba(243, 244, 246, 0.96);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    color: rgba(15, 23, 42, 0.7);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
   .landing__mobile-empty-cta-head{
     display: flex;
     align-items: flex-start;
@@ -2258,6 +2424,20 @@
     margin-top: 16px;
   }
 
+  .landing__mobile-job-card{
+    width: min(100%, 392px);
+    margin-top: 16px;
+    padding: 14px;
+  }
+
+  .landing__mobile-job-card-title{
+    font-size: 17px;
+  }
+
+  .landing__mobile-job-card-salary{
+    font-size: 15px;
+  }
+
   .landing__mobile-radar-head{
     font-size: 13px;
   }
@@ -2383,6 +2563,49 @@
     margin-top: 14px;
     padding: 12px 14px 14px;
   }
+
+  .landing__mobile-job-card{
+    width: min(100%, 368px);
+    margin-top: 14px;
+    padding: 12px 14px 14px;
+    gap: 8px;
+  }
+
+  .landing__mobile-job-card-head{
+    gap: 10px;
+  }
+
+  .landing__mobile-job-card-logo{
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .landing__mobile-job-card-brand-copy strong{
+    font-size: 13px;
+  }
+
+  .landing__mobile-job-card-workmodel{
+    min-height: 20px;
+    padding: 0 7px;
+    font-size: 9px;
+  }
+
+  .landing__mobile-job-card-brand-copy span,
+  .landing__mobile-job-card-summary,
+  .landing__mobile-job-card-chip,
+  .landing__mobile-job-card-action{
+    font-size: 10px;
+  }
+
+  .landing__mobile-job-card-title{
+    font-size: 16px;
+  }
+
+  .landing__mobile-job-card-salary{
+    font-size: 14px;
+  }
+
 
   .landing__mobile-empty-cta-head{
     gap: 10px;

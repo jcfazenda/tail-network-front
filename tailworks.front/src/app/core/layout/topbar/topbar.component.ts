@@ -96,6 +96,10 @@ export class TopbarComponent {
     return this.primaryPath === '/home/ecossistema';
   }
 
+  get isCadastroPage(): boolean {
+    return this.primaryPath === '/vagas/cadastro';
+  }
+
   get isCandidateMode(): boolean {
     return this.primaryPath.startsWith('/usuario');
   }
@@ -435,6 +439,10 @@ export class TopbarComponent {
 
   toggleSidebar(): void {
     this.sidebarVisibilityService.toggle();
+  }
+
+  openCreateJob(): void {
+    void this.router.navigate(['/vagas/cadastro']);
   }
 
   clearTemplateSearch(): void {

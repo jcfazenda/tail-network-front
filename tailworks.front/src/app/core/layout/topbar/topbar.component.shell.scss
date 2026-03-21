@@ -22,7 +22,8 @@
 }
 
 .topbar__profile:focus-visible,
-.topbar__icon:focus-visible{
+.topbar__icon:focus-visible,
+.topbar__shortcut:focus-visible{
   outline: 2px solid rgba(225, 138, 39, 0.32);
   outline-offset: 4px;
 }
@@ -76,6 +77,24 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.topbar__shortcut{
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(188, 109, 24, 0.22);
+  border-radius: 999px;
+  background: rgba(188, 109, 24, 0.14);
+  color: rgba(140, 76, 18, 0.96);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: lowercase;
+  box-shadow: 0 8px 18px rgba(188, 109, 24, 0.12);
 }
 
 .topbar__icon{
@@ -146,5 +165,10 @@
   .topbar__icon{
     width: 30px;
     height: 30px;
+  }
+
+  .topbar__shortcut{
+    min-height: 30px;
+    padding-inline: 12px;
   }
 }

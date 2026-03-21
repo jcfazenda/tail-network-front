@@ -23,6 +23,16 @@
   </button>
 
   <div class="topbar__actions">
+    <button
+      *ngIf="isTemplateLanding"
+      class="topbar__shortcut"
+      type="button"
+      (click)="openCreateJob()"
+      aria-label="Criar vaga"
+    >
+      criar
+    </button>
+
     <button class="topbar__icon" type="button" aria-label="Buscar">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
     </button>

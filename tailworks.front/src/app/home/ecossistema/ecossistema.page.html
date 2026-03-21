@@ -74,15 +74,73 @@
       </div>
     </section>
 
-    <div class="landing__mobile-empty-cta" aria-label="Criar card">
-      <div class="landing__mobile-empty-cta-head">
-        <p>Você não tem nenhum card criado.</p>
-        <a class="landing__mobile-empty-cta-button" href="/vagas/cadastro">criar</a>
+    <ng-container *ngIf="featuredJob as job; else emptyJobCard">
+      <article class="landing__mobile-job-card" aria-label="Card da vaga criada">
+        <div class="landing__mobile-job-card-head">
+          <div class="landing__mobile-job-card-brand">
+            <ng-container *ngIf="jobCompanyLogoUrl(job) as logoUrl; else companyFallback">
+              <img
+                *ngIf="logoUrl; else companyFallback"
+                class="landing__mobile-job-card-logo"
+                [src]="logoUrl"
+                [alt]="job.company"
+                loading="eager"
+                decoding="async"
+              />
+            </ng-container>
+            <ng-template #companyFallback>
+              <div class="landing__mobile-job-card-logo landing__mobile-job-card-logo--fallback">
+                {{ jobCompanyLogoLabel(job) }}
+              </div>
+            </ng-template>
+
+            <div class="landing__mobile-job-card-brand-copy">
+              <strong>{{ job.company }}</strong>
+              <span>{{ jobCardLocation(job) }}</span>
+            </div>
+          </div>
+
+          <span class="landing__mobile-job-card-workmodel">{{ jobCardWorkModel(job) }}</span>
+        </div>
+
+        <div class="landing__mobile-job-card-title-row">
+          <div class="landing__mobile-job-card-title">{{ job.title }}</div>
+
+          <div
+            class="landing__mobile-job-card-salary"
+            *ngIf="job.salaryRange && job.showSalaryRangeInCard !== false"
+          >
+            {{ job.salaryRange }}
+          </div>
+        </div>
+
+        <p class="landing__mobile-job-card-summary">
+          {{ job.summary || 'Sua vaga publicada aparecerá aqui.' }}
+        </p>
+
+        <div class="landing__mobile-job-card-chips-row">
+          <div class="landing__mobile-job-card-chips">
+            <span class="landing__mobile-job-card-chip" *ngFor="let stack of job.techStack | slice:0:2">
+              {{ stack.name }}
+            </span>
+          </div>
+
+          <a class="landing__mobile-job-card-action" href="/vagas/cadastro">editar</a>
+        </div>
+      </article>
+    </ng-container>
+
+    <ng-template #emptyJobCard>
+      <div class="landing__mobile-empty-cta" aria-label="Criar card">
+        <div class="landing__mobile-empty-cta-head">
+          <p>Você não tem nenhum card criado.</p>
+          <a class="landing__mobile-empty-cta-button" href="/vagas/cadastro">criar</a>
+        </div>
+        <p class="landing__mobile-empty-cta-copy">
+          Ao começar a criar cards, eles aparecerão aqui e você poderá ver os candidatos no radar com seus % de compatibilidade e aderência.
+        </p>
       </div>
-      <p class="landing__mobile-empty-cta-copy">
-        Ao começar a criar cards, eles aparecerão aqui e você poderá ver os candidatos no radar com seus % de compatibilidade e aderência.
-      </p>
-    </div>
+    </ng-template>
 
     <footer class="landing__mobile-footer">CRIATTI Technologies @direitos 2026</footer>
   </section>
