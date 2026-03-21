@@ -16,7 +16,10 @@
       <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
     </div>
 
-    <span class="topbar__greeting">Hi {{ topbarGreetingName }}</span>
+    <span class="topbar__profile-copy">
+      <span class="topbar__profile-name">{{ topbarProfileDisplayName }}</span>
+      <span class="topbar__profile-meta">{{ topbarProfileDisplayMeta }}</span>
+    </span>
   </button>
 
   <div class="topbar__actions">

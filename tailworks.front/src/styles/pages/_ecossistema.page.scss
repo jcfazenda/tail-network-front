@@ -1807,6 +1807,8 @@
   }
 
   .landing__panel{
+    position: relative;
+    isolation: isolate;
     width: 100%;
     min-height: 100%;
     height: 100%;
@@ -1821,6 +1823,7 @@
 
   .landing__panel-art{
     position: relative;
+    z-index: 1;
     width: 100%;
     height: min(66vw, 290px);
     margin: -10px 0 0;
@@ -1849,8 +1852,8 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 76px;
-    height: 76px;
+    width: 92px;
+    height: 92px;
     background: center / contain no-repeat url('/assets/images/logo-tail.png');
     z-index: 2;
     pointer-events: none;
@@ -1860,7 +1863,8 @@
     margin-top: -16px;
     padding: 0 12px;
     position: relative;
-    z-index: 2;
+    z-index: 8;
+    overflow: visible !important;
   }
 
   .landing__mobile-track{
@@ -1868,10 +1872,14 @@
     display: flex;
     gap: 0;
     overflow-x: auto;
-    padding: 0 0 12px;
+    overflow-y: visible;
+    padding: 28px 0 12px;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    position: relative;
+    z-index: 4;
+    overflow: visible !important;
   }
 
   .landing__mobile-track::-webkit-scrollbar{
@@ -1888,15 +1896,27 @@
     padding: 0 12px;
     box-sizing: border-box;
     scroll-snap-align: start;
+    overflow: visible;
+    position: relative;
+    z-index: 4;
+    overflow: visible !important;
+  }
+
+  .landing__mobile-card-shell{
+    position: relative;
+    overflow: visible !important;
+    z-index: 6;
   }
 
   .landing__mobile-card{
+    position: relative;
+    z-index: 4;
     padding: 5px 5px 7px;
     gap: 5px;
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
     box-shadow: 0 10px 18px -20px rgba(15, 23, 42, 0.24);
-    overflow: visible;
+    overflow: visible !important;
     transform: rotate(var(--polaroid-tilt, 0deg));
   }
 
@@ -1905,18 +1925,28 @@
   }
 
   .landing__mobile-tape{
+    display: block;
     position: absolute;
     left: 50%;
-    top: -10px;
-    width: 26px;
-    height: 12px;
-    transform: translateX(-50%) rotate(-2deg);
-    border-radius: 3px;
-    background: #df8b1e;
-    border: 1px solid rgba(122, 64, 12, 0.5);
-    box-shadow: 0 4px 10px rgba(122, 64, 12, 0.22);
-    opacity: 1;
-    z-index: 3;
+    top: -14px;
+    width: 36px;
+    height: 14px;
+    transform: translateX(-50%) rotate(var(--tape-tilt, -2deg));
+    border-radius: 2px;
+    background:
+      linear-gradient(180deg, rgba(228, 164, 74, 0.92), rgba(193, 126, 34, 0.92)),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.08) 0 3px,
+        rgba(122, 64, 12, 0.05) 3px 6px
+      );
+    border: 1px solid rgba(122, 64, 12, 0.34);
+    box-shadow:
+      0 3px 8px rgba(122, 64, 12, 0.16),
+      inset 0 1px 0 rgba(255, 245, 214, 0.28);
+    opacity: 0.94;
+    filter: saturate(0.88) contrast(0.96);
+    z-index: 20;
     pointer-events: none;
   }
 
@@ -2092,8 +2122,8 @@
   .landing__panel-art::after{
     top: 10px;
     right: 10px;
-    width: 68px;
-    height: 68px;
+    width: 82px;
+    height: 82px;
   }
 
   .landing__mobile-strip{
@@ -2177,8 +2207,8 @@
   .landing__panel-art::after{
     top: 8px;
     right: 8px;
-    width: 60px;
-    height: 60px;
+    width: 72px;
+    height: 72px;
   }
 
   .landing__mobile-strip{
@@ -2205,8 +2235,8 @@
 
   .landing__mobile-tape{
     top: -8px;
-    width: 24px;
-    height: 10px;
+    width: 32px;
+    height: 13px;
   }
 
   .landing__mobile-card .hired-card__photo{

@@ -16,38 +16,46 @@
           *ngFor="let page of mobileHiredPages; let pageIndex = index"
           class="landing__mobile-page"
         >
-          <article
-            *ngFor="let card of page; trackBy: trackByHiredCard; let cardIndex = index"
-            class="hired-card landing__mobile-card"
-            [style.--polaroid-tilt]="mobilePolaroidTilt(pageIndex, cardIndex, card.name + card.company + card.roleTitle)"
-          >
-            <span class="landing__mobile-tape" aria-hidden="true"></span>
+        <div
+          *ngFor="let card of page; trackBy: trackByHiredCard; let cardIndex = index"
+          class="landing__mobile-card-shell"
+        >
+            <span
+              class="landing__mobile-tape"
+              aria-hidden="true"
+              [style.--tape-tilt]="mobileTapeTilt(pageIndex, cardIndex, card.name + card.company + card.roleTitle)"
+            ></span>
 
-            <div class="hired-card__photo">
-              <img class="hired-card__photo-img" [src]="card.avatarUrl" [alt]="card.name" loading="eager" decoding="async" />
-            </div>
-
-            <div class="hired-card__caption">
-              <div class="hired-card__name">{{ card.name }}</div>
-              <div class="hired-card__role">{{ card.roleTitle }}</div>
-
-              <div class="hired-card__company">
-                <img class="hired-card__company-logo" [src]="card.companyLogoUrl" [alt]="card.company" loading="eager" decoding="async" />
-                <span class="hired-card__company-name">{{ card.company }}</span>
+            <article
+              class="hired-card landing__mobile-card"
+              [style.--polaroid-tilt]="mobilePolaroidTilt(pageIndex, cardIndex, card.name + card.company + card.roleTitle)"
+            >
+              <div class="hired-card__photo">
+                <img class="hired-card__photo-img" [src]="card.avatarUrl" [alt]="card.name" loading="eager" decoding="async" />
               </div>
-            </div>
 
-            <div class="hired-card__chips">
-              <span
-                *ngFor="let stack of card.stacks"
-                class="hired-card__chip"
-                [class.hired-card__chip--dark]="stack.tone === 'dark'"
-                [class.hired-card__chip--accent]="stack.tone === 'accent'"
-              >
-                {{ stack.label }}
-              </span>
-            </div>
-          </article>
+              <div class="hired-card__caption">
+                <div class="hired-card__name">{{ card.name }}</div>
+                <div class="hired-card__role">{{ card.roleTitle }}</div>
+
+                <div class="hired-card__company">
+                  <img class="hired-card__company-logo" [src]="card.companyLogoUrl" [alt]="card.company" loading="eager" decoding="async" />
+                  <span class="hired-card__company-name">{{ card.company }}</span>
+                </div>
+              </div>
+
+              <div class="hired-card__chips">
+                <span
+                  *ngFor="let stack of card.stacks"
+                  class="hired-card__chip"
+                  [class.hired-card__chip--dark]="stack.tone === 'dark'"
+                  [class.hired-card__chip--accent]="stack.tone === 'accent'"
+                >
+                  {{ stack.label }}
+                </span>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
     </div>

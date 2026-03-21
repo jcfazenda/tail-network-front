@@ -648,6 +648,18 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return cardIndex % 2 === 0 ? `-${magnitude}deg` : `${magnitude}deg`;
   }
 
+  mobileTapeTilt(pageIndex: number, cardIndex: number, seed: string): string {
+    let hash = 0;
+    const compositeSeed = `${pageIndex}:${cardIndex}:${seed}:tape`;
+    for (let i = 0; i < compositeSeed.length; i += 1) {
+      hash = (hash * 33 + compositeSeed.charCodeAt(i)) >>> 0;
+    }
+
+    const tiltSteps = [-13, -11, -9, -7, 7, 9, 11, 13];
+    const tilt = tiltSteps[hash % tiltSteps.length] ?? (cardIndex % 2 === 0 ? -9 : 9);
+    return `${tilt}deg`;
+  }
+
   scrollHired(direction: -1 | 1): void {
     const el = this.hiredTrack?.nativeElement;
     if (!el) {
