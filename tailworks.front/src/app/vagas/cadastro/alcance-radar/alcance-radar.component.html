@@ -1,23 +1,4 @@
 <section class="radar-overview" aria-label="Alcance do radar">
-  <div class="radar-overview__content">
-    <span class="radar-overview__kicker" *ngIf="title.trim()">{{ title }}</span>
-
-    <div class="radar-overview__legend-list">
-      <div
-        class="radar-overview__legend-item"
-        *ngFor="let item of items"
-        [ngClass]="'radar-overview__legend-item--' + item.tone"
-      >
-        <span class="radar-overview__legend-row">
-          <span class="radar-overview__icon" aria-hidden="true"></span>
-          <span class="radar-overview__label">{{ item.label }}</span>
-          <span class="radar-overview__detail" *ngIf="item.detail">{{ item.detail }}</span>
-          <strong class="radar-overview__percent" *ngIf="item.percent !== undefined">+{{ item.percent }}%</strong>
-          <strong class="radar-overview__count" *ngIf="item.count !== undefined">{{ item.count }}</strong>
-        </span>
-      </div>
-    </div>
-  </div>
 
   <div class="radar-overview__gauge-wrap">
     <svg class="radar-overview__gauge-svg" viewBox="0 0 112 112" aria-hidden="true">
@@ -45,4 +26,26 @@
       <span *ngIf="showGaugeLabel">{{ gaugeLabel }}</span>
     </span>
   </div>
+    
+  <div class="radar-overview__content">
+    <span class="radar-overview__kicker" *ngIf="title.trim()">{{ title }}</span>
+
+    <div class="radar-overview__legend-list">
+      <div
+        class="radar-overview__legend-item"
+        *ngFor="let item of items"
+        [ngClass]="'radar-overview__legend-item--' + item.tone"
+      >
+        <span class="radar-overview__legend-row">
+          <span class="radar-overview__icon" aria-hidden="true"></span>
+          <span class="radar-overview__label">{{ item.label }}</span>
+          <span class="radar-overview__detail" *ngIf="item.detail">{{ item.detail }}</span>
+          <strong class="radar-overview__percent" *ngIf="item.percent !== undefined">+{{ item.percent }}%</strong>
+          <strong class="radar-overview__count" *ngIf="item.count !== undefined">{{ item.count }}</strong>
+        </span>
+      </div>
+    </div>
+  </div>
+
+
 </section>
