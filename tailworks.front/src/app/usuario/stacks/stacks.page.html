@@ -127,16 +127,19 @@
                           [class.candidate-stacks__stack-item-slider--cold]="getRepoKnowledge('primary', item.id) >= 10 && getRepoKnowledge('primary', item.id) < 45"
                           [class.candidate-stacks__stack-item-slider--hot]="getRepoKnowledge('primary', item.id) >= 45"
                         >
-                          <input
-                            class="candidate-stacks__stack-item-range"
-                            type="range"
-                            min="0"
-                            max="100"
-                            step="1"
-                            [value]="getRepoKnowledge('primary', item.id)"
-                            (input)="updateRepoKnowledge('primary', item, $any($event.target).value)"
-                            [attr.aria-label]="'Definir percentual de ' + item.name"
-                          />
+
+<input
+  class="candidate-stacks__stack-item-range"
+  type="range"
+  min="0"
+  max="100"
+  step="1"
+  [value]="getRepoKnowledge('primary', item.id)"
+  (input)="updateRepoKnowledge('primary', item, $any($event.target).value)"
+  (change)="updateRepoKnowledge('primary', item, $any($event.target).value)"
+  [attr.aria-label]="'Definir percentual de ' + item.name"
+/>
+
                         </div>
                         <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
                       </div>

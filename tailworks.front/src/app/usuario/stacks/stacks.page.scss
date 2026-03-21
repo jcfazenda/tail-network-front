@@ -10,7 +10,7 @@
 
 .candidate-stacks__intro{
   display: grid;
-  gap: px;
+  gap: 8px;
   padding: 4px 4px 0;
   margin: 0;
 }
@@ -141,10 +141,9 @@
 }
 
 .candidate-stacks__section-head{
-  display: flex;
-  gap: 28px;
-  align-items: center;
-  padding: 0 6px 8px;
+  display: grid;
+  gap: 6px;
+  padding: 0 4px;
 }
 
 .candidate-stacks__crest{
@@ -190,11 +189,7 @@
   display: flex;
   justify-content: flex-start;
   width: 100%;
-  padding: 0;
-}
-
-.candidate-stacks__toolbar{
-  padding-bottom: 16px;
+  padding: 0 0 16px;
   border-bottom: 1px dashed rgba(214, 220, 228, 0.96);
 }
 
@@ -226,16 +221,17 @@
 
 .candidate-stacks__radar-preview ::ng-deep .radar-overview__content{
   grid-area: content;
+  padding-left: 0;
+  padding-top: 0;
+  gap: 10px;
 }
 
 .candidate-stacks__radar-preview ::ng-deep .radar-overview__gauge-wrap{
   grid-area: gauge;
-}
-
-.candidate-stacks__radar-preview ::ng-deep .radar-overview__content{
-  padding-left: 0;
-  padding-top: 0;
-  gap: 10px;
+  width: 136px;
+  height: 136px;
+  justify-self: start;
+  transform: none;
 }
 
 .candidate-stacks__radar-preview ::ng-deep .radar-overview__legend-list{
@@ -260,14 +256,6 @@
 .candidate-stacks__radar-preview ::ng-deep .radar-overview__percent,
 .candidate-stacks__radar-preview ::ng-deep .radar-overview__count{
   font-size: 11px;
-}
-
-//  GRAFICO RADAR
-.candidate-stacks__radar-preview ::ng-deep .radar-overview__gauge-wrap{
-  width: 136px;
-  height: 136px;
-  justify-self: start;
-  transform: none;
 }
 
 .candidate-stacks__radar-preview ::ng-deep .radar-overview__gauge-core{
@@ -308,19 +296,12 @@
   font-weight: 600;
 }
 
- // STACKS
 .candidate-stacks__section{
   width: 100%;
   max-width: 1240px;
   display: grid;
   gap: 12px;
   margin-top: 18px;
-}
-
-.candidate-stacks__section-head{
-  display: grid;
-  gap: 6px;
-  padding: 0 4px;
 }
 
 .candidate-stacks__section-head .candidate-stacks__purpose-pill{
@@ -331,8 +312,8 @@
 .candidate-stacks__section-title-row{
   display: inline-flex;
   align-items: center;
-  gap: 0px;
-  margin-top: 0px;
+  gap: 4px;
+  margin-top: 0;
 }
 
 .candidate-stacks__help-button{
@@ -956,7 +937,7 @@
   grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
   align-items: center;
   gap: 14px;
-  min-height: 44px;
+  min-height: 52px;
   padding: 8px 10px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.46);
@@ -1191,7 +1172,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  height: 24px;
+  height: 36px;
   cursor: pointer;
 }
 
@@ -1200,7 +1181,7 @@
   content: '';
   position: absolute;
   inset: 50% 0 auto;
-  height: 10px;
+  height: 12px;
   border-radius: 999px;
   transform: translateY(-50%);
   pointer-events: none;
@@ -1235,12 +1216,12 @@
   height: 100%;
   margin: 0;
   z-index: 2;
-  opacity: 0.001;
+  opacity: 0.01;
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
-  touch-action: pan-y;
+  touch-action: manipulation;
 }
 
 .candidate-stacks__stack-item-range:active{
@@ -1248,7 +1229,7 @@
 }
 
 .candidate-stacks__stack-item-range::-webkit-slider-runnable-track{
-  height: 10px;
+  height: 12px;
   border-radius: 999px;
   background: transparent;
 }
@@ -1256,9 +1237,9 @@
 .candidate-stacks__stack-item-range::-webkit-slider-thumb{
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
-  margin-top: -7px;
+  width: 28px;
+  height: 28px;
+  margin-top: -8px;
   border-radius: 50%;
   border: 0;
   background: rgba(255, 255, 255, 0.001);
@@ -1267,21 +1248,21 @@
 }
 
 .candidate-stacks__stack-item-range::-moz-range-track{
-  height: 10px;
+  height: 12px;
   border-radius: 999px;
   border: 0;
   background: transparent;
 }
 
 .candidate-stacks__stack-item-range::-moz-range-progress{
-  height: 10px;
+  height: 12px;
   border-radius: 999px;
   background: transparent;
 }
 
 .candidate-stacks__stack-item-range::-moz-range-thumb{
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.001);
@@ -1355,7 +1336,6 @@
   box-shadow: 0 10px 18px rgba(83, 165, 101, 0.18);
 }
 
-// Certificado por stack (card expandido)
 .candidate-stacks__repo-guide-cert{
   margin-top: 14px;
   padding-top: 14px;
@@ -1560,11 +1540,7 @@
   color: rgba(15, 23, 42, 0.68);
 }
 
-.candidate-stacks__modal-field input:focus{
-  border-color: rgba(51, 65, 85, 0.42);
-  box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.12);
-}
-
+.candidate-stacks__modal-field input:focus,
 .candidate-stacks__modal-field select:focus{
   border-color: rgba(51, 65, 85, 0.42);
   box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.12);
@@ -1692,7 +1668,7 @@
 
 @media (max-width: 980px){
   .candidate-stacks__hero{
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 20px;
     height: auto;
   }
@@ -1702,7 +1678,6 @@
   }
 
   .candidate-stacks__section-head{
-    flex-direction: column;
     align-items: flex-start;
   }
 
@@ -1812,5 +1787,63 @@
 
   .candidate-stacks__modal-button--danger{
     margin-right: 0;
+  }
+
+  .candidate-stacks__repo-row{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .candidate-stacks__repo-row-left{
+    width: 100%;
+  }
+
+  .candidate-stacks__repo-row-right{
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
+  }
+
+  .candidate-stacks__repo-row-name{
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  .candidate-stacks__stack-item-slider{
+    height: 40px;
+  }
+
+  .candidate-stacks__stack-item-slider::before,
+  .candidate-stacks__stack-item-slider::after{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-webkit-slider-runnable-track{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-moz-range-track{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-moz-range-progress{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-webkit-slider-thumb{
+    width: 30px;
+    height: 30px;
+    margin-top: -8px;
+  }
+
+  .candidate-stacks__stack-item-range::-moz-range-thumb{
+    width: 30px;
+    height: 30px;
+  }
+
+  .candidate-stacks__helper{
+    padding: 16px;
+    font-size: 14px;
   }
 }
