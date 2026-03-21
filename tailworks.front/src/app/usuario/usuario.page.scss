@@ -13,9 +13,14 @@
   gap: 20px;
 }
 
-.usuario-page__profile-top{
+.usuario-page__profile-top {
   display: grid;
-  gap: 0;
+  gap: 18px;
+}
+
+.usuario-page__profile-strip {
+  display: block;
+  margin-top: 8px;
 }
 
 .usuario-page__intro {
@@ -24,8 +29,8 @@
   padding: 0 4px;
 }
 
-.usuario-page__intro--top{
-  padding: 8px 4px 0;
+.usuario-page__intro--top {
+  padding: 8px 4px 12px;
   border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
 }
 
@@ -34,7 +39,7 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  padding-top: 16px;
+  padding-top: 12px;
   padding-bottom: 10px;
 }
 
@@ -126,8 +131,7 @@
   padding: 22px;
   border-radius: 24px;
   border: 1px solid rgba(226, 232, 240, 0.92);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
   box-shadow:
     0 18px 38px rgba(15, 23, 42, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.86);
@@ -250,12 +254,52 @@
     gap: 16px;
   }
 
-  .usuario-page__profile-top{
-    gap: 0;
+  .usuario-page__profile-top {
+    gap: 14px;
   }
 
-  .usuario-page__intro--top{
-    padding-bottom: 0;
+  .usuario-page__profile-strip {
+    margin-top: 10px;
+  }
+
+  .usuario-page__intro--top {
+    padding: 4px 2px 10px;
+  }
+
+  .usuario-page__chips {
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .usuario-page__chip {
+    min-width: unset;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 12px 14px;
+  }
+
+  .usuario-page__chip-text {
+    white-space: normal;
+  }
+
+  .usuario-page__workspace-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .usuario-page__workspace-card {
+    min-height: auto;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .usuario-page__workspace-card strong {
+    font-size: 16px;
+  }
+
+  .usuario-page__workspace-card p {
+    font-size: 13px;
+    line-height: 1.45;
   }
 
   .usuario-page__modal-backdrop {
@@ -271,17 +315,62 @@
 }
 
 @media (max-width: 640px) {
+  .usuario-page {
+    padding: 0 12px 24px;
+    gap: 14px;
+  }
+
+  .usuario-page__profile-top {
+    gap: 12px;
+  }
+
+  .usuario-page__profile-strip {
+    margin-top: 12px;
+  }
+
+  .usuario-page__intro {
+    padding: 0;
+  }
+
   .usuario-page__intro h1,
   .usuario-page__modal-intro h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
-  .usuario-page__workspace-grid {
+  .usuario-page__intro p,
+  .usuario-page__modal-intro p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .usuario-page__chips {
+    display: grid;
     grid-template-columns: 1fr;
+    gap: 8px;
+    padding-top: 8px;
+    padding-bottom: 6px;
   }
 
-  .usuario-page__workspace-card {
-    min-height: auto;
-    padding: 18px;
+  .usuario-page__chip {
+    border-radius: 18px;
+  }
+
+  .usuario-page__workspace-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+
+  .usuario-page__workspace-link {
+    font-size: 12px;
+  }
+
+  .usuario-page__modal {
+    padding: 20px 14px 16px;
+  }
+
+  .usuario-page__modal-intro {
+    padding-right: 32px;
   }
 }
