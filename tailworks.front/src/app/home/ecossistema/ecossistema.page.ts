@@ -214,6 +214,20 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     );
   }
 
+  get mobileTopStacks(): Array<{ label: string; count: number }> {
+    const counts = new Map<string, number>();
+    for (const card of this.mobileHiredSpotlights) {
+      for (const stack of card.stacks) {
+        counts.set(stack.label, (counts.get(stack.label) ?? 0) + 1);
+      }
+    }
+
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'pt-BR'))
+      .slice(0, 6)
+      .map(([label, count]) => ({ label, count }));
+  }
+
   readonly radarTotal = 87;
   readonly radarDelta = 12;
   readonly allRadarCategories: RadarCategory[] = [
@@ -266,9 +280,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       color: 'linear-gradient(90deg, rgba(140, 76, 18, 0.86), rgba(188, 109, 24, 0.84) 58%, rgba(242, 179, 26, 0.72))',
     },
   ];
+  private readonly defaultRadarCategoryIds = ['backend', 'frontend', 'ia', 'cloud', 'mobile', 'seguranca', 'devops'];
 
   showRadarCategoryPicker = false;
-  selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
+  selectedRadarCategoryIds = [...this.defaultRadarCategoryIds];
   readonly sidebarOpen = this.sidebarVisibilityService.isOpen;
 
   constructor() {
@@ -1009,8 +1024,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         .filter((categoryId) => availableIds.has(categoryId));
 
       if (nextSelection.length) {
+        const mergedSelection = Array.from(new Set([...nextSelection, ...this.defaultRadarCategoryIds]));
+
         this.selectedRadarCategoryIds = this.allRadarCategories
-          .filter((category) => nextSelection.includes(category.id))
+          .filter((category) => mergedSelection.includes(category.id))
           .map((category) => category.id);
       }
     } catch {

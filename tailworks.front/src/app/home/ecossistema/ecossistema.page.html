@@ -51,5 +51,35 @@
         </div>
       </div>
     </div>
+
+    <section class="landing__mobile-radar" aria-label="Stacks mais contratadas">
+      <div class="landing__mobile-radar-head">
+        <span class="landing__mobile-radar-delta">+ {{ radarDelta }} contratacoes desde ontem</span>
+      </div>
+      <div class="landing__mobile-radar-bars">
+        <div
+          *ngFor="let category of radarCategories; trackBy: trackByRadarCategory"
+          class="landing__mobile-radar-row"
+        >
+          <div class="landing__mobile-radar-label">
+            <span
+              class="landing__mobile-radar-dot"
+              [style.background]="radarDotColor(category.value)"
+            ></span>
+            <span>{{ category.label }}</span>
+          </div>
+
+          <div class="landing__mobile-radar-track">
+            <span
+              class="landing__mobile-radar-fill"
+              [style.width.%]="category.value"
+              [style.background]="radarBarFill(category.value)"
+            ></span>
+          </div>
+
+          <strong class="landing__mobile-radar-value">{{ category.value }}%</strong>
+        </div>
+      </div>
+    </section>
   </section>
 </main>
