@@ -7,28 +7,21 @@
     </div>
 
     <div class="landing__mobile-strip">
-      <div
-        #hiredTrack
-        class="landing__mobile-track"
-        (scroll)="onHiredScroll()"
-      >
+      <div class="landing__mobile-track">
+        <div class="landing__mobile-page">
         <div
-          *ngFor="let page of mobileHiredPages; let pageIndex = index"
-          class="landing__mobile-page"
-        >
-        <div
-          *ngFor="let card of page; trackBy: trackByHiredCard; let cardIndex = index"
+          *ngFor="let card of mobileVisibleHiredCards; trackBy: trackByHiredCard; let cardIndex = index"
           class="landing__mobile-card-shell"
         >
             <span
               class="landing__mobile-tape"
               aria-hidden="true"
-              [style.--tape-tilt]="mobileTapeTilt(pageIndex, cardIndex, card.name + card.company + card.roleTitle)"
+              [style.--tape-tilt]="mobileTapeTilt(activeHiredIndex, cardIndex, card.name + card.company + card.roleTitle)"
             ></span>
 
             <article
               class="hired-card landing__mobile-card"
-              [style.--polaroid-tilt]="mobilePolaroidTilt(pageIndex, cardIndex, card.name + card.company + card.roleTitle)"
+              [style.--polaroid-tilt]="mobilePolaroidTilt(activeHiredIndex, cardIndex, card.name + card.company + card.roleTitle)"
             >
               <div class="hired-card__photo">
                 <img class="hired-card__photo-img" [src]="card.avatarUrl" [alt]="card.name" loading="eager" decoding="async" />
@@ -37,21 +30,11 @@
               <div class="hired-card__caption">
                 <div class="hired-card__name">{{ card.name }}</div>
                 <div class="hired-card__role">{{ card.roleTitle }}</div>
-
-                <div class="hired-card__company">
-                  <img class="hired-card__company-logo" [src]="card.companyLogoUrl" [alt]="card.company" loading="eager" decoding="async" />
-                  <span class="hired-card__company-name">{{ card.company }}</span>
-                </div>
-              </div>
-
-              <div class="hired-card__chips">
                 <span
-                  *ngFor="let stack of card.stacks"
-                  class="hired-card__chip"
-                  [class.hired-card__chip--dark]="stack.tone === 'dark'"
-                  [class.hired-card__chip--accent]="stack.tone === 'accent'"
+                  *ngIf="card.stacks.length"
+                  class="hired-card__chip hired-card__chip--accent landing__mobile-primary-chip"
                 >
-                  {{ stack.label }}
+                  {{ card.stacks[0]?.label }}
                 </span>
               </div>
             </article>

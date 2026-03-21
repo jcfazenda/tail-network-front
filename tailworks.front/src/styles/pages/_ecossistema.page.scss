@@ -1966,23 +1966,34 @@
   }
 
   .landing__mobile-card .hired-card__name{
-    font-size: 8px;
+    font-size: 10px;
     line-height: 1.15;
   }
 
   .landing__mobile-card .hired-card__role,
   .landing__mobile-card .hired-card__company-name{
-    font-size: 6px;
+    font-size: 8px;
     line-height: 1.1;
   }
 
+  .landing__mobile-primary-chip{
+    margin-top: 4px;
+    min-width: 0;
+    height: 26px !important;
+    padding: 0 10px !important;
+    border-radius: 999px !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    align-self: center;
+  }
+
   .landing__mobile-card .hired-card__company{
-    gap: 3px;
-    margin-top: 1px;
+    gap: 5px;
+    margin-top: 2px;
   }
 
   .landing__mobile-card .hired-card__company-logo{
-    height: 9px;
+    height: 12px;
   }
 
   .landing__mobile-card .hired-card__chips{
@@ -2245,13 +2256,20 @@
   }
 
   .landing__mobile-card .hired-card__name{
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .landing__mobile-card .hired-card__role,
   .landing__mobile-card .hired-card__company-name,
   .landing__mobile-card .hired-card__chip{
-    font-size: 6px;
+    font-size: 8px;
+  }
+
+  .landing__mobile-primary-chip{
+    height: 22px !important;
+    padding: 0 9px !important;
+    border-radius: 999px !important;
+    font-size: 8px !important;
   }
 
   .landing__mobile-radar{

@@ -209,9 +209,21 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get mobileHiredPages(): HiredSpotlightCard[][] {
     const cards = this.mobileHiredSpotlights;
-    return Array.from({ length: Math.ceil(cards.length / 2) }, (_, index) =>
-      cards.slice(index * 2, index * 2 + 2),
-    );
+    const pageCount = Math.max(1, Math.ceil(cards.length / 2));
+    return Array.from({ length: pageCount }, (_, index) => {
+      const start = index * 2;
+      const page = cards.slice(start, start + 2);
+      if (page.length === 2 || cards.length === 1) {
+        return page;
+      }
+
+      return [...page, cards[0]];
+    });
+  }
+
+  get mobileVisibleHiredCards(): HiredSpotlightCard[] {
+    const pages = this.mobileHiredPages;
+    return pages[this.activeHiredIndex] ?? pages[0] ?? [];
   }
 
   get mobileTopStacks(): Array<{ label: string; count: number }> {
@@ -287,6 +299,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   readonly sidebarOpen = this.sidebarVisibilityService.isOpen;
 
   constructor() {
+    this.preloadMobileSpotlightAssets();
     this.refreshMobileHiredDeck();
     this.restoreRadarCategorySelection();
     this.refreshJobs();
@@ -678,32 +691,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   onHiredScroll(): void {
-    const el = this.hiredTrack?.nativeElement;
-    if (!el) {
-      return;
-    }
-
-    this.syncHiredPagination();
-    const pageWidth = Math.max(1, el.clientWidth);
-    const maxPage = this.hiredPageCount - 1;
-    const bestPage = Math.min(maxPage, Math.max(0, Math.round(el.scrollLeft / pageWidth)));
-
-    if (bestPage !== this.activeHiredIndex) {
-      this.activeHiredIndex = bestPage;
-      this.cdr.markForCheck();
-    }
-
-    if (!this.hiredAutoScrollInFlight) {
-      this.lastManualHiredInteractionAt = Date.now();
-    }
+    // Mobile strip no longer uses scroll-driven pagination.
   }
 
   private autoAdvanceHired(): void {
-    const el = this.hiredTrack?.nativeElement;
-    if (!el) {
-      return;
-    }
-
     this.syncHiredPagination();
     // Se o usuario mexeu recentemente (scroll/arrow), nao briga com ele.
     const now = Date.now();
@@ -712,15 +703,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     }
 
     const nextPage = (this.activeHiredIndex + 1) % this.hiredPageCount;
-    const pageWidth = Math.max(1, el.clientWidth);
-
-    if (nextPage === 0) {
-      this.refreshMobileHiredDeck();
-      this.syncHiredPagination(true);
-    }
 
     this.hiredAutoScrollInFlight = true;
-    el.scrollTo({ left: nextPage * pageWidth, behavior: 'smooth' });
     this.activeHiredIndex = nextPage;
     this.cdr.markForCheck();
 
@@ -730,13 +714,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private syncHiredPagination(force = false): void {
-    const el = this.hiredTrack?.nativeElement;
-    if (!el) {
-      return;
-    }
-
-    const clientWidth = Math.max(1, el.clientWidth);
-    const nextPageCount = Math.max(1, Math.ceil(el.scrollWidth / clientWidth));
+    const nextPageCount = Math.max(1, this.mobileHiredPages.length);
     if (!force && nextPageCount === this.hiredPageCount) {
       return;
     }
@@ -755,7 +733,29 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    this.mobileSpotlightDeck = pool.slice(0, 4);
+    this.mobileSpotlightDeck = pool;
+  }
+
+  private preloadMobileSpotlightAssets(): void {
+    if (typeof Image === 'undefined') {
+      return;
+    }
+
+    const sources = new Set<string>();
+    for (const card of this.hiredSpotlights) {
+      if (card.avatarUrl) {
+        sources.add(card.avatarUrl);
+      }
+      if (card.companyLogoUrl) {
+        sources.add(card.companyLogoUrl);
+      }
+    }
+
+    sources.forEach((src) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = src;
+    });
   }
 
   toggleSidebar(): void {
