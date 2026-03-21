@@ -25,12 +25,12 @@ export class LoginPage implements OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
-  accessView: AccessView = 'login';
+  accessView: AccessView = 'register';
   registerFlow: RegisterFlow = 'organization';
   returnUrl = '';
 
-  email = '';
-  password = '';
+  email = 'julio@tailworks.com';
+  password = 'julio@56';
   errorMessage = '';
   successMessage = '';
 
@@ -42,7 +42,7 @@ export class LoginPage implements OnDestroy {
     this.subscriptions.add(
       this.route.queryParamMap.subscribe((params) => {
         this.returnUrl = params.get('returnUrl')?.trim() || '';
-        this.accessView = params.get('view') === 'register' ? 'register' : 'login';
+        this.accessView = params.get('view') === 'login' ? 'login' : 'register';
         this.registerFlow = params.get('registerFlow') === 'individual' ? 'individual' : 'organization';
         this.cdr.markForCheck();
       }),
@@ -69,9 +69,9 @@ export class LoginPage implements OnDestroy {
     this.authService.resetWorkspace();
     this.errorMessage = '';
     this.successMessage = '';
-    this.email = '';
-    this.password = '';
-    this.accessView = 'login';
+    this.email = 'julio@tailworks.com';
+    this.password = 'julio@56';
+    this.accessView = 'register';
     this.registerFlow = 'organization';
     this.recruiterSignup = this.createRecruiterSignupDraft();
     this.talentSignup = this.createTalentSignupDraft();
@@ -81,12 +81,13 @@ export class LoginPage implements OnDestroy {
   addSubordinateRecruiter(): void {
     this.recruiterSignup.subordinateRecruiters = [
       ...this.recruiterSignup.subordinateRecruiters,
-      this.createRecruiterInviteDraft(),
+      this.createEmptyRecruiterInviteDraft(),
     ];
   }
 
   removeSubordinateRecruiter(index: number): void {
-    this.recruiterSignup.subordinateRecruiters = this.recruiterSignup.subordinateRecruiters.filter((_item, itemIndex) => itemIndex !== index);
+    this.recruiterSignup.subordinateRecruiters =
+      this.recruiterSignup.subordinateRecruiters.filter((_item, itemIndex) => itemIndex !== index);
   }
 
   login(): void {
@@ -111,7 +112,9 @@ export class LoginPage implements OnDestroy {
     this.successMessage = '';
 
     if (!this.email.trim()) {
-      this.errorMessage = `Informe o e-mail para simular o acesso com ${provider === 'google' ? 'Google' : 'LinkedIn'}.`;
+      this.errorMessage = `Informe o e-mail para simular o acesso com ${
+        provider === 'google' ? 'Google' : 'LinkedIn'
+      }.`;
       return;
     }
 
@@ -130,13 +133,15 @@ export class LoginPage implements OnDestroy {
 
     try {
       const account = this.authService.registerRecruiterOrganization(this.recruiterSignup);
-      this.successMessage = 'Estrutura inicial criada. Agora entre com sua conta e escolha Recruiter ou Talento no Home.';
+      this.successMessage =
+        'Estrutura inicial criada. Agora entre com sua conta e escolha Recruiter ou Talento no Home.';
       this.accessView = 'login';
       this.email = account.email;
       this.password = account.password;
       this.recruiterSignup = this.createRecruiterSignupDraft();
     } catch (error) {
-      this.errorMessage = error instanceof Error ? error.message : 'Nao foi possivel concluir o cadastro do recruiter.';
+      this.errorMessage =
+        error instanceof Error ? error.message : 'Nao foi possivel concluir o cadastro do recruiter.';
     }
   }
 
@@ -152,11 +157,23 @@ export class LoginPage implements OnDestroy {
       this.password = account.password;
       this.talentSignup = this.createTalentSignupDraft();
     } catch (error) {
-      this.errorMessage = error instanceof Error ? error.message : 'Nao foi possivel concluir o cadastro do talento.';
+      this.errorMessage =
+        error instanceof Error ? error.message : 'Nao foi possivel concluir o cadastro do talento.';
     }
   }
 
+  // -------- Recruiter --------
+
   private createRecruiterInviteDraft(): RecruiterInviteDraft {
+    return {
+      name: 'Breno Recrutador Jr.',
+      email: 'breno@tailworks.com',
+      password: 'breno@56',
+      role: 'Recruiter Jr.',
+    };
+  }
+
+  private createEmptyRecruiterInviteDraft(): RecruiterInviteDraft {
     return {
       name: '',
       email: '',
@@ -167,11 +184,11 @@ export class LoginPage implements OnDestroy {
 
   private createRecruiterSignupDraft(): RecruiterSignupDraft {
     return {
-      name: '',
-      email: '',
-      password: '',
-      role: 'Talent Acquisition Lead',
-      companyName: '',
+      name: 'Julio Recutador Sr.',
+      email: 'julio@tailworks.com',
+      password: 'julio@56',
+      role: 'Recruiter Sr.',
+      companyName: 'Criatti SA',
       companySector: 'Tecnologia',
       companyLocation: 'Rio de Janeiro - RJ',
       companyDescription: '',
@@ -179,11 +196,13 @@ export class LoginPage implements OnDestroy {
     };
   }
 
+  // -------- Talent --------
+
   private createTalentSignupDraft(): TalentSignupDraft {
     return {
-      name: '',
-      email: '',
-      password: '',
+      name: 'Janaina Talento',
+      email: 'janaina@gmail.com',
+      password: 'janaina@56',
       location: 'Rio de Janeiro - RJ',
     };
   }
