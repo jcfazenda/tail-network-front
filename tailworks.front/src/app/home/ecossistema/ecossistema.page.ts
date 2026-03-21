@@ -114,6 +114,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   hiredPageCount = 1;
   hiredPages: number[] = [0];
   ecoFilter: EcoFilter = 'radar';
+  private mobileSpotlightDeck: HiredSpotlightCard[] = [];
 
   readonly hiredSpotlights: HiredSpotlightCard[] = [
     {
@@ -202,6 +203,17 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     },
   ];
 
+  get mobileHiredSpotlights(): HiredSpotlightCard[] {
+    return this.mobileSpotlightDeck;
+  }
+
+  get mobileHiredPages(): HiredSpotlightCard[][] {
+    const cards = this.mobileHiredSpotlights;
+    return Array.from({ length: Math.ceil(cards.length / 2) }, (_, index) =>
+      cards.slice(index * 2, index * 2 + 2),
+    );
+  }
+
   readonly radarTotal = 87;
   readonly radarDelta = 12;
   readonly allRadarCategories: RadarCategory[] = [
@@ -260,6 +272,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   readonly sidebarOpen = this.sidebarVisibilityService.isOpen;
 
   constructor() {
+    this.refreshMobileHiredDeck();
     this.restoreRadarCategorySelection();
     this.refreshJobs();
     this.subscriptions.add(
@@ -271,7 +284,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     if (typeof window !== 'undefined') {
       this.copyRotationTimer = window.setInterval(() => this.rotateHiringCopy(), 9000);
-      this.hiredRotationTimer = window.setInterval(() => this.autoAdvanceHired(), 9000);
+      this.hiredRotationTimer = window.setInterval(() => this.autoAdvanceHired(), 16000);
       this.resizeListener = () => this.syncHiredPagination(true);
       window.addEventListener('resize', this.resizeListener, { passive: true });
     }
@@ -609,6 +622,17 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return `${tilt}deg`;
   }
 
+  mobilePolaroidTilt(_pageIndex: number, cardIndex: number, seed: string): string {
+    const base = this.polaroidTilt(seed);
+    const numeric = Number.parseFloat(base.replace('deg', ''));
+    if (!Number.isFinite(numeric) || numeric === 0) {
+      return cardIndex % 2 === 0 ? '-2deg' : '2deg';
+    }
+
+    const magnitude = Math.abs(numeric);
+    return cardIndex % 2 === 0 ? `-${magnitude}deg` : `${magnitude}deg`;
+  }
+
   scrollHired(direction: -1 | 1): void {
     const el = this.hiredTrack?.nativeElement;
     if (!el) {
@@ -656,12 +680,17 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.syncHiredPagination();
     // Se o usuario mexeu recentemente (scroll/arrow), nao briga com ele.
     const now = Date.now();
-    if (now - this.lastManualHiredInteractionAt < 4000) {
+    if (now - this.lastManualHiredInteractionAt < 7000) {
       return;
     }
 
     const nextPage = (this.activeHiredIndex + 1) % this.hiredPageCount;
     const pageWidth = Math.max(1, el.clientWidth);
+
+    if (nextPage === 0) {
+      this.refreshMobileHiredDeck();
+      this.syncHiredPagination(true);
+    }
 
     this.hiredAutoScrollInFlight = true;
     el.scrollTo({ left: nextPage * pageWidth, behavior: 'smooth' });
@@ -670,7 +699,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     window.setTimeout(() => {
       this.hiredAutoScrollInFlight = false;
-    }, 900);
+    }, 1200);
   }
 
   private syncHiredPagination(force = false): void {
@@ -691,6 +720,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       this.activeHiredIndex = nextPageCount - 1;
     }
     this.cdr.markForCheck();
+  }
+
+  private refreshMobileHiredDeck(): void {
+    const pool = [...this.hiredSpotlights];
+    for (let i = pool.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    this.mobileSpotlightDeck = pool.slice(0, 4);
   }
 
   toggleSidebar(): void {

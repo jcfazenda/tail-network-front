@@ -1796,23 +1796,175 @@
 
 @media (max-width: 720px){
   .landing{
-    min-height: 100dvh;
-    padding: 0;
-    display: block;
+    position: fixed;
+    top: 56px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    min-height: 0;
+    padding: 6px 0 0;
+    background: #eef2f6;
   }
 
-  .landing__frame{
+  .landing__panel{
     width: 100%;
-    min-height: 100dvh;
-    padding: 0;
-    border-radius: 0;
-    background: #f8fafc;
-    padding-bottom: 0;
+    min-height: 100%;
+    height: 100%;
+    margin: 0;
+    background: #ffffff;
+    border: 0;
+    box-shadow: none;
+    border-radius: 28px 28px 0 0;
     box-sizing: border-box;
+    overflow: visible;
   }
 
-  .landing__sidebar-toggle{
+  .landing__panel-art{
+    position: relative;
+    width: 100%;
+    height: min(66vw, 290px);
+    margin: -10px 0 0;
+    background: center top / cover no-repeat url('/assets/images/mulher-fundo-thumbnail.png');
+    border-radius: 0;
+  }
+
+  .landing__panel-copy{
+    position: absolute;
+    top: 46px;
+    left: 18px;
+    width: min(172px, 46%);
+    margin: 0;
+    color: #d67e13;
+    font-size: 15px;
+    line-height: 1.02;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    z-index: 2;
+  }
+
+  .landing__panel-art::after{
+    content: "";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 76px;
+    height: 76px;
+    background: center / contain no-repeat url('/assets/images/logo-tail.png');
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .landing__mobile-strip{
+    margin-top: -16px;
+    padding: 0 12px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .landing__mobile-track{
+    --mobile-strip-gap: 8px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 0 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .landing__mobile-track::-webkit-scrollbar{
     display: none;
+  }
+
+  .landing__mobile-page{
+    flex: 0 0 100%;
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 132px));
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+  }
+
+  .landing__mobile-card{
+    padding: 5px 5px 7px;
+    gap: 5px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 18px -20px rgba(15, 23, 42, 0.24);
+    overflow: visible;
+    transform: rotate(var(--polaroid-tilt, 0deg));
+  }
+
+  .landing__mobile-card:hover{
+    transform: rotate(var(--polaroid-tilt, 0deg)) translateY(-1px);
+  }
+
+  .landing__mobile-tape{
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    width: 26px;
+    height: 12px;
+    transform: translateX(-50%) rotate(-2deg);
+    border-radius: 3px;
+    background: #df8b1e;
+    border: 1px solid rgba(122, 64, 12, 0.5);
+    box-shadow: 0 4px 10px rgba(122, 64, 12, 0.22);
+    opacity: 1;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .landing__mobile-card::before{
+    content: none;
+  }
+
+  .landing__mobile-card .hired-card__photo{
+    height: 104px;
+    margin-top: 0;
+    border-radius: 0;
+    background: #eef1f5;
+  }
+
+  .landing__mobile-card .hired-card__photo-img{
+    object-position: center top;
+  }
+
+  .landing__mobile-card .hired-card__name{
+    font-size: 8px;
+    line-height: 1.15;
+  }
+
+  .landing__mobile-card .hired-card__role,
+  .landing__mobile-card .hired-card__company-name{
+    font-size: 6px;
+    line-height: 1.1;
+  }
+
+  .landing__mobile-card .hired-card__company{
+    gap: 3px;
+    margin-top: 1px;
+  }
+
+  .landing__mobile-card .hired-card__company-logo{
+    height: 9px;
+  }
+
+  .landing__mobile-card .hired-card__chips{
+    gap: 3px;
+  }
+
+  .landing__mobile-card .hired-card__chip{
+    min-width: 0;
+    height: 14px;
+    padding: 0 4px;
+    border-radius: 5px;
+    font-size: 6px;
   }
 
   app-topbar{
@@ -1822,34 +1974,168 @@
     right: 0;
     z-index: 900;
     display: block;
-    padding: 8px 12px 0;
+    padding: 0;
     box-sizing: border-box;
-    background: #f8fafc;
+    background: #ffffff;
   }
 
-  .landing__shell,
-  .landing__below{
-    display: none;
+  app-topbar .topbar{
+    min-height: 56px;
+    border-radius: 0;
   }
 }
 
 @media (max-width: 560px){
   .landing{
-    min-height: 100dvh;
-    padding: 0;
+    top: 52px;
+    min-height: 0;
+    padding-top: 6px;
+    background: #eef2f6;
   }
 
-  .landing__frame{
-    padding: 0;
+  .landing__panel{
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .landing__panel-art{
+    width: 100%;
+    height: min(70vw, 280px);
+    margin-top: -8px;
+    border-radius: 0;
+  }
+
+  .landing__panel-copy{
+    top: 42px;
+    left: 16px;
+    width: min(160px, 48%);
+    font-size: 13px;
+  }
+
+  .landing__panel-art::after{
+    top: 10px;
+    right: 10px;
+    width: 68px;
+    height: 68px;
+  }
+
+  .landing__mobile-strip{
+    margin-top: -14px;
+    padding: 0 10px;
+  }
+
+  .landing__mobile-track{
+    --mobile-strip-gap: 6px;
+    gap: 0;
+    padding: 0 0 10px;
+  }
+
+  .landing__mobile-page{
+    grid-template-columns: repeat(2, minmax(0, 124px));
+    justify-content: center;
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .landing__mobile-card{
+    padding: 5px 5px 6px;
+  }
+
+  .landing__mobile-card .hired-card__photo{
+    height: 100px;
   }
 
   app-topbar{
-    padding: 8px 10px 0;
+    padding: 0;
   }
 }
 
 @media (max-width: 420px){
+  .landing{
+    top: 54px;
+    padding-top: 5px;
+    background: #eef2f6;
+  }
+
+  .landing__panel{
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .landing__panel-art{
+    width: 100%;
+    height: min(74vw, 270px);
+    margin-top: -6px;
+    border-radius: 0;
+  }
+
+  .landing__panel-copy{
+    top: 38px;
+    left: 14px;
+    width: min(148px, 50%);
+    font-size: 12px;
+  }
+
+  .landing__panel-art::after{
+    top: 8px;
+    right: 8px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .landing__mobile-strip{
+    margin-top: -12px;
+    padding: 0 8px;
+  }
+
+  .landing__mobile-track{
+    --mobile-strip-gap: 5px;
+    gap: 0;
+    padding: 0 0 10px;
+  }
+
+  .landing__mobile-page{
+    grid-template-columns: repeat(2, minmax(0, 116px));
+    justify-content: center;
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .landing__mobile-card{
+    padding: 4px 4px 6px;
+  }
+
+  .landing__mobile-tape{
+    top: -8px;
+    width: 24px;
+    height: 10px;
+  }
+
+  .landing__mobile-card .hired-card__photo{
+    height: 96px;
+    margin-top: 0;
+  }
+
+  .landing__mobile-card .hired-card__name{
+    font-size: 8px;
+  }
+
+  .landing__mobile-card .hired-card__role,
+  .landing__mobile-card .hired-card__company-name,
+  .landing__mobile-card .hired-card__chip{
+    font-size: 6px;
+  }
+
   app-topbar{
-    padding: 8px 8px 0;
+    padding: 0;
+  }
+
+  app-topbar .topbar{
+    min-height: 54px;
+    border-radius: 0;
   }
 }
