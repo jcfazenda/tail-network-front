@@ -125,11 +125,20 @@ export class MockAuthService {
     return this.syncRecruiterWorkspace(this.getSession());
   }
 
-  login(email: string, password: string): AuthSession | null {
+  login(email: string, password?: string): AuthSession | null {
     const normalizedEmail = email.trim().toLocaleLowerCase('pt-BR');
-    const account = this.loadAccounts().find((item) => (
-      item.email.toLocaleLowerCase('pt-BR') === normalizedEmail && item.password === password
-    ));
+    const normalizedPassword = password?.trim() ?? '';
+    const account = this.loadAccounts().find((item) => {
+      if (item.email.toLocaleLowerCase('pt-BR') !== normalizedEmail) {
+        return false;
+      }
+
+      if (!normalizedPassword) {
+        return true;
+      }
+
+      return item.password === password;
+    });
 
     if (!account) {
       return null;

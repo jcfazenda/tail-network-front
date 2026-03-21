@@ -73,6 +73,17 @@
   border: 1px solid rgba(218, 224, 232, 0.92);
 }
 
+.empresa-cadastro__ghost-action,
+.empresa-cadastro__primary-action,
+.empresa-cadastro__toggle,
+.empresa-cadastro__field input,
+.empresa-cadastro__field textarea {
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
 .empresa-cadastro__ghost-action {
   background: rgba(255, 255, 255, 0.92);
   color: #2f3b4f;
@@ -87,6 +98,24 @@
 .empresa-cadastro__primary-action:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.empresa-cadastro__ghost-action:hover,
+.empresa-cadastro__primary-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
+}
+
+.empresa-cadastro__ghost-action:focus-visible,
+.empresa-cadastro__primary-action:focus-visible,
+.empresa-cadastro__field input:focus-visible,
+.empresa-cadastro__field textarea:focus-visible,
+.empresa-cadastro__toggle:focus-within {
+  outline: none;
+  border-color: rgba(240, 123, 52, 0.62);
+  box-shadow:
+    0 0 0 4px rgba(240, 123, 52, 0.16),
+    0 14px 24px rgba(15, 23, 42, 0.08);
 }
 
 .empresa-cadastro__layout {
@@ -279,8 +308,96 @@
     padding: 24px 22px;
   }
 
+  .empresa-cadastro__hero-actions {
+    width: 100%;
+  }
+
   .empresa-cadastro__grid--identity,
   .empresa-cadastro__preview-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .empresa-cadastro {
+    gap: 18px;
+  }
+
+  .empresa-cadastro__hero,
+  .empresa-cadastro__form,
+  .empresa-cadastro__preview-card {
+    border-radius: 22px;
+  }
+
+  .empresa-cadastro__hero {
+    padding: 20px 18px;
+    gap: 16px;
+  }
+
+  .empresa-cadastro__hero p,
+  .empresa-cadastro__preview-note,
+  .empresa-cadastro__preview-block p {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .empresa-cadastro__hero-actions {
+    gap: 10px;
+  }
+
+  .empresa-cadastro__ghost-action,
+  .empresa-cadastro__primary-action {
+    width: 100%;
+  }
+
+  .empresa-cadastro__form,
+  .empresa-cadastro__preview-card {
+    padding: 18px;
+  }
+
+  .empresa-cadastro__section {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .empresa-cadastro__preview-header {
+    align-items: flex-start;
+  }
+
+  .empresa-cadastro__preview-pills {
+    gap: 8px;
+  }
+
+  .empresa-cadastro__toggle {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .empresa-cadastro__hero {
+    padding: 18px 16px;
+  }
+
+  .empresa-cadastro__form,
+  .empresa-cadastro__preview-card {
+    padding: 16px;
+  }
+
+  .empresa-cadastro__section {
+    padding: 14px;
+  }
+
+  .empresa-cadastro__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    font-size: 20px;
+  }
+
+  .empresa-cadastro__status-pill {
+    min-height: 28px;
+    padding-inline: 10px;
+    font-size: 11px;
   }
 }

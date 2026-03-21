@@ -1,279 +1,39 @@
-<header
-  class="topbar"
-  [class.topbar--candidate]="isCandidateMode && !isSelectionMode"
-  [class.topbar--template]="isTemplateLanding"
->
-  <div
-    class="topbar__primary"
-    [class.topbar__primary--candidate]="isCandidateMode"
-    [class.topbar__primary--candidate-collapsed]="showSidebarProfileInPrimary"
-    *ngIf="!isSelectionMode; else selectionTopbar"
+<header class="topbar" *ngIf="!isSelectionMode">
+  <button
+    *ngIf="showSidebarProfileInPrimary"
+    class="topbar__profile"
+    type="button"
+    (click)="toggleSidebar()"
+    aria-label="Abrir sidebar"
   >
-    <button
-      *ngIf="showSidebarProfileInPrimary"
-      class="topbar__sidebar-profile-trigger"
-      type="button"
-      (click)="toggleSidebar()"
-      aria-label="Mostrar sidebar"
+    <div
+      class="avatar topbar__avatar"
+      [class.avatar--candidate]="isCandidateMode"
+      [class.avatar--image]="!!topbarProfileAvatarUrl"
+      [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
+      aria-hidden="true"
     >
-      <div class="topbar__sidebar-profile">
-        <div
-          class="avatar topbar__sidebar-profile-avatar"
-          [class.avatar--candidate]="isCandidateMode"
-          [class.avatar--image]="!!topbarProfileAvatarUrl"
-          [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
-          aria-hidden="true"
-        >
-          <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
-        </div>
-
-        <div class="topbar__sidebar-profile-copy">
-          <strong>{{ topbarProfileDisplayName }}</strong>
-          <span>{{ topbarProfileDisplayMeta }}</span>
-        </div>
-      </div>
-    </button>
-
-    <div class="topbar__formation-summary" *ngIf="!isTemplateLanding">
-      <img
-        [src]="topbarFormationLogoUrl"
-        (error)="handleTopbarFormationLogoError($event)"
-        alt=""
-        class="topbar__formation-logo"
-      />
-      <div class="topbar__formation-copy">
-        <strong class="topbar__formation-degree">{{ topbarFormationGraduation }}</strong>
-        <span class="topbar__formation-specialization">{{ topbarFormationSpecialization }}</span>
-      </div>
+      <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
     </div>
 
-    <a
-      *ngIf="isCandidateEcosystem"
-      class="topbar__cta topbar__cta--back"
-      routerLink="/usuario/experiencia"
-      aria-label="Voltar"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
-      <span>Voltar</span>
-    </a>
+    <span class="topbar__greeting">Hi {{ topbarGreetingName }}</span>
+  </button>
 
-  </div>
-
-  <div class="search" [class.search--candidate]="isCandidateMode" *ngIf="!isSelectionMode">
-    <span class="material-symbols-rounded" aria-hidden="true">search</span>
-
-    <input
-      *ngIf="isTemplateLanding; else defaultSearch"
-      type="search"
-      placeholder="Buscar vaga, empresa ou local..."
-      aria-label="Buscar vaga, empresa ou local"
-      [value]="templateSearchQuery"
-      (input)="templateSearchQuery = ($any($event.target).value || '')"
-    />
-
-    <button
-      *ngIf="isTemplateLanding && hasTemplateSearchQuery"
-      class="search__clear"
-      type="button"
-      aria-label="Limpar busca"
-      (click)="clearTemplateSearch()"
-    >
-      <span class="material-symbols-rounded" aria-hidden="true">close</span>
-    </button>
-
-    <ng-template #defaultSearch>
-      <input
-        type="search"
-        [placeholder]="isCandidateMode ? 'Buscar vagas' : 'Buscar'"
-        [attr.aria-label]="isCandidateMode ? 'Buscar vagas' : 'Buscar talentos ou vagas'"
-      />
-    </ng-template>
-  </div>
-
-  <div class="actions">
-    <button
-      *ngIf="isCandidateMode && !isCandidateEcosystem"
-      class="topbar__market-brief"
-      type="button"
-      (click)="openCandidateEcosystem($event)"
-      aria-label="Ir para Ecossistema"
-    >
-      <span class="topbar__market-brief-head">
-        <span class="topbar__market-brief-badge" aria-hidden="true">
-          <span class="material-symbols-rounded">insights</span>
-        </span>
-        <span class="topbar__market-brief-copy">
-          <strong>Movimento do mercado</strong>
-          <span class="topbar__market-brief-copy-row">
-            <span>Visão rápida do Ecossistema</span>
-          </span>
-        </span>
-      </span>
-
-      <span class="topbar__market-brief-stats">
-        <span class="topbar__market-brief-metric">
-          <strong>{{ topbarNewVacanciesCount }}</strong>
-          <span>novas vagas</span>
-        </span>
-        <span class="topbar__market-brief-metric topbar__market-brief-metric--accent">
-          <strong>{{ topbarNewHiresCount }}</strong>
-          <span>novas contratações</span>
-        </span>
-      </span>
-    </button>
-
-    <a
-      *ngIf="!isCandidateMode"
-      class="topbar__cta"
-      routerLink="/vagas/cadastro"
-      aria-label="Abrir vagas"
-    >
-      <span>Abrir vagas</span>
-    </a>
-
-    <button
-      *ngIf="!isCandidateMode"
-      class="iconBtn topbar__clear-mock"
-      type="button"
-      (click)="clearPublishedJobsForTesting()"
-      aria-label="Limpar mock"
-      title="Limpar mock"
-    >
-      <span class="material-symbols-rounded">ink_eraser</span>
+  <div class="topbar__actions">
+    <button class="topbar__icon" type="button" aria-label="Buscar">
+      <span class="material-symbols-rounded" aria-hidden="true">search</span>
     </button>
 
     <button
-      class="iconBtn topbar__notifications"
-      [class.topbar__notifications--active]="unreadTalentNotifications > 0"
+      class="topbar__icon topbar__icon--notifications"
+      type="button"
       aria-label="Notificações"
-      type="button"
       (click)="openNotifications()"
     >
-      <span class="material-symbols-rounded">notifications</span>
+      <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
       <span class="topbar__notifications-badge" *ngIf="unreadTalentNotifications > 0">
         {{ unreadTalentNotifications }}
       </span>
     </button>
   </div>
 </header>
-
-<div
-  class="topbar-notification-backdrop"
-  *ngIf="isNotificationListOpen || activeTalentNotification"
-  (click)="closeNotificationModal()"
-  aria-hidden="true"
->
-  <section
-    class="topbar-notification-list"
-    *ngIf="isNotificationListOpen"
-    (click)="$event.stopPropagation()"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Lista de notificações"
-  >
-    <header class="topbar-notification-list__head">
-      <strong>Notificações</strong>
-      <span>{{ talentNotifications.length }}</span>
-    </header>
-
-    <div class="topbar-notification-list__items" *ngIf="talentNotifications.length; else emptyNotifications">
-      <article
-        class="topbar-notification-list__item"
-        *ngFor="let notification of talentNotifications"
-        [class.topbar-notification-list__item--unread]="notificationIsUnread(notification)"
-      >
-        <div class="topbar-notification-list__copy">
-          <div class="topbar-notification-list__copy-head">
-            <strong>{{ notificationTitle(notification) }}</strong>
-            <button
-              class="topbar-notification-list__action"
-              type="button"
-              (click)="openNotificationPreview(notification)"
-            >
-              Ver
-            </button>
-          </div>
-          <p>{{ notificationPreview(notification) }}</p>
-        </div>
-      </article>
-    </div>
-
-    <ng-template #emptyNotifications>
-      <div class="topbar-notification-list__empty" aria-live="polite">
-        Nenhuma notificação por aqui.
-      </div>
-    </ng-template>
-  </section>
-
-  <section
-    class="topbar-notification-modal"
-    *ngIf="activeTalentNotification"
-    (click)="$event.stopPropagation()"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Detalhes da notificação"
-  >
-    <div class="topbar-notification-modal__confetti" *ngIf="notificationConfettiPieces.length > 0" aria-hidden="true">
-      <span
-        class="topbar-notification-modal__confetti-piece"
-        *ngFor="let piece of notificationConfettiPieces"
-        [style.left]="piece.left"
-        [style.top]="piece.top"
-        [style.animation-delay]="piece.delay"
-        [style.animation-duration]="piece.duration"
-        [style.width]="piece.size"
-        [style.height]="piece.size"
-        [style.--confetti-rotate]="piece.rotate"
-        [style.--confetti-dx]="piece.dx"
-        [style.--confetti-dy]="piece.dy"
-        [style.background]="piece.color"
-      ></span>
-    </div>
-
-    <button class="topbar-notification-modal__close" type="button" (click)="closeNotificationModal()">
-      <span class="material-symbols-rounded" aria-hidden="true">close</span>
-    </button>
-
-    <div class="topbar-notification-modal__label">
-      Você avançou no processo seletivo!
-    </div>
-
-    <div class="topbar-notification-modal__job" *ngIf="activeTalentNotificationJob as job">
-      <strong class="topbar-notification-modal__job-title">{{ job.title }}</strong>
-      <span class="topbar-notification-modal__job-company">{{ activeTalentNotificationCompanyLine }}</span>
-      <span class="topbar-notification-modal__job-location" *ngIf="activeTalentNotificationLocationLine">
-        {{ activeTalentNotificationLocationLine }}
-      </span>
-      <span class="topbar-notification-modal__job-offer" *ngIf="activeTalentNotificationOfferLine">
-        {{ activeTalentNotificationOfferLine }}
-      </span>
-    </div>
-
-    <div class="topbar-notification-modal__recruiter">
-      <span class="topbar-notification-modal__recruiter-avatar" aria-hidden="true"></span>
-      <span class="topbar-notification-modal__recruiter-copy">
-        <strong>{{ recruiterTopbarDisplayName }}</strong>
-        <span>{{ recruiterTopbarDisplayMeta }}</span>
-      </span>
-    </div>
-
-    <div class="topbar-notification-modal__actions">
-      <button
-        class="topbar-notification-modal__action topbar-notification-modal__action--primary"
-        type="button"
-        (click)="openNotificationConversation()"
-      >
-        Ir para conversa com recrutador
-      </button>
-    </div>
-  </section>
-</div>
-
-<ng-template #selectionTopbar>
-  <div class="topbar__primary">
-    <div class="search">
-      <span class="material-symbols-rounded" aria-hidden="true">door_open</span>
-      <input type="search" value="Escolha seu acesso" aria-label="Escolha seu acesso" readonly />
-    </div>
-  </div>
-</ng-template>

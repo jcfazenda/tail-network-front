@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { TalentNotification } from '../../../usuario/talent-notification.service';
 import { JobsFacade } from '../../facades/jobs.facade';
@@ -48,7 +48,7 @@ type NotificationConfettiPiece = {
 @Component({
   standalone: true,
   selector: 'app-topbar',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './topbar.component.html',
   styleUrls: [
     './topbar.component.shell.scss',
@@ -240,6 +240,15 @@ export class TopbarComponent {
 
   get topbarProfileDisplayMeta(): string {
     return this.isCandidateMode ? this.topbarCandidateDisplayLocation : this.recruiterTopbarDisplayMeta;
+  }
+
+  get topbarGreetingName(): string {
+    const fullName = this.topbarProfileDisplayName.trim();
+    if (!fullName) {
+      return 'Henry';
+    }
+
+    return fullName.split(' ')[0] || fullName;
   }
 
   get topbarFormationLogoUrl(): string {

@@ -62,19 +62,6 @@
   outline-offset: 4px;
 }
 
-.landing__topbar{
-  position: sticky;
-  top: 0;
-  z-index: 520;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.landing__topbar app-topbar{
-  width: min(1480px, 88vw);
-}
-
 .landing__shell{
   width: 100%;
   border-radius: 34px 34px 0 0;
@@ -1809,326 +1796,60 @@
 
 @media (max-width: 720px){
   .landing{
-    padding: 0 14px 34px;
+    min-height: 100dvh;
+    padding: 0;
+    display: block;
   }
 
   .landing__frame{
-    padding: 10px;
-    border-radius: 34px 34px 0 0;
-    min-height: calc(100vh - 34px);
-    padding-bottom: 20px;
+    width: 100%;
+    min-height: 100dvh;
+    padding: 0;
+    border-radius: 0;
+    background: #f8fafc;
+    padding-bottom: 0;
+    box-sizing: border-box;
   }
 
   .landing__sidebar-toggle{
-    top: 24px;
-    left: 18px;
-    width: 42px;
-    height: 42px;
-  }
-
-  .landing__topbar{
-    margin-bottom: 10px;
-  }
-
-  .landing__topbar app-topbar{
-    width: min(1480px, 92vw);
-  }
-
-  .howitworks{
-    padding: 14px 12px 16px;
-    border-radius: 0 0 22px 22px;
-  }
-
-  .howitworks__nodes{
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .howitworks__bar{
-    width: 100%;
-    min-height: 136px;
-    margin-top: -54px;
-    padding: 14px 14px;
-  }
-
-  .howitworks__kpis{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 0;
-  }
-
-  .howitworks__kpi:not(:last-child)::after{
     display: none;
   }
 
-  .hired-strip__arrow{
+  app-topbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    display: block;
+    padding: 8px 12px 0;
+    box-sizing: border-box;
+    background: #f8fafc;
+  }
+
+  .landing__shell,
+  .landing__below{
     display: none;
-  }
-
-  .hired-strip__track{
-    padding: 10px 12px 14px;
-    scroll-padding-inline: 12px;
-  }
-
-  .howitworks__bar-copy{
-    padding: 28px 10px 28px;
-    margin-bottom: 8px;
-  }
-
-  .howitworks__cards{
-    grid-template-columns: 1fr;
-  }
-
-  .landing__shell{
-    padding: 28px 18px;
-    min-height: min(920px, 92vh);
-  }
-
-  .landing__brand{
-    top: 14px;
-    left: 16px;
-    width: 168px;
-  }
-
-  .candidate-week-radar{
-    width: 100%;
-  }
-
-  .landing__row{
-    grid-template-columns: 1fr;
-  }
-
-  .eco-filterbar__tab{
-    height: 40px;
-    font-size: 16px;
-    padding: 0 14px;
-  }
-
-  .eco-kpi__kpis{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .eco-kpi__kpi:not(:last-child)::after{
-    display: none;
-  }
-
-  .eco-kpi__kpi{
-    padding: 14px 14px;
-  }
-
-  .eco-kpi__search{
-    height: 54px;
-    border-radius: 18px;
-    padding: 0 16px;
-  }
-
-  .eco-kpi__search .material-symbols-rounded{
-    font-size: 26px;
-  }
-
-  .eco-kpi__search input{
-    font-size: 18px;
-  }
-
-  .eco-jobs{
-    grid-template-columns: 1fr;
-  }
-
-  .mini-feature{
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .landing__headline{
-    font-size: 40px;
-  }
-
-  .landing__content{
-    margin-left: 0;
-    max-width: 520px;
-  }
-
-  .landing__footer{
-    bottom: 10px;
   }
 }
 
 @media (max-width: 560px){
   .landing{
-    padding: 0 10px 26px;
+    min-height: 100dvh;
+    padding: 0;
   }
 
   .landing__frame{
-    padding: 8px;
-    border-radius: 26px 26px 0 0;
+    padding: 0;
   }
 
-  .landing__shell{
-    min-height: auto;
-    padding: 22px 14px 18px;
-    border-radius: 24px 24px 0 0;
-  }
-
-  .landing__brand{
-    width: 136px;
-  }
-
-  .landing__headline{
-    font-size: clamp(28px, 9vw, 34px);
-    line-height: 0.98;
-    max-width: 10ch;
-  }
-
-  .landing__subhead{
-    font-size: 14px;
-    line-height: 1.55;
-    max-width: 30ch;
-  }
-
-  .howitworks{
-    padding: 12px 10px 14px;
-  }
-
-  .howitworks__bar-copy{
-    padding: 22px 8px 20px;
-  }
-
-  .howitworks__bar-copy h3{
-    font-size: 20px;
-  }
-
-  .howitworks__bar-copy p{
-    font-size: 13px;
-  }
-
-  .hired-strip__track{
-    gap: 16px;
-    padding: 8px 10px 12px;
-    scroll-padding-inline: 10px;
-  }
-
-  .eco-filterbar__tabs{
-    gap: 8px;
-  }
-
-  .eco-filterbar__tab{
-    min-height: 38px;
-    height: auto;
-    padding: 8px 12px;
-    font-size: 14px;
-    gap: 8px;
-  }
-
-  .eco-filterbar__tab-icon{
-    font-size: 18px;
-  }
-
-  .eco-kpi__kpis{
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .eco-kpi__kpis-left{
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .eco-kpi__kpis-left .eco-kpi__kpi{
-    border-right: 0;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  }
-
-  .eco-kpi__kpi--right{
-    width: 100%;
-  }
-
-  .candidate-week-radar{
-    min-height: auto;
-    padding: 14px 14px 18px;
-    border-radius: 18px;
-  }
-
-  .candidate-week-radar__subtitle{
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .candidate-week-radar__delta{
-    margin-left: 0;
-  }
-
-  .mini-feature{
-    border-radius: 18px;
-  }
-
-  .mini-feature__media{
-    height: 188px;
-  }
-
-  .mini-feature__toolbar{
-    padding: 12px;
-    gap: 10px;
-  }
-
-  .mini-feature__body{
-    padding: 14px;
-  }
-
-  .mini-feature__job-title{
-    font-size: 20px;
-  }
-
-  .mini-feature__job-offer{
-    font-size: 12px;
-    line-height: 1.45;
-  }
-
-  .mini-feature__fitrow{
-    padding: 0 14px 14px;
-  }
-
-  .eco-jobs__empty{
-    padding: 18px 16px;
-    border-radius: 16px;
+  app-topbar{
+    padding: 8px 10px 0;
   }
 }
 
 @media (max-width: 420px){
-  .landing__sidebar-toggle{
-    top: 18px;
-    left: 14px;
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-  }
-
-  .landing__topbar app-topbar{
-    width: 100%;
-  }
-
-  .landing__headline{
-    font-size: 27px;
-    max-width: 9ch;
-  }
-
-  .landing__subhead{
-    font-size: 13px;
-  }
-
-  .mini-feature__company-copy strong{
-    font-size: 18px;
-  }
-
-  .mini-feature__job-title{
-    font-size: 18px;
-  }
-
-  .candidate-week-radar__label,
-  .candidate-week-radar__value{
-    font-size: 12px;
-  }
-
-  .eco-jobs__empty-action{
-    width: 100%;
-    justify-content: center;
+  app-topbar{
+    padding: 8px 8px 0;
   }
 }

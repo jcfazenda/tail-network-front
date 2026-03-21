@@ -11,7 +11,7 @@
       <h1>{{ accessView === 'login' ? 'Entre na TailWorks.' : 'Vamos criar sua conta.' }}</h1>
       <p>
         {{ accessView === 'login'
-          ? 'Use seu acesso, Google ou LinkedIn. Depois, no Home, voce escolhe se quer usar o sistema como recruiter ou talento.'
+          ? 'Por enquanto, o login esta liberado so com e-mail. Depois, no Home, voce escolhe se quer usar o sistema como recruiter ou talento.'
           : 'A conta e da pessoa. Depois de entrar, a escolha de usar como recruiter ou talento acontece no Home.' }}
       </p>
     </div>
@@ -58,10 +58,9 @@
         <input type="email" [(ngModel)]="email" name="email" placeholder="voce@empresa.com" />
       </label>
 
-      <label class="login-page__field">
-        <span>Senha</span>
-        <input type="password" [(ngModel)]="password" name="password" placeholder="Digite sua senha" />
-      </label>
+      <p class="login-page__helper">
+        Nesta fase, basta informar um e-mail ja cadastrado para entrar.
+      </p>
 
       <div class="login-page__actions">
         <button class="login-page__button login-page__button--primary" type="submit">

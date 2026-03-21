@@ -44,7 +44,7 @@ export class HomePage {
     }
 
     this.ecosystemEntryService.setMode('recruiter');
-    void this.router.navigateByUrl('/radar');
+    void this.router.navigateByUrl('/home/ecossistema');
   }
 
   protected enterAsTalent(event: Event): void {

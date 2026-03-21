@@ -3,145 +3,16 @@
   inset: 0;
   z-index: 820;
   display: block;
-  padding: 120px 24px 24px;
+  padding: 112px 24px 24px;
   background: rgba(17, 24, 39, 0.12);
   backdrop-filter: blur(6px);
 }
 
-@media (max-width: 1180px){
-  .topbar:not(.topbar--candidate){
-    grid-template-columns: auto minmax(300px, 1fr) auto;
-  }
-
-  .topbar:not(.topbar--candidate) .search{
-    min-width: 300px;
-  }
-
-  .topbar__primary--candidate{
-    grid-template-columns: minmax(480px, 1fr) minmax(260px, 320px) auto;
-  }
-
-  .topbar__primary--candidate-collapsed{
-    gap: 18px;
-  }
-
-  .topbar__formation-summary{
-    width: 100%;
-  }
-
-  .topbar__sidebar-profile{
-    gap: 12px;
-    padding-right: 16px;
-  }
-
-  .topbar__sidebar-profile .topbar__sidebar-profile-avatar{
-    width: 72px;
-    height: 72px;
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 1380px){
-  .topbar--candidate{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .topbar--candidate .topbar__primary{
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .search--candidate{
-    order: 2;
-    margin-left: auto;
-    width: 48px;
-    min-width: 48px;
-    max-width: 48px;
-    min-height: 48px;
-    padding: 0;
-    border-radius: 14px;
-    justify-content: center;
-    background: var(--btn-icon-bg);
-    border: 1px solid var(--btn-icon-border);
-    box-shadow: var(--btn-icon-shadow);
-    cursor: pointer;
-  }
-
-  .topbar--candidate .actions{
-    order: 3;
-    flex: 0 0 auto;
-    justify-self: auto;
-  }
-
-  .search--candidate input{
-    display: none;
-  }
-
-  .search--candidate .material-symbols-rounded{
-    position: static;
-    left: auto;
-    font-size: 20px;
-    color: var(--btn-icon-text);
-  }
-
-  .topbar__market-brief{
-    min-width: 48px;
-    width: 48px;
-    min-height: 48px;
-    padding: 0;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    background: var(--btn-icon-bg);
-    border: 1px solid var(--btn-icon-border);
-    box-shadow: var(--btn-icon-shadow);
-  }
-
-  .topbar__market-brief-head{
-    grid-template-columns: auto;
-    justify-items: center;
-    gap: 0;
-  }
-
-  .topbar__market-brief-copy,
-  .topbar__market-brief-stats{
-    display: none;
-  }
-
-  .topbar__market-brief-badge{
-    width: 24px;
-    height: 24px;
-    border-radius: 8px;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .topbar__market-brief-badge .material-symbols-rounded{
-    font-size: 18px;
-    color: var(--btn-icon-text);
-  }
-}
-
-@media (max-width: 980px){
-  .topbar__primary--candidate{
-    display: flex;
-    gap: 14px;
-  }
-
-  .topbar__formation-summary{
-    display: none;
-  }
-}
-
 .topbar-notification-list{
   position: absolute;
-  top: 102px;
+  top: 96px;
   right: 24px;
-  width: min(100%, 440px);
+  width: min(100%, 420px);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -230,25 +101,18 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    background 180ms ease;
 }
 
 .topbar-notification-list__action:hover{
-  transform: translateY(-1px);
   border-color: rgba(225, 138, 39, 0.26);
   background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
 }
 
-.topbar-notification-list__action:focus-visible{
+.topbar-notification-list__action:focus-visible,
+.topbar-notification-modal__close:focus-visible,
+.topbar-notification-modal__action:focus-visible{
   outline: none;
-  box-shadow:
-    0 0 0 3px rgba(225, 138, 39, 0.16),
-    0 10px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 0 0 3px rgba(225, 138, 39, 0.16);
 }
 
 .topbar-notification-list__empty{
@@ -303,158 +167,93 @@
   justify-content: center;
   cursor: pointer;
   z-index: 1;
-  transition:
-    transform 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.topbar-notification-modal__close:hover{
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-}
-
-.topbar-notification-modal__close:focus-visible,
-.topbar-notification-modal__action:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(225, 138, 39, 0.16);
 }
 
 .topbar-notification-modal__label{
-  position: absolute;
-  left: 315px;
-  top: 156px;
-  max-width: none;
-  font-size: 34px;
-  line-height: 1.14;
+  padding: 84px 48px 12px;
+  font-size: 30px;
+  line-height: 1.1;
   font-weight: 900;
-  white-space: nowrap;
-  color: #000000;
-  text-shadow: 0 8px 22px rgba(15, 23, 42, 0.32);
-  z-index: 1;
+  color: #111827;
+  text-align: center;
 }
 
 .topbar-notification-modal__job{
-  position: absolute;
-  font-size: 64px;
-  left: 450px;
-  top: 282px;
   display: grid;
-  gap: 7px;
-  min-width: 0;
-  color: #111827;
-  z-index: 1;
-}
-
-.topbar-notification-modal__job-kicker{
-  font-size: 19px;
-  line-height: 1;
-  font-weight: 800;
-  color: #1f2937;
+  gap: 10px;
+  justify-items: center;
+  padding: 12px 48px 0;
+  text-align: center;
 }
 
 .topbar-notification-modal__job-title{
-  font-size: 30px;
-  line-height: 1.12;
-  font-weight: 900;
-  color: #111827;
-  letter-spacing: -0.02em;
+  font-size: 22px;
+  color: #172033;
 }
 
-.topbar-notification-modal__job-company{
-  font-size: 18px;
-  line-height: 1.32;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-.topbar-notification-modal__job-location{
-  font-size: 17px;
-  line-height: 1.18;
-  font-weight: 700;
-  color: #1f2937;
-}
-
+.topbar-notification-modal__job-company,
+.topbar-notification-modal__job-location,
 .topbar-notification-modal__job-offer{
-  margin-top: 8px;
-  font-size: 18px;
+  color: #64748b;
+  font-size: 15px;
   line-height: 1.5;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  color: #1f2937;
-  white-space: nowrap;
-}
-
-.topbar-notification-modal__actions{
-  position: absolute;
-  left: 26px;
-  right: 26px;
-  bottom: 54px;
-  display: flex;
-  justify-content: flex-end;
-  z-index: 1;
 }
 
 .topbar-notification-modal__recruiter{
-  position: absolute;
-  right: 128px;
-  bottom: 126px;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  z-index: 1;
+  margin: 28px auto 0;
+  padding: 0 24px;
 }
 
 .topbar-notification-modal__recruiter-avatar{
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   border-radius: 999px;
-  background: center/cover no-repeat url('/assets/avatars/avatar-default.svg');
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
-  border: 2px solid rgba(255, 255, 255, 0.96);
-  flex: 0 0 auto;
+  background: center / cover no-repeat url('/assets/avatars/avatar-default.svg'), linear-gradient(135deg, #e5e7eb, #cbd5e1);
 }
 
 .topbar-notification-modal__recruiter-copy{
   display: grid;
   gap: 2px;
-  color: #1f2937;
 }
 
 .topbar-notification-modal__recruiter-copy strong{
-  font-size: 16px;
-  line-height: 1.1;
-  font-weight: 800;
+  color: #172033;
 }
 
 .topbar-notification-modal__recruiter-copy span{
+  color: #64748b;
   font-size: 13px;
-  line-height: 1.2;
-  font-weight: 600;
-  color: rgba(31, 41, 55, 0.78);
+}
+
+.topbar-notification-modal__actions{
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px 40px;
 }
 
 .topbar-notification-modal__action{
-  width: min(100%, 320px);
-  min-height: 52px;
-  margin-right: 42px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  font-size: 15px;
-  font-weight: 700;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 14px;
+  border: 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
 }
 
 .topbar-notification-modal__action--primary{
-  background: linear-gradient(180deg, #dd7f24 0%, #b85f12 100%);
-  color: #fff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: var(--btn-primary-shadow);
 }
 
 .topbar-notification-modal__action--primary:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 14px 28px rgba(184, 95, 18, 0.26);
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--btn-primary-shadow-hover);
 }
 
 @keyframes topbarNotificationConfetti{
@@ -463,225 +262,76 @@
     transform: translate3d(0, 0, 0) rotate(var(--confetti-rotate, 0deg)) scale(0.35);
   }
 
-  10%{
+  12%{
     opacity: 1;
-  }
-
-  38%{
-    opacity: 1;
-    transform: translate3d(calc(var(--confetti-dx, 0px) * 0.72), calc(var(--confetti-dy, 0px) * 0.72), 0)
-      rotate(calc(var(--confetti-rotate, 0deg) + 180deg)) scale(1.02);
   }
 
   100%{
     opacity: 0;
-    transform: translate3d(var(--confetti-dx, 0px), var(--confetti-dy, 0px), 0)
-      rotate(calc(var(--confetti-rotate, 0deg) + 360deg)) scale(0.92);
-  }
-}
-
-@media (max-width: 960px){
-  .topbar{
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 12px 16px;
-  }
-
-  .actions{
-    justify-content: flex-start;
-  }
-
-  .topbar-notification-backdrop{
-    padding-top: 132px;
-  }
-
-  .topbar-notification-list{
-    top: 108px;
-    right: 18px;
+    transform: translate3d(var(--confetti-dx, 0px), var(--confetti-dy, 0px), 0) rotate(calc(var(--confetti-rotate, 0deg) + 180deg)) scale(1);
   }
 }
 
 @media (max-width: 720px){
-  .topbar__primary{
-    flex-wrap: wrap;
-  }
-
-  .topbar__cta,
-  .topbar__mode-pill{
-    width: 100%;
-    justify-content: center;
-  }
-
-  .topbar-notification-modal{
-    border-radius: 20px;
-    min-height: 560px;
-  }
-
-  .topbar-notification-modal__label{
-    left: 48px;
-    top: 166px;
-    max-width: none;
-    font-size: 24px;
-    white-space: nowrap;
-  }
-
-  .topbar-notification-modal__job{
-    left: 44px;
-    top: 236px;
-    right: 44px;
-  }
-
-  .topbar-notification-modal__job-title{
-    font-size: 22px;
-  }
-
-  .topbar-notification-modal__job-company,
-  .topbar-notification-modal__job-location,
-  .topbar-notification-modal__job-offer{
-    font-size: 15px;
-  }
-
-  .topbar-notification-modal__actions{
-    left: 18px;
-    right: 18px;
-    bottom: 16px;
-  }
-
-  .topbar-notification-modal__recruiter{
-    right: 84px;
-    bottom: 94px;
-  }
-
-  .topbar-notification-modal__recruiter-avatar{
-    width: 48px;
-    height: 48px;
-  }
-
-  .topbar-notification-modal__recruiter-copy strong{
-    font-size: 14px;
-  }
-
-  .topbar-notification-modal__recruiter-copy span{
-    font-size: 12px;
+  .topbar-notification-backdrop{
+    padding: 84px 16px 16px;
   }
 
   .topbar-notification-list{
-    left: 16px;
+    top: 72px;
     right: 16px;
+    left: 16px;
     width: auto;
   }
 
+  .topbar-notification-modal{
+    min-height: auto;
+  }
+
   .topbar-notification-modal__label{
-    left: 28px;
-    top: 132px;
-    max-width: 240px;
-    font-size: 20px;
+    padding: 72px 24px 12px;
+    font-size: 24px;
   }
 
   .topbar-notification-modal__job{
-    left: 28px;
-    top: 192px;
-    right: 28px;
-    gap: 8px;
-  }
-
-  .topbar-notification-modal__job-kicker{
-    font-size: 16px;
-  }
-
-  .topbar-notification-modal__job-title{
-    font-size: 18px;
-  }
-
-  .topbar-notification-modal__job-company,
-  .topbar-notification-modal__job-location,
-  .topbar-notification-modal__job-offer{
-    font-size: 13px;
-  }
-
-  .topbar-notification-modal__recruiter{
-    right: 40px;
-    bottom: 88px;
-    gap: 10px;
-  }
-
-  .topbar-notification-modal__recruiter-avatar{
-    width: 42px;
-    height: 42px;
-  }
-
-  .topbar-notification-modal__recruiter-copy strong{
-    font-size: 13px;
-  }
-
-  .topbar-notification-modal__recruiter-copy span{
-    font-size: 11px;
+    padding-inline: 24px;
   }
 }
 
 @media (max-width: 560px){
   .topbar-notification-backdrop{
-    padding: 92px 12px 12px;
+    padding: 72px 12px 12px;
   }
 
   .topbar-notification-list{
-    top: 86px;
+    top: 64px;
     left: 12px;
     right: 12px;
-    border-radius: 18px;
   }
 
   .topbar-notification-modal{
-    min-height: auto;
-    padding: 72px 18px 18px;
-    display: grid;
-    gap: 18px;
-  }
-
-  .topbar-notification-modal__label,
-  .topbar-notification-modal__job,
-  .topbar-notification-modal__actions,
-  .topbar-notification-modal__recruiter{
-    position: static;
+    border-radius: 18px;
   }
 
   .topbar-notification-modal__label{
-    max-width: none;
-    font-size: 22px;
-    white-space: normal;
-    text-shadow: none;
+    font-size: 20px;
+    padding-inline: 18px;
   }
 
   .topbar-notification-modal__job{
-    gap: 8px;
-  }
-
-  .topbar-notification-modal__job-title{
-    font-size: 20px;
-  }
-
-  .topbar-notification-modal__job-company,
-  .topbar-notification-modal__job-location,
-  .topbar-notification-modal__job-offer{
-    font-size: 13px;
-    white-space: normal;
+    padding-inline: 18px;
   }
 
   .topbar-notification-modal__recruiter{
-    justify-self: start;
+    padding-inline: 18px;
   }
 
   .topbar-notification-modal__actions{
-    left: auto;
-    right: auto;
-    bottom: auto;
-    justify-content: stretch;
+    padding: 24px 18px 28px;
   }
 
   .topbar-notification-modal__action{
     width: 100%;
-    margin-right: 0;
-    min-height: 48px;
+    justify-content: center;
   }
 }

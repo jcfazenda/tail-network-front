@@ -68,7 +68,13 @@
 .recruiter-cadastro__primary-action,
 .recruiter-cadastro__chip,
 .recruiter-cadastro__scope-card,
-.recruiter-cadastro__permission-card {
+.recruiter-cadastro__permission-card,
+.recruiter-cadastro__company-card,
+.recruiter-cadastro__empty-action,
+.recruiter-cadastro__field input,
+.recruiter-cadastro__field select,
+.recruiter-cadastro__field textarea,
+.recruiter-cadastro__toggle {
   transition:
     transform 0.16s ease,
     border-color 0.16s ease,
@@ -104,6 +110,35 @@
 .recruiter-cadastro__primary-action:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.recruiter-cadastro__ghost-action:hover,
+.recruiter-cadastro__primary-action:hover,
+.recruiter-cadastro__company-card:hover:not(:disabled),
+.recruiter-cadastro__chip:hover:not(:disabled),
+.recruiter-cadastro__scope-card:hover:not(:disabled),
+.recruiter-cadastro__permission-card:hover:not(:disabled),
+.recruiter-cadastro__empty-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
+}
+
+.recruiter-cadastro__ghost-action:focus-visible,
+.recruiter-cadastro__primary-action:focus-visible,
+.recruiter-cadastro__company-card:focus-visible,
+.recruiter-cadastro__chip:focus-visible,
+.recruiter-cadastro__scope-card:focus-visible,
+.recruiter-cadastro__permission-card:focus-visible,
+.recruiter-cadastro__empty-action:focus-visible,
+.recruiter-cadastro__field input:focus-visible,
+.recruiter-cadastro__field select:focus-visible,
+.recruiter-cadastro__field textarea:focus-visible,
+.recruiter-cadastro__toggle:focus-within {
+  outline: none;
+  border-color: rgba(240, 123, 52, 0.62);
+  box-shadow:
+    0 0 0 4px rgba(240, 123, 52, 0.16),
+    0 14px 24px rgba(15, 23, 42, 0.08);
 }
 
 .recruiter-cadastro__layout {
@@ -196,6 +231,7 @@
 .recruiter-cadastro__field textarea:disabled {
   background: rgba(244, 246, 249, 0.96);
   color: #7b8798;
+  box-shadow: none;
 }
 
 .recruiter-cadastro__field--wide {
@@ -517,9 +553,124 @@
     padding: 24px 22px;
   }
 
+  .recruiter-cadastro__hero-actions {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .recruiter-cadastro__grid--identity,
   .recruiter-cadastro__scope-grid,
   .recruiter-cadastro__permission-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .recruiter-cadastro {
+    gap: 18px;
+  }
+
+  .recruiter-cadastro__hero,
+  .recruiter-cadastro__form,
+  .recruiter-cadastro__preview-card,
+  .recruiter-cadastro__helper {
+    border-radius: 22px;
+  }
+
+  .recruiter-cadastro__hero {
+    padding: 20px 18px;
+    gap: 16px;
+  }
+
+  .recruiter-cadastro__hero p,
+  .recruiter-cadastro__section-head span,
+  .recruiter-cadastro__scope-card span,
+  .recruiter-cadastro__permission-card span {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .recruiter-cadastro__hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .recruiter-cadastro__ghost-action,
+  .recruiter-cadastro__primary-action,
+  .recruiter-cadastro__empty-action {
+    width: 100%;
+  }
+
+  .recruiter-cadastro__form,
+  .recruiter-cadastro__preview-card,
+  .recruiter-cadastro__helper {
+    padding: 18px;
+  }
+
+  .recruiter-cadastro__section {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .recruiter-cadastro__company-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .recruiter-cadastro__company-card,
+  .recruiter-cadastro__scope-card,
+  .recruiter-cadastro__permission-card {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .recruiter-cadastro__chips,
+  .recruiter-cadastro__preview-tags,
+  .recruiter-cadastro__preview-pills,
+  .recruiter-cadastro__toggles {
+    gap: 10px;
+  }
+
+  .recruiter-cadastro__chip,
+  .recruiter-cadastro__toggle {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .recruiter-cadastro__preview-avatar {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .recruiter-cadastro__hero {
+    padding: 18px 16px;
+  }
+
+  .recruiter-cadastro__form,
+  .recruiter-cadastro__preview-card,
+  .recruiter-cadastro__helper {
+    padding: 16px;
+  }
+
+  .recruiter-cadastro__section {
+    padding: 14px;
+  }
+
+  .recruiter-cadastro__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    font-size: 20px;
+  }
+
+  .recruiter-cadastro__preview-copy strong {
+    font-size: 16px;
+  }
+
+  .recruiter-cadastro__chip,
+  .recruiter-cadastro__tag {
+    min-height: 36px;
+    padding-inline: 12px;
+    font-size: 12px;
   }
 }

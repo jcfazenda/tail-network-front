@@ -37,7 +37,7 @@ export class AuthFacade {
     return this.authService.activateRecruiterWorkspace();
   }
 
-  login(email: string, password: string): AuthSession | null {
+  login(email: string, password?: string): AuthSession | null {
     return this.authService.login(email, password);
   }
 

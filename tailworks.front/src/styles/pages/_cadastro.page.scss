@@ -139,6 +139,11 @@
   text-decoration: none;
 }
 
+.job-create__nav-item:focus-visible{
+  outline: none;
+  box-shadow: var(--btn-focus-ring), var(--btn-secondary-shadow-hover);
+}
+
 .job-create__nav-item--active{
   color: var(--btn-primary-text);
   border-color: var(--btn-primary-border);
@@ -321,6 +326,12 @@
 .job-preview-banner__action--primary:hover{
   background: var(--btn-primary-bg-hover);
   box-shadow: var(--btn-primary-shadow-hover);
+}
+
+.job-preview-banner__action:focus-visible,
+.job-preview-banner__flip-toggle:focus-visible{
+  outline: none;
+  box-shadow: var(--btn-focus-ring), var(--btn-secondary-shadow-hover);
 }
 
 .job-preview-banner__flip-toggle{
@@ -4513,8 +4524,41 @@
     margin-top: 18px;
   }
 
+  .job-create-shell{
+    margin: 18px 0 36px;
+    padding-inline: 12px;
+  }
+
+  .job-create__hero{
+    gap: 14px;
+    padding: 0 0 16px;
+  }
+
   .job-create__title{
     font-size: 30px;
+  }
+
+  .job-create__description{
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .job-home-announcement__card{
+    padding: 14px 12px 16px;
+    border-radius: 16px;
+  }
+
+  .job-home-announcement__copy{
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .job-home-announcement__copy span{
+    white-space: normal;
+  }
+
+  .summary-card__company-brand{
+    align-items: flex-start;
   }
 
   .job-preview-banner{
@@ -4551,6 +4595,7 @@
 
   .job-create__hero-buttons{
     flex-wrap: wrap;
+    gap: 8px;
   }
 
   .job-create__hero-progress{
@@ -4559,9 +4604,20 @@
 
   .job-create__hero-button{
     flex: 1 1 0;
+    min-width: min(100%, 148px);
     justify-content: center;
     display: inline-flex;
     align-items: center;
+  }
+
+  .job-create__panel-progress-action{
+    width: 100%;
+    justify-content: center;
+  }
+
+  .announcement-upload-area{
+    min-height: 190px;
+    border-radius: 18px;
   }
 
   .job-card{
@@ -4577,5 +4633,47 @@
     flex-direction: column-reverse;
     align-items: stretch;
   }
+}
 
+@media (max-width: 420px){
+  .job-create-shell{
+    padding-inline: 10px;
+  }
+
+  .job-create__title{
+    font-size: 27px;
+  }
+
+  .job-create__nav{
+    gap: 8px;
+  }
+
+  .job-create__nav-item,
+  .job-create__hero-button,
+  .job-preview-banner__action{
+    width: 100%;
+  }
+
+  .job-create__hero-button{
+    min-height: 42px;
+    flex-basis: 100%;
+  }
+
+  .job-preview-banner__face{
+    padding: 16px 48px 16px 14px;
+  }
+
+  .job-preview-banner__title{
+    font-size: 24px;
+  }
+
+  .job-home-announcement__head p,
+  .job-home-announcement__copy strong{
+    max-width: none;
+  }
+
+  .summary-card__company-description{
+    flex-wrap: wrap;
+    gap: 6px;
+  }
 }

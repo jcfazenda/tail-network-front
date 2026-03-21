@@ -93,8 +93,13 @@ export class LoginPage implements OnDestroy {
     this.errorMessage = '';
     this.successMessage = '';
 
-    if (!this.authService.login(this.email, this.password)) {
-      this.errorMessage = 'Nao encontramos um acesso com esse e-mail e senha.';
+    if (!this.email.trim()) {
+      this.errorMessage = 'Informe o e-mail para entrar.';
+      return;
+    }
+
+    if (!this.authService.login(this.email)) {
+      this.errorMessage = 'Nao encontramos um acesso com esse e-mail.';
       return;
     }
 
