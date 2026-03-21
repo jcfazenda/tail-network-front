@@ -86,7 +86,7 @@ export class SidebarComponent {
       label: 'Minha Rede',
       items: [
         { label: 'Candidaturas', icon: 'task_alt', route: '/usuario/minhas-candidaturas' },
-        { label: 'Radar do Ecossistema', icon: 'radar', route: '/usuario/minhas-candidaturas', queryParams: { ecosystem: 'open' } },
+        { label: 'Radar do Ecossistema', icon: 'radar', route: '/usuario/ecossistema' },
       ],
     },
     {

@@ -3,11 +3,13 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
-import { CandidateStage, MockJobRecord, WorkModel } from '../../vagas/data/vagas.models';
+import { CandidateStage, MockJobRecord, TechStackItem, WorkModel } from '../../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
 import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.service';
 import { EcosystemSearchService } from '../../core/layout/ecosystem-search.service';
 import { BrowserStorageService } from '../../core/storage/browser-storage.service';
+import { MatchExperienceSignal, MatchScoreBreakdown, MatchTalentProfile } from '../../core/matching/match-domain.models';
+import { MatchDomainService } from '../../core/matching/match-domain.service';
 
 type TalentEcoFilter = 'radar' | 'applications';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -53,6 +55,35 @@ type HiredSpotlightCard = {
   stacks: HiredSpotlightStack[];
 };
 
+type StoredCandidateStackChip = {
+  id?: string;
+  name?: string;
+  knowledge?: number;
+};
+
+type StoredCandidateStacksDraft = {
+  primary?: StoredCandidateStackChip[];
+  extra?: StoredCandidateStackChip[];
+};
+
+type StoredCandidateExperienceStack = {
+  name?: string;
+};
+
+type StoredCandidateExperience = {
+  role?: string;
+  positionLevel?: string;
+  companySegment?: string;
+  appliedStacks?: StoredCandidateExperienceStack[];
+};
+
+type TalentCompatibleJobView = {
+  job: MockJobRecord;
+  score: MatchScoreBreakdown;
+  matchedStacks: TechStackItem[];
+  missingStacks: TechStackItem[];
+};
+
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
@@ -67,6 +98,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly ecosystemSearchService = inject(EcosystemSearchService);
   private readonly browserStorage = inject(BrowserStorageService);
+  private readonly matchDomainService = inject(MatchDomainService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
@@ -79,6 +111,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
   private readonly brandOrangeMid = { r: 188, g: 109, b: 24 };
   private readonly brandOrangeLight = { r: 242, g: 179, b: 26 };
+  private static readonly candidateStacksStorageKey = 'tailworks:candidate-stacks-draft:v5';
+  private static readonly candidateExperiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
 
   private jobsSnapshot: MockJobRecord[] = [];
   private copyIndex = 0;
@@ -420,6 +454,29 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
       return haystack.includes(query);
     });
+  }
+
+  get talentCompatibleJobs(): TalentCompatibleJobView[] {
+    const talentProfile = this.readTalentProfile();
+
+    return this.ecoFilteredJobs
+      .map((job) => {
+        const score = this.scoreTalentForJob(job, talentProfile);
+        const matchedStacks = this.pickStacksByRepoIds(job.techStack, score.matchedRepoIds);
+        const missingStacks = this.pickStacksByRepoIds(job.techStack, score.missingRepoIds);
+
+        return {
+          job,
+          score,
+          matchedStacks: matchedStacks.slice(0, 3),
+          missingStacks: missingStacks.slice(0, 2),
+        };
+      })
+      .sort((left, right) =>
+        right.score.overallScore - left.score.overallScore
+        || right.score.stackScore - left.score.stackScore
+        || left.job.title.localeCompare(right.job.title, 'pt-BR'),
+      );
   }
 
   get hasEcoSearch(): boolean {
@@ -828,6 +885,18 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       .slice(0, 3);
   }
 
+  talentJobMainStacks(view: TalentCompatibleJobView): TechStackItem[] {
+    if (view.matchedStacks.length) {
+      return view.matchedStacks;
+    }
+
+    return this.topJobTechStacks(view.job);
+  }
+
+  talentJobMissingStacks(view: TalentCompatibleJobView): TechStackItem[] {
+    return view.missingStacks;
+  }
+
   private workModelLabel(model: WorkModel): string {
     switch (model) {
       case 'Hibrido':
@@ -857,6 +926,72 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   private refreshJobs(): void {
     this.jobsSnapshot = this.jobsFacade.getJobs();
+  }
+
+  private readTalentProfile(): MatchTalentProfile {
+    const storedStacks = this.browserStorage.readJson<StoredCandidateStacksDraft>(EcossistemaPage.candidateStacksStorageKey);
+    const storedExperiences = this.browserStorage.readJson<StoredCandidateExperience[]>(EcossistemaPage.candidateExperiencesStorageKey) ?? [];
+    const stackScores: Record<string, number> = {};
+    const allStacks = [...(storedStacks?.primary ?? []), ...(storedStacks?.extra ?? [])];
+
+    for (const stack of allStacks) {
+      const repoId = typeof stack.id === 'string' && stack.id.startsWith('repo:')
+        ? stack.id
+        : this.matchDomainService.mapTechLabelsToRepoIds([stack.name ?? ''])[0];
+
+      if (!repoId) {
+        continue;
+      }
+
+      const knowledge = this.matchDomainService.clampScore(stack.knowledge ?? 0);
+      if ((stackScores[repoId] ?? 0) < knowledge) {
+        stackScores[repoId] = knowledge;
+      }
+    }
+
+    const experiences: MatchExperienceSignal[] = storedExperiences.map((experience) => ({
+      role: experience.role?.trim(),
+      positionLevel: experience.positionLevel?.trim(),
+      companySegment: experience.companySegment?.trim(),
+      appliedStacks: (experience.appliedStacks ?? [])
+        .map((stack) => stack.name?.trim())
+        .filter((name): name is string => Boolean(name)),
+    }));
+
+    return { stackScores, experiences };
+  }
+
+  private scoreTalentForJob(job: MockJobRecord, talentProfile: MatchTalentProfile): MatchScoreBreakdown {
+    const hasProfileData = Object.keys(talentProfile.stackScores).length > 0 || (talentProfile.experiences?.length ?? 0) > 0;
+    if (!hasProfileData) {
+      const fallback = this.matchDomainService.clampScore(job.match || this.matchDomainService.estimateJobReadinessFromTechStack(job.techStack));
+      return {
+        overallScore: fallback,
+        stackScore: fallback,
+        experienceScore: 0,
+        matchedRepoIds: this.matchDomainService.mapTechLabelsToRepoIds(job.techStack.map((item) => item.name)).slice(0, 3),
+        missingRepoIds: [],
+      };
+    }
+
+    const jobProfile = this.matchDomainService.buildJobProfile({
+      techStack: job.techStack,
+      seniority: job.seniority,
+      responsibilitySections: job.responsibilitySections,
+    });
+
+    return this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
+  }
+
+  private pickStacksByRepoIds(techStack: TechStackItem[], repoIds: string[]): TechStackItem[] {
+    if (!repoIds.length) {
+      return [];
+    }
+
+    const repoSet = new Set(repoIds);
+    return techStack
+      .filter((stack) => this.matchDomainService.mapTechLabelsToRepoIds([stack.name]).some((repoId) => repoSet.has(repoId)))
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
   }
 
   private rotateHiringCopy(): void {
@@ -1087,6 +1222,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   trackByJob(_index: number, item: MockJobRecord): string {
     return item.id;
+  }
+
+  trackByTalentCompatibleJob(_index: number, item: TalentCompatibleJobView): string {
+    return item.job.id;
   }
 
   private radarTone(value: number): { dark: { r: number; g: number; b: number }; mid: { r: number; g: number; b: number }; light: { r: number; g: number; b: number } } {

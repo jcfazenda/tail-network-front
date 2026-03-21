@@ -97,6 +97,13 @@
   box-shadow: 0 8px 18px rgba(188, 109, 24, 0.12);
 }
 
+.topbar__shortcut--candidate{
+  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.94);
+  color: rgba(15, 23, 42, 0.78);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
 .topbar__icon{
   position: relative;
   width: 28px;

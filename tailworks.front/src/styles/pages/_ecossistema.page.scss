@@ -2129,6 +2129,13 @@
     box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
   }
 
+  .landing__mobile-job-card--talent{
+    gap: 14px;
+    background:
+      radial-gradient(140% 120% at 0% 0%, rgba(188, 109, 24, 0.07), rgba(255, 255, 255, 0)),
+      #ffffff;
+  }
+
   .landing__mobile-job-card-head{
     display: flex;
     align-items: flex-start;
@@ -2198,6 +2205,30 @@
     flex: 0 0 auto;
   }
 
+  .landing__mobile-job-card-match{
+    display: grid;
+    justify-items: end;
+    gap: 2px;
+    flex: 0 0 auto;
+  }
+
+  .landing__mobile-job-card-match strong{
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+    color: rgba(188, 109, 24, 0.98);
+  }
+
+  .landing__mobile-job-card-match span{
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(140, 76, 18, 0.72);
+  }
+
   .landing__mobile-job-card-brand-copy span{
     font-size: 11px;
     line-height: 1.25;
@@ -2254,6 +2285,40 @@
     color: rgba(15, 23, 42, 0.6);
   }
 
+  .landing__mobile-job-card-insights{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .landing__mobile-job-card-insight{
+    min-height: 52px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    display: grid;
+    align-content: center;
+    gap: 4px;
+    background: rgba(248, 250, 252, 0.88);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .landing__mobile-job-card-insight span{
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.48);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .landing__mobile-job-card-insight strong{
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.84);
+    letter-spacing: -0.02em;
+  }
+
   .landing__mobile-job-card-chips-row{
     display: flex;
     align-items: center;
@@ -2281,6 +2346,31 @@
     color: rgba(15, 23, 42, 0.7);
     font-size: 11px;
     font-weight: 800;
+  }
+
+  .landing__mobile-job-card-chip--muted{
+    background: rgba(243, 244, 246, 0.72);
+    border-style: dashed;
+    color: rgba(15, 23, 42, 0.52);
+  }
+
+  .landing__mobile-job-card-gap{
+    display: grid;
+    gap: 8px;
+    padding-top: 2px;
+  }
+
+  .landing__mobile-job-card-gap > span{
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.52);
+  }
+
+  .landing__mobile-job-card-gap-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .landing__mobile-empty-cta-head{

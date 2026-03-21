@@ -2,15 +2,15 @@
   display: block;
   width: min(100%, var(--usuario-shell-width, 980px));
   max-width: var(--usuario-shell-width, 980px);
-  margin: 0 0 10px;
+  margin: 0;
   padding: 0 8px;
   box-sizing: border-box;
 }
 
 .candidate-registration-strip{
   display: grid;
-  gap: 10px;
-  padding: 0 0 8px;
+  gap: 4px;
+  padding: 0 0 6px;
 }
 
 .candidate-registration-strip__avatar-input{
@@ -19,11 +19,21 @@
 
 .candidate-registration-strip__identity-row{
   display: grid;
-  grid-template-columns: 86px minmax(280px, 340px) minmax(0, 1fr);
+  grid-template-columns: 86px minmax(280px, 340px);
   align-items: center;
   gap: 22px;
-  padding-bottom: 14px;
-  border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
+  padding-bottom: 10px;
+}
+
+.candidate-registration-strip__divider{
+  width: 100%;
+  height: 0;
+  border-top: 1px dashed rgba(15, 23, 42, 0.14);
+}
+
+.candidate-registration-strip__formation-row{
+  display: grid;
+  padding-top: 10px;
 }
 
 .candidate-registration-strip__avatar{
@@ -128,8 +138,8 @@
   align-items: center;
   gap: 16px;
   min-width: 0;
-  padding-left: 24px;
-  border-left: 1px solid rgba(15, 23, 42, 0.12);
+  padding-left: 0;
+  border-left: 0;
 }
 
 .candidate-registration-strip__formation-logo{
@@ -260,22 +270,64 @@
 }
 
 @media (max-width: 720px){
+  :host{
+    margin-top: -24px;
+  }
+
+  .candidate-registration-strip{
+    padding-top: 0;
+    gap: 0;
+  }
+
   .candidate-registration-strip__identity-row{
-    grid-template-columns: 1fr;
-    justify-items: start;
+    grid-template-columns: 58px minmax(0, 1fr);
     align-items: start;
-    padding-bottom: 24px;
+    justify-items: start;
+    gap: 10px 12px;
+    padding-top: 0;
+    padding-bottom: 8px;
+  }
+
+  .candidate-registration-strip__avatar{
+    width: 58px;
+    height: 58px;
+    box-shadow:
+      inset 0 0 0 4px rgba(255, 255, 255, 0.56),
+      0 12px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .candidate-registration-strip__avatar .material-symbols-rounded{
+    font-size: 28px;
   }
 
   .candidate-registration-strip__identity{
     justify-items: start;
     text-align: left;
+    min-height: 58px;
+    align-content: center;
+    gap: 2px;
+  }
+
+  .candidate-registration-strip__identity-name strong{
+    font-size: 15px;
+  }
+
+  .candidate-registration-strip__identity-detail{
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .candidate-registration-strip__formation-row{
+    padding-top: 8px;
   }
 
   .candidate-registration-strip__formation{
     grid-template-columns: 60px minmax(0, 1fr);
     padding-left: 0;
     border-left: 0;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
   }
 
   .candidate-registration-strip__formation-logo{

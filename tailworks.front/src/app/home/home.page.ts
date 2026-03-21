@@ -59,7 +59,7 @@ export class HomePage {
     const session = this.authService.getSession();
     this.ecosystemEntryService.setMode('talent');
     this.jobsFacade.signInAsTalent(session?.name ?? 'Talento', session?.location);
-    void this.router.navigateByUrl('/usuario/minhas-candidaturas');
+    void this.router.navigateByUrl('/usuario/ecossistema');
   }
 
   protected resetWorkspace(event: Event): void {

@@ -74,7 +74,70 @@
       </div>
     </section>
 
-    <ng-container *ngIf="ecoFilteredJobs.length; else emptyJobCard">
+    <ng-container *ngIf="isTalentEcosystemMode; else recruiterJobCards">
+      <ng-container *ngIf="talentCompatibleJobs.length; else emptyJobCard">
+        <article
+          *ngFor="let view of talentCompatibleJobs; trackBy: trackByTalentCompatibleJob"
+          class="landing__mobile-job-card"
+          aria-label="Card compativel com o perfil"
+        >
+          <div class="landing__mobile-job-card-head">
+            <div class="landing__mobile-job-card-brand">
+              <ng-container *ngIf="jobCompanyLogoUrl(view.job) as logoUrl; else companyFallbackTalent">
+                <img
+                  *ngIf="logoUrl; else companyFallbackTalent"
+                  class="landing__mobile-job-card-logo"
+                  [src]="logoUrl"
+                  [alt]="view.job.company"
+                  loading="eager"
+                  decoding="async"
+                />
+              </ng-container>
+              <ng-template #companyFallbackTalent>
+                <div class="landing__mobile-job-card-logo landing__mobile-job-card-logo--fallback">
+                  {{ jobCompanyLogoLabel(view.job) }}
+                </div>
+              </ng-template>
+
+              <div class="landing__mobile-job-card-brand-copy">
+                <strong>{{ view.job.company }}</strong>
+                <span>{{ jobCardLocation(view.job) }}</span>
+              </div>
+            </div>
+
+            <span class="landing__mobile-job-card-workmodel">{{ jobCardWorkModel(view.job) }}</span>
+          </div>
+
+          <div class="landing__mobile-job-card-title-row">
+            <div class="landing__mobile-job-card-title">{{ view.job.title }}</div>
+
+            <div
+              class="landing__mobile-job-card-salary"
+              *ngIf="view.job.salaryRange && view.job.showSalaryRangeInCard !== false"
+            >
+              {{ view.job.salaryRange }}
+            </div>
+          </div>
+
+          <p class="landing__mobile-job-card-summary">
+            {{ view.job.summary || 'Vaga alinhada com o seu perfil atual.' }}
+          </p>
+
+          <div class="landing__mobile-job-card-chips-row">
+            <div class="landing__mobile-job-card-chips">
+              <span class="landing__mobile-job-card-chip" *ngFor="let stack of talentJobMainStacks(view)">
+                {{ stack.name }}
+              </span>
+            </div>
+
+            <a class="landing__mobile-job-card-action" href="/usuario/minhas-candidaturas">candidatar</a>
+          </div>
+        </article>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #recruiterJobCards>
+      <ng-container *ngIf="ecoFilteredJobs.length; else emptyJobCard">
       <article
         *ngFor="let job of ecoFilteredJobs; trackBy: trackByJob"
         class="landing__mobile-job-card"
@@ -132,16 +195,19 @@
           <a class="landing__mobile-job-card-action" href="/vagas/cadastro">editar</a>
         </div>
       </article>
-    </ng-container>
+      </ng-container>
+    </ng-template>
 
     <ng-template #emptyJobCard>
       <div class="landing__mobile-empty-cta" aria-label="Criar card">
         <div class="landing__mobile-empty-cta-head">
-          <p>Você não tem nenhum card criado.</p>
-          <a class="landing__mobile-empty-cta-button" href="/vagas/cadastro">criar</a>
+          <p>{{ isTalentEcosystemMode ? 'Nenhuma vaga compatível apareceu agora.' : 'Você não tem nenhum card criado.' }}</p>
+          <a *ngIf="!isTalentEcosystemMode" class="landing__mobile-empty-cta-button" href="/vagas/cadastro">criar</a>
         </div>
         <p class="landing__mobile-empty-cta-copy">
-          Ao começar a criar cards, eles aparecerão aqui e você poderá ver os candidatos no radar com seus % de compatibilidade e aderência.
+          {{ isTalentEcosystemMode
+            ? 'Complete melhor o seu perfil, stacks e experiências para o radar encontrar vagas mais aderentes ao seu momento.'
+            : 'Ao começar a criar cards, eles aparecerão aqui e você poderá ver os candidatos no radar com seus % de compatibilidade e aderência.' }}
         </p>
       </div>
     </ng-template>

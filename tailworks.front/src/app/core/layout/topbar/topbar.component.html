@@ -24,6 +24,16 @@
 
   <div class="topbar__actions">
     <button
+      *ngIf="isCandidateEcosystem"
+      class="topbar__shortcut topbar__shortcut--candidate"
+      type="button"
+      (click)="openCandidateProfileSetup()"
+      aria-label="Configurar perfil"
+    >
+      configurar
+    </button>
+
+    <button
       *ngIf="isTemplateLanding"
       class="topbar__shortcut"
       type="button"

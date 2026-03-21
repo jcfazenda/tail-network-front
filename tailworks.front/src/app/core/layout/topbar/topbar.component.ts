@@ -117,12 +117,11 @@ export class TopbarComponent {
   }
 
   get canToggleSidebar(): boolean {
-    return !this.isSelectionMode && !this.isCandidateEcosystem;
+    return !this.isSelectionMode;
   }
 
   get showSidebarProfileInPrimary(): boolean {
-    // Keep the avatar/profile block visible even when the sidebar is open.
-    return !this.isSelectionMode && !this.isCandidateEcosystem;
+    return !this.isSelectionMode;
   }
 
   get shouldShowTopbarAvatar(): boolean {
@@ -443,6 +442,10 @@ export class TopbarComponent {
 
   openCreateJob(): void {
     void this.router.navigate(['/vagas/cadastro']);
+  }
+
+  openCandidateProfileSetup(): void {
+    void this.router.navigate(['/usuario/dados-cadastrais']);
   }
 
   clearTemplateSearch(): void {

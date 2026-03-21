@@ -7,16 +7,26 @@
   --usuario-shell-width: min(1400px, calc(100vw - 120px));
   width: min(100%, var(--usuario-shell-width));
   margin: 0 auto;
-  padding: 40px 24px 32px;
+  padding: 0 24px 32px;
   box-sizing: border-box;
   display: grid;
-  gap: 28px;
+  gap: 20px;
+}
+
+.usuario-page__profile-top{
+  display: grid;
+  gap: 0;
 }
 
 .usuario-page__intro {
   display: grid;
   gap: 8px;
   padding: 0 4px;
+}
+
+.usuario-page__intro--top{
+  padding: 8px 4px 0;
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.14);
 }
 
 .usuario-page__chips {
@@ -88,7 +98,7 @@
 .usuario-page__modal-intro h1 {
   margin: 0;
   color: #1f2937;
-  font-size: 30px;
+  font-size: 20px;
   line-height: 1.1;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -99,8 +109,8 @@
   margin: 0;
   max-width: 74ch;
   color: #6b7280;
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.32;
 }
 
 .usuario-page__workspace-grid {
@@ -236,8 +246,16 @@
 @media (max-width: 900px) {
   .usuario-page {
     width: 100%;
-    padding: 24px 16px 28px;
-    gap: 22px;
+    padding: 0 16px 28px;
+    gap: 16px;
+  }
+
+  .usuario-page__profile-top{
+    gap: 0;
+  }
+
+  .usuario-page__intro--top{
+    padding-bottom: 0;
   }
 
   .usuario-page__modal-backdrop {

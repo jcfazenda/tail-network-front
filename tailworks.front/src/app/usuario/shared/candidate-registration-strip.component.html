@@ -40,11 +40,12 @@
         </span>
       </div>
       <span class="candidate-registration-strip__identity-detail">{{ displayEmail }}</span>
-      <span class="candidate-registration-strip__identity-detail">
-        {{ displayPhone }} <span class="candidate-registration-strip__identity-separator">•</span> {{ displayCityState }}
-      </span>
     </div>
+  </div>
 
+  <div class="candidate-registration-strip__divider" aria-hidden="true"></div>
+
+  <div class="candidate-registration-strip__formation-row">
     <div class="candidate-registration-strip__formation">
       <img
         [src]="displayFormationLogoUrl"

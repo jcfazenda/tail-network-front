@@ -30,7 +30,7 @@ export class EcosystemEntryService {
   resolveModeForUrl(url: string): EcosystemEntryMode | null {
     const primaryPath = url.split('?')[0]?.split('#')[0] || url;
 
-    if (primaryPath.startsWith('/usuario') && primaryPath !== '/usuario/ecossistema') {
+    if (primaryPath.startsWith('/usuario')) {
       return 'talent';
     }
 

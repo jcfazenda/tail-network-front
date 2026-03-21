@@ -60,7 +60,7 @@
 }
 
 .shell__main--candidate{
-  background: var(--bg);
+  background: #f7f9fc;
 }
 
 .shell__main--ecosystem{
@@ -91,6 +91,10 @@
 
 .shell__content--candidate{
   background: transparent;
+}
+
+.shell__content--candidate-basic{
+  padding-top: 76px;
 }
 
 .shell__content--ecosystem{
@@ -160,6 +164,10 @@
 
   .shell__content--ecosystem{
     padding: 82px 14px 16px;
+  }
+
+  .shell__content--candidate-basic{
+    padding-top: 64px;
   }
 
   .shell__content--template{
