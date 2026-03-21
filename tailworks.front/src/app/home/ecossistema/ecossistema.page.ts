@@ -822,6 +822,12 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return { salary, rest };
   }
 
+  topJobTechStacks(job: MockJobRecord) {
+    return [...job.techStack]
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .slice(0, 3);
+  }
+
   private workModelLabel(model: WorkModel): string {
     switch (model) {
       case 'Hibrido':

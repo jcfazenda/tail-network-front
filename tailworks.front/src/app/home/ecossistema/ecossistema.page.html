@@ -74,8 +74,12 @@
       </div>
     </section>
 
-    <ng-container *ngIf="featuredJob as job; else emptyJobCard">
-      <article class="landing__mobile-job-card" aria-label="Card da vaga criada">
+    <ng-container *ngIf="ecoFilteredJobs.length; else emptyJobCard">
+      <article
+        *ngFor="let job of ecoFilteredJobs; trackBy: trackByJob"
+        class="landing__mobile-job-card"
+        aria-label="Card da vaga criada"
+      >
         <div class="landing__mobile-job-card-head">
           <div class="landing__mobile-job-card-brand">
             <ng-container *ngIf="jobCompanyLogoUrl(job) as logoUrl; else companyFallback">
@@ -120,7 +124,7 @@
 
         <div class="landing__mobile-job-card-chips-row">
           <div class="landing__mobile-job-card-chips">
-            <span class="landing__mobile-job-card-chip" *ngFor="let stack of job.techStack | slice:0:2">
+            <span class="landing__mobile-job-card-chip" *ngFor="let stack of topJobTechStacks(job)">
               {{ stack.name }}
             </span>
           </div>
