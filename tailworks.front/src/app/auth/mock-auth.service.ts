@@ -6,6 +6,7 @@ import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { BrowserStorageService } from '../core/storage/browser-storage.service';
 import { AuthSyncApiService } from './auth-sync-api.service';
 import { TalentDirectoryService } from '../talent/talent-directory.service';
+import { TalentProfileStoreService } from '../talent/talent-profile-store.service';
 
 export type RecruiterInviteDraft = {
   name: string;
@@ -57,6 +58,7 @@ export class MockAuthService {
   private readonly sessionSubject = new BehaviorSubject<AuthSession | null>(null);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly authSyncApi = inject(AuthSyncApiService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
 
   readonly session$ = this.sessionSubject.asObservable();
 
@@ -94,6 +96,8 @@ export class MockAuthService {
       'tailworks:talent-directory:v1',
       'tailworks:candidate-basic-draft:v1',
       'tailworks:candidate-stacks-draft:v2',
+      'tailworks:candidate-stacks-draft:v5',
+      'tailworks:candidate-experiences-draft:v1',
       'tailworks:company-directory:v1',
       'tailworks:recruiter-radar-categories-selection:v1',
       'tailworks:radar-categories-selection:v1',
@@ -107,6 +111,7 @@ export class MockAuthService {
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
     this.vagasMockService.clearPublishedJobsForTesting();
+    this.talentProfileStore.clear();
     this.ensureDefaultMockAccess();
     storage.setItem(this.bootstrapStorageKey, 'done');
   }
@@ -329,6 +334,36 @@ export class MockAuthService {
     return nextAccount;
   }
 
+  seedTalentAccounts(drafts: TalentSignupDraft[]): number {
+    const nextAccounts = [...this.loadAccounts()];
+
+    for (const draft of drafts) {
+      const normalizedEmail = draft.email.trim().toLocaleLowerCase('pt-BR');
+      const existingIndex = nextAccounts.findIndex((account) => account.email.toLocaleLowerCase('pt-BR') === normalizedEmail);
+      const nextAccount: AuthAccount = {
+        id: existingIndex >= 0 ? nextAccounts[existingIndex].id : `auth-talent-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+        name: draft.name.trim(),
+        email: normalizedEmail,
+        password: draft.password,
+        canUseRecruiter: false,
+        canUseTalent: true,
+        location: draft.location.trim() || 'Rio de Janeiro - RJ',
+      };
+
+      if (existingIndex >= 0) {
+        nextAccounts[existingIndex] = nextAccount;
+      } else {
+        nextAccounts.push(nextAccount);
+      }
+
+      this.syncTalentDirectory(nextAccount);
+    }
+
+    this.persistAccounts(nextAccounts);
+    void this.authSyncApi.writeAll(nextAccounts);
+    return drafts.length;
+  }
+
   resetWorkspace(): void {
     const storage = this.getStorage();
     if (!storage) {
@@ -345,6 +380,8 @@ export class MockAuthService {
       'tailworks:talent-directory:v1',
       'tailworks:candidate-basic-draft:v1',
       'tailworks:candidate-stacks-draft:v2',
+      'tailworks:candidate-stacks-draft:v5',
+      'tailworks:candidate-experiences-draft:v1',
       'tailworks:recruiter-radar-categories-selection:v1',
       'tailworks:radar-categories-selection:v1',
       'tailworks:candidate-experience-formation-copy:v1',
@@ -357,6 +394,7 @@ export class MockAuthService {
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
     this.vagasMockService.clearPublishedJobsForTesting();
+    this.talentProfileStore.clear();
     this.ensureDefaultMockAccess();
     this.sessionSubject.next(null);
   }
@@ -380,7 +418,16 @@ export class MockAuthService {
     storage?.setItem(this.sessionStorageKey, JSON.stringify(session));
     this.syncRecruiterWorkspace(session);
     this.syncTalentDirectory(session);
+    this.syncTalentWorkspace(session);
     this.sessionSubject.next(session);
+  }
+
+  private syncTalentWorkspace(session: AuthSession | null): void {
+    if (!session?.email || session.canUseTalent !== true || session.canUseRecruiter === true) {
+      return;
+    }
+
+    this.talentProfileStore.restoreProfileToCurrentWorkspace(session.email);
   }
 
   private syncTalentDirectory(session: Pick<AuthSession, 'name' | 'email' | 'location' | 'canUseTalent' | 'canUseRecruiter'> | null): void {

@@ -138,6 +138,7 @@ export class SidebarComponent {
         label: 'Time',
         items: [
           { label: 'Chat do Time', icon: 'forum', route: '/recruiter/time' },
+          { label: 'Core Algoritimo', icon: 'psychology', route: '/recruiter/core-algoritimo' },
           ...(canManageDirectory ? [{ label: 'Recruiters', icon: 'badge', route: '/recruiter/panel' }] : []),
           ...(canCreateRecruiter ? [{ label: 'Novo Recruiter', icon: 'person_add', route: '/recruiter/cadastro' }] : []),
         ],

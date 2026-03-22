@@ -248,7 +248,9 @@
                       </div>
 
                       <div class="ecosystem-desktop__job-candidate-fit">
-                        <span class="ecosystem-desktop__job-candidate-role">{{ candidate.role }}</span>
+                        <div class="ecosystem-desktop__job-candidate-stacks">
+                          <span class="ecosystem-desktop__job-candidate-role" *ngFor="let stack of candidate.topStacks">{{ stack }}</span>
+                        </div>
                         <div class="ecosystem-desktop__job-candidate-fit-score">
                           <div class="ecosystem-desktop__job-candidate-fit-bar" aria-hidden="true">
                             <span [style.width.%]="candidate.match"></span>

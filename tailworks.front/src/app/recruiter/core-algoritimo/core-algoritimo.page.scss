@@ -1,0 +1,447 @@
+.core-algoritimo {
+  display: grid;
+  gap: 22px;
+}
+
+.core-algoritimo__hero,
+.core-algoritimo__metrics,
+.core-algoritimo__panel,
+.core-algoritimo__ranking-card,
+.core-algoritimo__status {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 249, 252, 0.98));
+  border: 1px solid rgba(212, 219, 228, 0.68);
+  border-radius: 28px;
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.core-algoritimo__hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 30px;
+}
+
+.core-algoritimo__hero-copy {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+}
+
+.core-algoritimo__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(238, 120, 48, 0.12);
+  color: #a84d17;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.core-algoritimo__hero h1,
+.core-algoritimo__panel-head h2 {
+  margin: 0;
+  color: #172033;
+}
+
+.core-algoritimo__hero h1 {
+  font-size: clamp(30px, 3.2vw, 42px);
+  line-height: 1.02;
+}
+
+.core-algoritimo__hero p,
+.core-algoritimo__panel-head p,
+.core-algoritimo__candidate-summary {
+  margin: 0;
+  color: #5f6d80;
+  line-height: 1.6;
+}
+
+.core-algoritimo__hero-actions {
+  display: grid;
+  gap: 12px;
+  min-width: min(260px, 100%);
+}
+
+.core-algoritimo__primary-action,
+.core-algoritimo__ghost-action {
+  min-height: 46px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.core-algoritimo__primary-action {
+  border: 1px solid rgba(29, 36, 51, 0.9);
+  background: linear-gradient(135deg, #1d2433, #34405a);
+  color: #fff;
+}
+
+.core-algoritimo__ghost-action {
+  border: 1px solid rgba(216, 223, 232, 0.9);
+  background: rgba(255, 255, 255, 0.88);
+  color: #283447;
+}
+
+.core-algoritimo__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 18px;
+}
+
+.core-algoritimo__status {
+  padding: 14px 18px;
+  color: #2f4052;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.core-algoritimo__metric-card,
+.core-algoritimo__band-card,
+.core-algoritimo__score-tile {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(227, 232, 239, 0.9);
+}
+
+.core-algoritimo__metric-card span,
+.core-algoritimo__metric-card small,
+.core-algoritimo__band-card span,
+.core-algoritimo__score-tile span {
+  color: #6a7688;
+}
+
+.core-algoritimo__metric-card strong,
+.core-algoritimo__band-card strong {
+  font-size: 28px;
+  color: #182133;
+}
+
+.core-algoritimo__workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.core-algoritimo__panel {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.core-algoritimo__panel--sticky {
+  position: sticky;
+  top: 18px;
+}
+
+.core-algoritimo__panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.core-algoritimo__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 223, 232, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.core-algoritimo__search span {
+  color: #7a8698;
+}
+
+.core-algoritimo__search input,
+.core-algoritimo__select select {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #202a3b;
+  font-size: 14px;
+}
+
+.core-algoritimo__job-list,
+.core-algoritimo__ranking {
+  display: grid;
+  gap: 14px;
+}
+
+.core-algoritimo__job-item {
+  display: grid;
+  gap: 10px;
+  text-align: left;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(223, 229, 236, 0.9);
+  background: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+}
+
+.core-algoritimo__job-item--active {
+  border-color: rgba(232, 123, 46, 0.44);
+  box-shadow: 0 0 0 3px rgba(232, 123, 46, 0.1);
+}
+
+.core-algoritimo__job-item-head,
+.core-algoritimo__ranking-head,
+.core-algoritimo__breakdown-head,
+.core-algoritimo__breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.core-algoritimo__job-item-head strong,
+.core-algoritimo__ranking-head h3,
+.core-algoritimo__breakdown-row strong {
+  color: #172033;
+}
+
+.core-algoritimo__job-item-meta,
+.core-algoritimo__ranking-head p {
+  color: #6a7688;
+  font-size: 13px;
+}
+
+.core-algoritimo__job-item-stacks,
+.core-algoritimo__chips,
+.core-algoritimo__reason-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.core-algoritimo__job-item-stacks span,
+.core-algoritimo__chip,
+.core-algoritimo__reason {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.core-algoritimo__job-item-stacks span,
+.core-algoritimo__chip {
+  background: rgba(243, 244, 246, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.core-algoritimo__chip--primary {
+  background: rgba(236, 136, 76, 0.12);
+  border-color: rgba(232, 123, 46, 0.16);
+  color: #a65118;
+}
+
+.core-algoritimo__main {
+  display: grid;
+  gap: 18px;
+}
+
+.core-algoritimo__salary {
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(222, 228, 236, 0.82);
+  color: #2a3748;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.core-algoritimo__job-summary {
+  margin: 0;
+  color: #485668;
+  line-height: 1.6;
+}
+
+.core-algoritimo__job-groups {
+  display: grid;
+  gap: 16px;
+}
+
+.core-algoritimo__stack-group {
+  display: grid;
+  gap: 10px;
+}
+
+.core-algoritimo__group-label,
+.core-algoritimo__position {
+  color: #7c8798;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.core-algoritimo__toolbar,
+.core-algoritimo__bands,
+.core-algoritimo__score-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.core-algoritimo__toolbar {
+  grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(180px, 1fr));
+}
+
+.core-algoritimo__select {
+  display: grid;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 223, 232, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.core-algoritimo__select span {
+  color: #758194;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.core-algoritimo__ranking-card {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.core-algoritimo__score-badge {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.core-algoritimo__score-badge strong {
+  color: #1c2738;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.core-algoritimo__score-badge span {
+  color: #6c788a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.core-algoritimo__reason {
+  background: rgba(243, 244, 246, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.68);
+}
+
+.core-algoritimo__breakdown {
+  display: grid;
+  gap: 8px;
+}
+
+.core-algoritimo__breakdown-head,
+.core-algoritimo__breakdown-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(66px, 1fr));
+  gap: 10px;
+}
+
+.core-algoritimo__breakdown-head {
+  color: #7c8798;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.core-algoritimo__breakdown-row {
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(247, 249, 252, 0.94);
+  border: 1px solid rgba(224, 230, 238, 0.72);
+  color: #516075;
+  font-size: 13px;
+}
+
+.core-algoritimo__score-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.core-algoritimo__score-track span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9c5a17 0%, #c87419 52%, #f1b220 100%);
+}
+
+@media (max-width: 1200px) {
+  .core-algoritimo__workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .core-algoritimo__panel--sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 960px) {
+  .core-algoritimo__metrics,
+  .core-algoritimo__toolbar,
+  .core-algoritimo__bands,
+  .core-algoritimo__score-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .core-algoritimo__hero {
+    flex-direction: column;
+  }
+
+  .core-algoritimo__breakdown-head,
+  .core-algoritimo__breakdown-row {
+    grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(58px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .core-algoritimo__metrics,
+  .core-algoritimo__toolbar,
+  .core-algoritimo__bands,
+  .core-algoritimo__score-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .core-algoritimo__breakdown {
+    overflow-x: auto;
+  }
+
+  .core-algoritimo__breakdown-head,
+  .core-algoritimo__breakdown-row {
+    min-width: 620px;
+  }
+}

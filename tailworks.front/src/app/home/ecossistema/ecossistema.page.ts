@@ -89,7 +89,7 @@ type TalentCompatibleJobView = {
 type JobCardTalentRow = {
   name: string;
   location: string;
-  role: string;
+  topStacks: string[];
   avatar: string;
   match: number;
 };
@@ -1016,7 +1016,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return candidates.map((candidate) => ({
         name: candidate.name,
         location: candidate.location?.trim() || 'Brasil',
-        role: candidate.role,
+        topStacks: this.topJobTechStacks(job).slice(0, 2).map((stack) => stack.name),
         avatar: candidate.avatar,
         match: candidate.match,
       }));
@@ -1039,34 +1039,39 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         return {
           name: talent.name,
           location: talent.location,
-          role: this.jobRadarTalentRole(job, talent.stacks, score.matchedRepoIds),
+          topStacks: this.jobRadarTalentStacks(job, talent.stacks, score.matchedRepoIds),
           avatar: talent.avatarUrl,
           match: score.overallScore,
         };
       })
-      .filter((talent) => talent.match >= 45)
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-      .slice(0, 4);
+      .slice(0, Math.max(2, this.talentDirectoryService.listTalents().length));
   }
 
-  private jobRadarTalentRole(job: MockJobRecord, stackScores: Record<string, number>, matchedRepoIds: string[]): string {
+  private jobRadarTalentStacks(job: MockJobRecord, stackScores: Record<string, number>, matchedRepoIds: string[]): string[] {
     const matchedRepoSet = new Set(matchedRepoIds);
-    const preferredJobStack = job.techStack.find((stack) =>
-      this.matchDomainService.mapTechLabelsToRepoIds([stack.name]).some((repoId) => matchedRepoSet.has(repoId)),
-    );
+    const rankedMatched = Object.entries(stackScores)
+      .filter(([repoId, score]) => matchedRepoSet.has(repoId) && score > 0)
+      .sort((left, right) => right[1] - left[1])
+      .slice(0, 2)
+      .map(([repoId]) => this.prettyTechRepoLabel(repoId));
 
-    if (preferredJobStack?.name?.trim()) {
-      return preferredJobStack.name.trim();
+    if (rankedMatched.length) {
+      return rankedMatched;
     }
 
-    const strongestTalentRepoId = Object.entries(stackScores)
-      .sort((left, right) => right[1] - left[1])[0]?.[0];
+    const rankedJobStacks = job.techStack
+      .slice()
+      .sort((left, right) => right.match - left.match)
+      .slice(0, 2)
+      .map((stack) => stack.name.trim())
+      .filter(Boolean);
 
-    if (strongestTalentRepoId) {
-      return this.prettyTechRepoLabel(strongestTalentRepoId);
+    if (rankedJobStacks.length) {
+      return rankedJobStacks;
     }
 
-    return `${job.seniority} ${job.title}`.trim();
+    return [`${job.seniority} ${job.title}`.trim()];
   }
 
   private prettyTechRepoLabel(repoId: string): string {

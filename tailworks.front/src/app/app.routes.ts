@@ -78,6 +78,12 @@ export const routes: Routes = [
     canActivate: [recruiterAuthGuard],
   },
   {
+    path: 'recruiter/core-algoritimo',
+    loadComponent: () => import('./recruiter/core-algoritimo/core-algoritimo.page').then((m) => m.CoreAlgoritimoPage),
+    data: { title: 'Core Algoritimo' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
     path: 'recruiter/cadastro',
     loadComponent: () => import('./recruiter/recruiter-cadastro/recruiter-cadastro.page').then((m) => m.RecruiterCadastroPage),
     data: { title: 'Cadastro de Recruiter' },
