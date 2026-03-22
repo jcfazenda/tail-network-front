@@ -9,6 +9,7 @@ import {
   SaveMockJobCommand,
   TalentJobDecision,
 } from '../../vagas/data/vagas.models';
+import { MatchLabDataset } from '../matching-lab/matching-lab.models';
 
 @Injectable({ providedIn: 'root' })
 export class JobsFacade {
@@ -36,8 +37,12 @@ export class JobsFacade {
     return this.jobsService.getRecruitersForCompany(companyName);
   }
 
-  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
+  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'id' | 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
     return this.jobsService.canCurrentRecruiterAccessJob(job);
+  }
+
+  seedJobsFromMatchingLab(dataset: MatchLabDataset): number {
+    return this.jobsService.seedJobsFromMatchingLab(dataset);
   }
 
   signInAsTalent(name: string, location?: string): void {

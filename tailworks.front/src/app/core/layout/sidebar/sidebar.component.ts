@@ -63,7 +63,7 @@ export class SidebarComponent {
 
   private readonly recruiterItems: NavItem[] = [
     { label: 'Radar', route: '/radar', icon: 'radar' },
-    { label: 'Minhas Vagas', route: '/vagas', icon: 'work' },
+    { label: 'Minhas Vagas', route: '/home/ecossistema', icon: 'work' },
     { label: 'Talentos', route: '/talentos', icon: 'group' },
     { label: 'Propostas', route: '/propostas', icon: 'assignment' },
     { label: 'Sair', route: '/login', icon: 'logout' },
@@ -129,7 +129,7 @@ export class SidebarComponent {
         items: [
           { label: 'Radar', icon: 'radar', route: '/radar' },
           { label: 'Novo Card', icon: 'add_box', route: '/vagas/cadastro' },
-          { label: 'Minhas Vagas', icon: 'work', route: '/vagas' },
+          { label: 'Minhas Vagas', icon: 'work', route: '/home/ecossistema' },
           { label: 'Talentos', icon: 'group', route: '/talentos' },
           { label: 'Propostas', icon: 'assignment', route: '/propostas' },
         ],

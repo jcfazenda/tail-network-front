@@ -410,7 +410,7 @@
 }
 
 .ecosystem-desktop__job-title-row {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .ecosystem-desktop__job-title-group {
@@ -419,6 +419,10 @@
   gap: 10px;
   flex-wrap: wrap;
   min-width: 0;
+}
+
+.ecosystem-desktop__job-card p {
+  margin: 6px 0 0;
 }
 
 .ecosystem-desktop__job-salary {

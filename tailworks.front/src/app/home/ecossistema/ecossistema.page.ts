@@ -123,6 +123,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
   private readonly brandOrangeMid = { r: 188, g: 109, b: 24 };
   private readonly brandOrangeLight = { r: 242, g: 179, b: 26 };
+  private readonly talentAdherenceThreshold = 50;
   private static readonly candidateStacksStorageKey = 'tailworks:candidate-stacks-draft:v5';
   private static readonly candidateExperiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
 
@@ -503,6 +504,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
           missingStacks: missingStacks.slice(0, 2),
         };
       })
+      .filter((view) =>
+        view.score.overallScore >= this.talentAdherenceThreshold
+        && view.score.matchedRepoIds.length > 0,
+      )
       .sort((left, right) =>
         right.score.overallScore - left.score.overallScore
         || right.score.stackScore - left.score.stackScore
@@ -947,12 +952,13 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return null;
     }
 
-    // Keep already-formatted ranges as-is.
-    if (value.includes('R$')) {
-      return value;
+    const match = value.match(/(\d[\d.\s]*,\d{2}|\d[\d.\s]*)/);
+    if (!match) {
+      return null;
     }
 
-    return `R$ ${value}`;
+    const token = (match[1] ?? '').replace(/\s/g, '');
+    return `R$ ${token}`;
   }
 
   jobCardSalary(job: MockJobRecord): string | null {
@@ -966,13 +972,13 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   jobInteractionAvatars(job: MockJobRecord): string[] {
     const directAvatars = (job.avatars ?? []).map((item) => item?.trim()).filter(Boolean);
     if (directAvatars.length) {
-      return directAvatars.slice(0, 3);
+      return directAvatars.slice(0, 4);
     }
 
     return (job.candidates ?? [])
       .map((candidate) => candidate.avatar?.trim())
       .filter((avatar): avatar is string => !!avatar)
-      .slice(0, 3);
+      .slice(0, 4);
   }
 
   jobInteractionExtraCount(job: MockJobRecord): number {
@@ -1007,7 +1013,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     return [...source]
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-      .slice(0, 4);
+      .slice(0, 2);
   }
 
   jobCardTalentRows(job: MockJobRecord): JobCardTalentRow[] {
@@ -1032,9 +1038,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return [];
     }
 
-    return this.talentDirectoryService.listTalents()
-      .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring)
-      .map((talent) => {
+    const talents = this.talentDirectoryService.listTalents()
+      .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring);
+
+    return talents.map((talent) => {
         const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, { stackScores: talent.stacks });
         return {
           name: talent.name,
@@ -1045,7 +1052,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         };
       })
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-      .slice(0, Math.max(2, this.talentDirectoryService.listTalents().length));
+      .slice(0, 2);
   }
 
   private jobRadarTalentStacks(job: MockJobRecord, stackScores: Record<string, number>, matchedRepoIds: string[]): string[] {

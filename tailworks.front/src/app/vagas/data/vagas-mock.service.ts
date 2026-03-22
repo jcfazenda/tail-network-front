@@ -8,6 +8,7 @@ import { BrowserStorageService } from '../../core/storage/browser-storage.servic
 import { JobsRepository } from './jobs.repository';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { JobsSyncApiService } from './jobs-sync-api.service';
+import { MatchLabDataset } from '../../core/matching-lab/matching-lab.models';
 
 type CandidateBasicProfile = {
   name: string;
@@ -153,7 +154,11 @@ export class VagasMockService {
     return this.recruiterDirectoryService.getRecruiterCompanies();
   }
 
-  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
+  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'id' | 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
+    if (job.id.startsWith('lab-')) {
+      return true;
+    }
+
     const recruiter = this.readRecruiterIdentity();
     const accessibleCompanies = this.getCurrentRecruiterCompanies();
 
@@ -348,6 +353,87 @@ export class VagasMockService {
 
   clearPublishedJobsForTesting(): void {
     this.clearJobs();
+  }
+
+  seedJobsFromMatchingLab(dataset: MatchLabDataset): number {
+    if (!dataset.jobs.length || !dataset.results.length) {
+      return 0;
+    }
+
+    const recruiter = this.getCurrentRecruiterIdentity();
+    const talentByName = new Map(
+      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
+    );
+    const currentJobs = this.loadJobs().filter((job) => !job.id.startsWith('lab-'));
+
+    const seededJobs = dataset.results.map((result, index) => {
+      const radarEntries = result.ranking
+        .filter((entry) => entry.score >= 60)
+        .slice(0, 18);
+      const topRanking = radarEntries.slice(0, 4);
+      const candidates: MockJobCandidate[] = topRanking.map((entry, rankingIndex) => {
+        const talent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
+        return {
+          id: `${result.job.id}-candidate-${rankingIndex + 1}`,
+          name: entry.candidate.name,
+          role: entry.candidate.summary,
+          location: entry.candidate.location,
+          match: entry.score,
+          minutesAgo: 5 + rankingIndex,
+          status: 'online',
+          avatar: talent?.avatarUrl?.trim() || this.fallbackTalentAvatar,
+          stage: 'radar',
+          radarOnly: true,
+          source: 'seed',
+        };
+      });
+
+      const createdAt = new Date(Date.now() - (index * 60_000)).toISOString();
+
+      return this.decorateTalentVisibility({
+        id: `lab-${result.job.id}`,
+        code: result.job.code,
+        title: result.job.title,
+        company: result.job.company,
+        companyLogoUrl: this.matchingLabCompanyLogoUrl(result.job.company),
+        homeAnnouncementImageUrl: '',
+        location: result.job.location,
+        workModel: result.job.workModel,
+        seniority: result.job.seniority,
+        summary: result.job.summary,
+        contractType: 'CLT',
+        statusReason: '',
+        salaryRange: result.job.salaryMin ? `R$ ${result.job.salaryMin.toLocaleString('pt-BR')}` : '',
+        showSalaryRangeInCard: true,
+        allowCandidateSalarySuggestion: false,
+        hybridOnsiteDaysDescription: '',
+        benefits: [],
+        hiringDocuments: [],
+        techStack: result.job.stacks.map((stack) => ({ name: stack.stackName, match: stack.percent })),
+        differentials: [],
+        responsibilitySections: [],
+        createdByRecruiterId: recruiter.id,
+        createdByRecruiterName: recruiter.name,
+        createdByRecruiterRole: recruiter.role,
+        recruiterWatcherIds: [recruiter.id],
+        priority: 'Carga local',
+        match: result.ranking[0]?.score ?? 0,
+        talents: radarEntries.length,
+        radarCount: radarEntries.length,
+        ageLabel: 'Agora',
+        postedLabel: 'Carga local',
+        avatars: candidates.map((candidate) => candidate.avatar).slice(0, 4),
+        extraCount: Math.max(0, radarEntries.length - 4),
+        status: 'ativas',
+        candidates,
+        createdAt,
+        updatedAt: createdAt,
+      });
+    });
+
+    this.cache = [...seededJobs, ...currentJobs];
+    this.persist();
+    return seededJobs.length;
   }
 
   deleteJob(id: string): void {
@@ -1128,6 +1214,24 @@ export class VagasMockService {
       avatars: highlightedAvatars.slice(0, 3),
       extraCount: Math.max(0, totalRadar - Math.min(3, highlightedAvatars.length)),
     };
+  }
+
+  private matchingLabCompanyLogoUrl(company: string): string {
+    const normalized = company.trim().toLocaleLowerCase('pt-BR');
+
+    if (normalized.includes('itaú') || normalized.includes('itau')) {
+      return '/assets/images/logo-itau.png';
+    }
+
+    if (normalized.includes('nubank')) {
+      return '/assets/images/logo-nubank-roxinho.webp';
+    }
+
+    if (normalized.includes('mercado livre') || normalized.includes('ifood') || normalized.includes('stone')) {
+      return '/assets/images/logo-nubank.png';
+    }
+
+    return '';
   }
 
   private normalizeCandidate(

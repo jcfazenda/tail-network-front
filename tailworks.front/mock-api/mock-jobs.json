@@ -1,1 +1,118 @@
-[]
+[
+  {
+    "id": "6ccb4a62-bde3-4e72-ac9e-3dfcabfcb81c",
+    "code": "VG-0001",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 68,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-03-22T20:25:33.658Z",
+    "updatedAt": "2026-03-22T20:25:33.658Z",
+    "title": "Backend .NET Sênior",
+    "company": "Banco Itaú",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 80
+      },
+      {
+        "name": "Entity Framework",
+        "match": 65
+      },
+      {
+        "name": "REST API",
+        "match": 75
+      },
+      {
+        "name": "SQL Server",
+        "match": 70
+      },
+      {
+        "name": "Azure",
+        "match": 40
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ]
+  }
+]

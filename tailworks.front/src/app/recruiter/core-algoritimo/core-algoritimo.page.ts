@@ -165,9 +165,10 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
   async seedSystemTalents(): Promise<void> {
     const generated = this.matchingLabService.generateLocalMass();
+    const jobs = this.jobsFacade.seedJobsFromMatchingLab(generated);
     const result = await this.talentSystemSeedService.seedTalentsFromLab();
     await this.refreshDatasetFromProfiles(false);
-    this.seedStatus = `${generated.jobs.length} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
+    this.seedStatus = `${jobs} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
     this.loginStatus = '';
   }
 

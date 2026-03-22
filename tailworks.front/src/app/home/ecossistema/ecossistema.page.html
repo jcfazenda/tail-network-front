@@ -75,7 +75,7 @@
           <div class="ecosystem-desktop__jobs-grid" *ngIf="talentCompatibleJobs.length; else desktopEmptyState">
             <article
               class="ecosystem-desktop__job-card"
-              *ngFor="let view of talentCompatibleJobs.slice(0, 2); trackBy: trackByTalentCompatibleJob"
+              *ngFor="let view of talentCompatibleJobs; trackBy: trackByTalentCompatibleJob"
             >
               <div class="ecosystem-desktop__job-card-head">
                 <div class="ecosystem-desktop__job-brand">
@@ -124,7 +124,7 @@
             <article
               class="ecosystem-desktop__job-card ecosystem-desktop__job-card--flippable"
               [class.is-flipped]="isJobCardFlipped(job)"
-              *ngFor="let job of ecoFilteredJobs.slice(0, 2); trackBy: trackByJob"
+              *ngFor="let job of ecoFilteredJobs; trackBy: trackByJob"
             >
               <div class="ecosystem-desktop__job-card-rotator">
                 <div class="ecosystem-desktop__job-card-face ecosystem-desktop__job-card-face--front">
