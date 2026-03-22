@@ -2,11 +2,20 @@
   <div class="brand">
     <ng-container *ngIf="isProfileSidebarMode; else defaultBrand">
       <div class="brandCandidate">
+        <input
+          #sidebarAvatarInput
+          class="brandAvatarInput"
+          type="file"
+          accept=".jpg,.jpeg,.png,.gif,.webp"
+          (change)="onSidebarAvatarSelected($event)"
+        />
+
         <button
           class="brandAvatarButton"
           type="button"
-          (click)="hideSidebar()"
-          aria-label="Esconder sidebar"
+          (click)="openSidebarAvatarPicker(sidebarAvatarInput)"
+          [attr.aria-label]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
+          [title]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
         >
           <div
             class="brandAvatar"

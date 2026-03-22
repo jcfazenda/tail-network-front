@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -31,6 +31,7 @@ type CandidateBasicProfile = {
 type CandidateBasicDraft = {
   profile?: CandidateBasicProfile;
   photoPreviewUrl?: string;
+  photoFileName?: string;
 };
 
 type NotificationConfettiPiece = {
@@ -60,10 +61,14 @@ export class TopbarComponent {
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly formationCopyStorageKey = 'tailworks:candidate-experience-formation-copy:v1';
   private static readonly formationLogoStorageKey = 'tailworks:candidate-experience-logo-draft:v1';
+  private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
   private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-default.svg';
   private static readonly recruiterFormationLogoAsset = '/assets/images/formacao-default.png';
+  readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;
+  avatarMenuOpen = false;
   private readonly jobsFacade = inject(JobsFacade);
   private readonly talentNotificationsFacade = inject(TalentNotificationsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
@@ -72,6 +77,7 @@ export class TopbarComponent {
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -410,8 +416,19 @@ export class TopbarComponent {
 
   @HostListener('document:keydown.escape')
   handleEscape(): void {
+    if (this.avatarMenuOpen) {
+      this.closeAvatarMenu();
+    }
+
     if (this.notificationsOpen || this.notificationModal) {
       this.closeNotificationModal();
+    }
+  }
+
+  @HostListener('document:click')
+  handleDocumentClick(): void {
+    if (this.avatarMenuOpen) {
+      this.closeAvatarMenu();
     }
   }
 
@@ -438,6 +455,49 @@ export class TopbarComponent {
 
   toggleSidebar(): void {
     this.sidebarVisibilityService.toggle();
+  }
+
+  toggleAvatarMenu(event?: Event): void {
+    event?.stopPropagation();
+    this.avatarMenuOpen = !this.avatarMenuOpen;
+    this.cdr.markForCheck();
+  }
+
+  closeAvatarMenu(): void {
+    this.avatarMenuOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  openTopbarAvatarPicker(input: HTMLInputElement, event?: Event): void {
+    event?.stopPropagation();
+
+    if (!this.isCandidateMode) {
+      this.toggleSidebar();
+      this.closeAvatarMenu();
+      return;
+    }
+
+    input.click();
+    this.closeAvatarMenu();
+  }
+
+  openSidebarFromAvatarMenu(event?: Event): void {
+    event?.stopPropagation();
+    this.toggleSidebar();
+    this.closeAvatarMenu();
+  }
+
+  onTopbarAvatarSelected(event: Event): void {
+    if (!this.isCandidateMode) {
+      return;
+    }
+
+    const input = event.target as HTMLInputElement | null;
+    this.handleCandidatePhotoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
   }
 
   openCreateJob(): void {
@@ -510,6 +570,11 @@ export class TopbarComponent {
     });
   }
 
+  @HostListener(`window:${TopbarComponent.photoUpdatedEventName}`)
+  handlePhotoUpdated(): void {
+    this.cdr.markForCheck();
+  }
+
   private readFormationDraft(): FormationCopyDraft | null {
     const rawDraft = this.browserStorage.getItem(TopbarComponent.formationCopyStorageKey);
     if (!rawDraft) {
@@ -566,5 +631,48 @@ export class TopbarComponent {
         dy: `${dy.toFixed(1)}px`,
       };
     });
+  }
+
+  private handleCandidatePhotoFile(file: File | null): void {
+    if (!file) {
+      return;
+    }
+
+    if (!this.acceptedPhotoMimeTypes.includes(file.type) || file.size > this.maxPhotoSizeBytes) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const photoPreviewUrl = typeof reader.result === 'string' ? reader.result : '';
+      if (!photoPreviewUrl) {
+        return;
+      }
+
+      this.persistCandidatePhotoDraft(photoPreviewUrl, file.name);
+      window.dispatchEvent(
+        new CustomEvent(TopbarComponent.photoUpdatedEventName, {
+          detail: {
+            photoPreviewUrl,
+            photoFileName: file.name,
+          },
+        }),
+      );
+      this.cdr.markForCheck();
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  private persistCandidatePhotoDraft(photoPreviewUrl: string, photoFileName: string): void {
+    const current = this.readCandidateDraft() ?? {};
+    const nextDraft: CandidateBasicDraft = {
+      ...current,
+      profile: current.profile ? { ...current.profile } : undefined,
+      photoPreviewUrl,
+      photoFileName,
+    };
+
+    this.browserStorage.setItem(TopbarComponent.basicDraftStorageKey, JSON.stringify(nextDraft));
   }
 }

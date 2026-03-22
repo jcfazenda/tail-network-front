@@ -337,6 +337,9 @@
   width: 100%;
   display: grid;
   grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
+  grid-template-areas:
+    'left top'
+    'left right';
   align-items: center;
   gap: 14px;
   min-height: 44px;
@@ -348,10 +351,20 @@
 }
 
 .candidate-stacks__repo-row-left{
+  grid-area: left;
   min-width: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.candidate-stacks__repo-row-top{
+  grid-area: top;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-width: 0;
 }
 
 .candidate-stacks__stack-item-help{
@@ -421,12 +434,56 @@
   text-overflow: ellipsis;
 }
 
+.candidate-stacks__repo-row-status{
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.candidate-stacks__repo-row-status--right{
+  background: rgba(225, 138, 39, 0.12);
+  color: rgba(136, 79, 12, 0.92);
+}
+
 .candidate-stacks__repo-row-right{
+  grid-area: right;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   min-width: 0;
+}
+
+.candidate-stacks__repo-row-meta{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.candidate-stacks__repo-row-meta-separator{
+  color: rgba(15, 23, 42, 0.26);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.candidate-stacks__repo-row-actions{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
 }
 
 .candidate-stacks__repo-row-value{
@@ -471,24 +528,70 @@
 }
 
 @media (max-width: 680px){
+  .candidate-stacks__category-box--solid{
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .candidate-stacks__repo{
+    padding: 0 0 4px;
+  }
+
+  .candidate-stacks__repo-layout{
+    gap: 10px;
+  }
+
+  .candidate-stacks__repo-expand{
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+
   .candidate-stacks__repo-row{
     grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-areas:
+      'left top'
+      'right right';
+    gap: 8px;
     align-items: stretch;
+    padding: 8px 6px;
+    border-radius: 12px;
   }
 
   .candidate-stacks__repo-row-left{
     width: 100%;
   }
 
+  .candidate-stacks__repo-row-top{
+    align-self: start;
+  }
+
   .candidate-stacks__repo-row-right{
     grid-template-columns: minmax(0, 1fr) auto;
     width: 100%;
+    gap: 8px;
+  }
+
+  .candidate-stacks__repo-row-meta{
+    gap: 6px;
+  }
+
+  .candidate-stacks__repo-row-status{
+    min-height: 20px;
+    padding: 0 7px;
+    font-size: 10px;
+  }
+
+  .candidate-stacks__repo-row-actions{
+    gap: 4px;
   }
 
   .candidate-stacks__repo-row-name{
     white-space: normal;
     overflow: visible;
     text-overflow: unset;
+  }
+
+  .candidate-stacks__repo-row-value{
+    min-width: 38px;
   }
 }

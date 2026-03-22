@@ -94,32 +94,19 @@
 
               <div class="candidate-stacks__repo" *ngIf="primaryRepoOptions.length; else emptyPrimaryRepo">
                 <div class="candidate-stacks__repo-rows" aria-label="Stacks do repositório">
-                  <div *ngFor="let item of primaryRepoOptions" class="candidate-stacks__repo-entry">
-                    <div class="candidate-stacks__repo-row">
-                      <div class="candidate-stacks__repo-row-left">
-                        <button
-                          class="candidate-stacks__stack-item-edit"
-                          type="button"
-                          (click)="openRepoStackDescription('primary', item)"
-                          [attr.aria-label]="'Editar descrição de ' + item.name"
-                          title="Editar descrição"
-                        >
-                          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                        </button>
-                        <span class="candidate-stacks__repo-row-name">{{ item.name }}</span>
-                        <button
-                          class="candidate-stacks__stack-item-help"
-                          type="button"
-                          (click)="toggleInlineGuide(item)"
-                          [class.candidate-stacks__stack-item-help--active]="expandedGuideRepoId === item.id"
-                          [attr.aria-label]="'Entender o propósito de ' + item.name"
-                          title="O que se espera nessa stack"
-                        >
-                          <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                        </button>
-                      </div>
+                    <div *ngFor="let item of primaryRepoOptions" class="candidate-stacks__repo-entry">
+                      <div class="candidate-stacks__repo-row">
+                        <div class="candidate-stacks__repo-row-left">
+                          <span class="candidate-stacks__repo-row-name">{{ item.name }}</span>
+                        </div>
 
-                      <div class="candidate-stacks__repo-row-right">
+                        <div class="candidate-stacks__repo-row-top">
+                          <span class="candidate-stacks__repo-row-status candidate-stacks__repo-row-status--right">
+                            {{ percentLevelLabel(getRepoKnowledge('primary', item.id)) }}
+                          </span>
+                        </div>
+
+                        <div class="candidate-stacks__repo-row-right">
                         <div
                           class="candidate-stacks__stack-item-slider"
                           [style.--stack-progress]="getRepoKnowledge('primary', item.id) + '%'"
@@ -141,7 +128,31 @@
 />
 
                         </div>
-                        <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                        <div class="candidate-stacks__repo-row-meta">
+                          <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
+                          <span class="candidate-stacks__repo-row-meta-separator" aria-hidden="true">|</span>
+                          <div class="candidate-stacks__repo-row-actions">
+                            <button
+                              class="candidate-stacks__stack-item-edit"
+                              type="button"
+                              (click)="openRepoStackDescription('primary', item)"
+                              [attr.aria-label]="'Editar descrição de ' + item.name"
+                              title="Editar descrição"
+                            >
+                              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                            </button>
+                            <button
+                              class="candidate-stacks__stack-item-help"
+                              type="button"
+                              (click)="toggleInlineGuide(item)"
+                              [class.candidate-stacks__stack-item-help--active]="expandedGuideRepoId === item.id"
+                              [attr.aria-label]="'Entender o propósito de ' + item.name"
+                              title="O que se espera nessa stack"
+                            >
+                              <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 

@@ -618,3 +618,34 @@
   border-style: dashed;
   background: rgba(255, 255, 255, 0.42);
 }
+
+@media (max-width: 680px){
+  .candidate-stacks__section{
+    margin-top: 12px;
+  }
+
+  .candidate-stacks__section-head{
+    padding: 0;
+  }
+
+  .candidate-stacks__category-side{
+    gap: 8px;
+    padding-top: 2px;
+    width: calc(100% + 22px);
+    margin-left: -11px;
+    margin-right: -11px;
+  }
+
+  .candidate-stacks__category-title{
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .candidate-stacks__category-box{
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}

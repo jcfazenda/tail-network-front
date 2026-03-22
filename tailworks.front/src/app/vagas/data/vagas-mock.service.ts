@@ -7,6 +7,7 @@ import { TalentDirectoryService, TalentRecord } from '../../talent/talent-direct
 import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 import { JobsRepository } from './jobs.repository';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
+import { JobsSyncApiService } from './jobs-sync-api.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -55,9 +56,12 @@ export class VagasMockService {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly jobsRepository = inject(JobsRepository);
   private readonly matchDomainService = inject(MatchDomainService);
+  private readonly jobsSyncApi = inject(JobsSyncApiService);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
+  private remoteSyncTimer: number | null = null;
+  private remoteSyncInFlight = false;
 
   readonly jobsChanged$ = this.jobsChangedSubject.asObservable();
 
@@ -73,6 +77,8 @@ export class VagasMockService {
       this.broadcastChannel = new BroadcastChannel(this.syncChannelName);
       this.broadcastChannel.addEventListener('message', this.handleBroadcastSync);
     }
+
+    void this.bootstrapRemoteSync();
   }
 
   getJobs(): MockJobRecord[] {
@@ -323,12 +329,14 @@ export class VagasMockService {
 
     const storage = this.getStorage();
     if (!storage) {
+      void this.pushRemoteSnapshot();
       this.emitJobsChanged();
       return;
     }
 
-    storage.removeItem(this.storageKey);
+    this.jobsRepository.writeAll([]);
     this.broadcastSync();
+    void this.pushRemoteSnapshot();
     this.emitJobsChanged();
   }
 
@@ -526,6 +534,7 @@ export class VagasMockService {
     this.jobsRepository.writeAll(this.cache);
     this.broadcastSync();
     this.emitJobsChanged();
+    void this.pushRemoteSnapshot();
   }
 
   private updateTalentStage(
@@ -633,6 +642,80 @@ export class VagasMockService {
     this.cache = this.parseJobs(this.jobsRepository.readRaw());
     this.emitJobsChanged();
   };
+
+  private async bootstrapRemoteSync(): Promise<void> {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const localJobs = this.jobsRepository.readAll() ?? [];
+    const remoteJobs = await this.jobsSyncApi.readAll();
+
+    if (remoteJobs) {
+      const localRaw = JSON.stringify(localJobs);
+      const remoteRaw = JSON.stringify(remoteJobs);
+
+      if (remoteJobs.length > 0 && remoteRaw !== localRaw) {
+        this.applyRemoteJobs(remoteJobs);
+      } else if (!remoteJobs.length && localJobs.length > 0) {
+        await this.jobsSyncApi.writeAll(localJobs);
+      }
+    }
+
+    this.startRemotePolling();
+  }
+
+  private startRemotePolling(): void {
+    if (this.remoteSyncTimer !== null || typeof window === 'undefined') {
+      return;
+    }
+
+    this.remoteSyncTimer = window.setInterval(() => {
+      void this.pullRemoteSnapshot();
+    }, 3000);
+  }
+
+  private async pullRemoteSnapshot(): Promise<void> {
+    if (this.remoteSyncInFlight) {
+      return;
+    }
+
+    this.remoteSyncInFlight = true;
+
+    try {
+      const remoteJobs = await this.jobsSyncApi.readAll();
+      if (!remoteJobs) {
+        return;
+      }
+
+      const localRaw = this.jobsRepository.readRaw() ?? '[]';
+      const remoteRaw = JSON.stringify(remoteJobs);
+
+      if (remoteRaw === localRaw) {
+        return;
+      }
+
+      this.applyRemoteJobs(remoteJobs);
+    } finally {
+      this.remoteSyncInFlight = false;
+    }
+  }
+
+  private async pushRemoteSnapshot(): Promise<void> {
+    if (!this.cache) {
+      return;
+    }
+
+    await this.jobsSyncApi.writeAll(this.cache);
+  }
+
+  private applyRemoteJobs(remoteJobs: MockJobRecord[]): void {
+    const normalizedJobs = remoteJobs.length ? this.normalizeJobs(remoteJobs) : [];
+    this.cache = normalizedJobs;
+    this.jobsRepository.writeAll(normalizedJobs);
+    this.broadcastSync();
+    this.emitJobsChanged();
+  }
 
   private broadcastSync(): void {
     this.broadcastChannel?.postMessage({ key: this.storageKey, updatedAt: Date.now() });

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Params, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -28,6 +28,7 @@ type CandidateBasicProfile = {
 type CandidateBasicDraft = {
   profile?: CandidateBasicProfile;
   photoPreviewUrl?: string;
+  photoFileName?: string;
 };
 
 @Component({
@@ -41,12 +42,16 @@ type CandidateBasicDraft = {
 export class SidebarComponent {
   readonly overlayMode = input(false);
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
+  private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
   private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-default.svg';
+  readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly jobsFacade = inject(JobsFacade);
   private readonly browserStorage = inject(BrowserStorageService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -342,6 +347,33 @@ export class SidebarComponent {
     this.sidebarVisibilityService.hide();
   }
 
+  openSidebarAvatarPicker(input: HTMLInputElement): void {
+    if (!this.isCandidateMode) {
+      this.hideSidebar();
+      return;
+    }
+
+    input.click();
+  }
+
+  onSidebarAvatarSelected(event: Event): void {
+    if (!this.isCandidateMode) {
+      return;
+    }
+
+    const input = event.target as HTMLInputElement | null;
+    this.handleCandidatePhotoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  @HostListener(`window:${SidebarComponent.photoUpdatedEventName}`)
+  handlePhotoUpdated(): void {
+    this.cdr.markForCheck();
+  }
+
   private readPrimaryPath(url: string): string {
     const [path] = url.split('?');
     return path.split('#')[0];
@@ -363,5 +395,48 @@ export class SidebarComponent {
       this.browserStorage.removeItem(SidebarComponent.basicDraftStorageKey);
       return null;
     }
+  }
+
+  private handleCandidatePhotoFile(file: File | null): void {
+    if (!file) {
+      return;
+    }
+
+    if (!this.acceptedPhotoMimeTypes.includes(file.type) || file.size > this.maxPhotoSizeBytes) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const photoPreviewUrl = typeof reader.result === 'string' ? reader.result : '';
+      if (!photoPreviewUrl) {
+        return;
+      }
+
+      this.persistCandidatePhotoDraft(photoPreviewUrl, file.name);
+      window.dispatchEvent(
+        new CustomEvent(SidebarComponent.photoUpdatedEventName, {
+          detail: {
+            photoPreviewUrl,
+            photoFileName: file.name,
+          },
+        }),
+      );
+      this.cdr.markForCheck();
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  private persistCandidatePhotoDraft(photoPreviewUrl: string, photoFileName: string): void {
+    const current = this.readCandidateDraft() ?? {};
+    const nextDraft: CandidateBasicDraft = {
+      ...current,
+      profile: current.profile ? { ...current.profile } : undefined,
+      photoPreviewUrl,
+      photoFileName,
+    };
+
+    this.browserStorage.setItem(SidebarComponent.basicDraftStorageKey, JSON.stringify(nextDraft));
   }
 }

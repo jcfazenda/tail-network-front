@@ -1,26 +1,62 @@
 <header class="topbar" *ngIf="!isSelectionMode">
-  <button
-    *ngIf="showSidebarProfileInPrimary"
-    class="topbar__profile"
-    type="button"
-    (click)="toggleSidebar()"
-    aria-label="Abrir sidebar"
-  >
-    <div
-      class="avatar topbar__avatar"
-      [class.avatar--candidate]="isCandidateMode"
-      [class.avatar--image]="!!topbarProfileAvatarUrl"
-      [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
-      aria-hidden="true"
+  <div *ngIf="showSidebarProfileInPrimary" class="topbar__profile">
+    <input
+      #topbarAvatarInput
+      class="topbar__avatar-input"
+      type="file"
+      accept=".jpg,.jpeg,.png,.gif,.webp"
+      (change)="onTopbarAvatarSelected($event)"
+    />
+
+    <button
+      class="topbar__avatar-trigger"
+      type="button"
+      (click)="toggleAvatarMenu($event)"
+      aria-label="Abrir menu do avatar"
+      title="Abrir menu do avatar"
     >
-      <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
+      <div
+        class="avatar topbar__avatar"
+        [class.avatar--candidate]="isCandidateMode"
+        [class.avatar--image]="!!topbarProfileAvatarUrl"
+        [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
+        aria-hidden="true"
+      >
+        <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
+      </div>
+    </button>
+
+    <div
+      class="topbar__avatar-menu"
+      *ngIf="avatarMenuOpen"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        class="topbar__avatar-menu-item"
+        type="button"
+        (click)="openTopbarAvatarPicker(topbarAvatarInput, $event)"
+      >
+        Alterar Foto
+      </button>
+      <button
+        class="topbar__avatar-menu-item"
+        type="button"
+        (click)="openSidebarFromAvatarMenu($event)"
+      >
+        Menu
+      </button>
     </div>
 
-    <span class="topbar__profile-copy">
+    <button
+      class="topbar__profile-copy topbar__profile-copy-button"
+      type="button"
+      (click)="toggleSidebar()"
+      aria-label="Abrir sidebar"
+    >
       <span class="topbar__profile-name">{{ topbarProfileDisplayName }}</span>
       <span class="topbar__profile-meta">{{ topbarProfileDisplayMeta }}</span>
-    </span>
-  </button>
+    </button>
+  </div>
 
   <div class="topbar__actions">
     <button

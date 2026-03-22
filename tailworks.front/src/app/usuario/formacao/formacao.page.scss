@@ -288,15 +288,20 @@
   display: grid;
   place-items: center;
   padding: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .candidate-formation__modal{
   width: min(100%, 640px);
+  max-height: calc(100dvh - 48px);
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid var(--border);
   border-radius: 20px;
   box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
   display: grid;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .candidate-formation__modal-header{
@@ -578,6 +583,32 @@
 }
 
 @media (max-width: 960px){
+  .candidate-formation__modal-backdrop{
+    align-items: start;
+    padding:
+      max(12px, env(safe-area-inset-top))
+      12px
+      max(12px, env(safe-area-inset-bottom));
+  }
+
+  .candidate-formation__modal{
+    width: 100%;
+    max-height: calc(100dvh - max(24px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    border-radius: 18px;
+  }
+
+  .candidate-formation__modal-header{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(8px);
+  }
+
+  .candidate-formation__modal-body{
+    padding: 18px 16px 20px;
+  }
+
   .candidate-formation__hero{
     grid-template-columns: 1fr;
     gap: 22px;

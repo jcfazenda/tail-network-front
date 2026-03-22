@@ -370,35 +370,35 @@
 
 @media (max-width: 680px){
   .candidate-stacks__stack-item-slider{
-    height: 40px;
+    height: 32px;
   }
 
   .candidate-stacks__stack-item-slider::before,
   .candidate-stacks__stack-item-slider::after{
-    height: 14px;
+    height: 7px;
   }
 
   .candidate-stacks__stack-item-range::-webkit-slider-runnable-track{
-    height: 14px;
+    height: 7px;
   }
 
   .candidate-stacks__stack-item-range::-moz-range-track{
-    height: 14px;
+    height: 7px;
   }
 
   .candidate-stacks__stack-item-range::-moz-range-progress{
-    height: 14px;
+    height: 7px;
   }
 
   .candidate-stacks__stack-item-range::-webkit-slider-thumb{
-    width: 30px;
-    height: 30px;
-    margin-top: -8px;
+    width: 24px;
+    height: 24px;
+    margin-top: -8.5px;
   }
 
   .candidate-stacks__stack-item-range::-moz-range-thumb{
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
   }
 
   .candidate-stacks__repo-guide-cert{
