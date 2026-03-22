@@ -1,1 +1,35 @@
-/* Page styles moved to global stylesheet to reduce Angular component-style budget pressure. */
+@media (max-width: 720px){
+  app-topbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    display: block;
+    padding: 0;
+    box-sizing: border-box;
+    background: #ffffff;
+  }
+
+  :host ::ng-deep app-topbar .topbar{
+    min-height: 56px;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 560px){
+  app-topbar{
+    padding: 0;
+  }
+}
+
+@media (max-width: 420px){
+  app-topbar{
+    padding: 0;
+  }
+
+  :host ::ng-deep app-topbar .topbar{
+    min-height: 54px;
+    border-radius: 0;
+  }
+}

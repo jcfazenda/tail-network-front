@@ -10,6 +10,7 @@ import { EcosystemSearchService } from '../../core/layout/ecosystem-search.servi
 import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 import { MatchExperienceSignal, MatchScoreBreakdown, MatchTalentProfile } from '../../core/matching/match-domain.models';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
+import { EcossistemaMobileComponent } from './ecossistema-mobile/ecossistema-mobile.component';
 
 type TalentEcoFilter = 'radar' | 'applications';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -87,7 +88,7 @@ type TalentCompatibleJobView = {
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, TopbarComponent],
+  imports: [CommonModule, TopbarComponent, EcossistemaMobileComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -117,6 +118,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private jobsSnapshot: MockJobRecord[] = [];
   private copyIndex = 0;
   copyIsFading = false;
+  readonly mobileVm = this;
 
   readonly hiringCopy = [
     {
