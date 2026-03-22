@@ -205,10 +205,10 @@
                       <button
                         class="ecosystem-desktop__job-chat-action"
                         type="button"
-                        aria-label="Abrir conversa do card"
+                        aria-label="Examinar candidatos do card"
                         (click)="toggleJobCardFlip(job)"
                       >
-                        <img src="/assets/icons/chat.svg" alt="" aria-hidden="true" />
+                        <span class="material-symbols-rounded" aria-hidden="true">search</span>
                       </button>
                     </div>
                   </div>
@@ -219,6 +219,14 @@
                       <a class="ecosystem-desktop__job-inline-action" href="/vagas/cadastro" aria-label="Editar card">
                         <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                       </a>
+                      <button
+                        class="ecosystem-desktop__job-inline-action ecosystem-desktop__job-inline-action--chat"
+                        type="button"
+                        aria-label="Ver conversa do card"
+                        (click)="toggleJobCardFlip(job)"
+                      >
+                        <img src="/assets/icons/chat.svg" alt="" aria-hidden="true" />
+                      </button>
                     </div>
                     <span class="ecosystem-desktop__job-salary" *ngIf="jobCardSalary(job) as salary">{{ salary }}</span>
                   </div>
@@ -261,7 +269,7 @@
                         aria-label="Voltar para a frente do card"
                         (click)="toggleJobCardFlip(job)"
                       >
-                        <img src="/assets/icons/chat.svg" alt="" aria-hidden="true" />
+                        <span class="material-symbols-rounded" aria-hidden="true">search</span>
                       </button>
                     </div>
                   </div>

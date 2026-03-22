@@ -15,6 +15,7 @@ import { TalentDirectoryService } from '../../talent/talent-directory.service';
 import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
 import { EcosystemJobFiltersService } from '../../core/layout/ecosystem-job-filters.service';
 import { EcosystemViewFilterService } from '../../core/layout/ecosystem-view-filter.service';
+import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab/matching-lab.models';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -1082,13 +1083,34 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   jobInteractionExtraCount(job: MockJobRecord): number {
-    const directCount = Math.max(0, job.extraCount ?? 0);
-    if (directCount > 0) {
-      return directCount;
+    const labDisplayCount = this.labJobRadarDisplayCount(job);
+    if (labDisplayCount > 0) {
+      return labDisplayCount;
     }
 
-    const totalCandidates = job.candidates?.length ?? 0;
-    return Math.max(0, totalCandidates - this.jobInteractionAvatars(job).length);
+    const visibleAvatars = this.jobInteractionAvatars(job).length;
+    const explicitExtra = Math.max(0, job.extraCount ?? 0);
+    const derivedTotal = explicitExtra > 0 ? explicitExtra + visibleAvatars : 0;
+    const totalCandidates = Math.max(0, job.candidates?.length ?? 0);
+    const totalRadar = Math.max(0, job.radarCount ?? 0);
+    const totalTalents = Math.max(0, job.talents ?? 0);
+
+    return Math.max(derivedTotal, totalCandidates, totalRadar, totalTalents);
+  }
+
+  private labJobRadarDisplayCount(job: MockJobRecord): number {
+    if (!job.id.startsWith('lab-')) {
+      return 0;
+    }
+
+    const dataset = this.matchingLabService.getDataset();
+    const jobId = job.id.replace(/^lab-/, '');
+    const result = dataset.results.find((entry: MatchLabJobResult) => entry.job.id === jobId);
+    if (!result) {
+      return 0;
+    }
+
+    return result.ranking.filter((entry: MatchLabRankingEntry) => entry.score >= this.talentAdherenceThreshold).length;
   }
 
   isJobCardFlipped(job: MockJobRecord): boolean {

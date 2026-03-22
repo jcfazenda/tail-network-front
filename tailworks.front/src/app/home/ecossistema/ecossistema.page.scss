@@ -588,26 +588,21 @@
 }
 
 .ecosystem-desktop__job-chat-action {
-  width: 34px;
-  height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
   border: 0;
-  background: rgba(226, 230, 236, 0.98);
-  color: rgba(15, 23, 42, 0.58);
+  background: transparent;
+  color: rgba(108, 122, 143, 0.92);
   padding: 0;
   cursor: pointer;
   flex: 0 0 auto;
   box-shadow: none;
 }
 
-.ecosystem-desktop__job-chat-action img {
-  width: 18px;
-  height: 18px;
-  display: block;
-  opacity: 0.72;
+.ecosystem-desktop__job-chat-action .material-symbols-rounded {
+  font-size: 20px;
+  line-height: 1;
 }
 
 .ecosystem-desktop__job-actions {
@@ -850,6 +845,17 @@
 
 .ecosystem-desktop__job-inline-action .material-symbols-rounded {
   font-size: 19px;
+}
+
+.ecosystem-desktop__job-inline-action--chat {
+  padding: 0;
+}
+
+.ecosystem-desktop__job-inline-action--chat img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  opacity: 0.76;
 }
 
 .ecosystem-desktop__empty {
