@@ -19,6 +19,36 @@ type CompanyStatusFilter = 'all' | 'active' | 'inactive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaPage implements OnDestroy {
+  private readonly brazilStateAbbreviations: Record<string, string> = {
+    Acre: 'AC',
+    Alagoas: 'AL',
+    Amapa: 'AP',
+    Amazonas: 'AM',
+    Bahia: 'BA',
+    Ceara: 'CE',
+    'Distrito Federal': 'DF',
+    'Espirito Santo': 'ES',
+    Goias: 'GO',
+    Maranhao: 'MA',
+    'Mato Grosso': 'MT',
+    'Mato Grosso do Sul': 'MS',
+    'Minas Gerais': 'MG',
+    Para: 'PA',
+    Paraiba: 'PB',
+    Parana: 'PR',
+    Pernambuco: 'PE',
+    Piaui: 'PI',
+    'Rio de Janeiro': 'RJ',
+    'Rio Grande do Norte': 'RN',
+    'Rio Grande do Sul': 'RS',
+    Rondonia: 'RO',
+    Roraima: 'RR',
+    'Santa Catarina': 'SC',
+    'Sao Paulo': 'SP',
+    Sergipe: 'SE',
+    Tocantins: 'TO',
+  };
+
   private readonly companiesFacade = inject(CompaniesFacade);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly jobsFacade = inject(JobsFacade);
@@ -108,6 +138,24 @@ export class EmpresaPage implements OnDestroy {
 
   canDeleteCompany(company: CompanyRecord): boolean {
     return this.recruiterCount(company.name) === 0 && this.jobCount(company.name) === 0;
+  }
+
+  formatCompanyLocation(location: string): string {
+    const normalizedLocation = location.trim();
+    if (!normalizedLocation) {
+      return '';
+    }
+
+    const [firstPart = '', secondPart = ''] = normalizedLocation.split(' - ').map((item) => item.trim());
+    const isCountryLast = secondPart === 'Brasil' || secondPart === 'Portugal';
+
+    if (isCountryLast) {
+      const stateCode = secondPart === 'Brasil' ? this.brazilStateAbbreviations[firstPart] : '';
+      const formattedRegion = [firstPart, stateCode].filter(Boolean).join(' ');
+      return [secondPart, formattedRegion].filter(Boolean).join(' - ');
+    }
+
+    return normalizedLocation;
   }
 
   trackCompany(_index: number, company: CompanyRecord): string {

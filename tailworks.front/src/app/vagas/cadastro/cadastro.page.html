@@ -167,7 +167,7 @@
               <span class="field__label field__label--soft">Empresa</span>
               <span class="select-shell">
                 <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">apartment</span>
-                <select name="company" [(ngModel)]="jobDraft.company">
+                <select name="company" [(ngModel)]="jobDraft.company" (ngModelChange)="onCompanyChange($event)">
                   <option *ngFor="let item of companyOptions" [value]="item">{{ item }}</option>
                 </select>
                 <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>

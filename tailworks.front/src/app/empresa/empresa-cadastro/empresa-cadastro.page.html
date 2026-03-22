@@ -1,7 +1,6 @@
 <section class="empresa-cadastro">
   <header class="empresa-cadastro__hero">
     <div class="empresa-cadastro__hero-copy">
-      <span class="empresa-cadastro__eyebrow">Perfil da empresa</span>
       <h1>{{ pageTitle }}</h1>
       <p>{{ pageDescription }}</p>
     </div>
@@ -14,152 +13,64 @@
 
       <button class="empresa-cadastro__primary-action" type="button" [disabled]="!canSave" (click)="saveCompany()">
         <span class="material-symbols-rounded" aria-hidden="true">save</span>
-        <span>{{ isEditMode ? 'Salvar ajustes' : 'Cadastrar empresa' }}</span>
+        <span>Salvar</span>
       </button>
     </div>
   </header>
 
   <div class="empresa-cadastro__layout">
     <form class="empresa-cadastro__form" (submit)="$event.preventDefault(); saveCompany()">
-      <section class="empresa-cadastro__section">
-        <header class="empresa-cadastro__section-head">
-          <strong>Identidade e perfil</strong>
-          <span>Esses dados abastecem o cadastro, os cards e a selecao de empresa para recruiters.</span>
-        </header>
+      <header class="empresa-cadastro__section-head">
+        <strong>Identidade e perfil</strong>
+        <span>Esses dados abastecem o cadastro, os cards e a selecao de empresa para recruiters.</span>
+      </header>
 
-        <div class="empresa-cadastro__grid empresa-cadastro__grid--identity">
-          <label class="empresa-cadastro__field">
-            <span>Nome</span>
-            <input type="text" [(ngModel)]="draft.name" name="name" />
-          </label>
+      <div class="empresa-cadastro__grid empresa-cadastro__grid--identity">
+        <label class="empresa-cadastro__field">
+          <span>Nome</span>
+          <input type="text" [(ngModel)]="draft.name" name="name" />
+        </label>
 
-          <label class="empresa-cadastro__field">
-            <span>Setor</span>
-            <input type="text" [(ngModel)]="draft.sector" name="sector" />
-          </label>
+        <label class="empresa-cadastro__field">
+          <span>Setor</span>
+          <input type="text" [(ngModel)]="draft.sector" name="sector" />
+        </label>
 
-          <label class="empresa-cadastro__field">
-            <span>Localidade</span>
-            <input type="text" [(ngModel)]="draft.location" name="location" />
-          </label>
+        <label class="empresa-cadastro__field empresa-cadastro__field--select-elevated">
+          <span class="empresa-cadastro__field-label empresa-cadastro__field-label--soft">Pais</span>
+          <span class="empresa-cadastro__select-shell">
+            <span class="empresa-cadastro__select-shell-icon material-symbols-rounded" aria-hidden="true">public</span>
+            <select
+              [ngModel]="selectedCountry"
+              (ngModelChange)="onCountryChange($event)"
+              name="country"
+            >
+              <option *ngFor="let country of countryOptions" [value]="country">{{ country }}</option>
+            </select>
+            <span class="empresa-cadastro__select-shell-chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
+          </span>
+        </label>
 
-          <label class="empresa-cadastro__field">
-            <span>Logo label</span>
-            <input type="text" maxlength="2" [(ngModel)]="draft.logoLabel" name="logoLabel" />
-          </label>
-
-          <label class="empresa-cadastro__field empresa-cadastro__field--wide">
-            <span>Descricao</span>
-            <textarea rows="4" [(ngModel)]="draft.description" name="description"></textarea>
-          </label>
-        </div>
-      </section>
-
-      <section class="empresa-cadastro__section">
-        <header class="empresa-cadastro__section-head">
-          <strong>Presenca digital</strong>
-          <span>Informacoes usadas no visual e no contexto da empresa dentro do sistema.</span>
-        </header>
-
-        <div class="empresa-cadastro__grid empresa-cadastro__grid--identity">
-          <label class="empresa-cadastro__field">
-            <span>Seguidores</span>
-            <input type="text" [(ngModel)]="draft.followers" name="followers" />
-          </label>
-
-          <label class="empresa-cadastro__field">
-            <span>LinkedIn</span>
-            <input type="text" [(ngModel)]="draft.linkedinCount" name="linkedinCount" />
-          </label>
-
-          <label class="empresa-cadastro__field">
-            <span>Website</span>
-            <input type="url" [(ngModel)]="draft.website" name="website" />
-          </label>
-
-          <label class="empresa-cadastro__field">
-            <span>Dominio de email</span>
-            <input type="text" [(ngModel)]="draft.emailDomain" name="emailDomain" />
-          </label>
-
-          <label class="empresa-cadastro__field empresa-cadastro__field--wide">
-            <span>Logo URL</span>
-            <input type="url" [(ngModel)]="draft.logoUrl" name="logoUrl" />
-          </label>
-        </div>
-      </section>
-
-      <section class="empresa-cadastro__section">
-        <header class="empresa-cadastro__section-head">
-          <strong>Operacao</strong>
-          <span>Defina volume mensal e se a empresa esta ativa para ser atribuida a recruiters.</span>
-        </header>
-
-        <div class="empresa-cadastro__grid empresa-cadastro__grid--identity">
-          <label class="empresa-cadastro__field">
-            <span>Contratacoes por mes</span>
-            <input type="number" min="0" [(ngModel)]="draft.monthlyHiringCount" name="monthlyHiringCount" />
-          </label>
-
-          <label class="empresa-cadastro__toggle">
-            <input type="checkbox" [(ngModel)]="draft.active" name="active" />
-            <span>Empresa ativa</span>
-          </label>
-        </div>
+        <label class="empresa-cadastro__field empresa-cadastro__field--select-elevated">
+          <span class="empresa-cadastro__field-label empresa-cadastro__field-label--soft">Localidade</span>
+          <span class="empresa-cadastro__select-shell">
+            <span class="empresa-cadastro__select-shell-icon material-symbols-rounded" aria-hidden="true">location_on</span>
+            <select
+              [ngModel]="selectedState"
+              (ngModelChange)="onStateChange($event)"
+              name="state"
+            >
+              <option *ngFor="let state of stateOptions" [value]="state">{{ getStateOptionLabel(state) }}</option>
+            </select>
+            <span class="empresa-cadastro__select-shell-chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
+          </span>
+        </label>
 
         <label class="empresa-cadastro__field empresa-cadastro__field--wide">
-          <span>Observacoes</span>
-          <textarea rows="4" [(ngModel)]="draft.notes" name="notes"></textarea>
+          <span>Descricao</span>
+          <textarea rows="4" [(ngModel)]="draft.description" name="description"></textarea>
         </label>
-      </section>
+      </div>
     </form>
-
-    <aside class="empresa-cadastro__preview">
-      <section class="empresa-cadastro__preview-card">
-        <div class="empresa-cadastro__preview-header">
-          <div
-            class="empresa-cadastro__avatar"
-            [class.empresa-cadastro__avatar--image]="!!avatarPreviewUrl"
-            [style.backgroundImage]="avatarPreviewUrl ? 'url(' + avatarPreviewUrl + ')' : null"
-          >
-            <span *ngIf="!avatarPreviewUrl">{{ avatarInitials }}</span>
-          </div>
-
-          <div class="empresa-cadastro__preview-copy">
-            <strong>{{ draft.name || 'Nova Empresa' }}</strong>
-            <span>{{ draft.sector || 'Tecnologia' }}</span>
-            <small>{{ draft.location || 'Brasil' }}</small>
-          </div>
-        </div>
-
-        <div class="empresa-cadastro__preview-pills">
-          <span class="empresa-cadastro__status-pill" [class.empresa-cadastro__status-pill--inactive]="!draft.active">
-            {{ draft.active ? 'Ativa' : 'Inativa' }}
-          </span>
-          <span class="empresa-cadastro__status-pill empresa-cadastro__status-pill--accent">
-            {{ draft.monthlyHiringCount || 0 }} contratacoes/mes
-          </span>
-        </div>
-
-        <div class="empresa-cadastro__preview-block">
-          <span class="empresa-cadastro__preview-label">Descricao</span>
-          <p>{{ draft.description || 'A descricao da empresa aparecera aqui.' }}</p>
-        </div>
-
-        <div class="empresa-cadastro__preview-grid">
-          <div>
-            <span class="empresa-cadastro__preview-label">Seguidores</span>
-            <strong>{{ draft.followers || '120.000 seguidores' }}</strong>
-          </div>
-
-          <div>
-            <span class="empresa-cadastro__preview-label">LinkedIn</span>
-            <strong>{{ draft.linkedinCount || '120.000 no LinkedIn' }}</strong>
-          </div>
-        </div>
-
-        <p class="empresa-cadastro__preview-note" *ngIf="draft.notes">{{ draft.notes }}</p>
-      </section>
-    </aside>
   </div>
 </section>

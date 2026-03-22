@@ -99,18 +99,7 @@
 
       <div class="empresa-card__meta">
         <div>
-          <span class="empresa-card__meta-label">Localidade</span>
-          <strong>{{ company.location }}</strong>
-        </div>
-
-        <div>
-          <span class="empresa-card__meta-label">Seguidores</span>
-          <strong>{{ company.followers }}</strong>
-        </div>
-
-        <div>
-          <span class="empresa-card__meta-label">Contratacoes</span>
-          <strong>{{ company.monthlyHiringCount }}/mes</strong>
+          <strong>{{ formatCompanyLocation(company.location) }}</strong>
         </div>
       </div>
 

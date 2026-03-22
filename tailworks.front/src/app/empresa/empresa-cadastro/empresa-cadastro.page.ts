@@ -17,6 +17,90 @@ import { CompanyDraft, CompanyRecord } from '../empresa.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaCadastroPage implements OnDestroy {
+  readonly countryOptions = ['Brasil', 'Portugal'];
+  readonly brazilStateAbbreviations: Record<string, string> = {
+    Acre: 'AC',
+    Alagoas: 'AL',
+    Amapa: 'AP',
+    Amazonas: 'AM',
+    Bahia: 'BA',
+    Ceara: 'CE',
+    'Distrito Federal': 'DF',
+    'Espirito Santo': 'ES',
+    Goias: 'GO',
+    Maranhao: 'MA',
+    'Mato Grosso': 'MT',
+    'Mato Grosso do Sul': 'MS',
+    'Minas Gerais': 'MG',
+    Para: 'PA',
+    Paraiba: 'PB',
+    Parana: 'PR',
+    Pernambuco: 'PE',
+    Piaui: 'PI',
+    'Rio de Janeiro': 'RJ',
+    'Rio Grande do Norte': 'RN',
+    'Rio Grande do Sul': 'RS',
+    Rondonia: 'RO',
+    Roraima: 'RR',
+    'Santa Catarina': 'SC',
+    'Sao Paulo': 'SP',
+    Sergipe: 'SE',
+    Tocantins: 'TO',
+  };
+  readonly statesByCountry: Record<string, string[]> = {
+    Brasil: [
+      'Acre',
+      'Alagoas',
+      'Amapa',
+      'Amazonas',
+      'Bahia',
+      'Ceara',
+      'Distrito Federal',
+      'Espirito Santo',
+      'Goias',
+      'Maranhao',
+      'Mato Grosso',
+      'Mato Grosso do Sul',
+      'Minas Gerais',
+      'Para',
+      'Paraiba',
+      'Parana',
+      'Pernambuco',
+      'Piaui',
+      'Rio de Janeiro',
+      'Rio Grande do Norte',
+      'Rio Grande do Sul',
+      'Rondonia',
+      'Roraima',
+      'Santa Catarina',
+      'Sao Paulo',
+      'Sergipe',
+      'Tocantins',
+    ],
+    Portugal: [
+      'Aveiro',
+      'Beja',
+      'Braga',
+      'Braganca',
+      'Castelo Branco',
+      'Coimbra',
+      'Evora',
+      'Faro',
+      'Guarda',
+      'Leiria',
+      'Lisboa',
+      'Portalegre',
+      'Porto',
+      'Santarem',
+      'Setubal',
+      'Viana do Castelo',
+      'Vila Real',
+      'Viseu',
+      'Acores',
+      'Madeira',
+    ],
+  };
+
   private readonly companiesFacade = inject(CompaniesFacade);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly jobsFacade = inject(JobsFacade);
@@ -29,6 +113,8 @@ export class EmpresaCadastroPage implements OnDestroy {
   editingCompanyId: string | null = null;
   editingCompanyName = '';
   isEditMode = false;
+  selectedCountry = 'Brasil';
+  selectedState = 'Rio de Janeiro';
 
   constructor() {
     this.subscriptions.add(
@@ -40,6 +126,7 @@ export class EmpresaCadastroPage implements OnDestroy {
         this.editingCompanyName = company?.name ?? '';
         this.isEditMode = !!company;
         this.draft = company ? this.toDraft(company) : this.createEmptyDraft();
+        this.syncLocationControlsFromDraft();
         this.cdr.markForCheck();
       }),
     );
@@ -54,6 +141,7 @@ export class EmpresaCadastroPage implements OnDestroy {
         const company = this.companiesFacade.getCompanyById(this.editingCompanyId);
         if (company) {
           this.draft = this.toDraft(company);
+          this.syncLocationControlsFromDraft();
         }
         this.cdr.markForCheck();
       }),
@@ -78,13 +166,28 @@ export class EmpresaCadastroPage implements OnDestroy {
     return !!this.draft.name.trim() && !!this.draft.location.trim();
   }
 
-  get avatarPreviewUrl(): string {
-    return this.draft.logoUrl?.trim() || '';
+  get stateOptions(): string[] {
+    return this.statesByCountry[this.selectedCountry] ?? [];
   }
 
-  get avatarInitials(): string {
-    const base = this.draft.logoLabel.trim() || this.draft.name.trim().slice(0, 2);
-    return (base || 'em').slice(0, 2).toUpperCase();
+  getStateOptionLabel(state: string): string {
+    if (this.selectedCountry !== 'Brasil') {
+      return state;
+    }
+
+    const uf = this.brazilStateAbbreviations[state];
+    return uf ? `${state} ${uf}` : state;
+  }
+
+  onCountryChange(country: string): void {
+    this.selectedCountry = country;
+    this.selectedState = this.stateOptions[0] ?? '';
+    this.updateDraftLocation();
+  }
+
+  onStateChange(state: string): void {
+    this.selectedState = state;
+    this.updateDraftLocation();
   }
 
   saveCompany(): void {
@@ -92,6 +195,7 @@ export class EmpresaCadastroPage implements OnDestroy {
       return;
     }
 
+    const wasCreatingCompany = !this.isEditMode;
     const previousCompanyName = this.editingCompanyName;
     const savedCompany = this.companiesFacade.saveCompany({
       ...this.draft,
@@ -108,6 +212,10 @@ export class EmpresaCadastroPage implements OnDestroy {
       notes: this.draft.notes?.trim() || undefined,
     });
 
+    if (wasCreatingCompany) {
+      this.linkCompanyToCurrentRecruiter(savedCompany.name);
+    }
+
     if (this.isEditMode && previousCompanyName && previousCompanyName !== savedCompany.name) {
       this.recruitersFacade.replaceCompanyName(previousCompanyName, savedCompany.name);
       this.jobsFacade.renameCompany(previousCompanyName, savedCompany.name);
@@ -116,11 +224,28 @@ export class EmpresaCadastroPage implements OnDestroy {
     void this.router.navigateByUrl('/empresa');
   }
 
+  private linkCompanyToCurrentRecruiter(companyName: string): void {
+    const normalizedCompanyName = companyName.trim();
+    if (!normalizedCompanyName) {
+      return;
+    }
+
+    const currentRecruiter = this.recruitersFacade.getCurrentRecruiter();
+    if (currentRecruiter.managedCompanies.includes(normalizedCompanyName)) {
+      return;
+    }
+
+    this.recruitersFacade.saveRecruiter({
+      ...currentRecruiter,
+      managedCompanies: [...currentRecruiter.managedCompanies, normalizedCompanyName],
+    });
+  }
+
   private createEmptyDraft(): CompanyDraft {
     return {
       name: '',
       sector: 'Tecnologia',
-      location: 'Brasil',
+      location: 'Rio de Janeiro - Brasil',
       description: '',
       followers: '',
       linkedinCount: '',
@@ -132,6 +257,26 @@ export class EmpresaCadastroPage implements OnDestroy {
       active: true,
       notes: '',
     };
+  }
+
+  private updateDraftLocation(): void {
+    this.draft = {
+      ...this.draft,
+      location: [this.selectedState, this.selectedCountry].filter(Boolean).join(' - '),
+    };
+  }
+
+  private syncLocationControlsFromDraft(): void {
+    const normalizedLocation = this.draft.location.trim();
+    const [rawState = '', rawCountry = ''] = normalizedLocation.split(' - ').map((item) => item.trim());
+    const matchedCountry = this.countryOptions.find((country) => country === rawCountry) ?? 'Brasil';
+    const matchedState = this.statesByCountry[matchedCountry]?.find((state) => state === rawState)
+      ?? this.statesByCountry[matchedCountry]?.[0]
+      ?? '';
+
+    this.selectedCountry = matchedCountry;
+    this.selectedState = matchedState;
+    this.updateDraftLocation();
   }
 
   private toDraft(company: CompanyRecord): CompanyDraft {

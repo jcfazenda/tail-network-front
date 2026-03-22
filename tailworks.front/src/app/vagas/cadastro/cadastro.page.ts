@@ -54,6 +54,88 @@ type ConfettiPiece = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CadastroPage implements OnDestroy {
+  private readonly brazilStateAbbreviations: Record<string, string> = {
+    Acre: 'AC',
+    Alagoas: 'AL',
+    Amapa: 'AP',
+    Amazonas: 'AM',
+    Bahia: 'BA',
+    Ceara: 'CE',
+    'Distrito Federal': 'DF',
+    'Espirito Santo': 'ES',
+    Goias: 'GO',
+    Maranhao: 'MA',
+    'Mato Grosso': 'MT',
+    'Mato Grosso do Sul': 'MS',
+    'Minas Gerais': 'MG',
+    Para: 'PA',
+    Paraiba: 'PB',
+    Parana: 'PR',
+    Pernambuco: 'PE',
+    Piaui: 'PI',
+    'Rio de Janeiro': 'RJ',
+    'Rio Grande do Norte': 'RN',
+    'Rio Grande do Sul': 'RS',
+    Rondonia: 'RO',
+    Roraima: 'RR',
+    'Santa Catarina': 'SC',
+    'Sao Paulo': 'SP',
+    Sergipe: 'SE',
+    Tocantins: 'TO',
+  };
+  private readonly statesByCountry: Record<string, string[]> = {
+    Brasil: [
+      'Acre',
+      'Alagoas',
+      'Amapa',
+      'Amazonas',
+      'Bahia',
+      'Ceara',
+      'Distrito Federal',
+      'Espirito Santo',
+      'Goias',
+      'Maranhao',
+      'Mato Grosso',
+      'Mato Grosso do Sul',
+      'Minas Gerais',
+      'Para',
+      'Paraiba',
+      'Parana',
+      'Pernambuco',
+      'Piaui',
+      'Rio de Janeiro',
+      'Rio Grande do Norte',
+      'Rio Grande do Sul',
+      'Rondonia',
+      'Roraima',
+      'Santa Catarina',
+      'Sao Paulo',
+      'Sergipe',
+      'Tocantins',
+    ],
+    Portugal: [
+      'Aveiro',
+      'Beja',
+      'Braga',
+      'Braganca',
+      'Castelo Branco',
+      'Coimbra',
+      'Evora',
+      'Faro',
+      'Guarda',
+      'Leiria',
+      'Lisboa',
+      'Portalegre',
+      'Porto',
+      'Santarem',
+      'Setubal',
+      'Viana do Castelo',
+      'Vila Real',
+      'Viseu',
+      'Acores',
+      'Madeira',
+    ],
+  };
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -111,11 +193,6 @@ export class CadastroPage implements OnDestroy {
       description: 'Folga remunerada no mês do aniversario',
     },
   ];
-  readonly locationOptions = [
-    'Rio de Janeiro - RJ',
-    'São Paulo - SP',
-    'Remoto - Brasil',
-  ];
   readonly companyLogoGuide = '512 x 512 px';
   readonly homeAnnouncementImageGuide = '1200 x 675 px';
   readonly acceptedCompanyLogoMimeTypes = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -165,9 +242,21 @@ export class CadastroPage implements OnDestroy {
 
   get companyOptions(): string[] {
     return Array.from(new Set([
+      ...this.companiesFacade.listCompanyNames(false),
       ...this.recruitersFacade.getRecruiterCompanies(),
       this.jobDraft.company.trim(),
-    ].filter(Boolean)));
+    ].filter(Boolean))).sort((left, right) => left.localeCompare(right, 'pt-BR'));
+  }
+
+  get locationOptions(): string[] {
+    const company = this.companiesFacade.getCompanyByName(this.jobDraft.company);
+    const country = this.extractCountryFromLocation(company?.location) ?? 'Brasil';
+    const states = this.statesByCountry[country] ?? [];
+
+    return states.map((state) => {
+      const uf = country === 'Brasil' ? this.brazilStateAbbreviations[state] : '';
+      return [state, uf].filter(Boolean).join(' - ');
+    });
   }
 
   ngOnDestroy(): void {
@@ -1575,10 +1664,17 @@ export class CadastroPage implements OnDestroy {
     const nextCompany = recruiterCompanies[0]?.trim() || this.jobDraft.company;
 
     if (!nextCompany || this.jobDraft.company === nextCompany) {
+      this.ensureLocationMatchesSelectedCompany();
       return;
     }
 
     this.jobDraft.company = nextCompany;
+    this.ensureLocationMatchesSelectedCompany();
+  }
+
+  onCompanyChange(companyName: string): void {
+    this.jobDraft.company = companyName;
+    this.ensureLocationMatchesSelectedCompany();
   }
 
   private hydrateStatusFromJob(job: MockJobRecord): void {
@@ -1643,6 +1739,29 @@ export class CadastroPage implements OnDestroy {
         this.statusStageIndex = 0;
         this.expandCurrentStatusPreview();
     }
+  }
+
+  private ensureLocationMatchesSelectedCompany(): void {
+    const options = this.locationOptions;
+    if (!options.length) {
+      return;
+    }
+
+    if (options.includes(this.jobDraft.location)) {
+      return;
+    }
+
+    this.jobDraft.location = options[0];
+  }
+
+  private extractCountryFromLocation(location: string | undefined): string | null {
+    const normalizedLocation = location?.trim();
+    if (!normalizedLocation) {
+      return null;
+    }
+
+    const [, rawCountry = ''] = normalizedLocation.split(' - ').map((item) => item.trim());
+    return rawCountry || null;
   }
 
   private mapRecruiterStepIndexToStage(index: number): MockJobCandidate['stage'] {
