@@ -1,32 +1,51 @@
 <section class="entry-home">
-  <div class="entry-home__hero">
-    <h1>Escolha como deseja entrar no sistema.</h1>
-    <p>Depois de entrar com sua conta, é aqui que você decide se quer usar o ambiente como recruiter ou como talento.</p>
+  <div class="entry-home__overlay"></div>
 
-    <button class="entry-home__reset" type="button" (click)="resetWorkspace($event)">
-      Recomecar ambiente
-    </button>
-  </div>
+  <div class="entry-home__content">
 
-  <div class="entry-home__status" *ngIf="statusMessage">
-    {{ statusMessage }}
-  </div>
 
-  <div class="entry-home__actions">
-    <a class="entry-home__card entry-home__card--recruiter" href="/login" (click)="enterAsRecruiter($event)">
-      <span class="entry-home__icon material-symbols-rounded" aria-hidden="true">work</span>
-      <div class="entry-home__copy">
-        <strong>Entrar como Recruiter</strong>
-        <span>Use sua conta e abra a operação recruiter, com vagas, radar e gestão da empresa.</span>
-      </div>
-    </a>
+    <div class="entry-home__hero">
+ 
 
-    <a class="entry-home__card entry-home__card--talent" href="/login" (click)="enterAsTalent($event)">
-      <span class="entry-home__icon material-symbols-rounded" aria-hidden="true">person</span>
-      <div class="entry-home__copy">
-        <strong>Entrar como Talento</strong>
-        <span>Use a mesma conta para navegar na jornada do candidato e acompanhar suas oportunidades.</span>
-      </div>
-    </a>
+      <button class="entry-home__reset" type="button" (click)="resetWorkspace($event)">
+        Recomecar ambiente
+      </button>
+    </div>
+
+    <div class="entry-home__status" *ngIf="statusMessage">
+      {{ statusMessage }}
+    </div>
+
+    <div class="entry-home__actions">
+      <a
+        class="entry-home__card entry-home__card--recruiter"
+        href="/login"
+        (click)="enterAsRecruiter($event)"
+      >
+        <span class="entry-home__icon material-symbols-rounded" aria-hidden="true">work</span>
+
+        <div class="entry-home__copy">
+          <strong>Entrar como Recruiter</strong>
+          <span>
+            Use sua conta e abra a operação recruiter, com vagas, radar e gestão da empresa.
+          </span>
+        </div>
+      </a>
+
+      <a
+        class="entry-home__card entry-home__card--talent"
+        href="/login"
+        (click)="enterAsTalent($event)"
+      >
+        <span class="entry-home__icon material-symbols-rounded" aria-hidden="true">person</span>
+
+        <div class="entry-home__copy">
+          <strong>Entrar como Talento</strong>
+          <span>
+            Use a mesma conta para navegar na jornada do candidato e acompanhar suas oportunidades.
+          </span>
+        </div>
+      </a>
+    </div>
   </div>
 </section>

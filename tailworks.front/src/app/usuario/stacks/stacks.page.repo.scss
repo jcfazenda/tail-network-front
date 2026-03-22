@@ -470,3 +470,25 @@
   flex: 0 0 auto;
 }
 
+@media (max-width: 680px){
+  .candidate-stacks__repo-row{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .candidate-stacks__repo-row-left{
+    width: 100%;
+  }
+
+  .candidate-stacks__repo-row-right{
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
+  }
+
+  .candidate-stacks__repo-row-name{
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+}

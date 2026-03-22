@@ -151,7 +151,7 @@
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
-  touch-action: pan-y;
+  touch-action: auto;
 }
 
 .candidate-stacks__stack-item-range:active{
@@ -369,6 +369,38 @@
 }
 
 @media (max-width: 680px){
+  .candidate-stacks__stack-item-slider{
+    height: 40px;
+  }
+
+  .candidate-stacks__stack-item-slider::before,
+  .candidate-stacks__stack-item-slider::after{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-webkit-slider-runnable-track{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-moz-range-track{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-moz-range-progress{
+    height: 14px;
+  }
+
+  .candidate-stacks__stack-item-range::-webkit-slider-thumb{
+    width: 30px;
+    height: 30px;
+    margin-top: -8px;
+  }
+
+  .candidate-stacks__stack-item-range::-moz-range-thumb{
+    width: 30px;
+    height: 30px;
+  }
+
   .candidate-stacks__repo-guide-cert{
     flex-direction: column;
   }
@@ -378,4 +410,3 @@
     justify-content: flex-start;
   }
 }
-
