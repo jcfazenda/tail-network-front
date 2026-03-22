@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, effect, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -12,6 +13,7 @@ import { EcosystemPanelService } from '../../../usuario/ecosystem-panel.service'
 import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service';
 import { EcosystemSearchService } from '../ecosystem-search.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
+import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 
 type FormationCopyDraft = {
   endMonth?: string;
@@ -49,7 +51,7 @@ type NotificationConfettiPiece = {
 @Component({
   standalone: true,
   selector: 'app-topbar',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './topbar.component.html',
   styleUrls: [
     './topbar.component.shell.scss',
@@ -73,10 +75,15 @@ export class TopbarComponent {
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly ecosystemPanelService = inject(EcosystemPanelService);
   private readonly ecosystemSearchService = inject(EcosystemSearchService);
+  private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  filterCompany = '';
+  filterState = '';
+  filterStack = '';
+  isFilterPopupOpen = false;
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -119,6 +126,39 @@ export class TopbarComponent {
 
   get isRecruiterEcosystem(): boolean {
     return this.isCandidateEcosystem && this.ecosystemEntryService.mode() === 'recruiter';
+  }
+
+  get isAnyEcosystem(): boolean {
+    return this.primaryPath === '/home/ecossistema' || this.primaryPath === '/usuario/ecossistema';
+  }
+
+  get hasSavedEcosystemFilters(): boolean {
+    const filters = this.ecosystemJobFiltersService.filters();
+    return !!(filters.company || filters.state || filters.stack);
+  }
+
+  get ecosystemCompanies(): string[] {
+    return this.readEcosystemJobs()
+      .map((job) => job.company.trim())
+      .filter(Boolean)
+      .filter((company, index, list) => list.indexOf(company) === index)
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'));
+  }
+
+  get ecosystemStates(): string[] {
+    return this.readEcosystemJobs()
+      .map((job) => job.location.split('-').pop()?.trim() ?? '')
+      .filter(Boolean)
+      .filter((state, index, list) => list.indexOf(state) === index)
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'));
+  }
+
+  get ecosystemStacks(): string[] {
+    return this.readEcosystemJobs()
+      .flatMap((job) => job.techStack.map((stack) => stack.name.trim()))
+      .filter(Boolean)
+      .filter((stack, index, list) => list.indexOf(stack) === index)
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'));
   }
 
   get canToggleSidebar(): boolean {
@@ -421,6 +461,11 @@ export class TopbarComponent {
 
   @HostListener('document:keydown.escape')
   handleEscape(): void {
+    if (this.isFilterPopupOpen) {
+      this.closeEcosystemFilters();
+      return;
+    }
+
     if (this.notificationsOpen || this.notificationModal) {
       this.closeNotificationModal();
     }
@@ -467,6 +512,33 @@ export class TopbarComponent {
     this.templateSearchQuery = '';
   }
 
+  openEcosystemFilters(): void {
+    const filters = this.ecosystemJobFiltersService.filters();
+    this.filterCompany = filters.company;
+    this.filterState = filters.state;
+    this.filterStack = filters.stack;
+    this.isFilterPopupOpen = true;
+  }
+
+  closeEcosystemFilters(): void {
+    this.isFilterPopupOpen = false;
+  }
+
+  clearEcosystemFilters(): void {
+    this.filterCompany = '';
+    this.filterState = '';
+    this.filterStack = '';
+  }
+
+  confirmEcosystemFilters(): void {
+    this.ecosystemJobFiltersService.setFilters({
+      company: this.filterCompany,
+      state: this.filterState,
+      stack: this.filterStack,
+    });
+    this.closeEcosystemFilters();
+  }
+
   openNotifications(): void {
     if (!this.isCandidateMode) {
       return;
@@ -482,6 +554,7 @@ export class TopbarComponent {
     this.notificationModal = null;
     this.notificationsOpen = false;
     this.confettiPieces = [];
+    this.isFilterPopupOpen = false;
   }
 
   openNotificationPreview(notification: TalentNotification): void {
@@ -523,6 +596,16 @@ export class TopbarComponent {
         notice: Date.now(),
       },
     });
+  }
+
+  private readEcosystemJobs(): MockJobRecord[] {
+    const jobs = this.jobsFacade.getJobs().filter((job) => job.status === 'ativas');
+
+    if (this.primaryPath === '/home/ecossistema') {
+      return jobs.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
+    }
+
+    return jobs;
   }
 
   @HostListener(`window:${TopbarComponent.photoUpdatedEventName}`)

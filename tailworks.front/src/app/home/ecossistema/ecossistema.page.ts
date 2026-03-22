@@ -12,6 +12,8 @@ import { MatchExperienceSignal, MatchScoreBreakdown, MatchTalentProfile } from '
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { EcossistemaMobileComponent } from './ecossistema-mobile/ecossistema-mobile.component';
 import { TalentDirectoryService } from '../../talent/talent-directory.service';
+import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
+import { EcosystemJobFiltersService } from '../../core/layout/ecosystem-job-filters.service';
 
 type TalentEcoFilter = 'radar' | 'applications';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -110,6 +112,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly matchDomainService = inject(MatchDomainService);
   private readonly talentDirectoryService = inject(TalentDirectoryService);
+  private readonly matchingLabService = inject(MatchingLabService);
+  private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
@@ -469,14 +473,16 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get ecoFilteredJobs(): MockJobRecord[] {
     const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
+    const filters = this.ecosystemJobFiltersService.filters();
     const base = this.jobsSnapshot.filter((job) => job.status === 'ativas');
     const scoped = this.isTalentEcosystemMode
       ? base
       : base.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
 
-    const filteredByMode = this.isTalentEcosystemMode
+    const filteredByMode = (this.isTalentEcosystemMode
       ? scoped.filter((job) => this.talentJobMatchesFilter(job, this.ecoFilter as TalentEcoFilter))
-      : scoped.filter((job) => this.recruiterJobMatchesFilter(job, this.ecoFilter as RecruiterEcoFilter));
+      : scoped.filter((job) => this.recruiterJobMatchesFilter(job, this.ecoFilter as RecruiterEcoFilter)))
+      .filter((job) => this.matchesSavedFilters(job, filters));
 
     if (!query) {
       return filteredByMode;
@@ -1103,7 +1109,40 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private refreshJobs(): void {
-    this.jobsSnapshot = this.jobsFacade.getJobs();
+    let jobs = this.jobsFacade.getJobs();
+    const dataset = this.matchingLabService.getDataset();
+
+    if (dataset.jobs.length && !jobs.some((job) => job.id.startsWith('lab-'))) {
+      this.jobsFacade.seedJobsFromMatchingLab(dataset);
+      jobs = this.jobsFacade.getJobs();
+    }
+
+    this.jobsSnapshot = jobs;
+  }
+
+  private matchesSavedFilters(
+    job: MockJobRecord,
+    filters: { company: string; state: string; stack: string },
+  ): boolean {
+    if (filters.company && job.company !== filters.company) {
+      return false;
+    }
+
+    if (filters.state) {
+      const jobState = job.location.split('-').pop()?.trim() ?? '';
+      if (jobState !== filters.state) {
+        return false;
+      }
+    }
+
+    if (filters.stack) {
+      const hasStack = job.techStack.some((stack) => stack.name.trim() === filters.stack);
+      if (!hasStack) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private readTalentProfile(): MatchTalentProfile {

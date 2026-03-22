@@ -42,6 +42,10 @@ export type EcosistemaMobileViewModel = {
   talentJobMainStacks(view: TalentCompatibleJobViewLike): Array<{ name: string }>;
   trackByJob(index: number, job: MockJobRecord): unknown;
   topJobTechStacks(job: MockJobRecord): Array<{ name: string }>;
+  ecoTopFilters: Array<{ id: string; label: string }>;
+  ecoFilter: string;
+  ecoFilterIcon(filter: string): string | null;
+  setEcoFilter(filter: string): void;
 };
 
 @Component({

@@ -57,6 +57,17 @@
       criar
     </button>
 
+    <button
+      *ngIf="isAnyEcosystem"
+      class="topbar__icon"
+      type="button"
+      aria-label="Filtrar"
+      (click)="openEcosystemFilters()"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">filter_alt</span>
+      <span class="topbar__icon-badge" *ngIf="hasSavedEcosystemFilters"></span>
+    </button>
+
     <button class="topbar__icon" type="button" aria-label="Buscar">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
     </button>
@@ -164,6 +175,52 @@
         (click)="openNotificationConversation()"
       >
         abrir
+      </button>
+    </div>
+  </section>
+</div>
+
+<div
+  *ngIf="isFilterPopupOpen"
+  class="topbar-filter-backdrop"
+  (click)="closeEcosystemFilters()"
+>
+  <section class="topbar-filter-modal" (click)="$event.stopPropagation()">
+    <div class="topbar-filter-modal__head">
+      <strong>Filtrar</strong>
+      <button class="topbar-filter-modal__close" type="button" (click)="closeEcosystemFilters()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <label class="topbar-filter-modal__field">
+      <span>Empresa</span>
+      <select [(ngModel)]="filterCompany">
+        <option value="">Todas</option>
+        <option *ngFor="let company of ecosystemCompanies" [value]="company">{{ company }}</option>
+      </select>
+    </label>
+
+    <label class="topbar-filter-modal__field">
+      <span>Estado</span>
+      <select [(ngModel)]="filterState">
+        <option value="">Todos</option>
+        <option *ngFor="let state of ecosystemStates" [value]="state">{{ state }}</option>
+      </select>
+    </label>
+
+    <label class="topbar-filter-modal__field">
+      <span>Stack</span>
+      <select [(ngModel)]="filterStack">
+        <option value="">Todas</option>
+        <option *ngFor="let stack of ecosystemStacks" [value]="stack">{{ stack }}</option>
+      </select>
+    </label>
+
+    <div class="topbar-filter-modal__actions">
+      <button class="topbar-filter-modal__action" type="button" (click)="clearEcosystemFilters()">Limpar</button>
+      <button class="topbar-filter-modal__action topbar-filter-modal__action--primary" type="button" (click)="confirmEcosystemFilters()">
+        Confirmar
       </button>
     </div>
   </section>

@@ -120,6 +120,21 @@
         </ng-container>
 
         <ng-template #recruiterDesktopJobs>
+          <div class="ecosystem-desktop__tabs">
+            <button
+              *ngFor="let filter of ecoTopFilters"
+              class="ecosystem-desktop__tab"
+              type="button"
+              [class.ecosystem-desktop__tab--active]="ecoFilter === filter.id"
+              (click)="setEcoFilter(filter.id)"
+            >
+              <span class="material-symbols-rounded" *ngIf="ecoFilterIcon(filter.id)" aria-hidden="true">
+                {{ ecoFilterIcon(filter.id) }}
+              </span>
+              <span>{{ filter.label }}</span>
+            </button>
+          </div>
+
           <div class="ecosystem-desktop__jobs-grid" *ngIf="ecoFilteredJobs.length; else desktopEmptyState">
             <article
               class="ecosystem-desktop__job-card ecosystem-desktop__job-card--flippable"

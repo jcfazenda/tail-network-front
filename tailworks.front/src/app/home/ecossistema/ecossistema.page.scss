@@ -361,6 +361,35 @@
   gap: 16px;
 }
 
+.ecosystem-desktop__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ecosystem-desktop__tab {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 222, 231, 0.96);
+  background: rgba(255, 255, 255, 0.96);
+  color: #607085;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ecosystem-desktop__tab--active {
+  background: rgba(39, 46, 64, 0.96);
+  border-color: rgba(39, 46, 64, 0.96);
+  color: #fff;
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.16);
+}
+
 .ecosystem-desktop__job-card-head,
 .ecosystem-desktop__job-title-row {
   display: flex;

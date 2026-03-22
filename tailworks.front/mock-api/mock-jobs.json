@@ -1,5 +1,2292 @@
 [
   {
+    "id": "lab-job-01",
+    "code": "VG-0001",
+    "title": "Backend .NET Senior",
+    "company": "Itaú Unibanco",
+    "companyLogoUrl": "/assets/images/logo-itau.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 14.000",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 94
+      },
+      {
+        "name": "Azure",
+        "match": 78
+      },
+      {
+        "name": "Docker",
+        "match": 72
+      },
+      {
+        "name": "Kubernetes",
+        "match": 54
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 32
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 95.1,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-01-candidate-1",
+        "name": "Bruno Rezende",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Rio de Janeiro - RJ",
+        "match": 95.1,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-01-candidate-2",
+        "name": "Icaro Gomes",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Rio de Janeiro - RJ",
+        "match": 94.6,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-01-candidate-3",
+        "name": "Otavio Lima",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Rio de Janeiro - RJ",
+        "match": 94.6,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-01-candidate-4",
+        "name": "Rafael Nogueira",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Rio de Janeiro - RJ",
+        "match": 94.6,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:27:25.272Z",
+    "updatedAt": "2026-03-22T20:27:25.272Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-02",
+    "code": "VG-0002",
+    "title": "Backend Java Pleno",
+    "company": "Mercado Livre",
+    "companyLogoUrl": "/assets/images/logo-nubank.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir serviços de pagamentos, sustentar arquitetura distribuída e acelerar entregas críticas com produto e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 10.000",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 92
+      },
+      {
+        "name": "AWS",
+        "match": 76
+      },
+      {
+        "name": "Docker",
+        "match": 64
+      },
+      {
+        "name": "Kubernetes",
+        "match": 48
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 30
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 97.3,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-02-candidate-1",
+        "name": "Clara Azevedo",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 97.3,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-02-candidate-2",
+        "name": "Elaine Gomes",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 97.1,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-02-candidate-3",
+        "name": "Priscila Faria",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 97.1,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-02-candidate-4",
+        "name": "Sabrina Peixoto",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 97.1,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:26:25.274Z",
+    "updatedAt": "2026-03-22T20:26:25.274Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-03",
+    "code": "VG-0003",
+    "title": "Frontend Angular Senior",
+    "company": "CI&T",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 11.000",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Angular",
+        "match": 95
+      },
+      {
+        "name": "TypeScript",
+        "match": 88
+      },
+      {
+        "name": "UX / UI",
+        "match": 46
+      },
+      {
+        "name": "React",
+        "match": 28
+      },
+      {
+        "name": "Figma",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 96.9,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-03-candidate-1",
+        "name": "Henrique Lins",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 96.9,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-03-candidate-2",
+        "name": "Diego Rangel",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 95.1,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-03-candidate-3",
+        "name": "Yuri Castro",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 95.1,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-03-candidate-4",
+        "name": "Alan Costa",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 94.5,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:25:25.276Z",
+    "updatedAt": "2026-03-22T20:25:25.276Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-04",
+    "code": "VG-0004",
+    "title": "Frontend React Pleno",
+    "company": "Nubank",
+    "companyLogoUrl": "/assets/images/logo-nubank-roxinho.webp",
+    "homeAnnouncementImageUrl": "",
+    "location": "Curitiba - PR",
+    "workModel": "Remoto",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir jornadas web, sustentar arquitetura de frontend e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 9.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "React",
+        "match": 95
+      },
+      {
+        "name": "TypeScript",
+        "match": 84
+      },
+      {
+        "name": "UX / UI",
+        "match": 38
+      },
+      {
+        "name": "Node.js",
+        "match": 30
+      },
+      {
+        "name": "Figma",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 98,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-04-candidate-1",
+        "name": "Natalia Torres",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 98,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-04-candidate-2",
+        "name": "Taina Lopes",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 98,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-04-candidate-3",
+        "name": "Malu Bernardes",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 97.6,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-04-candidate-4",
+        "name": "Mirela Goulart",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 97.6,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:24:25.278Z",
+    "updatedAt": "2026-03-22T20:24:25.278Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-05",
+    "code": "VG-0005",
+    "title": "Fullstack .NET + React",
+    "company": "Accenture",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Belo Horizonte - MG",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs e interfaces, sustentar arquitetura distribuída e acelerar entregas críticas com produto e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 12.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 88
+      },
+      {
+        "name": "React",
+        "match": 82
+      },
+      {
+        "name": "TypeScript",
+        "match": 66
+      },
+      {
+        "name": "Azure",
+        "match": 42
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 30
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 98.8,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-05-candidate-1",
+        "name": "Marcos Veiga",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Brasília - DF",
+        "match": 98.8,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-05-candidate-2",
+        "name": "Pedro Lemos",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Brasília - DF",
+        "match": 98.8,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-05-candidate-3",
+        "name": "Vinicius Rocha",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Brasília - DF",
+        "match": 98.8,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-05-candidate-4",
+        "name": "Wesley Moura",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Brasília - DF",
+        "match": 98.8,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:23:25.280Z",
+    "updatedAt": "2026-03-22T20:23:25.280Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-06",
+    "code": "VG-0006",
+    "title": "Fullstack Java + Angular",
+    "company": "Stefanini",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Brasília - DF",
+    "workModel": "Presencial",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir serviços e interfaces, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 11.800",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 90
+      },
+      {
+        "name": "Angular",
+        "match": 82
+      },
+      {
+        "name": "TypeScript",
+        "match": 58
+      },
+      {
+        "name": "AWS",
+        "match": 34
+      },
+      {
+        "name": "QA Automação",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 63.2,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-06-candidate-1",
+        "name": "Henrique Lins",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 63.2,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-06-candidate-2",
+        "name": "Arthur Vieira",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 62.6,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-06-candidate-3",
+        "name": "Joao Vilar",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 62.6,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-06-candidate-4",
+        "name": "Pietro Pacheco",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 62.6,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:22:25.281Z",
+    "updatedAt": "2026-03-22T20:22:25.281Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-07",
+    "code": "VG-0007",
+    "title": "Mobile Flutter Pleno",
+    "company": "PicPay",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Recife - PE",
+    "workModel": "Remoto",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir fluxos mobile, sustentar arquitetura do app e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 9.000",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Flutter",
+        "match": 94
+      },
+      {
+        "name": "TypeScript",
+        "match": 34
+      },
+      {
+        "name": "AWS",
+        "match": 28
+      },
+      {
+        "name": "UX / UI",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 84.2,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-07-candidate-1",
+        "name": "Alice Tavares",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Recife - PE",
+        "match": 84.2,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-07-candidate-2",
+        "name": "Aline Freitas",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Recife - PE",
+        "match": 84.2,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-07-candidate-3",
+        "name": "Luana Barreto",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Recife - PE",
+        "match": 84.2,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-07-candidate-4",
+        "name": "Monique Duarte",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Recife - PE",
+        "match": 84.2,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:21:25.283Z",
+    "updatedAt": "2026-03-22T20:21:25.283Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-08",
+    "code": "VG-0008",
+    "title": "Mobile React Native Senior",
+    "company": "iFood",
+    "companyLogoUrl": "/assets/images/logo-nubank.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir aplicativos móveis, sustentar arquitetura escalável e acelerar entregas críticas com produto e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 11.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "React Native",
+        "match": 94
+      },
+      {
+        "name": "React",
+        "match": 72
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "Node.js",
+        "match": 34
+      },
+      {
+        "name": "AWS",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 96.6,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-08-candidate-1",
+        "name": "Leonardo Brito",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Florianópolis - SC",
+        "match": 96.6,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-08-candidate-2",
+        "name": "Ruan Sales",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Florianópolis - SC",
+        "match": 96.6,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-08-candidate-3",
+        "name": "Vinicius Marins",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Florianópolis - SC",
+        "match": 96.6,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-08-candidate-4",
+        "name": "Heitor Lobo",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Florianópolis - SC",
+        "match": 96.4,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:20:25.284Z",
+    "updatedAt": "2026-03-22T20:20:25.284Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-09",
+    "code": "VG-0009",
+    "title": "DevOps Cloud Senior",
+    "company": "TIVIT",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Campinas - SP",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir esteiras, sustentar arquitetura de plataforma e acelerar entregas críticas junto ao time de engenharia.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 13.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "AWS",
+        "match": 90
+      },
+      {
+        "name": "Docker",
+        "match": 86
+      },
+      {
+        "name": "Kubernetes",
+        "match": 80
+      },
+      {
+        "name": "Segurança",
+        "match": 36
+      },
+      {
+        "name": "Python",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 100,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-09-candidate-1",
+        "name": "Beatriz Mello",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 100,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-09-candidate-2",
+        "name": "Camila Moura",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 100,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-09-candidate-3",
+        "name": "Fernanda Luz",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 100,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-09-candidate-4",
+        "name": "Flavia Bittencourt",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 100,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:19:25.286Z",
+    "updatedAt": "2026-03-22T20:19:25.286Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-10",
+    "code": "VG-0010",
+    "title": "Data Engineer Senior",
+    "company": "Globo",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir pipelines, sustentar arquitetura de dados e acelerar entregas críticas junto ao time de analytics.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 13.800",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Python",
+        "match": 90
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 88
+      },
+      {
+        "name": "AWS",
+        "match": 52
+      },
+      {
+        "name": "Google Cloud",
+        "match": 46
+      },
+      {
+        "name": "IA / ML",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 97.7,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-10-candidate-1",
+        "name": "Igor Santana",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 97.7,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-10-candidate-2",
+        "name": "Tiago Cunha",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 97.7,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-10-candidate-3",
+        "name": "Diego Matos",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 95.9,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-10-candidate-4",
+        "name": "Douglas Freire",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 95.9,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:18:25.287Z",
+    "updatedAt": "2026-03-22T20:18:25.287Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-11",
+    "code": "VG-0011",
+    "title": "Machine Learning Engineer",
+    "company": "VTEX",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Florianópolis - SC",
+    "workModel": "Remoto",
+    "seniority": "Especialista",
+    "summary": "Profissional para evoluir modelos, sustentar arquitetura de inferência e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 16.000",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Python",
+        "match": 92
+      },
+      {
+        "name": "IA / ML",
+        "match": 90
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 66
+      },
+      {
+        "name": "Google Cloud",
+        "match": 46
+      },
+      {
+        "name": "AWS",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 98.7,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-11-candidate-1",
+        "name": "Isabela Pacheco",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 98.7,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-11-candidate-2",
+        "name": "Jade Montenegro",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 98.7,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-11-candidate-3",
+        "name": "Karen Assis",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 98.7,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-11-candidate-4",
+        "name": "Larissa Mota",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 98.7,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:17:25.289Z",
+    "updatedAt": "2026-03-22T20:17:25.289Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-12",
+    "code": "VG-0012",
+    "title": "QA Automação Pleno",
+    "company": "Capgemini",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Fortaleza - CE",
+    "workModel": "Hibrido",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir automações, sustentar arquitetura de testes e acelerar entregas críticas junto ao time de engenharia.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 8.200",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "QA Automação",
+        "match": 94
+      },
+      {
+        "name": "TypeScript",
+        "match": 54
+      },
+      {
+        "name": "Node.js",
+        "match": 36
+      },
+      {
+        "name": "React",
+        "match": 26
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 63,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-12-candidate-1",
+        "name": "Marcela Reis",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 63,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-12-candidate-2",
+        "name": "Marina Prado",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 63,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-12-candidate-3",
+        "name": "Gabriela Dias",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 62.7,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-12-candidate-4",
+        "name": "Natalia Torres",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Belo Horizonte - MG",
+        "match": 62.7,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:16:25.290Z",
+    "updatedAt": "2026-03-22T20:16:25.290Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-13",
+    "code": "VG-0013",
+    "title": "Cloud Security Analyst",
+    "company": "Stone",
+    "companyLogoUrl": "/assets/images/logo-nubank.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir controles, sustentar arquitetura segura e acelerar entregas críticas junto ao time de cloud e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 12.800",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Segurança",
+        "match": 92
+      },
+      {
+        "name": "AWS",
+        "match": 74
+      },
+      {
+        "name": "Azure",
+        "match": 56
+      },
+      {
+        "name": "Kubernetes",
+        "match": 34
+      },
+      {
+        "name": "Docker",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 76.5,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-13-candidate-1",
+        "name": "Daniela Paixao",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 76.5,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-13-candidate-2",
+        "name": "Evelyn Soares",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 76.5,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-13-candidate-3",
+        "name": "Leticia Braga",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 76.5,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-13-candidate-4",
+        "name": "Lorena Cardoso",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 76.5,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:15:25.291Z",
+    "updatedAt": "2026-03-22T20:15:25.291Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-14",
+    "code": "VG-0014",
+    "title": "UX/UI Product Designer",
+    "company": "OLX Brasil",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir jornadas, sustentar arquitetura de interface e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 8.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "UX / UI",
+        "match": 92
+      },
+      {
+        "name": "Figma",
+        "match": 86
+      },
+      {
+        "name": "React",
+        "match": 28
+      },
+      {
+        "name": "Angular",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 71.8,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-14-candidate-1",
+        "name": "Alan Costa",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 71.8,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-14-candidate-2",
+        "name": "Breno Vieira",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 71.8,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-14-candidate-3",
+        "name": "Eduardo Braga",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 71.8,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-14-candidate-4",
+        "name": "Lucas Ventura",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 71.8,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:14:25.293Z",
+    "updatedAt": "2026-03-22T20:14:25.293Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-15",
+    "code": "VG-0015",
+    "title": "Backend Node Pleno",
+    "company": "Magalu",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Porto Alegre - RS",
+    "workModel": "Hibrido",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time de produtos.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 9.300",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Node.js",
+        "match": 92
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "AWS",
+        "match": 44
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 36
+      },
+      {
+        "name": "QA Automação",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 54.3,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-03-22T20:13:25.296Z",
+    "updatedAt": "2026-03-22T20:13:25.296Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-16",
+    "code": "VG-0016",
+    "title": "Platform Engineer",
+    "company": "BRQ Digital Solutions",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Remoto",
+    "seniority": "Especialista",
+    "summary": "Profissional para evoluir plataforma interna, sustentar arquitetura distribuída e acelerar entregas críticas para engenharia.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 16.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Kubernetes",
+        "match": 92
+      },
+      {
+        "name": "Docker",
+        "match": 84
+      },
+      {
+        "name": "AWS",
+        "match": 70
+      },
+      {
+        "name": "Segurança",
+        "match": 42
+      },
+      {
+        "name": "Python",
+        "match": 36
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 99.2,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-16-candidate-1",
+        "name": "Daniela Paixao",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 99.2,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-16-candidate-2",
+        "name": "Evelyn Soares",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 99.2,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-16-candidate-3",
+        "name": "Leticia Braga",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 99.2,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-16-candidate-4",
+        "name": "Lorena Cardoso",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Fortaleza - CE",
+        "match": 99.2,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:12:25.299Z",
+    "updatedAt": "2026-03-22T20:12:25.299Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-17",
+    "code": "VG-0017",
+    "title": "Analytics Engineer",
+    "company": "XP Inc.",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir camada analítica, sustentar arquitetura de dados e acelerar entregas críticas com produto e analytics.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 12.200",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "SQL / Dados",
+        "match": 92
+      },
+      {
+        "name": "Python",
+        "match": 74
+      },
+      {
+        "name": "AWS",
+        "match": 36
+      },
+      {
+        "name": "QA Automação",
+        "match": 30
+      },
+      {
+        "name": "IA / ML",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 95.1,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-17-candidate-1",
+        "name": "Igor Santana",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 95.1,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-17-candidate-2",
+        "name": "Tiago Cunha",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 95.1,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-17-candidate-3",
+        "name": "Cesar Campos",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 93.6,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-17-candidate-4",
+        "name": "Fabio Maciel",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Salvador - BA",
+        "match": 93.6,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:11:25.306Z",
+    "updatedAt": "2026-03-22T20:11:25.306Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-18",
+    "code": "VG-0018",
+    "title": "Frontend Angular Junior",
+    "company": "B3",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Salvador - BA",
+    "workModel": "Presencial",
+    "seniority": "Junior",
+    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 4.200",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Angular",
+        "match": 88
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "UX / UI",
+        "match": 28
+      },
+      {
+        "name": "Figma",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 98.6,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-18-candidate-1",
+        "name": "Arthur Vieira",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 98.6,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-18-candidate-2",
+        "name": "Joao Vilar",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 98.6,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-18-candidate-3",
+        "name": "Pietro Pacheco",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 98.6,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-18-candidate-4",
+        "name": "Alan Costa",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Curitiba - PR",
+        "match": 96.8,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:10:25.308Z",
+    "updatedAt": "2026-03-22T20:10:25.308Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-19",
+    "code": "VG-0019",
+    "title": "Java Specialist Payments",
+    "company": "C6 Bank",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Especialista",
+    "summary": "Profissional para evoluir serviços financeiros, sustentar arquitetura distribuída e acelerar entregas críticas com produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 17.000",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 96
+      },
+      {
+        "name": "AWS",
+        "match": 62
+      },
+      {
+        "name": "Kubernetes",
+        "match": 58
+      },
+      {
+        "name": "Segurança",
+        "match": 32
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 89.3,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-19-candidate-1",
+        "name": "Clara Azevedo",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 89.3,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-19-candidate-2",
+        "name": "Elaine Gomes",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 89.3,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-19-candidate-3",
+        "name": "Priscila Faria",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 89.3,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-19-candidate-4",
+        "name": "Sabrina Peixoto",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "São Paulo - SP",
+        "match": 89.3,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:09:25.310Z",
+    "updatedAt": "2026-03-22T20:09:25.310Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
+    "id": "lab-job-20",
+    "code": "VG-0020",
+    "title": "AI Product Engineer",
+    "company": "Claro",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir aplicações com IA, sustentar arquitetura distribuída e acelerar entregas críticas com produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 14.500",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "IA / ML",
+        "match": 88
+      },
+      {
+        "name": "Python",
+        "match": 82
+      },
+      {
+        "name": "React",
+        "match": 42
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 36
+      },
+      {
+        "name": "AWS",
+        "match": 30
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 88.3,
+    "talents": 4,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [
+      {
+        "id": "job-20-candidate-1",
+        "name": "Isabela Pacheco",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 88.3,
+        "minutesAgo": 5,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-20-candidate-2",
+        "name": "Jade Montenegro",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 88.3,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-20-candidate-3",
+        "name": "Karen Assis",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 88.3,
+        "minutesAgo": 7,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      },
+      {
+        "id": "job-20-candidate-4",
+        "name": "Larissa Mota",
+        "role": "Perfil real do sistema sincronizado a partir do login e edição do talento.",
+        "location": "Porto Alegre - RS",
+        "match": 88.3,
+        "minutesAgo": 8,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed"
+      }
+    ],
+    "createdAt": "2026-03-22T20:08:25.311Z",
+    "updatedAt": "2026-03-22T20:08:25.311Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false
+  },
+  {
     "id": "6ccb4a62-bde3-4e72-ac9e-3dfcabfcb81c",
     "code": "VG-0001",
     "createdByRecruiterId": "julio-fazenda-recruiter",
