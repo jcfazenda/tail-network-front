@@ -205,7 +205,7 @@
                       <button
                         class="ecosystem-desktop__job-chat-action"
                         type="button"
-                        aria-label="Examinar candidatos do card"
+                        aria-label="Virar card"
                         (click)="toggleJobCardFlip(job)"
                       >
                         <span class="material-symbols-rounded" aria-hidden="true">search</span>
@@ -215,15 +215,20 @@
 
                   <div class="ecosystem-desktop__job-title-row">
                     <div class="ecosystem-desktop__job-title-group">
-                      <h3>{{ job.title }}</h3>
-                      <a class="ecosystem-desktop__job-inline-action" href="/vagas/cadastro" aria-label="Editar card">
+                      <h3>{{ job.code ? job.code + ' - ' : '' }}{{ job.title }}</h3>
+                      <button
+                        class="ecosystem-desktop__job-inline-action"
+                        type="button"
+                        aria-label="Criar vaga"
+                        (click)="openCreateJob()"
+                      >
                         <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                      </a>
+                      </button>
                       <button
                         class="ecosystem-desktop__job-inline-action ecosystem-desktop__job-inline-action--chat"
                         type="button"
                         aria-label="Ver conversa do card"
-                        (click)="toggleJobCardFlip(job)"
+                        (click)="openRecruiterCandidatesPanel(job)"
                       >
                         <img src="/assets/icons/chat.svg" alt="" aria-hidden="true" />
                       </button>
@@ -276,7 +281,7 @@
 
                   <div class="ecosystem-desktop__job-back-head">
                     <div class="ecosystem-desktop__job-back-copy">
-                      <strong>{{ job.title }}</strong>
+                      <strong>{{ job.code ? job.code + ' - ' : '' }}{{ job.title }}</strong>
                     </div>
                   </div>
 
@@ -343,3 +348,66 @@
 </main>
 
 <app-ecossistema-mobile class="ecosystem-mobile" [vm]="mobileVm"></app-ecossistema-mobile>
+
+<aside class="job-side-panel" *ngIf="selectedJobPanel && !isTalentEcosystemMode && !isCompactViewport">
+  <div class="job-side-panel__topcard">
+    <button class="job-side-panel__close" type="button" (click)="handleRecruiterPanelAction()">
+      <span class="material-symbols-rounded" aria-hidden="true">
+        {{ selectedChatJob ? 'arrow_back' : 'close' }}
+      </span>
+    </button>
+
+    <div class="job-side-panel__profile">
+      <div class="job-side-panel__avatar-wrap">
+        <img
+          src="/assets/avatars/avatar-default.svg"
+          [alt]="recruiterPanelDisplayName"
+          class="job-side-panel__avatar"
+        />
+      </div>
+      <div class="job-side-panel__profile-text">
+        <div class="job-side-panel__profile-name">{{ recruiterPanelDisplayName }}</div>
+        <div class="job-side-panel__profile-role">{{ recruiterPanelDisplayRole }}</div>
+      </div>
+    </div>
+
+    <div class="job-side-panel__title-row">
+      <div class="job-side-panel__title">{{ selectedJobPanel.id.startsWith('lab-') ? selectedJobPanel.id.replace('lab-', '').toUpperCase() + ' - ' : '' }}{{ selectedJobPanel.title }}</div>
+    </div>
+
+    <div class="job-side-panel__meta">
+      <div class="job-side-panel__meta-left">
+        <span class="job-side-panel__item">{{ selectedJobPanel.company }}</span>
+      </div>
+      <div class="job-side-panel__meta-bottom">
+        <span class="job-side-panel__item">{{ selectedJobPanel.location }} 📍</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-side-panel__content">
+    <app-panel-candidatos-list
+      *ngIf="!selectedChatJob"
+      [embedded]="true"
+      [selectedJobPanel]="selectedJobPanel"
+      [sortedCandidatesFor]="sortedCandidatesForPanel.bind(this)"
+      [stageLabel]="recruiterPanelStageLabel.bind(this)"
+      (closePanelEvent)="closeRecruiterPanel()"
+      (openChat)="openRecruiterPanelCandidate($event)"
+      (openCandidateProfile)="openRecruiterPanelCandidate($event)"
+      (openCandidateStatus)="openRecruiterPanelCandidate($event)"
+    ></app-panel-candidatos-list>
+
+    <app-tail-chat-panel
+      *ngIf="selectedChatJob"
+      [embedded]="true"
+      [job]="selectedChatJob"
+      [startIndex]="chatStartIndex"
+      [showConversationList]="false"
+      (openCandidateProfile)="handleRecruiterCandidateProfile($event)"
+      (close)="closeRecruiterChat()"
+    ></app-tail-chat-panel>
+  </div>
+</aside>
+
+<div class="panel-backdrop" *ngIf="selectedJobPanel && !isTalentEcosystemMode && !isCompactViewport" (click)="closeRecruiterPanel()"></div>

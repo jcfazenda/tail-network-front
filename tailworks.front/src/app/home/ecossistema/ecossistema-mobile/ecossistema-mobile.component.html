@@ -169,7 +169,22 @@
           </div>
 
           <div class="landing__mobile-job-card-title-row">
-            <div class="landing__mobile-job-card-title">{{ job.title }}</div>
+            <div class="landing__mobile-job-card-title">
+              <span>{{ job.code ? job.code + ' - ' : '' }}{{ job.title }}</span>
+              <button
+                class="landing__mobile-job-card-title-action"
+                type="button"
+                aria-label="Abrir painel de candidatos"
+                (click)="vm.openRecruiterCandidatesPanel(job)"
+              >
+                <img
+                  class="landing__mobile-job-card-title-icon"
+                  src="/assets/icons/chat.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
 
             <div
               class="landing__mobile-job-card-salary"
@@ -190,7 +205,7 @@
               </span>
             </div>
 
-            <a class="landing__mobile-job-card-action" href="/vagas/cadastro">editar</a>
+            <button class="landing__mobile-job-card-action" type="button" (click)="vm.openEditJob(job.id)">editar</button>
           </div>
         </article>
       </ng-container>
@@ -213,3 +228,59 @@
     <footer class="landing__mobile-footer">CRIATTI Technologies @direitos 2026</footer>
   </section>
 </main>
+
+<ng-container *ngIf="vm.selectedJobPanel && !vm.isTalentEcosystemMode && vm.isCompactViewport">
+  <div class="landing__mobile-panel-backdrop" (click)="vm.closeRecruiterPanel()"></div>
+
+  <aside class="landing__mobile-panel" aria-label="Painel de candidatos da vaga">
+    <div class="landing__mobile-panel-head">
+      <button class="landing__mobile-panel-close" type="button" (click)="vm.handleRecruiterPanelAction()">
+        <span class="material-symbols-rounded" aria-hidden="true">
+          {{ vm.selectedChatJob ? 'arrow_back' : 'close' }}
+        </span>
+      </button>
+
+      <div class="landing__mobile-panel-profile">
+        <img
+          class="landing__mobile-panel-avatar"
+          src="/assets/avatars/avatar-default.svg"
+          [alt]="vm.recruiterPanelDisplayName"
+        />
+        <div class="landing__mobile-panel-profile-copy">
+          <strong>{{ vm.recruiterPanelDisplayName }}</strong>
+          <span>{{ vm.recruiterPanelDisplayRole }}</span>
+        </div>
+      </div>
+
+      <div class="landing__mobile-panel-job">
+        <strong>{{ vm.selectedJobPanel.id.startsWith('lab-') ? vm.selectedJobPanel.id.replace('lab-', '').toUpperCase() + ' - ' : '' }}{{ vm.selectedJobPanel.title }}</strong>
+        <span>{{ vm.selectedJobPanel.company }}</span>
+        <small>{{ vm.selectedJobPanel.location }}</small>
+      </div>
+    </div>
+
+    <div class="landing__mobile-panel-body">
+      <app-panel-candidatos-list
+        *ngIf="!vm.selectedChatJob"
+        [embedded]="true"
+        [selectedJobPanel]="vm.selectedJobPanel"
+        [sortedCandidatesFor]="vm.sortedCandidatesForPanel.bind(vm)"
+        [stageLabel]="vm.recruiterPanelStageLabel.bind(vm)"
+        (closePanelEvent)="vm.closeRecruiterPanel()"
+        (openChat)="vm.openRecruiterPanelCandidate($event)"
+        (openCandidateProfile)="vm.openRecruiterPanelCandidate($event)"
+        (openCandidateStatus)="vm.openRecruiterPanelCandidate($event)"
+      ></app-panel-candidatos-list>
+
+      <app-tail-chat-panel
+        *ngIf="vm.selectedChatJob"
+        [embedded]="true"
+        [job]="vm.selectedChatJob"
+        [startIndex]="vm.chatStartIndex"
+        [showConversationList]="false"
+        (openCandidateProfile)="vm.handleRecruiterCandidateProfile($event)"
+        (close)="vm.closeRecruiterChat()"
+      ></app-tail-chat-panel>
+    </div>
+  </aside>
+</ng-container>

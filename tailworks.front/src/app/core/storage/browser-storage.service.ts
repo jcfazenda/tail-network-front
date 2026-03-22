@@ -22,6 +22,26 @@ export class BrowserStorageService {
     this.storage?.removeItem(key);
   }
 
+  listKeys(): string[] {
+    const storage = this.storage;
+    if (!storage) {
+      return [];
+    }
+
+    return Array.from({ length: storage.length }, (_value, index) => storage.key(index))
+      .filter((key): key is string => !!key);
+  }
+
+  removeByPrefixes(prefixes: string[]): void {
+    if (!prefixes.length) {
+      return;
+    }
+
+    this.listKeys()
+      .filter((key) => prefixes.some((prefix) => key.startsWith(prefix)))
+      .forEach((key) => this.removeItem(key));
+  }
+
   readJson<T>(key: string): T | null {
     const raw = this.getItem(key);
     if (!raw) {

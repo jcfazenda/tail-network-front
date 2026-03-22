@@ -870,6 +870,140 @@
   font-weight: 700;
 }
 
+.panel-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.16);
+  backdrop-filter: blur(4px);
+  z-index: 980;
+}
+
+.job-side-panel {
+  position: fixed;
+  top: 113px;
+  right: 0;
+  height: calc(100vh - 150px);
+  width: 600px;
+  min-width: 560px;
+  max-width: 100vw;
+  z-index: 990;
+  background: rgba(247, 244, 238, 0.98);
+  box-shadow: -8px 0 32px rgba(15,23,42,0.10);
+  border-left: 1px solid rgba(15,23,42,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.job-side-panel__topcard{
+  margin: 10px 14px 0;
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.job-side-panel__profile{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.job-side-panel__avatar-wrap{
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.job-side-panel__avatar{
+  display: block;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.job-side-panel__profile-text{
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  text-align: left;
+}
+
+.job-side-panel__profile-name{
+  font-weight: 800;
+  color: #1f1f1f;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.job-side-panel__profile-role{
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.62);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.job-side-panel__title{
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #172033;
+}
+
+.job-side-panel__meta{
+  display: grid;
+  gap: 4px;
+  color: rgba(38, 44, 58, 0.68);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.job-side-panel__meta-left,
+.job-side-panel__meta-bottom{
+  text-align: left;
+  white-space: nowrap;
+}
+
+.job-side-panel__close{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: rgba(16, 18, 21, 0.05);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+}
+
+.job-side-panel__close .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+}
+
+.job-side-panel__content{
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.job-side-panel__content > app-panel-candidatos-list,
+.job-side-panel__content > app-tail-chat-panel{
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
 @media (max-width: 1200px) {
   .ecosystem-desktop__hired-grid {
     grid-template-columns: repeat(2, minmax(0, 208px));
@@ -926,6 +1060,38 @@
   :host ::ng-deep app-topbar .topbar {
     min-height: 56px;
     border-radius: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .job-side-panel {
+    top: 12px;
+    width: calc(100vw - 12px);
+    min-width: 0;
+    height: calc(100vh - 24px);
+  }
+}
+
+@media (max-width: 720px) {
+  .panel-backdrop{
+    z-index: 1180;
+  }
+
+  .job-side-panel {
+    top: 56px;
+    right: 0;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    height: calc(100vh - 56px);
+    border-left: 0;
+    box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.12);
+    z-index: 1190;
+  }
+
+  .job-side-panel__topcard{
+    margin: 8px 10px 0;
+    padding: 10px;
   }
 }
 

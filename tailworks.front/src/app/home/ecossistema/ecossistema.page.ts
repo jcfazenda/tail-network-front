@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
@@ -16,6 +17,9 @@ import { MatchingLabService } from '../../core/matching-lab/matching-lab.service
 import { EcosystemJobFiltersService } from '../../core/layout/ecosystem-job-filters.service';
 import { EcosystemViewFilterService } from '../../core/layout/ecosystem-view-filter.service';
 import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab/matching-lab.models';
+import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
+import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
+import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../chat/tail-chat-panel.component';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -101,7 +105,7 @@ type JobCardTalentRow = {
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, TopbarComponent, EcossistemaMobileComponent],
+  imports: [CommonModule, TopbarComponent, EcossistemaMobileComponent, PanelCandidatosListComponent, TailChatPanelComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,9 +118,11 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly matchDomainService = inject(MatchDomainService);
   private readonly talentDirectoryService = inject(TalentDirectoryService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly matchingLabService = inject(MatchingLabService);
   private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
   private readonly ecosystemViewFilterService = inject(EcosystemViewFilterService);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
@@ -138,6 +144,9 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private copyIndex = 0;
   copyIsFading = false;
   readonly mobileVm = this;
+  selectedJobPanel: ChatJob | null = null;
+  selectedChatJob: ChatJob | null = null;
+  chatStartIndex = 0;
 
   readonly hiringCopy = [
     {
@@ -376,6 +385,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.refreshMobileHiredDeck();
     this.restoreRadarCategorySelection();
     this.refreshJobs();
+    void this.ensureSyncedTalentProfiles();
     this.subscriptions.add(
       this.jobsFacade.jobsChanged$.subscribe(() => {
         this.refreshJobs();
@@ -416,6 +426,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get isTalentEcosystemMode(): boolean {
     return this.ecosystemEntryService.getMode() === 'talent';
+  }
+
+  get isCompactViewport(): boolean {
+    return this.sidebarVisibilityService.isCompactViewport();
   }
 
   get ecoFilters(): Array<{ id: EcoFilter; label: string }> {
@@ -496,6 +510,14 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       { icon: 'work', value: `${jobs.length}`, suffix: 'total de cards' },
       { icon: 'group', value: `${stageTotal}`, suffix: stageLabel },
     ];
+  }
+
+  get recruiterPanelDisplayName(): string {
+    return this.jobsFacade.getCurrentRecruiterIdentity().name;
+  }
+
+  get recruiterPanelDisplayRole(): string {
+    return this.jobsFacade.getCurrentRecruiterIdentity().role;
   }
 
   get recruiterSummaryStageLabel(): string {
@@ -1071,6 +1093,13 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   jobInteractionAvatars(job: MockJobRecord): string[] {
+    if (!this.isTalentEcosystemMode && this.ecoFilter === 'radar') {
+      return this.buildRadarPanelCandidates(job)
+        .map((candidate) => candidate.avatar?.trim())
+        .filter((avatar): avatar is string => !!avatar)
+        .slice(0, 4);
+    }
+
     const directAvatars = (job.avatars ?? []).map((item) => item?.trim()).filter(Boolean);
     if (directAvatars.length) {
       return directAvatars.slice(0, 4);
@@ -1083,9 +1112,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   jobInteractionExtraCount(job: MockJobRecord): number {
-    const labDisplayCount = this.labJobRadarDisplayCount(job);
-    if (labDisplayCount > 0) {
-      return labDisplayCount;
+    if (!this.isTalentEcosystemMode && this.ecoFilter === 'radar') {
+      return this.buildRadarPanelCandidates(job).length;
     }
 
     const visibleAvatars = this.jobInteractionAvatars(job).length;
@@ -1098,21 +1126,271 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return Math.max(derivedTotal, totalCandidates, totalRadar, totalTalents);
   }
 
-  private labJobRadarDisplayCount(job: MockJobRecord): number {
+  async openRecruiterCandidatesPanel(job: MockJobRecord): Promise<void> {
+    if (this.isTalentEcosystemMode) {
+      return;
+    }
+
+    await this.ensureSyncedTalentProfiles();
+    this.selectedJobPanel = this.asChatJob(job);
+    this.selectedChatJob = null;
+    this.chatStartIndex = 0;
+    this.cdr.markForCheck();
+  }
+
+  closeRecruiterPanel(): void {
+    this.selectedChatJob = null;
+    this.selectedJobPanel = null;
+    this.chatStartIndex = 0;
+    this.cdr.markForCheck();
+  }
+
+  closeRecruiterChat(): void {
+    this.selectedChatJob = null;
+    this.chatStartIndex = 0;
+    this.cdr.markForCheck();
+  }
+
+  openCreateJob(): void {
+    void this.router.navigateByUrl('/vagas/cadastro');
+  }
+
+  openEditJob(jobId: string): void {
+    if (!jobId.trim()) {
+      this.openCreateJob();
+      return;
+    }
+
+    void this.router.navigate(['/vagas/cadastro'], {
+      queryParams: { edit: jobId },
+    });
+  }
+
+  openRecruiterPanelCandidate(index: number): void {
+    if (!this.selectedJobPanel) {
+      return;
+    }
+
+    const candidates = this.sortedCandidatesForPanel(this.selectedJobPanel) as unknown as ChatCandidate[];
+    const candidate = candidates[index];
+    if (!candidate) {
+      return;
+    }
+
+    this.selectedChatJob = this.selectedJobPanel;
+    this.chatStartIndex = index;
+    this.cdr.markForCheck();
+  }
+
+  recruiterPanelStageLabel(stage?: MockJobCandidate['stage']): string {
+    switch (stage) {
+      case 'radar':
+        return 'Talento no radar';
+      case 'contratado':
+        return 'Contratado';
+      case 'aguardando':
+        return 'Contratação Solicitada';
+      case 'processo':
+        return 'Em Processo';
+      case 'tecnica':
+        return 'Em Entrevista Técnica';
+      case 'aceito':
+        return 'Aceito';
+      case 'proxima':
+        return 'Ficou pra próxima';
+      case 'documentacao':
+        return 'Validando documentos';
+      case 'candidatura':
+        return 'Candidatura enviada';
+      case 'cancelado':
+        return 'Candidatura cancelada';
+      default:
+        return 'Talento no radar';
+    }
+  }
+
+  sortedCandidatesForPanel(job: MockJobRecord | ChatJob): MockJobCandidate[] {
+    const order: CandidateStage[] = ['radar', 'candidatura', 'tecnica', 'processo', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
+    const sourceCandidates = [...(job.candidates as MockJobCandidate[])];
+    const filteredCandidates = sourceCandidates.filter((candidate) => this.candidateMatchesRecruiterPanelFilter(candidate));
+
+    return filteredCandidates.sort((left, right) => {
+      const stageLeft = this.jobsFacade.getEffectiveCandidateStage(left) ?? 'radar';
+      const stageRight = this.jobsFacade.getEffectiveCandidateStage(right) ?? 'radar';
+      return order.indexOf(stageLeft) - order.indexOf(stageRight) || right.match - left.match;
+    });
+  }
+
+  handleRecruiterPanelAction(): void {
+    if (this.selectedChatJob) {
+      this.closeRecruiterChat();
+      return;
+    }
+
+    this.closeRecruiterPanel();
+  }
+
+  handleRecruiterCandidateProfile(_context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' }): void {
+    // O fluxo principal aqui é lateral: lista -> chat.
+  }
+
+  private asChatJob(job: MockJobRecord): ChatJob {
+    const candidates = this.ecoFilter === 'radar'
+      ? this.buildRadarPanelCandidates(job)
+      : this.sortedCandidatesForPanel(job).map((candidate) => ({
+          ...candidate,
+          stage: this.jobsFacade.getEffectiveCandidateStage(candidate),
+        }));
+
+    return {
+      id: job.id,
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      workModel: job.workModel,
+      techStack: job.techStack.map((item) => ({ name: item.name, match: item.match })),
+      candidates,
+      hiringDocuments: job.hiringDocuments,
+      talentSubmittedDocuments: [],
+      talentDocumentsConsentAccepted: false,
+    };
+  }
+
+  private buildRadarPanelCandidates(job: MockJobRecord): MockJobCandidate[] {
+    const jobProfile = this.matchDomainService.buildJobProfile({
+      techStack: job.techStack,
+      seniority: job.seniority,
+      responsibilitySections: job.responsibilitySections,
+    });
+
+    if (!jobProfile.requiredRepoIds.length) {
+      return this.fallbackRadarCandidates(job);
+    }
+
+    const talentByName = new Map(
+      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
+    );
+
+    const rankedProfiles = this.talentProfileStore.listMatchCandidates()
+      .map((candidate, index) => {
+        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, {
+          stackScores: Object.fromEntries(candidate.stacks.map((stack) => [stack.stackId, stack.percent])),
+          experiences: candidate.experiences.map((experience) => ({
+            role: experience.role,
+            positionLevel: candidate.seniority,
+            appliedStacks: experience.stackIds.map((stackId) => this.prettyTechRepoLabel(stackId)),
+          })),
+        });
+        const directoryTalent = talentByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
+
+        return {
+          id: `radar-${job.id}-${index + 1}`,
+          name: candidate.name,
+          role: this.jobRadarTalentStacks(
+            job,
+            Object.fromEntries(candidate.stacks.map((stack) => [stack.stackId, stack.percent])),
+            score.matchedRepoIds,
+          ).join(' / '),
+          location: directoryTalent?.location || candidate.location,
+          match: score.overallScore,
+          minutesAgo: 5 + index,
+          status: 'online' as const,
+          avatar: directoryTalent?.avatarUrl || '/assets/avatars/avatar-default.svg',
+          stage: 'radar',
+          radarOnly: true,
+          source: 'seed' as const,
+          availabilityLabel: 'Disponibilidade imediata',
+        } satisfies MockJobCandidate;
+      })
+      .filter((candidate) => candidate.match >= this.talentAdherenceThreshold)
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
+
+    if (rankedProfiles.length) {
+      return rankedProfiles;
+    }
+
+    const matchingLabCandidates = this.buildRadarCandidatesFromMatchingLab(job);
+    if (matchingLabCandidates.length) {
+      return matchingLabCandidates;
+    }
+
+    return this.fallbackRadarCandidates(job);
+  }
+
+  private async ensureSyncedTalentProfiles(): Promise<void> {
+    await this.talentProfileStore.syncFromRemote();
+    this.cdr.markForCheck();
+  }
+
+  private buildRadarCandidatesFromMatchingLab(job: MockJobRecord): MockJobCandidate[] {
     if (!job.id.startsWith('lab-')) {
-      return 0;
+      return [];
     }
 
     const dataset = this.matchingLabService.getDataset();
     const jobId = job.id.replace(/^lab-/, '');
     const result = dataset.results.find((entry: MatchLabJobResult) => entry.job.id === jobId);
     if (!result) {
-      return 0;
+      return [];
     }
 
-    return result.ranking.filter((entry: MatchLabRankingEntry) => entry.score >= this.talentAdherenceThreshold).length;
+    const talentByName = new Map(
+      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
+    );
+
+    return result.ranking
+      .filter((entry: MatchLabRankingEntry) => entry.score >= this.talentAdherenceThreshold)
+      .map((entry, index) => {
+        const directoryTalent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
+
+        return {
+          id: `lab-radar-${job.id}-${index + 1}`,
+          name: entry.candidate.name,
+          role: entry.candidate.summary,
+          location: directoryTalent?.location || entry.candidate.location,
+          match: entry.score,
+          minutesAgo: 5 + index,
+          status: 'online' as const,
+          avatar: directoryTalent?.avatarUrl || '/assets/avatars/avatar-default.svg',
+          stage: 'radar',
+          radarOnly: true,
+          source: 'seed' as const,
+          availabilityLabel: 'Disponibilidade imediata',
+        } satisfies MockJobCandidate;
+      });
   }
 
+  private fallbackRadarCandidates(job: MockJobRecord): MockJobCandidate[] {
+    return [...(job.candidates ?? [])]
+      .filter((candidate) => (this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar') === 'radar')
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
+  }
+
+  private candidateMatchesRecruiterPanelFilter(candidate: MockJobCandidate): boolean {
+    const stage = this.jobsFacade.getEffectiveCandidateStage(candidate);
+
+    if (this.ecoFilter === 'radar') {
+      return stage === 'radar';
+    }
+
+    if (this.ecoFilter === 'candidaturas') {
+      return stage === 'candidatura';
+    }
+
+    if (this.ecoFilter === 'processo') {
+      return stage === 'processo' || stage === 'tecnica' || stage === 'aceito' || stage === 'documentacao' || stage === 'aguardando';
+    }
+
+    if (this.ecoFilter === 'contratados') {
+      return stage === 'contratado';
+    }
+
+    if (this.ecoFilter === 'solicitada') {
+      return stage === 'aguardando';
+    }
+
+    return true;
+  }
   isJobCardFlipped(job: MockJobRecord): boolean {
     return this.flippedJobCardIds.has(job.id);
   }

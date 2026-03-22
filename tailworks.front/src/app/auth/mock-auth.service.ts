@@ -387,33 +387,21 @@ export class MockAuthService {
       return;
     }
 
-    [
-      this.accountsStorageKey,
-      this.sessionStorageKey,
-      'tailworks.front.mock-vagas.publish-only',
-      'tailworks:recruiter-directory:v1',
-      'tailworks:recruiter-workspace:v1',
-      'tailworks:company-directory:v1',
-      'tailworks:talent-directory:v1',
-      'tailworks:candidate-basic-draft:v1',
-      'tailworks:candidate-stacks-draft:v2',
-      'tailworks:candidate-stacks-draft:v5',
-      'tailworks:candidate-experiences-draft:v1',
-      'tailworks:recruiter-radar-categories-selection:v1',
-      'tailworks:radar-categories-selection:v1',
-      'tailworks:candidate-experience-formation-copy:v1',
-      'tailworks:candidate-experience-logo-draft:v1',
-      'tailworks:matching-lab-dataset:v1',
-    ].forEach((key) => storage.removeItem(key));
+    this.browserStorage.removeByPrefixes([
+      'tailworks:',
+      'tailworks.front.',
+      'tailworks.sidebar.',
+    ]);
 
     storage.setItem('tailworks:recruiter-directory:v1', '[]');
     storage.setItem('tailworks:company-directory:v1', '[]');
     storage.setItem(this.bootstrapStorageKey, 'done');
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
+    this.recruiterDirectoryService.clearCurrentWorkspace();
     this.vagasMockService.clearPublishedJobsForTesting();
     this.talentProfileStore.clear();
-    this.ensureDefaultMockAccess();
+    void this.authSyncApi.writeAll([]);
     this.sessionSubject.next(null);
   }
 

@@ -2,6 +2,118 @@
   display: block;
 }
 
+.landing__mobile-panel-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(4px);
+  z-index: 1180;
+}
+
+.landing__mobile-panel{
+  position: fixed;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(247, 244, 238, 0.98);
+  z-index: 1190;
+  overflow: hidden;
+}
+
+.landing__mobile-panel-head{
+  display: grid;
+  gap: 12px;
+  padding: 14px 14px 10px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.landing__mobile-panel-close{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(16, 18, 21, 0.05);
+  color: rgba(15, 23, 42, 0.72);
+  cursor: pointer;
+}
+
+.landing__mobile-panel-close .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+}
+
+.landing__mobile-panel-profile{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing__mobile-panel-avatar{
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.landing__mobile-panel-profile-copy{
+  display: grid;
+  gap: 2px;
+}
+
+.landing__mobile-panel-profile-copy strong{
+  color: #1f1f1f;
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.landing__mobile-panel-profile-copy span{
+  color: rgba(15, 23, 42, 0.62);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.landing__mobile-panel-job{
+  display: grid;
+  gap: 4px;
+}
+
+.landing__mobile-panel-job strong{
+  color: #172033;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.landing__mobile-panel-job span,
+.landing__mobile-panel-job small{
+  color: rgba(38, 44, 58, 0.68);
+  font-size: 12px;
+}
+
+.landing__mobile-panel-body{
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.landing__mobile-panel-body > app-panel-candidatos-list,
+.landing__mobile-panel-body > app-tail-chat-panel{
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+}
+
 @media (max-width: 720px){
   .landing{
     position: fixed;
@@ -502,11 +614,38 @@
   }
 
   .landing__mobile-job-card-title{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
     font-size: 18px;
     line-height: 1.1;
     font-weight: 900;
     color: rgba(15, 23, 42, 0.9);
     letter-spacing: -0.02em;
+  }
+
+  .landing__mobile-job-card-title span{
+    min-width: 0;
+  }
+
+  .landing__mobile-job-card-title-action{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  .landing__mobile-job-card-title-icon{
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex: 0 0 auto;
+    opacity: 0.8;
   }
 
   .landing__mobile-job-card-salary{
