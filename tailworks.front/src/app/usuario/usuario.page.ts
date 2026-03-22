@@ -4,7 +4,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DadosCadastraisPage } from './dados-cadastrais/dados-cadastrais.page';
 import { FormacaoPage } from './formacao/formacao.page';
-import { CandidateRegistrationStripComponent } from './shared/candidate-registration-strip.component';
 
 type CandidateBasicProfile = {
   name: string;
@@ -39,7 +38,7 @@ type ProfileWorkspaceCard = {
 @Component({
   standalone: true,
   selector: 'app-usuario-page',
-  imports: [CommonModule, RouterLink, CandidateRegistrationStripComponent, DadosCadastraisPage, FormacaoPage],
+  imports: [CommonModule, RouterLink, DadosCadastraisPage, FormacaoPage],
   templateUrl: './usuario.page.html',
   styleUrls: ['./usuario.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

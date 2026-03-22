@@ -54,6 +54,7 @@ type NotificationConfettiPiece = {
   imports: [CommonModule, FormsModule],
   templateUrl: './topbar.component.html',
   styleUrls: [
+    './topbar.component.scss',
     './topbar.component.shell.scss',
     './topbar.component.overlay.scss',
   ],
