@@ -16,6 +16,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  z-index: 2;
 }
 
 .topbar__avatar-input{
@@ -81,11 +82,9 @@
 }
 
 .topbar__avatar{
-  width: 24px;
-  height: 24px;
-  border-width: 1px;
-  font-size: 10px;
-  box-shadow: none;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
 }
 
 .topbar__greeting{
@@ -171,34 +170,97 @@
   cursor: pointer;
 }
 
+.topbar__icon--notifications{
+  position: relative;
+}
+
+.topbar__notifications-badge{
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2f7de8, #0f5fd6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 24px rgba(47, 125, 232, 0.26);
+}
+
 .topbar__icon .material-symbols-rounded{
   font-size: 17px;
   line-height: 1;
 }
 
-.avatar{
-  width: 40px;
-  height: 40px;
+.topbar__avatar-trigger{
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   border-radius: 999px;
-  background: center/cover no-repeat url('/assets/avatars/avatar-default.svg'), var(--avatar-gradient);
-  color: #fff;
-  font-weight: 700;
-  display: grid;
-  place-items: center;
-  border: 2px solid #fff;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: transform .18s ease;
+  touch-action: manipulation;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 3;
 }
 
-.avatar--candidate{
+.topbar__avatar-trigger::before,
+.topbar__avatar-trigger::after{
+  content: none;
+}
+
+.topbar__avatar-surface{
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #d9dfe7, #c8d1dc);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  pointer-events: auto;
+}
+
+.topbar__avatar-surface--candidate{
   background:
     radial-gradient(120% 120% at 50% 18%, rgba(255, 255, 255, 0.96), rgba(255,255,255,0)),
     var(--avatar-gradient);
-  color: rgba(15, 23, 42, 0.72);
 }
 
-.avatar--image{
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+.topbar__avatar-surface--image{
+  background: #d9e0e7;
+}
+
+.topbar__avatar-image{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
 }
 
 @media (min-width: 561px){
@@ -208,9 +270,20 @@
   }
 
   .topbar__avatar{
-    width: 28px;
-    height: 28px;
-    font-size: 11px;
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+
+  .topbar__avatar-trigger{
+    width: 48px;
+    height: 48px;
+  }
+
+  .topbar__avatar-surface{
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
   }
 
   .topbar__profile-name{

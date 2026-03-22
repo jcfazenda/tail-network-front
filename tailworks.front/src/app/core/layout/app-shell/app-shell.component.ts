@@ -61,7 +61,11 @@ export class AppShellComponent {
   }
 
   get hasSidebar(): boolean {
-    return !this.isHomeEntry && !this.isCandidateEcosystem;
+    if (this.isCandidateEcosystem) {
+      return this.isCompactSidebarMode;
+    }
+
+    return !this.isHomeEntry;
   }
 
   get isSidebarOpen(): boolean {

@@ -1,7 +1,7 @@
 import { Injectable, NgZone, computed, inject, signal } from '@angular/core';
 import { MockJobCandidate, MockJobRecord } from '../vagas/data/vagas.models';
 
-export type TalentNotificationType = 'process-advanced';
+export type TalentNotificationType = 'process-advanced' | 'new-vacancy';
 
 export type TalentNotification = {
   id: string;
@@ -60,6 +60,28 @@ export class TalentNotificationService {
     const nextNotifications = [
       nextNotification,
       ...this.notifications().filter((item) => !(item.type === 'process-advanced' && item.jobId === job.id && !item.readAt)),
+    ].slice(0, 20);
+
+    this.persistNotifications(nextNotifications);
+  }
+
+  pushNewVacancyNotification(job: MockJobRecord): void {
+    const nextNotification: TalentNotification = {
+      id: `new-vacancy:${job.id}:${Date.now()}`,
+      type: 'new-vacancy',
+      jobId: job.id,
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      workModel: job.workModel,
+      match: Math.round(job.match ?? 0),
+      candidateName: '',
+      createdAt: new Date().toISOString(),
+    };
+
+    const nextNotifications = [
+      nextNotification,
+      ...this.notifications().filter((item) => !(item.type === 'new-vacancy' && item.jobId === job.id && !item.readAt)),
     ].slice(0, 20);
 
     this.persistNotifications(nextNotifications);

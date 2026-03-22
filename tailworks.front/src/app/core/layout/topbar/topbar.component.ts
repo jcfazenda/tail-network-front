@@ -68,7 +68,6 @@ export class TopbarComponent {
   readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;
-  avatarMenuOpen = false;
   private readonly jobsFacade = inject(JobsFacade);
   private readonly talentNotificationsFacade = inject(TalentNotificationsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
@@ -391,6 +390,10 @@ export class TopbarComponent {
   }
 
   notificationTitle(notification: TalentNotification): string {
+    if (notification.type === 'new-vacancy') {
+      return 'Nova vaga no radar';
+    }
+
     const time = new Date(notification.createdAt);
     const hh = `${time.getHours()}`.padStart(2, '0');
     const mm = `${time.getMinutes()}`.padStart(2, '0');
@@ -399,6 +402,8 @@ export class TopbarComponent {
 
   notificationPreview(notification: TalentNotification): string {
     switch (notification.type) {
+      case 'new-vacancy':
+        return 'Uma nova vaga ativa entrou no ecossistema e ja pode aparecer no seu radar.';
       case 'process-advanced':
         return 'A empresa avaliou seu perfil e decidiu seguir com sua candidatura.';
       default:
@@ -416,19 +421,8 @@ export class TopbarComponent {
 
   @HostListener('document:keydown.escape')
   handleEscape(): void {
-    if (this.avatarMenuOpen) {
-      this.closeAvatarMenu();
-    }
-
     if (this.notificationsOpen || this.notificationModal) {
       this.closeNotificationModal();
-    }
-  }
-
-  @HostListener('document:click')
-  handleDocumentClick(): void {
-    if (this.avatarMenuOpen) {
-      this.closeAvatarMenu();
     }
   }
 
@@ -457,47 +451,8 @@ export class TopbarComponent {
     this.sidebarVisibilityService.toggle();
   }
 
-  toggleAvatarMenu(event?: Event): void {
-    event?.stopPropagation();
-    this.avatarMenuOpen = !this.avatarMenuOpen;
-    this.cdr.markForCheck();
-  }
-
-  closeAvatarMenu(): void {
-    this.avatarMenuOpen = false;
-    this.cdr.markForCheck();
-  }
-
-  openTopbarAvatarPicker(input: HTMLInputElement, event?: Event): void {
-    event?.stopPropagation();
-
-    if (!this.isCandidateMode) {
-      this.toggleSidebar();
-      this.closeAvatarMenu();
-      return;
-    }
-
-    input.click();
-    this.closeAvatarMenu();
-  }
-
-  openSidebarFromAvatarMenu(event?: Event): void {
-    event?.stopPropagation();
-    this.toggleSidebar();
-    this.closeAvatarMenu();
-  }
-
-  onTopbarAvatarSelected(event: Event): void {
-    if (!this.isCandidateMode) {
-      return;
-    }
-
-    const input = event.target as HTMLInputElement | null;
-    this.handleCandidatePhotoFile(input?.files?.[0] ?? null);
-
-    if (input) {
-      input.value = '';
-    }
+  openSidebar(): void {
+    this.sidebarVisibilityService.show();
   }
 
   openCreateJob(): void {

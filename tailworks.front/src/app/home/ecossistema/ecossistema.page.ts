@@ -884,12 +884,12 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   topJobTechStacks(job: MockJobRecord) {
     return [...job.techStack]
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-      .slice(0, 3);
+      .slice(0, 2);
   }
 
   talentJobMainStacks(view: TalentCompatibleJobView): TechStackItem[] {
     if (view.matchedStacks.length) {
-      return view.matchedStacks;
+      return view.matchedStacks.slice(0, 2);
     }
 
     return this.topJobTechStacks(view.job);

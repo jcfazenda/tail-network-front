@@ -278,7 +278,9 @@ export class VagasMockService {
   saveJob(command: SaveMockJobCommand): MockJobRecord {
     const jobs = this.loadJobs();
     const record = this.buildRecord(command);
-    this.cache = [record, ...jobs];
+    const nextJobs = [record, ...jobs];
+    this.notifyTalentAboutNewVacancies(jobs, nextJobs);
+    this.cache = nextJobs;
     this.persist();
     return record;
   }
@@ -292,7 +294,9 @@ export class VagasMockService {
     }
 
     const record = this.buildRecord(command, existing);
-    this.cache = [record, ...jobs.filter((job) => job.id !== id)];
+    const nextJobs = [record, ...jobs.filter((job) => job.id !== id)];
+    this.notifyTalentAboutNewVacancies(jobs, nextJobs);
+    this.cache = nextJobs;
     this.persist();
     return record;
   }
@@ -312,7 +316,9 @@ export class VagasMockService {
       updatedAt: new Date().toISOString(),
     };
 
-    this.cache = jobs.map((job) => (job.id === id ? updatedJob : job));
+    const nextJobs = jobs.map((job) => (job.id === id ? updatedJob : job));
+    this.notifyTalentAboutNewVacancies(jobs, nextJobs);
+    this.cache = nextJobs;
     this.persist();
     return updatedJob;
   }
@@ -710,11 +716,33 @@ export class VagasMockService {
   }
 
   private applyRemoteJobs(remoteJobs: MockJobRecord[]): void {
+    const previousJobs = this.cache ?? this.jobsRepository.readAll() ?? [];
     const normalizedJobs = remoteJobs.length ? this.normalizeJobs(remoteJobs) : [];
+    this.notifyTalentAboutNewVacancies(previousJobs, normalizedJobs);
     this.cache = normalizedJobs;
     this.jobsRepository.writeAll(normalizedJobs);
     this.broadcastSync();
     this.emitJobsChanged();
+  }
+
+  private notifyTalentAboutNewVacancies(previousJobs: MockJobRecord[], nextJobs: MockJobRecord[]): void {
+    if (!previousJobs.length) {
+      return;
+    }
+
+    const previousActiveJobIds = new Set(
+      previousJobs
+        .filter((job) => job.status === 'ativas')
+        .map((job) => job.id),
+    );
+
+    for (const job of nextJobs) {
+      if (job.status !== 'ativas' || previousActiveJobIds.has(job.id)) {
+        continue;
+      }
+
+      this.talentNotificationService.pushNewVacancyNotification(job);
+    }
   }
 
   private broadcastSync(): void {

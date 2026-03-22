@@ -1,56 +1,34 @@
 <header class="topbar" *ngIf="!isSelectionMode">
   <div *ngIf="showSidebarProfileInPrimary" class="topbar__profile">
-    <input
-      #topbarAvatarInput
-      class="topbar__avatar-input"
-      type="file"
-      accept=".jpg,.jpeg,.png,.gif,.webp"
-      (change)="onTopbarAvatarSelected($event)"
-    />
-
     <button
       class="topbar__avatar-trigger"
       type="button"
-      (click)="toggleAvatarMenu($event)"
-      aria-label="Abrir menu do avatar"
-      title="Abrir menu do avatar"
+      (click)="openSidebar()"
+      (pointerup)="openSidebar()"
+      aria-label="Abrir sidebar"
+      title="Abrir sidebar"
     >
-      <div
-        class="avatar topbar__avatar"
-        [class.avatar--candidate]="isCandidateMode"
-        [class.avatar--image]="!!topbarProfileAvatarUrl"
-        [style.backgroundImage]="topbarProfileAvatarUrl ? 'url(' + topbarProfileAvatarUrl + ')' : null"
+      <span
+        class="topbar__avatar-surface"
+        [class.topbar__avatar-surface--candidate]="isCandidateMode"
+        [class.topbar__avatar-surface--image]="!!topbarProfileAvatarUrl"
+        (click)="openSidebar()"
         aria-hidden="true"
       >
+        <img
+          *ngIf="topbarProfileAvatarUrl"
+          class="topbar__avatar-image"
+          [src]="topbarProfileAvatarUrl"
+          alt=""
+        />
         <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
-      </div>
+      </span>
     </button>
-
-    <div
-      class="topbar__avatar-menu"
-      *ngIf="avatarMenuOpen"
-      (click)="$event.stopPropagation()"
-    >
-      <button
-        class="topbar__avatar-menu-item"
-        type="button"
-        (click)="openTopbarAvatarPicker(topbarAvatarInput, $event)"
-      >
-        Alterar Foto
-      </button>
-      <button
-        class="topbar__avatar-menu-item"
-        type="button"
-        (click)="openSidebarFromAvatarMenu($event)"
-      >
-        Menu
-      </button>
-    </div>
 
     <button
       class="topbar__profile-copy topbar__profile-copy-button"
       type="button"
-      (click)="toggleSidebar()"
+      (click)="openSidebar()"
       aria-label="Abrir sidebar"
     >
       <span class="topbar__profile-name">{{ topbarProfileDisplayName }}</span>
@@ -96,3 +74,97 @@
     </button>
   </div>
 </header>
+
+<div
+  *ngIf="isNotificationListOpen || activeTalentNotification"
+  class="topbar-notification-backdrop"
+  (click)="closeNotificationModal()"
+>
+  <section
+    *ngIf="isNotificationListOpen"
+    class="topbar-notification-list"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="topbar-notification-list__head">
+      <strong>Notificações</strong>
+      <span>{{ unreadTalentNotifications }}</span>
+    </div>
+
+    <div *ngIf="hasTalentNotifications; else emptyNotifications" class="topbar-notification-list__items">
+      <article
+        *ngFor="let notification of talentNotifications"
+        class="topbar-notification-list__item"
+        [class.topbar-notification-list__item--unread]="notificationIsUnread(notification)"
+      >
+        <div class="topbar-notification-list__copy">
+          <div class="topbar-notification-list__copy-head">
+            <strong>{{ notificationTitle(notification) }}</strong>
+            <button
+              class="topbar-notification-list__action"
+              type="button"
+              (click)="openNotificationPreview(notification)"
+            >
+              abrir
+            </button>
+          </div>
+          <p>{{ notificationPreview(notification) }}</p>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #emptyNotifications>
+      <div class="topbar-notification-list__empty">Nenhuma notificação no momento.</div>
+    </ng-template>
+  </section>
+
+  <section
+    *ngIf="activeTalentNotification"
+    class="topbar-notification-modal"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="topbar-notification-modal__confetti" *ngIf="notificationConfettiPieces.length">
+      <span
+        *ngFor="let piece of notificationConfettiPieces"
+        class="topbar-notification-modal__confetti-piece"
+        [style.left]="piece.left"
+        [style.top]="piece.top"
+        [style.animationDelay]="piece.delay"
+        [style.animationDuration]="piece.duration"
+        [style.width]="piece.size"
+        [style.height]="piece.size"
+        [style.background]="piece.color"
+        [style.--confetti-rotate]="piece.rotate"
+        [style.--confetti-dx]="piece.dx"
+        [style.--confetti-dy]="piece.dy"
+      ></span>
+    </div>
+
+    <button class="topbar-notification-modal__close" type="button" (click)="closeNotificationModal()">
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
+    </button>
+
+    <div class="topbar-notification-modal__label">{{ notificationTitle(activeTalentNotification) }}</div>
+
+    <div class="topbar-notification-modal__job">
+      <strong class="topbar-notification-modal__job-title">{{ activeTalentNotification.title }}</strong>
+      <span class="topbar-notification-modal__job-company">{{ activeTalentNotificationCompanyLine }}</span>
+      <span class="topbar-notification-modal__job-location">{{ activeTalentNotificationLocationLine }}</span>
+      <span class="topbar-notification-modal__job-offer" *ngIf="activeTalentNotificationOfferLine">
+        {{ activeTalentNotificationOfferLine }}
+      </span>
+    </div>
+
+    <div class="topbar-notification-modal__actions">
+      <button class="topbar-notification-modal__action" type="button" (click)="closeNotificationModal()">
+        fechar
+      </button>
+      <button
+        class="topbar-notification-modal__action topbar-notification-modal__action--primary"
+        type="button"
+        (click)="openNotificationConversation()"
+      >
+        abrir
+      </button>
+    </div>
+  </section>
+</div>
