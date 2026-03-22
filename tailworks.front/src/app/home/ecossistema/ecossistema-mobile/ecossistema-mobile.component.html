@@ -165,12 +165,15 @@
               </div>
             </div>
 
-            <span class="landing__mobile-job-card-workmodel">{{ vm.jobCardWorkModel(job) }}</span>
+            <div class="landing__mobile-job-card-meta">
+              <span class="landing__mobile-job-card-code" *ngIf="job.code">{{ job.code }}</span>
+              <span class="landing__mobile-job-card-workmodel">{{ vm.jobCardWorkModel(job) }}</span>
+            </div>
           </div>
 
           <div class="landing__mobile-job-card-title-row">
             <div class="landing__mobile-job-card-title">
-              <span>{{ job.code ? job.code + ' - ' : '' }}{{ job.title }}</span>
+              <span>{{ job.title }}</span>
               <button
                 class="landing__mobile-job-card-title-action"
                 type="button"
@@ -234,28 +237,49 @@
 
   <aside class="landing__mobile-panel" aria-label="Painel de candidatos da vaga">
     <div class="landing__mobile-panel-head">
-      <button class="landing__mobile-panel-close" type="button" (click)="vm.handleRecruiterPanelAction()">
-        <span class="material-symbols-rounded" aria-hidden="true">
-          {{ vm.selectedChatJob ? 'arrow_back' : 'close' }}
-        </span>
-      </button>
-
       <div class="landing__mobile-panel-profile">
-        <img
-          class="landing__mobile-panel-avatar"
-          src="/assets/avatars/avatar-default.svg"
-          [alt]="vm.recruiterPanelDisplayName"
-        />
+        <ng-container *ngIf="vm.selectedJobPanelCompanyLogoUrl as logoUrl; else mobilePanelCompanyFallback">
+          <img
+            class="landing__mobile-panel-avatar landing__mobile-panel-avatar--company"
+            [src]="logoUrl"
+            [alt]="vm.selectedJobPanel.company"
+          />
+        </ng-container>
+        <ng-template #mobilePanelCompanyFallback>
+          <div class="landing__mobile-panel-avatar landing__mobile-panel-avatar--company-fallback">
+            {{ vm.selectedJobPanelCompanyLogoLabel }}
+          </div>
+        </ng-template>
+
         <div class="landing__mobile-panel-profile-copy">
-          <strong>{{ vm.recruiterPanelDisplayName }}</strong>
-          <span>{{ vm.recruiterPanelDisplayRole }}</span>
+          <div class="landing__mobile-panel-profile-row">
+            <strong>{{ vm.selectedJobPanel.company }}</strong>
+            <div class="landing__mobile-panel-head-actions">
+              <span class="landing__mobile-panel-chip" *ngIf="vm.selectedJobPanelCode">{{ vm.selectedJobPanelCode }}</span>
+              <span class="landing__mobile-panel-chip" *ngIf="vm.selectedJobPanelWorkModel">{{ vm.selectedJobPanelWorkModel }}</span>
+              <button class="landing__mobile-panel-close" type="button" (click)="vm.handleRecruiterPanelAction()">
+                <span class="material-symbols-rounded" aria-hidden="true">
+                  {{ vm.selectedChatJob ? 'arrow_back' : 'close' }}
+                </span>
+              </button>
+            </div>
+          </div>
+          <span>{{ vm.selectedJobPanel.location }}</span>
         </div>
       </div>
 
       <div class="landing__mobile-panel-job">
-        <strong>{{ vm.selectedJobPanel.id.startsWith('lab-') ? vm.selectedJobPanel.id.replace('lab-', '').toUpperCase() + ' - ' : '' }}{{ vm.selectedJobPanel.title }}</strong>
-        <span>{{ vm.selectedJobPanel.company }}</span>
-        <small>{{ vm.selectedJobPanel.location }}</small>
+        <div class="landing__mobile-panel-job-chips" *ngIf="vm.selectedJobPanelTopStacks.length">
+          <span class="landing__mobile-panel-job-chip" *ngFor="let stack of vm.selectedJobPanelTopStacks">
+            {{ stack.name }}
+          </span>
+        </div>
+        <div class="landing__mobile-panel-job-title-row">
+          <strong>{{ vm.selectedJobPanelDisplayTitle }}</strong>
+          <span class="landing__mobile-panel-job-salary" *ngIf="vm.selectedJobPanelSalary">
+            {{ vm.selectedJobPanelSalary }}
+          </span>
+        </div>
       </div>
     </div>
 

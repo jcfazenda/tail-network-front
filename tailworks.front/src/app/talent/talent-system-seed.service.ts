@@ -49,6 +49,14 @@ export class TalentSystemSeedService {
           formation: this.formationFromSeniority(candidate.seniority),
         },
       },
+      formationCopy: {
+        graduation: this.formationFromSeniority(candidate.seniority),
+        specialization: this.specializationFromCandidate(candidate),
+        endMonth: 'Dez',
+        endYear: '2025',
+        graduated: true,
+        educationStatus: 'Concluído',
+      },
       stacksDraft: this.toStacksDraft(candidate),
       experiencesDraft: this.toExperienceDrafts(candidate),
     };
@@ -171,6 +179,18 @@ export class TalentSystemSeedService {
       default:
         return 'Tecnólogo em Análise e Desenvolvimento';
     }
+  }
+
+  private specializationFromCandidate(candidate: MatchLabCandidate): string {
+    const topStack = candidate.stacks
+      .slice()
+      .sort((left, right) => right.percent - left.percent)[0]?.stackName?.trim();
+
+    if (!topStack) {
+      return 'Especialização em Engenharia de Software';
+    }
+
+    return `Especialização em ${topStack}`;
   }
 
   private positionLevelFromCandidate(seniority: MatchLabSeniority): SeededExperienceDraft['positionLevel'] {

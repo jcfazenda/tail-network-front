@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule, UpperCasePipe, NgClass } from '@angular/common';
 import { JobsFacade } from '../core/facades/jobs.facade';
+import { TalentProfileStoreService } from '../talent/talent-profile-store.service';
 
 export type CandidateStage =
   | 'radar'
@@ -52,6 +53,7 @@ interface CandidateGroup {
 })
 export class PanelCandidatosListComponent {
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
 
   @Input() selectedJobPanel: any = null;
   @Input() sortedCandidatesFor!: (job: any) => any[];
@@ -79,12 +81,13 @@ export class PanelCandidatosListComponent {
     this.openCandidateStatus.emit(index);
   }
 
-  candidateStatusLabel(candidate: PanelCandidate): string {
-    return this.stageLabel(this.normalizeCandidateStage(candidate));
-  }
-
   candidateStatusTone(candidate: PanelCandidate): string {
     return this.normalizeCandidateStage(candidate) ?? 'radar';
+  }
+
+  candidateSpecialization(candidate: PanelCandidate): string {
+    return this.talentProfileStore.findProfileByName(candidate.name)?.formationCopy?.specialization?.trim()
+      || 'Especialização não informada';
   }
 
   get groupedCandidates(): CandidateGroup[] {
@@ -116,10 +119,6 @@ export class PanelCandidatosListComponent {
     });
 
     return groups;
-  }
-
-  get hasRadarProfiles(): boolean {
-    return this.groupedCandidates.some(group => group.stage === 'radar');
   }
 
   get recruiterDisplayName(): string {

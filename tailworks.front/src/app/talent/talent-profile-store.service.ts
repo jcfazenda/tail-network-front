@@ -67,6 +67,16 @@ export type SeededExperienceDraft = {
 export type SeededTalentProfile = {
   email: string;
   basicDraft: SeededCandidateBasicDraft;
+  formationCopy?: {
+    graduation: string;
+    specialization: string;
+    startMonth?: string;
+    startYear?: string;
+    endMonth?: string;
+    endYear?: string;
+    graduated?: boolean;
+    educationStatus?: string;
+  };
   stacksDraft: SeededStacksDraft;
   experiencesDraft: SeededExperienceDraft[];
 };
@@ -114,6 +124,9 @@ export class TalentProfileStoreService {
     }
 
     this.browserStorage.writeJson(TalentProfileStoreService.basicDraftStorageKey, profile.basicDraft);
+    if (profile.formationCopy) {
+      this.browserStorage.writeJson('tailworks:candidate-experience-formation-copy:v1', profile.formationCopy);
+    }
     this.browserStorage.writeJson(TalentProfileStoreService.stacksDraftStorageKey, profile.stacksDraft);
     this.browserStorage.writeJson(TalentProfileStoreService.experiencesDraftStorageKey, profile.experiencesDraft);
     this.browserStorage.writeJson(TalentProfileStoreService.ecosystemVisibilityStorageKey, true);
@@ -127,6 +140,7 @@ export class TalentProfileStoreService {
     }
 
     const basicDraft = this.browserStorage.readJson<SeededCandidateBasicDraft>(TalentProfileStoreService.basicDraftStorageKey);
+    const formationCopy = this.browserStorage.readJson<SeededTalentProfile['formationCopy']>('tailworks:candidate-experience-formation-copy:v1');
     const experiencesDraft = this.browserStorage.readJson<SeededExperienceDraft[]>(TalentProfileStoreService.experiencesDraftStorageKey);
     const storedStacksDraft = this.browserStorage.readJson<SeededStacksDraft>(TalentProfileStoreService.stacksDraftStorageKey);
 
@@ -140,6 +154,7 @@ export class TalentProfileStoreService {
     await this.upsertProfiles([{
       email,
       basicDraft,
+      formationCopy: formationCopy ?? undefined,
       stacksDraft,
       experiencesDraft,
     }]);
@@ -152,7 +167,7 @@ export class TalentProfileStoreService {
       name: profile.basicDraft.profile?.name?.trim() || `Talento ${index + 1}`,
       location: profile.basicDraft.profile?.location?.trim() || 'Brasil',
       seniority: this.resolveSeniority(profile.experiencesDraft),
-      summary: `Perfil real do sistema sincronizado a partir do login e edição do talento.`,
+      summary: this.buildCandidateSummary(profile),
       stacks: this.toMatchStacks(profile),
       experiences: profile.experiencesDraft.map((experience) => ({
         id: experience.id,
@@ -168,6 +183,24 @@ export class TalentProfileStoreService {
         summary: experience.responsibilities,
       })),
     }));
+  }
+
+  findProfileByName(name: string): SeededTalentProfile | null {
+    const normalizedName = name.trim().toLocaleLowerCase('pt-BR');
+    return this.listProfiles().find((profile) =>
+      profile.basicDraft.profile?.name?.trim().toLocaleLowerCase('pt-BR') === normalizedName,
+    ) ?? null;
+  }
+
+  private buildCandidateSummary(profile: SeededTalentProfile): string {
+    const latestExperience = profile.experiencesDraft[0];
+    if (!latestExperience) {
+      return 'Talento disponível no radar.';
+    }
+
+    return [latestExperience.role?.trim(), latestExperience.company?.trim()]
+      .filter(Boolean)
+      .join(' • ') || 'Talento disponível no radar.';
   }
 
   private toMatchStacks(profile: SeededTalentProfile): MatchLabCandidate['stacks'] {

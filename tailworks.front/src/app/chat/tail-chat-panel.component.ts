@@ -191,15 +191,6 @@ export class TailChatPanelComponent implements OnChanges {
     return this.selectedConversation?.stack || this.selectedConversation?.role || '';
   }
 
-  get selectedStatusLabel(): string {
-    const selected = this.selectedConversation;
-    if (!selected) {
-      return 'Talento no radar';
-    }
-
-    return this.stageLabelFor(selected);
-  }
-
   get jobTechStack(): ChatTechStackItem[] {
     return this.job?.techStack ?? [];
   }
@@ -384,7 +375,7 @@ export class TailChatPanelComponent implements OnChanges {
 
     switch (stage) {
       case 'radar':
-        return 'Talento no radar';
+        return 'Radar';
       case 'candidatura':
         return 'Candidatura enviada';
       case 'processo':
@@ -404,7 +395,7 @@ export class TailChatPanelComponent implements OnChanges {
       case 'cancelado':
         return 'Candidatura cancelada';
       default:
-        return 'Talento no radar';
+        return 'Radar';
     }
   }
 

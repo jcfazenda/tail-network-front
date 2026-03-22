@@ -35,6 +35,13 @@ export type EcosistemaMobileViewModel = {
   chatStartIndex: number;
   recruiterPanelDisplayName: string;
   recruiterPanelDisplayRole: string;
+  selectedJobPanelCompanyLogoUrl: string | null;
+  selectedJobPanelCompanyLogoLabel: string;
+  selectedJobPanelDisplayTitle: string;
+  selectedJobPanelCode: string;
+  selectedJobPanelWorkModel: string;
+  selectedJobPanelTopStacks: Array<{ name: string }>;
+  selectedJobPanelSalary: string | null;
   trackByHiredCard(index: number, card: HiredSpotlightCardLike): unknown;
   mobileTapeTilt(pageIndex: number, cardIndex: number, seed: string): string;
   mobilePolaroidTilt(pageIndex: number, cardIndex: number, seed: string): string;

@@ -520,6 +520,72 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return this.jobsFacade.getCurrentRecruiterIdentity().role;
   }
 
+  get selectedJobPanelCompanyLogoUrl(): string | null {
+    if (!this.selectedJobPanel) {
+      return null;
+    }
+
+    const job = this.jobsFacade.getJobById(this.selectedJobPanel.id);
+    return job ? this.jobCompanyLogoUrl(job) : null;
+  }
+
+  get selectedJobPanelCompanyLogoLabel(): string {
+    if (!this.selectedJobPanel) {
+      return '';
+    }
+
+    const job = this.jobsFacade.getJobById(this.selectedJobPanel.id);
+    return job ? this.jobCompanyLogoLabel(job) : this.selectedJobPanel.company.slice(0, 2).toUpperCase();
+  }
+
+  get selectedJobPanelDisplayTitle(): string {
+    if (!this.selectedJobPanel) {
+      return '';
+    }
+
+    const job = this.jobsFacade.getJobById(this.selectedJobPanel.id);
+    if (!job) {
+      return this.selectedJobPanel.title;
+    }
+
+    return job.title;
+  }
+
+  get selectedJobPanelCode(): string {
+    if (!this.selectedJobPanel) {
+      return '';
+    }
+
+    return this.jobsFacade.getJobById(this.selectedJobPanel.id)?.code?.trim() ?? '';
+  }
+
+  get selectedJobPanelWorkModel(): string {
+    if (!this.selectedJobPanel) {
+      return '';
+    }
+
+    const job = this.jobsFacade.getJobById(this.selectedJobPanel.id);
+    return job ? this.jobCardWorkModel(job) : (this.selectedJobPanel.workModel ?? '');
+  }
+
+  get selectedJobPanelTopStacks(): Array<{ name: string }> {
+    if (!this.selectedJobPanel) {
+      return [];
+    }
+
+    const job = this.jobsFacade.getJobById(this.selectedJobPanel.id);
+    return job ? this.topJobTechStacks(job) : this.selectedJobPanel.techStack.slice(0, 2);
+  }
+
+  get selectedJobPanelSalary(): string | null {
+    if (!this.selectedJobPanel) {
+      return null;
+    }
+
+    const job = this.jobsFacade.getJobById(this.selectedJobPanel.id);
+    return job ? this.jobCardSalary(job) : null;
+  }
+
   get recruiterSummaryStageLabel(): string {
     if (this.ecoFilter === 'candidaturas') {
       return 'total de candidatos';
@@ -1185,7 +1251,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   recruiterPanelStageLabel(stage?: MockJobCandidate['stage']): string {
     switch (stage) {
       case 'radar':
-        return 'Talento no radar';
+        return 'Radar';
       case 'contratado':
         return 'Contratado';
       case 'aguardando':
@@ -1205,7 +1271,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       case 'cancelado':
         return 'Candidatura cancelada';
       default:
-        return 'Talento no radar';
+        return 'Radar';
     }
   }
 
@@ -1342,11 +1408,18 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       .filter((entry: MatchLabRankingEntry) => entry.score >= this.talentAdherenceThreshold)
       .map((entry, index) => {
         const directoryTalent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
+        const compactRole = entry.debug.stackBreakdown
+          .slice()
+          .sort((left, right) => right.weightedContribution - left.weightedContribution)
+          .slice(0, 2)
+          .map((item) => item.stackName.trim())
+          .filter(Boolean)
+          .join(' / ');
 
         return {
           id: `lab-radar-${job.id}-${index + 1}`,
           name: entry.candidate.name,
-          role: entry.candidate.summary,
+          role: compactRole || entry.candidate.seniority,
           location: directoryTalent?.location || entry.candidate.location,
           match: entry.score,
           minutesAgo: 5 + index,
