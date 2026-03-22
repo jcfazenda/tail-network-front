@@ -1,5 +1,490 @@
-@media (max-width: 720px){
-  app-topbar{
+:host {
+  display: block;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(227, 167, 79, 0.16), transparent 32%),
+    linear-gradient(180deg, #eef2f6 0%, #f7f9fb 100%);
+}
+
+.ecosystem-mobile {
+  display: none;
+}
+
+.ecosystem-desktop {
+  display: block;
+  padding: 18px 20px 28px;
+}
+
+.ecosystem-desktop__shell {
+  display: grid;
+  gap: 22px;
+}
+
+.ecosystem-desktop__hero,
+.ecosystem-desktop__section,
+.ecosystem-desktop__radar-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(214, 222, 231, 0.86);
+  border-radius: 30px;
+  box-shadow:
+    0 20px 44px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+}
+
+.ecosystem-desktop__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
+  gap: 22px;
+  padding: 28px;
+}
+
+.ecosystem-desktop__hero-copy {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.ecosystem-desktop__eyebrow,
+.ecosystem-desktop__section-kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(227, 132, 48, 0.12);
+  color: #a05018;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.ecosystem-desktop__hero h1,
+.ecosystem-desktop__section-head h2 {
+  margin: 0;
+  color: #172033;
+}
+
+.ecosystem-desktop__hero h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 0.98;
+  max-width: 12ch;
+}
+
+.ecosystem-desktop__hero-text,
+.ecosystem-desktop__job-card p,
+.ecosystem-desktop__empty p {
+  margin: 0;
+  color: #607085;
+  line-height: 1.6;
+}
+
+.ecosystem-desktop__hero-text {
+  max-width: 64ch;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.ecosystem-desktop__hero-text--fading {
+  opacity: 0.32;
+  transform: translateY(3px);
+}
+
+.ecosystem-desktop__filters,
+.ecosystem-desktop__kpis,
+.ecosystem-desktop__hired-grid,
+.ecosystem-desktop__jobs-grid,
+.ecosystem-desktop__job-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ecosystem-desktop__filter-chip,
+.ecosystem-desktop__section-action,
+.ecosystem-desktop__empty-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 222, 231, 0.92);
+  background: rgba(255, 255, 255, 0.92);
+  color: #425166;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.ecosystem-desktop__filter-chip:hover,
+.ecosystem-desktop__section-action:hover,
+.ecosystem-desktop__empty-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.ecosystem-desktop__filter-chip--active,
+.ecosystem-desktop__section-action,
+.ecosystem-desktop__empty-action {
+  background: linear-gradient(135deg, #1d2433, #39445e);
+  border-color: rgba(29, 36, 51, 0.92);
+  color: #fff;
+}
+
+.ecosystem-desktop__kpi {
+  min-width: 132px;
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(250, 251, 253, 0.98), rgba(241, 244, 248, 0.98));
+  border: 1px solid rgba(223, 229, 236, 0.96);
+}
+
+.ecosystem-desktop__kpi .material-symbols-rounded {
+  color: #a85a1b;
+}
+
+.ecosystem-desktop__kpi strong {
+  font-size: 24px;
+  color: #172033;
+}
+
+.ecosystem-desktop__kpi small {
+  color: #6c7a8f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ecosystem-desktop__kpi--accent {
+  background: linear-gradient(135deg, rgba(29, 36, 51, 0.98), rgba(55, 66, 93, 0.96));
+}
+
+.ecosystem-desktop__kpi--accent strong,
+.ecosystem-desktop__kpi--accent small,
+.ecosystem-desktop__kpi--accent .material-symbols-rounded {
+  color: #fff;
+}
+
+.ecosystem-desktop__hero-visual {
+  display: grid;
+}
+
+.ecosystem-desktop__hero-art {
+  position: relative;
+  min-height: 340px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f2efe9, #ead8c3);
+}
+
+.ecosystem-desktop__hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.ecosystem-desktop__hero-badge {
+  position: absolute;
+  left: 20px;
+  top: 22px;
+  max-width: 220px;
+  color: #d67e13;
+  font-size: 22px;
+  line-height: 0.98;
+  font-weight: 900;
+}
+
+.ecosystem-desktop__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.82fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.ecosystem-desktop__main,
+.ecosystem-desktop__side {
+  display: grid;
+  gap: 22px;
+}
+
+.ecosystem-desktop__section,
+.ecosystem-desktop__radar-card {
+  padding: 24px;
+}
+
+.ecosystem-desktop__radar-card {
+  position: sticky;
+  top: 90px;
+}
+
+.ecosystem-desktop__section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.ecosystem-desktop__section-head--side {
+  margin-bottom: 20px;
+}
+
+.ecosystem-desktop__section-head h2 {
+  font-size: clamp(22px, 2vw, 30px);
+}
+
+.ecosystem-desktop__section-note,
+.ecosystem-desktop__radar-delta {
+  color: #738195;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.ecosystem-desktop__hired-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ecosystem-desktop__hired-card,
+.ecosystem-desktop__job-card,
+.ecosystem-desktop__empty {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(254, 254, 255, 0.98), rgba(245, 247, 250, 0.98));
+  border: 1px solid rgba(223, 229, 236, 0.96);
+}
+
+.ecosystem-desktop__hired-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  aspect-ratio: 0.88;
+  background: #eef1f5;
+}
+
+.ecosystem-desktop__hired-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ecosystem-desktop__hired-flag {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  min-height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #a85a1b;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: lowercase;
+}
+
+.ecosystem-desktop__hired-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.ecosystem-desktop__hired-copy strong,
+.ecosystem-desktop__job-brand-copy strong,
+.ecosystem-desktop__radar-row strong {
+  color: #172033;
+}
+
+.ecosystem-desktop__hired-copy span,
+.ecosystem-desktop__hired-copy small,
+.ecosystem-desktop__job-brand-copy span {
+  color: #6a788c;
+}
+
+.ecosystem-desktop__hired-stacks,
+.ecosystem-desktop__job-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ecosystem-desktop__hired-stack,
+.ecosystem-desktop__job-chip,
+.ecosystem-desktop__job-workmodel,
+.ecosystem-desktop__job-meta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ecosystem-desktop__hired-stack,
+.ecosystem-desktop__job-chip {
+  background: rgba(227, 132, 48, 0.1);
+  color: #9b511c;
+}
+
+.ecosystem-desktop__job-chip--muted {
+  background: rgba(113, 126, 145, 0.12);
+  color: #5d6c80;
+}
+
+.ecosystem-desktop__jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ecosystem-desktop__job-card-head,
+.ecosystem-desktop__job-title-row,
+.ecosystem-desktop__radar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ecosystem-desktop__job-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ecosystem-desktop__job-brand img,
+.ecosystem-desktop__job-brand-fallback {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  flex: 0 0 auto;
+}
+
+.ecosystem-desktop__job-brand img {
+  object-fit: cover;
+  background: #fff;
+}
+
+.ecosystem-desktop__job-brand-fallback {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1d2433, #53607a);
+  color: #fff;
+  font-weight: 900;
+}
+
+.ecosystem-desktop__job-brand-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ecosystem-desktop__job-title-row {
+  align-items: flex-start;
+}
+
+.ecosystem-desktop__job-title-row h3 {
+  margin: 0;
+  color: #172033;
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.ecosystem-desktop__job-workmodel {
+  background: rgba(217, 234, 225, 0.72);
+  color: #216447;
+}
+
+.ecosystem-desktop__job-meta {
+  background: rgba(217, 222, 232, 0.6);
+  color: #56657b;
+  white-space: nowrap;
+}
+
+.ecosystem-desktop__empty {
+  justify-items: start;
+}
+
+.ecosystem-desktop__empty strong {
+  color: #172033;
+  font-size: 20px;
+}
+
+.ecosystem-desktop__radar-list {
+  display: grid;
+  gap: 12px;
+}
+
+.ecosystem-desktop__radar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 1.8fr) auto;
+  align-items: center;
+}
+
+.ecosystem-desktop__radar-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #213044;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ecosystem-desktop__radar-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.ecosystem-desktop__radar-track {
+  position: relative;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+}
+
+.ecosystem-desktop__radar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+}
+
+@media (max-width: 1200px) {
+  .ecosystem-desktop__hero,
+  .ecosystem-desktop__content,
+  .ecosystem-desktop__jobs-grid,
+  .ecosystem-desktop__hired-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ecosystem-desktop__radar-card {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .ecosystem-desktop {
+    display: none;
+  }
+
+  .ecosystem-mobile {
+    display: block;
+  }
+
+  app-topbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,24 +496,24 @@
     background: #ffffff;
   }
 
-  :host ::ng-deep app-topbar .topbar{
+  :host ::ng-deep app-topbar .topbar {
     min-height: 56px;
     border-radius: 0;
   }
 }
 
-@media (max-width: 560px){
-  app-topbar{
+@media (max-width: 560px) {
+  app-topbar {
     padding: 0;
   }
 }
 
-@media (max-width: 420px){
-  app-topbar{
+@media (max-width: 420px) {
+  app-topbar {
     padding: 0;
   }
 
-  :host ::ng-deep app-topbar .topbar{
+  :host ::ng-deep app-topbar .topbar {
     min-height: 54px;
     border-radius: 0;
   }

@@ -8,12 +8,19 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = Number(process.env.MOCK_API_PORT || 4300);
 const dataFile = path.join(__dirname, 'mock-jobs.json');
+const authDataFile = path.join(__dirname, 'mock-auth-accounts.json');
 
 app.use(express.json({ limit: '5mb' }));
 
 function ensureDataFile() {
   if (!fs.existsSync(dataFile)) {
     fs.writeFileSync(dataFile, '[]\n', 'utf8');
+  }
+}
+
+function ensureAuthDataFile() {
+  if (!fs.existsSync(authDataFile)) {
+    fs.writeFileSync(authDataFile, '[]\n', 'utf8');
   }
 }
 
@@ -34,6 +41,23 @@ function writeJobs(jobs) {
   fs.writeFileSync(dataFile, `${JSON.stringify(jobs, null, 2)}\n`, 'utf8');
 }
 
+function readAuthAccounts() {
+  ensureAuthDataFile();
+
+  try {
+    const raw = fs.readFileSync(authDataFile, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeAuthAccounts(accounts) {
+  ensureAuthDataFile();
+  fs.writeFileSync(authDataFile, `${JSON.stringify(accounts, null, 2)}\n`, 'utf8');
+}
+
 app.get('/api/health', (_request, response) => {
   response.json({ ok: true });
 });
@@ -46,6 +70,16 @@ app.put('/api/mock-jobs', (request, response) => {
   const jobs = Array.isArray(request.body) ? request.body : [];
   writeJobs(jobs);
   response.json({ ok: true, count: jobs.length });
+});
+
+app.get('/api/mock-auth-accounts', (_request, response) => {
+  response.json(readAuthAccounts());
+});
+
+app.put('/api/mock-auth-accounts', (request, response) => {
+  const accounts = Array.isArray(request.body) ? request.body : [];
+  writeAuthAccounts(accounts);
+  response.json({ ok: true, count: accounts.length });
 });
 
 app.listen(port, '0.0.0.0', () => {

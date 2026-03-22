@@ -37,11 +37,11 @@ export class AuthFacade {
     return this.authService.activateRecruiterWorkspace();
   }
 
-  login(email: string, password?: string): AuthSession | null {
+  login(email: string, password?: string): Promise<AuthSession | null> {
     return this.authService.login(email, password);
   }
 
-  loginWithProvider(email: string): AuthSession | null {
+  loginWithProvider(email: string): Promise<AuthSession | null> {
     return this.authService.loginWithProvider(email);
   }
 

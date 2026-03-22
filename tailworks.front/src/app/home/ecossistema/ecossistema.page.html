@@ -1,2 +1,236 @@
 <app-topbar aria-label="Topbar"></app-topbar>
-<app-ecossistema-mobile [vm]="mobileVm"></app-ecossistema-mobile>
+
+<main class="ecosystem-desktop">
+  <section class="ecosystem-desktop__shell">
+    <header class="ecosystem-desktop__hero">
+      <div class="ecosystem-desktop__hero-copy">
+        <span class="ecosystem-desktop__eyebrow">
+          {{ isTalentEcosystemMode ? 'Radar do mercado' : 'Operação do ecossistema' }}
+        </span>
+
+        <h1>
+          {{ isTalentEcosystemMode
+            ? 'Encontre as vagas que mais combinam com o seu momento'
+            : 'Acompanhe o movimento real das suas vagas no desktop' }}
+        </h1>
+
+        <p
+          class="ecosystem-desktop__hero-text"
+          [class.ecosystem-desktop__hero-text--fading]="copyIsFading"
+        >
+          {{ activeHiringCopy.body }}
+        </p>
+
+        <div class="ecosystem-desktop__filters">
+          <button
+            *ngFor="let item of ecoTopFilters; trackBy: trackByEcoFilter"
+            type="button"
+            class="ecosystem-desktop__filter-chip"
+            [class.ecosystem-desktop__filter-chip--active]="ecoFilter === item.id"
+            (click)="setEcoFilter(item.id)"
+          >
+            <span *ngIf="ecoFilterIcon(item.id) as icon" class="material-symbols-rounded" aria-hidden="true">{{ icon }}</span>
+            <span>{{ item.label }}</span>
+          </button>
+        </div>
+
+        <div class="ecosystem-desktop__kpis">
+          <article class="ecosystem-desktop__kpi" *ngFor="let item of ecoKpisLeft">
+            <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
+            <strong>{{ item.value }}</strong>
+            <small>{{ item.suffix }}</small>
+          </article>
+
+          <article class="ecosystem-desktop__kpi ecosystem-desktop__kpi--accent">
+            <span class="material-symbols-rounded" aria-hidden="true">{{ ecoAderenciaKpi.icon }}</span>
+            <strong>{{ ecoAderenciaKpi.value }}</strong>
+            <small>{{ ecoAderenciaKpi.suffix }}</small>
+          </article>
+        </div>
+      </div>
+
+      <aside class="ecosystem-desktop__hero-visual">
+        <div class="ecosystem-desktop__hero-art">
+          <img src="/assets/images/mulher-fundo-thumbnail.png" alt="Painel do ecossistema" loading="eager" decoding="async" />
+          <div class="ecosystem-desktop__hero-badge">AQUI TALENTO NAO PAGA PARA APARECER</div>
+        </div>
+      </aside>
+    </header>
+
+    <section class="ecosystem-desktop__content">
+      <div class="ecosystem-desktop__main">
+        <section class="ecosystem-desktop__section">
+          <div class="ecosystem-desktop__section-head">
+            <div>
+              <span class="ecosystem-desktop__section-kicker">Contratações</span>
+              <h2>Olha só quem acabou de ser contratado</h2>
+            </div>
+            <span class="ecosystem-desktop__section-note">Leitura rápida do mercado em tempo real</span>
+          </div>
+
+          <div class="ecosystem-desktop__hired-grid">
+            <article class="ecosystem-desktop__hired-card" *ngFor="let card of hiredSpotlights.slice(0, 4); trackBy: trackByHiredCard">
+              <div class="ecosystem-desktop__hired-photo">
+                <img [src]="card.avatarUrl" [alt]="card.name" loading="eager" decoding="async" />
+                <span class="ecosystem-desktop__hired-flag" *ngIf="card.isNew">novo</span>
+              </div>
+
+              <div class="ecosystem-desktop__hired-copy">
+                <strong>{{ card.name }}</strong>
+                <span>{{ card.roleTitle }}</span>
+                <small>{{ card.company }}</small>
+              </div>
+
+              <div class="ecosystem-desktop__hired-stacks">
+                <span class="ecosystem-desktop__hired-stack" *ngFor="let stack of card.stacks">{{ stack.label }}</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="ecosystem-desktop__section">
+          <div class="ecosystem-desktop__section-head">
+            <div>
+              <span class="ecosystem-desktop__section-kicker">
+                {{ isTalentEcosystemMode ? 'Vagas compatíveis' : 'Cards publicados' }}
+              </span>
+              <h2>
+                {{ isTalentEcosystemMode ? 'Oportunidades mais aderentes ao seu perfil' : 'Suas vagas ativas no ecossistema' }}
+              </h2>
+            </div>
+
+            <a
+              class="ecosystem-desktop__section-action"
+              [href]="isTalentEcosystemMode ? '/usuario/minhas-candidaturas' : '/vagas/cadastro'"
+            >
+              {{ isTalentEcosystemMode ? 'ver candidaturas' : 'abrir cadastro' }}
+            </a>
+          </div>
+
+          <ng-container *ngIf="isTalentEcosystemMode; else recruiterDesktopJobs">
+            <div class="ecosystem-desktop__jobs-grid" *ngIf="talentCompatibleJobs.length; else desktopEmptyState">
+              <article
+                class="ecosystem-desktop__job-card"
+                *ngFor="let view of talentCompatibleJobs.slice(0, 6); trackBy: trackByTalentCompatibleJob"
+              >
+                <div class="ecosystem-desktop__job-card-head">
+                  <div class="ecosystem-desktop__job-brand">
+                    <ng-container *ngIf="jobCompanyLogoUrl(view.job) as logoUrl; else companyFallbackTalentDesktop">
+                      <img *ngIf="logoUrl; else companyFallbackTalentDesktop" [src]="logoUrl" [alt]="view.job.company" />
+                    </ng-container>
+                    <ng-template #companyFallbackTalentDesktop>
+                      <div class="ecosystem-desktop__job-brand-fallback">{{ jobCompanyLogoLabel(view.job) }}</div>
+                    </ng-template>
+
+                    <div class="ecosystem-desktop__job-brand-copy">
+                      <strong>{{ view.job.company }}</strong>
+                      <span>{{ jobCardLocation(view.job) }}</span>
+                    </div>
+                  </div>
+
+                  <span class="ecosystem-desktop__job-workmodel">{{ jobCardWorkModel(view.job) }}</span>
+                </div>
+
+                <div class="ecosystem-desktop__job-title-row">
+                  <h3>{{ view.job.title }}</h3>
+                  <span class="ecosystem-desktop__job-meta">{{ ecoJobMeta(view.job) }}</span>
+                </div>
+
+                <p>{{ view.job.summary || 'Vaga alinhada com o seu perfil atual.' }}</p>
+
+                <div class="ecosystem-desktop__job-chips">
+                  <span class="ecosystem-desktop__job-chip" *ngFor="let stack of talentJobMainStacks(view)">{{ stack.name }}</span>
+                  <span class="ecosystem-desktop__job-chip ecosystem-desktop__job-chip--muted" *ngFor="let stack of talentJobMissingStacks(view)">
+                    {{ stack.name }}
+                  </span>
+                </div>
+              </article>
+            </div>
+          </ng-container>
+
+          <ng-template #recruiterDesktopJobs>
+            <div class="ecosystem-desktop__jobs-grid" *ngIf="ecoFilteredJobs.length; else desktopEmptyState">
+              <article
+                class="ecosystem-desktop__job-card"
+                *ngFor="let job of ecoFilteredJobs.slice(0, 6); trackBy: trackByJob"
+              >
+                <div class="ecosystem-desktop__job-card-head">
+                  <div class="ecosystem-desktop__job-brand">
+                    <ng-container *ngIf="jobCompanyLogoUrl(job) as logoUrl; else companyFallbackRecruiterDesktop">
+                      <img *ngIf="logoUrl; else companyFallbackRecruiterDesktop" [src]="logoUrl" [alt]="job.company" />
+                    </ng-container>
+                    <ng-template #companyFallbackRecruiterDesktop>
+                      <div class="ecosystem-desktop__job-brand-fallback">{{ jobCompanyLogoLabel(job) }}</div>
+                    </ng-template>
+
+                    <div class="ecosystem-desktop__job-brand-copy">
+                      <strong>{{ job.company }}</strong>
+                      <span>{{ jobCardLocation(job) }}</span>
+                    </div>
+                  </div>
+
+                  <span class="ecosystem-desktop__job-workmodel">{{ jobCardWorkModel(job) }}</span>
+                </div>
+
+                <div class="ecosystem-desktop__job-title-row">
+                  <h3>{{ job.title }}</h3>
+                  <span class="ecosystem-desktop__job-meta">{{ ecoJobMeta(job) }}</span>
+                </div>
+
+                <p>{{ job.summary || 'Sua vaga publicada aparecerá aqui.' }}</p>
+
+                <div class="ecosystem-desktop__job-chips">
+                  <span class="ecosystem-desktop__job-chip" *ngFor="let stack of topJobTechStacks(job)">{{ stack.name }}</span>
+                </div>
+              </article>
+            </div>
+          </ng-template>
+
+          <ng-template #desktopEmptyState>
+            <article class="ecosystem-desktop__empty">
+              <strong>{{ ecoEmptyTitle }}</strong>
+              <p>{{ ecoEmptyHint }}</p>
+              <a
+                *ngIf="shouldShowEmptyResetAction"
+                class="ecosystem-desktop__empty-action"
+                href="#"
+                (click)="$event.preventDefault(); resetEcoDiscovery()"
+              >
+                limpar recorte
+              </a>
+            </article>
+          </ng-template>
+        </section>
+      </div>
+
+      <aside class="ecosystem-desktop__side">
+        <section class="ecosystem-desktop__radar-card">
+          <div class="ecosystem-desktop__section-head ecosystem-desktop__section-head--side">
+            <div>
+              <span class="ecosystem-desktop__section-kicker">Radar de stacks</span>
+              <h2>Localidade Todas</h2>
+            </div>
+            <span class="ecosystem-desktop__radar-delta">+ {{ radarDelta }} desde ontem</span>
+          </div>
+
+          <div class="ecosystem-desktop__radar-list">
+            <div class="ecosystem-desktop__radar-row" *ngFor="let category of radarCategories; trackBy: trackByRadarCategory">
+              <div class="ecosystem-desktop__radar-label">
+                <span class="ecosystem-desktop__radar-dot" [style.background]="radarDotColor(category.value)"></span>
+                <span>{{ category.label }}</span>
+              </div>
+
+              <div class="ecosystem-desktop__radar-track">
+                <span class="ecosystem-desktop__radar-fill" [style.width.%]="category.value" [style.background]="radarBarFill(category.value)"></span>
+              </div>
+
+              <strong>{{ category.value }}%</strong>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </section>
+</main>
+
+<app-ecossistema-mobile class="ecosystem-mobile" [vm]="mobileVm"></app-ecossistema-mobile>

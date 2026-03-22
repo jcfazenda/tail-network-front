@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node scripts/dev.mjs",
+    "start:mobile": "node scripts/dev.mjs --host 0.0.0.0",
     "start:app": "ng serve --proxy-config proxy.conf.json",
     "start:api": "node mock-api/server.mjs",
     "build": "ng build",

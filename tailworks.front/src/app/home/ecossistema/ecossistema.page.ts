@@ -262,6 +262,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return pages[this.activeHiredIndex] ?? pages[0] ?? [];
   }
 
+  get activeHiringCopy() {
+    return this.hiringCopy[this.copyIndex];
+  }
+
   get mobileTopStacks(): Array<{ label: string; count: number }> {
     const counts = new Map<string, number>();
     for (const card of this.mobileHiredSpotlights) {

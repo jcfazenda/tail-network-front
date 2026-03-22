@@ -4,6 +4,7 @@ import { EmpresaDirectoryService } from '../empresa/empresa-directory.service';
 import { RecruiterDirectoryService } from '../recruiter/recruiter-directory.service';
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { BrowserStorageService } from '../core/storage/browser-storage.service';
+import { AuthSyncApiService } from './auth-sync-api.service';
 
 export type RecruiterInviteDraft = {
   name: string;
@@ -50,8 +51,11 @@ export class MockAuthService {
   private readonly accountsStorageKey = 'tailworks:auth-accounts:v1';
   private readonly sessionStorageKey = 'tailworks:auth-session:v1';
   private readonly bootstrapStorageKey = 'tailworks:auth-bootstrap:v1';
+  private readonly defaultRecruiterEmail = 'julio.fazenda@itau.com.br';
+  private readonly defaultRecruiterPassword = 'julio@56';
   private readonly sessionSubject = new BehaviorSubject<AuthSession | null>(null);
   private readonly browserStorage = inject(BrowserStorageService);
+  private readonly authSyncApi = inject(AuthSyncApiService);
 
   readonly session$ = this.sessionSubject.asObservable();
 
@@ -101,6 +105,7 @@ export class MockAuthService {
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
     this.vagasMockService.clearPublishedJobsForTesting();
+    this.ensureDefaultMockAccess();
     storage.setItem(this.bootstrapStorageKey, 'done');
   }
 
@@ -125,10 +130,11 @@ export class MockAuthService {
     return this.syncRecruiterWorkspace(this.getSession());
   }
 
-  login(email: string, password?: string): AuthSession | null {
+  async login(email: string, password?: string): Promise<AuthSession | null> {
     const normalizedEmail = email.trim().toLocaleLowerCase('pt-BR');
     const normalizedPassword = password?.trim() ?? '';
-    const account = this.loadAccounts().find((item) => {
+    let accounts = this.loadAccounts();
+    let account = accounts.find((item) => {
       if (item.email.toLocaleLowerCase('pt-BR') !== normalizedEmail) {
         return false;
       }
@@ -141,6 +147,25 @@ export class MockAuthService {
     });
 
     if (!account) {
+      const remoteAccounts = await this.authSyncApi.readAll();
+      if (remoteAccounts?.length) {
+        this.persistAccounts(remoteAccounts.map((item) => this.normalizeAccount(item)));
+        accounts = this.loadAccounts();
+        account = accounts.find((item) => {
+          if (item.email.toLocaleLowerCase('pt-BR') !== normalizedEmail) {
+            return false;
+          }
+
+          if (!normalizedPassword) {
+            return true;
+          }
+
+          return item.password === password;
+        });
+      }
+    }
+
+    if (!account) {
       return null;
     }
 
@@ -149,9 +174,17 @@ export class MockAuthService {
     return session;
   }
 
-  loginWithProvider(email: string): AuthSession | null {
+  async loginWithProvider(email: string): Promise<AuthSession | null> {
     const normalizedEmail = email.trim().toLocaleLowerCase('pt-BR');
-    const account = this.loadAccounts().find((item) => item.email.toLocaleLowerCase('pt-BR') === normalizedEmail);
+    let account = this.loadAccounts().find((item) => item.email.toLocaleLowerCase('pt-BR') === normalizedEmail);
+
+    if (!account) {
+      const remoteAccounts = await this.authSyncApi.readAll();
+      if (remoteAccounts?.length) {
+        this.persistAccounts(remoteAccounts.map((item) => this.normalizeAccount(item)));
+        account = this.loadAccounts().find((item) => item.email.toLocaleLowerCase('pt-BR') === normalizedEmail);
+      }
+    }
 
     if (!account) {
       return null;
@@ -269,6 +302,7 @@ export class MockAuthService {
     }
 
     this.persistAccounts(nextAccounts);
+    void this.authSyncApi.writeAll(nextAccounts);
     return masterAccount;
   }
 
@@ -286,7 +320,9 @@ export class MockAuthService {
       location: draft.location.trim() || 'Rio de Janeiro - RJ',
     };
 
-    this.persistAccounts([...this.loadAccounts(), nextAccount]);
+    const nextAccounts = [...this.loadAccounts(), nextAccount];
+    this.persistAccounts(nextAccounts);
+    void this.authSyncApi.writeAll(nextAccounts);
     return nextAccount;
   }
 
@@ -318,6 +354,7 @@ export class MockAuthService {
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
     this.vagasMockService.clearPublishedJobsForTesting();
+    this.ensureDefaultMockAccess();
     this.sessionSubject.next(null);
   }
 
@@ -340,6 +377,71 @@ export class MockAuthService {
     storage?.setItem(this.sessionStorageKey, JSON.stringify(session));
     this.syncRecruiterWorkspace(session);
     this.sessionSubject.next(session);
+  }
+
+  private ensureDefaultMockAccess(): void {
+    const normalizedEmail = this.defaultRecruiterEmail.toLocaleLowerCase('pt-BR');
+    const accounts = this.loadAccounts();
+    if (accounts.some((account) => account.email.toLocaleLowerCase('pt-BR') === normalizedEmail)) {
+      return;
+    }
+
+    const company = this.companyDirectoryService.getCompanyByName('Banco Itaú')
+      ?? this.companyDirectoryService.saveCompany({
+        name: 'Banco Itaú',
+        sector: 'Banco e serviços financeiros',
+        location: 'Rio de Janeiro - RJ',
+        description: 'Banco e serviços financeiros',
+        followers: '5.248.921 seguidores',
+        linkedinCount: '5.248.921 no LinkedIn',
+        logoLabel: 'it',
+        logoUrl: '/assets/images/logo-itau.png',
+        website: 'https://www.itau.com.br',
+        emailDomain: 'itau.com.br',
+        monthlyHiringCount: 43,
+        active: true,
+        notes: 'Conta recruiter padrão disponível em qualquer dispositivo.',
+      });
+
+    const recruiter = this.recruiterDirectoryService.findRecruiterByEmail(this.defaultRecruiterEmail, company.name)
+      ?? this.recruiterDirectoryService.saveRecruiter({
+        id: 'julio-fazenda-recruiter',
+        name: 'Julio Fazenda',
+        email: this.defaultRecruiterEmail,
+        role: 'Recruiter Sr.',
+        company: company.name,
+        isMaster: true,
+        active: true,
+        avatarUrl: '',
+        managedCompanies: [company.name],
+        areas: ['Backend', 'Cloud', 'Tech Recruiting'],
+        viewScope: 'company',
+        canCreateJobs: true,
+        canEditJobs: true,
+        canAdvanceCandidates: true,
+        canManageSubordinates: true,
+        canViewTalentRadar: true,
+        canExportData: true,
+        notes: 'Recruiter padrão para acesso multi-dispositivo no mock.',
+      });
+
+    const nextAccounts = [
+      ...accounts,
+      {
+        id: `auth-${recruiter.id}`,
+        name: recruiter.name,
+        email: this.defaultRecruiterEmail,
+        password: this.defaultRecruiterPassword,
+        canUseRecruiter: true,
+        canUseTalent: true,
+        recruiterId: recruiter.id,
+        company: recruiter.company,
+        location: 'Rio de Janeiro - RJ',
+      },
+    ];
+
+    this.persistAccounts(nextAccounts);
+    void this.authSyncApi.writeAll(nextAccounts);
   }
 
   private loadAccounts(): AuthAccount[] {
@@ -403,8 +505,45 @@ export class MockAuthService {
         : undefined);
 
     if (!recruiter) {
-      this.recruiterDirectoryService.clearCurrentWorkspace();
-      return false;
+      this.companyDirectoryService.saveCompany({
+        name: session.company,
+        sector: 'Tecnologia',
+        location: session.location || 'Rio de Janeiro - RJ',
+        description: 'Empresa sincronizada a partir do acesso compartilhado.',
+        followers: '0 seguidores',
+        linkedinCount: '0 no LinkedIn',
+        logoLabel: session.company.slice(0, 2),
+        logoUrl: '',
+        website: '',
+        emailDomain: this.emailDomainFromEmail(session.email),
+        monthlyHiringCount: 0,
+        active: true,
+        notes: 'Empresa recriada localmente para sincronizar login entre dispositivos.',
+      });
+
+      const seededRecruiter = this.recruiterDirectoryService.saveRecruiter({
+        id: session.recruiterId,
+        name: session.name,
+        email: session.email,
+        role: 'Recruiter',
+        company: session.company,
+        isMaster: true,
+        active: true,
+        avatarUrl: '',
+        managedCompanies: [session.company],
+        areas: ['Tech Recruiting'],
+        viewScope: 'company',
+        canCreateJobs: true,
+        canEditJobs: true,
+        canAdvanceCandidates: true,
+        canManageSubordinates: true,
+        canViewTalentRadar: true,
+        canExportData: true,
+        notes: 'Recruiter recriado localmente a partir da sessão compartilhada.',
+      });
+
+      this.recruiterDirectoryService.signInAsRecruiter(seededRecruiter.id, seededRecruiter.company);
+      return true;
     }
 
     this.recruiterDirectoryService.signInAsRecruiter(recruiter.id, recruiter.company);

@@ -1,6 +1,8 @@
 import { spawn } from 'node:child_process';
 
-const extraArgs = process.argv.slice(2);
+const incomingArgs = process.argv.slice(2);
+const hasExplicitHost = incomingArgs.some((arg, index) => arg === '--host' || (index > 0 && incomingArgs[index - 1] === '--host') || arg.startsWith('--host='));
+const extraArgs = hasExplicitHost ? incomingArgs : ['--host', '0.0.0.0', ...incomingArgs];
 const children = [];
 let shuttingDown = false;
 

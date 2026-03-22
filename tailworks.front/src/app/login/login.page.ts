@@ -29,7 +29,7 @@ export class LoginPage implements OnDestroy {
   registerFlow: RegisterFlow = 'organization';
   returnUrl = '';
 
-  email = 'julio@tailworks.com';
+  email = 'julio.fazenda@itau.com.br';
   password = 'julio@56';
   errorMessage = '';
   successMessage = '';
@@ -69,7 +69,7 @@ export class LoginPage implements OnDestroy {
     this.authService.resetWorkspace();
     this.errorMessage = '';
     this.successMessage = '';
-    this.email = 'julio@tailworks.com';
+    this.email = 'julio.fazenda@itau.com.br';
     this.password = 'julio@56';
     this.accessView = 'register';
     this.registerFlow = 'organization';
@@ -90,7 +90,7 @@ export class LoginPage implements OnDestroy {
       this.recruiterSignup.subordinateRecruiters.filter((_item, itemIndex) => itemIndex !== index);
   }
 
-  login(): void {
+  async login(): Promise<void> {
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -99,7 +99,7 @@ export class LoginPage implements OnDestroy {
       return;
     }
 
-    if (!this.authService.login(this.email)) {
+    if (!await this.authService.login(this.email)) {
       this.errorMessage = 'Nao encontramos um acesso com esse e-mail.';
       return;
     }
@@ -107,7 +107,7 @@ export class LoginPage implements OnDestroy {
     void this.router.navigateByUrl('/home');
   }
 
-  continueWithProvider(provider: SocialProvider): void {
+  async continueWithProvider(provider: SocialProvider): Promise<void> {
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -118,7 +118,7 @@ export class LoginPage implements OnDestroy {
       return;
     }
 
-    if (!this.authService.loginWithProvider(this.email)) {
+    if (!await this.authService.loginWithProvider(this.email)) {
       this.errorMessage = 'Nao encontramos um acesso com esse e-mail. Cadastre sua conta primeiro.';
       return;
     }
@@ -185,7 +185,7 @@ export class LoginPage implements OnDestroy {
   private createRecruiterSignupDraft(): RecruiterSignupDraft {
     return {
       name: 'Julio Recutador Sr.',
-      email: 'julio@tailworks.com',
+      email: 'julio.fazenda@itau.com.br',
       password: 'julio@56',
       role: 'Recruiter Sr.',
       companyName: 'Criatti SA',
