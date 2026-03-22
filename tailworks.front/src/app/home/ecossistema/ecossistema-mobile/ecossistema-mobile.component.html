@@ -135,21 +135,6 @@
     </ng-container>
 
     <ng-template #recruiterJobCards>
-      <div class="landing__mobile-tabs">
-        <button
-          *ngFor="let filter of vm.ecoTopFilters"
-          class="landing__mobile-tab"
-          type="button"
-          [class.landing__mobile-tab--active]="vm.ecoFilter === filter.id"
-          (click)="vm.setEcoFilter(filter.id)"
-        >
-          <span class="material-symbols-rounded" *ngIf="vm.ecoFilterIcon(filter.id)" aria-hidden="true">
-            {{ vm.ecoFilterIcon(filter.id) }}
-          </span>
-          <span>{{ filter.label }}</span>
-        </button>
-      </div>
-
       <ng-container *ngIf="vm.ecoFilteredJobs.length; else emptyJobCard">
         <article
           *ngFor="let job of vm.ecoFilteredJobs; trackBy: vm.trackByJob"

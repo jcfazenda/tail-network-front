@@ -14,8 +14,9 @@ import { EcossistemaMobileComponent } from './ecossistema-mobile/ecossistema-mob
 import { TalentDirectoryService } from '../../talent/talent-directory.service';
 import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
 import { EcosystemJobFiltersService } from '../../core/layout/ecosystem-job-filters.service';
+import { EcosystemViewFilterService } from '../../core/layout/ecosystem-view-filter.service';
 
-type TalentEcoFilter = 'radar' | 'applications';
+type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
 type EcoFilter = TalentEcoFilter | RecruiterEcoFilter;
 type EcoKpiItem = {
@@ -114,6 +115,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly talentDirectoryService = inject(TalentDirectoryService);
   private readonly matchingLabService = inject(MatchingLabService);
   private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
+  private readonly ecosystemViewFilterService = inject(EcosystemViewFilterService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
@@ -397,6 +399,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       this.ecosystemEntryService.mode();
       if (!this.ecoFilters.some((item) => item.id === this.ecoFilter)) {
         this.ecoFilter = 'radar';
+        this.ecosystemViewFilterService.setSelected(this.ecoFilter);
+        this.cdr.markForCheck();
+      }
+    });
+
+    effect(() => {
+      const selected = this.ecosystemViewFilterService.selected() as EcoFilter;
+      if (this.ecoFilters.some((item) => item.id === selected) && this.ecoFilter !== selected) {
+        this.ecoFilter = selected;
         this.cdr.markForCheck();
       }
     });
@@ -409,8 +420,9 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   get ecoFilters(): Array<{ id: EcoFilter; label: string }> {
     if (this.isTalentEcosystemMode) {
       return [
-        { id: 'radar', label: 'No Radar' },
-        { id: 'applications', label: 'Minhas candidaturas' },
+        { id: 'radar', label: 'Vagas no Radar' },
+        { id: 'applications', label: 'Minhas Candidaturas' },
+        { id: 'processo', label: 'Em Progresso' },
       ];
     }
 
@@ -466,8 +478,44 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return { icon: 'trending_up', value: `${avgMatch}%`, suffix: 'aderência' };
   }
 
+  get recruiterBoardSummary(): EcoKpiItem[] {
+    const jobs = this.ecoFilteredJobs;
+    const avgSalary = this.computeAverageSalary(jobs);
+    const stageLabel = this.recruiterSummaryStageLabel;
+    const stageTotal = jobs.reduce((sum, job) => {
+      if (this.ecoFilter === 'radar') {
+        return sum + (job.radarCount ?? 0);
+      }
+
+      return sum + this.jobStageCount(job, this.ecoFilter as RecruiterEcoFilter);
+    }, 0);
+
+    return [
+      { icon: 'payments', value: avgSalary ? `R$ ${avgSalary}` : 'R$ --', suffix: 'total de R$' },
+      { icon: 'work', value: `${jobs.length}`, suffix: 'total de cards' },
+      { icon: 'group', value: `${stageTotal}`, suffix: stageLabel },
+    ];
+  }
+
+  get recruiterSummaryStageLabel(): string {
+    if (this.ecoFilter === 'candidaturas') {
+      return 'total de candidatos';
+    }
+
+    if (this.ecoFilter === 'processo') {
+      return 'em andamento';
+    }
+
+    if (this.ecoFilter === 'contratados') {
+      return 'contratados';
+    }
+
+    return 'total no radar';
+  }
+
   setEcoFilter(filter: EcoFilter): void {
     this.ecoFilter = filter;
+    this.ecosystemViewFilterService.setSelected(filter);
     this.cdr.markForCheck();
   }
 
@@ -510,10 +558,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
           missingStacks: missingStacks.slice(0, 2),
         };
       })
-      .filter((view) =>
+      .filter((view) => this.ecoFilter !== 'radar' || (
         view.score.overallScore >= this.talentAdherenceThreshold
-        && view.score.matchedRepoIds.length > 0,
-      )
+        && view.score.matchedRepoIds.length > 0
+      ))
       .sort((left, right) =>
         right.score.overallScore - left.score.overallScore
         || right.score.stackScore - left.score.stackScore
@@ -531,9 +579,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     }
 
     if (this.isTalentEcosystemMode) {
-      return this.ecoFilter === 'applications'
-        ? 'Você ainda nao tem candidaturas nesse recorte.'
-        : 'Nenhuma vaga apareceu nesse radar agora.';
+      if (this.ecoFilter === 'applications') {
+        return 'Você ainda nao tem candidaturas nesse recorte.';
+      }
+
+      if (this.ecoFilter === 'processo') {
+        return 'Nenhuma vaga sua está em progresso agora.';
+      }
+
+      return 'Nenhuma vaga apareceu nesse radar agora.';
     }
 
     if (this.ecoFilter === 'contratados') {
@@ -588,6 +642,11 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     if (filter === 'applications') {
       return this.isApplicationsJob(job);
     }
+
+    if (filter === 'processo') {
+      return this.isInProgressJob(job);
+    }
+
     return this.isRadarJob(job);
   }
 
@@ -630,12 +689,47 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return job.radarCount > 0 || effectiveStages.some((stage) => stage === 'radar');
   }
 
+  private jobStageCount(job: MockJobRecord, view: RecruiterEcoFilter): number {
+    const effectiveStages = job.candidates
+      .map((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate))
+      .filter((stage): stage is NonNullable<typeof stage> => !!stage);
+
+    if (view === 'candidaturas') {
+      return effectiveStages.filter((stage) => stage === 'candidatura').length;
+    }
+
+    if (view === 'contratados') {
+      return effectiveStages.filter((stage) => stage === 'contratado').length;
+    }
+
+    if (view === 'processo') {
+      return effectiveStages.filter((stage) =>
+        stage === 'processo'
+        || stage === 'tecnica'
+        || stage === 'aceito'
+        || stage === 'documentacao',
+      ).length;
+    }
+
+    if (view === 'solicitada') {
+      return effectiveStages.filter((stage) => stage === 'aguardando').length;
+    }
+
+    return job.radarCount ?? 0;
+  }
+
   private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
     return this.jobsFacade.getEffectiveCandidateStage(this.jobsFacade.findTalentCandidate(job));
   }
 
   private isApplicationsJob(job: MockJobRecord): boolean {
-    return job.talentDecision === 'applied' && !this.isDeclinedJob(job);
+    const stage = this.getTalentStage(job);
+    return job.talentDecision === 'applied' && stage === 'candidatura' && !this.isDeclinedJob(job);
+  }
+
+  private isInProgressJob(job: MockJobRecord): boolean {
+    const stage = this.getTalentStage(job);
+    return stage === 'processo' || stage === 'tecnica' || stage === 'aceito' || stage === 'documentacao';
   }
 
   private isRadarJob(job: MockJobRecord): boolean {

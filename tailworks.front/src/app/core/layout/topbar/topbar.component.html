@@ -193,6 +193,21 @@
       </button>
     </div>
 
+    <div class="topbar-filter-modal__field topbar-filter-modal__field--chips" *ngIf="showMobileEcosystemViewFilter">
+      <div class="topbar-filter-modal__chips" role="group" aria-label="Selecionar visão do ecossistema">
+        <button
+          *ngFor="let option of mobileEcosystemViewOptions"
+          class="topbar-filter-modal__chip"
+          type="button"
+          [class.topbar-filter-modal__chip--active]="filterView === option.id"
+          (click)="filterView = option.id"
+        >
+          <span class="topbar-filter-modal__chip-label">{{ option.label }}</span>
+          <span class="topbar-filter-modal__chip-count">{{ option.count }}</span>
+        </button>
+      </div>
+    </div>
+
     <label class="topbar-filter-modal__field">
       <span>Empresa</span>
       <select [(ngModel)]="filterCompany">
@@ -216,6 +231,8 @@
         <option *ngFor="let stack of ecosystemStacks" [value]="stack">{{ stack }}</option>
       </select>
     </label>
+
+    <div class="topbar-filter-modal__divider" aria-hidden="true"></div>
 
     <div class="topbar-filter-modal__actions">
       <button class="topbar-filter-modal__action" type="button" (click)="clearEcosystemFilters()">Limpar</button>

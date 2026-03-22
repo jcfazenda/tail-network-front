@@ -65,13 +65,24 @@
       </section>
 
       <section class="ecosystem-desktop__section">
-        <div class="ecosystem-desktop__section-head" *ngIf="isTalentEcosystemMode">
-          <div>
-            <h2>Vagas compatíveis</h2>
-          </div>
-        </div>
-
         <ng-container *ngIf="isTalentEcosystemMode; else recruiterDesktopJobs">
+          <div class="ecosystem-desktop__tabs-shell ecosystem-desktop__tabs-shell--talent">
+            <div class="ecosystem-desktop__tabs">
+              <button
+                *ngFor="let filter of ecoTopFilters"
+                class="ecosystem-desktop__tab"
+                type="button"
+                [class.ecosystem-desktop__tab--active]="ecoFilter === filter.id"
+                (click)="setEcoFilter(filter.id)"
+              >
+                <span class="material-symbols-rounded" *ngIf="ecoFilterIcon(filter.id)" aria-hidden="true">
+                  {{ ecoFilterIcon(filter.id) }}
+                </span>
+                <span>{{ filter.label }}</span>
+              </button>
+            </div>
+          </div>
+
           <div class="ecosystem-desktop__jobs-grid" *ngIf="talentCompatibleJobs.length; else desktopEmptyState">
             <article
               class="ecosystem-desktop__job-card"
@@ -120,19 +131,33 @@
         </ng-container>
 
         <ng-template #recruiterDesktopJobs>
-          <div class="ecosystem-desktop__tabs">
-            <button
-              *ngFor="let filter of ecoTopFilters"
-              class="ecosystem-desktop__tab"
-              type="button"
-              [class.ecosystem-desktop__tab--active]="ecoFilter === filter.id"
-              (click)="setEcoFilter(filter.id)"
-            >
-              <span class="material-symbols-rounded" *ngIf="ecoFilterIcon(filter.id)" aria-hidden="true">
-                {{ ecoFilterIcon(filter.id) }}
-              </span>
-              <span>{{ filter.label }}</span>
-            </button>
+          <div class="ecosystem-desktop__board-head">
+            <div class="ecosystem-desktop__board-summary">
+              <article class="ecosystem-desktop__board-kpi" *ngFor="let item of recruiterBoardSummary">
+                <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
+                <div class="ecosystem-desktop__board-kpi-copy">
+                  <strong>{{ item.value }}</strong>
+                  <small>{{ item.suffix }}</small>
+                </div>
+              </article>
+            </div>
+
+            <div class="ecosystem-desktop__tabs-shell">
+              <div class="ecosystem-desktop__tabs">
+                <button
+                  *ngFor="let filter of ecoTopFilters"
+                  class="ecosystem-desktop__tab"
+                  type="button"
+                  [class.ecosystem-desktop__tab--active]="ecoFilter === filter.id"
+                  (click)="setEcoFilter(filter.id)"
+                >
+                  <span class="material-symbols-rounded" *ngIf="ecoFilterIcon(filter.id)" aria-hidden="true">
+                    {{ ecoFilterIcon(filter.id) }}
+                  </span>
+                  <span>{{ filter.label }}</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <div class="ecosystem-desktop__jobs-grid" *ngIf="ecoFilteredJobs.length; else desktopEmptyState">

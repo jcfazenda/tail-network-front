@@ -694,10 +694,70 @@
   gap: 8px;
 }
 
+.topbar-filter-modal__field--chips{
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
 .topbar-filter-modal__field span{
   color: #6c7a8f;
   font-size: 12px;
   font-weight: 700;
+}
+
+.topbar-filter-modal__chips{
+  display: grid;
+  gap: 10px;
+}
+
+.topbar-filter-modal__chip{
+  min-height: 44px;
+  width: 100%;
+  padding: 0 14px 0 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(214, 222, 231, 0.96);
+  background: rgba(247, 248, 251, 0.98);
+  color: #546174;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.topbar-filter-modal__chip--active{
+  border-color: rgba(214, 126, 19, 0.24);
+  background: linear-gradient(180deg, rgba(255, 242, 226, 0.98), rgba(255, 234, 205, 0.98));
+  color: #9a5b12;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 8px 18px rgba(214, 126, 19, 0.14);
+}
+
+.topbar-filter-modal__chip-label{
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 12px;
+}
+
+.topbar-filter-modal__chip-count{
+  flex: 0 0 auto;
+  min-width: 28px;
+  text-align: right;
+}
+
+.topbar-filter-modal__divider{
+  width: 100%;
+  border-bottom: 1px dashed rgba(214, 126, 19, 0.34);
+  margin: 2px 0 2px;
 }
 
 .topbar-filter-modal__field select{
