@@ -5,6 +5,7 @@ import { RecruiterDirectoryService } from '../recruiter/recruiter-directory.serv
 import { VagasMockService } from '../vagas/data/vagas-mock.service';
 import { BrowserStorageService } from '../core/storage/browser-storage.service';
 import { AuthSyncApiService } from './auth-sync-api.service';
+import { TalentDirectoryService } from '../talent/talent-directory.service';
 
 export type RecruiterInviteDraft = {
   name: string;
@@ -63,6 +64,7 @@ export class MockAuthService {
     private readonly companyDirectoryService: EmpresaDirectoryService,
     private readonly recruiterDirectoryService: RecruiterDirectoryService,
     private readonly vagasMockService: VagasMockService,
+    private readonly talentDirectoryService: TalentDirectoryService,
   ) {
     this.bootstrapFreshStart();
     const session = this.readSession();
@@ -322,6 +324,7 @@ export class MockAuthService {
 
     const nextAccounts = [...this.loadAccounts(), nextAccount];
     this.persistAccounts(nextAccounts);
+    this.syncTalentDirectory(nextAccount);
     void this.authSyncApi.writeAll(nextAccounts);
     return nextAccount;
   }
@@ -376,7 +379,22 @@ export class MockAuthService {
     const storage = this.getStorage();
     storage?.setItem(this.sessionStorageKey, JSON.stringify(session));
     this.syncRecruiterWorkspace(session);
+    this.syncTalentDirectory(session);
     this.sessionSubject.next(session);
+  }
+
+  private syncTalentDirectory(session: Pick<AuthSession, 'name' | 'email' | 'location' | 'canUseTalent' | 'canUseRecruiter'> | null): void {
+    if (!session || session.canUseTalent !== true || session.canUseRecruiter === true) {
+      return;
+    }
+
+    this.talentDirectoryService.upsertTalent({
+      name: session.name,
+      email: session.email,
+      location: session.location?.trim() || 'Rio de Janeiro - RJ',
+      visibleInEcosystem: true,
+      availableForHiring: true,
+    });
   }
 
   private ensureDefaultMockAccess(): void {

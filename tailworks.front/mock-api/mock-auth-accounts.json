@@ -29,5 +29,14 @@
     "canUseRecruiter": false,
     "canUseTalent": true,
     "location": "Rio de Janeiro - RJ"
+  },
+  {
+    "id": "auth-talent-1774196047054",
+    "name": "Thais Talento",
+    "email": "thais@gmail.com",
+    "password": "thais@56",
+    "canUseRecruiter": false,
+    "canUseTalent": true,
+    "location": "Rio de Janeiro - RJ"
   }
 ]

@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
-import { CandidateStage, MockJobRecord, TechStackItem, WorkModel } from '../../vagas/data/vagas.models';
+import { CandidateStage, MockJobCandidate, MockJobRecord, TechStackItem, WorkModel } from '../../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
 import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.service';
 import { EcosystemSearchService } from '../../core/layout/ecosystem-search.service';
@@ -11,6 +11,7 @@ import { BrowserStorageService } from '../../core/storage/browser-storage.servic
 import { MatchExperienceSignal, MatchScoreBreakdown, MatchTalentProfile } from '../../core/matching/match-domain.models';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { EcossistemaMobileComponent } from './ecossistema-mobile/ecossistema-mobile.component';
+import { TalentDirectoryService } from '../../talent/talent-directory.service';
 
 type TalentEcoFilter = 'radar' | 'applications';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -85,6 +86,14 @@ type TalentCompatibleJobView = {
   missingStacks: TechStackItem[];
 };
 
+type JobCardTalentRow = {
+  name: string;
+  location: string;
+  role: string;
+  avatar: string;
+  match: number;
+};
+
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
@@ -100,6 +109,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly ecosystemSearchService = inject(EcosystemSearchService);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly matchDomainService = inject(MatchDomainService);
+  private readonly talentDirectoryService = inject(TalentDirectoryService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
@@ -107,6 +117,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private hiredAutoScrollInFlight = false;
   private lastManualHiredInteractionAt = 0;
   private resizeListener?: () => void;
+  private readonly flippedJobCardIds = new Set<string>();
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
@@ -260,6 +271,20 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   get mobileVisibleHiredCards(): HiredSpotlightCard[] {
     const pages = this.mobileHiredPages;
     return pages[this.activeHiredIndex] ?? pages[0] ?? [];
+  }
+
+  get desktopVisibleHiredCards(): HiredSpotlightCard[] {
+    const cards = this.mobileHiredSpotlights;
+    if (!cards.length) {
+      return [];
+    }
+
+    const visibleCount = typeof window !== 'undefined' && window.innerWidth >= 1180 ? 3 : 2;
+    const startIndex = this.activeHiredIndex % cards.length;
+
+    return Array.from({ length: Math.min(visibleCount, cards.length) }, (_item, index) => (
+      cards[(startIndex + index) % cards.length]
+    ));
   }
 
   get activeHiringCopy() {
@@ -928,6 +953,141 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     }
 
     return `R$ ${value}`;
+  }
+
+  jobCardSalary(job: MockJobRecord): string | null {
+    if (job.showSalaryRangeInCard === false) {
+      return null;
+    }
+
+    return this.formatJobSalary(job.salaryRange);
+  }
+
+  jobInteractionAvatars(job: MockJobRecord): string[] {
+    const directAvatars = (job.avatars ?? []).map((item) => item?.trim()).filter(Boolean);
+    if (directAvatars.length) {
+      return directAvatars.slice(0, 3);
+    }
+
+    return (job.candidates ?? [])
+      .map((candidate) => candidate.avatar?.trim())
+      .filter((avatar): avatar is string => !!avatar)
+      .slice(0, 3);
+  }
+
+  jobInteractionExtraCount(job: MockJobRecord): number {
+    const directCount = Math.max(0, job.extraCount ?? 0);
+    if (directCount > 0) {
+      return directCount;
+    }
+
+    const totalCandidates = job.candidates?.length ?? 0;
+    return Math.max(0, totalCandidates - this.jobInteractionAvatars(job).length);
+  }
+
+  isJobCardFlipped(job: MockJobRecord): boolean {
+    return this.flippedJobCardIds.has(job.id);
+  }
+
+  toggleJobCardFlip(job: MockJobRecord): void {
+    if (this.flippedJobCardIds.has(job.id)) {
+      this.flippedJobCardIds.delete(job.id);
+    } else {
+      this.flippedJobCardIds.add(job.id);
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  jobCardCandidates(job: MockJobRecord): MockJobCandidate[] {
+    const candidates = job.candidates ?? [];
+    const primary = candidates.filter((candidate) => !candidate.radarOnly && candidate.stage !== 'radar');
+    const fallbackRadar = candidates.filter((candidate) => candidate.radarOnly || candidate.stage === 'radar');
+    const source = primary.length ? primary : fallbackRadar;
+
+    return [...source]
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .slice(0, 4);
+  }
+
+  jobCardTalentRows(job: MockJobRecord): JobCardTalentRow[] {
+    const candidates = this.jobCardCandidates(job);
+    if (candidates.length) {
+      return candidates.map((candidate) => ({
+        name: candidate.name,
+        location: candidate.location?.trim() || 'Brasil',
+        role: candidate.role,
+        avatar: candidate.avatar,
+        match: candidate.match,
+      }));
+    }
+
+    const jobProfile = this.matchDomainService.buildJobProfile({
+      techStack: job.techStack,
+      seniority: job.seniority,
+      responsibilitySections: job.responsibilitySections,
+    });
+
+    if (!jobProfile.requiredRepoIds.length) {
+      return [];
+    }
+
+    return this.talentDirectoryService.listTalents()
+      .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring)
+      .map((talent) => {
+        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, { stackScores: talent.stacks });
+        return {
+          name: talent.name,
+          location: talent.location,
+          role: this.jobRadarTalentRole(job, talent.stacks, score.matchedRepoIds),
+          avatar: talent.avatarUrl,
+          match: score.overallScore,
+        };
+      })
+      .filter((talent) => talent.match >= 45)
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .slice(0, 4);
+  }
+
+  private jobRadarTalentRole(job: MockJobRecord, stackScores: Record<string, number>, matchedRepoIds: string[]): string {
+    const matchedRepoSet = new Set(matchedRepoIds);
+    const preferredJobStack = job.techStack.find((stack) =>
+      this.matchDomainService.mapTechLabelsToRepoIds([stack.name]).some((repoId) => matchedRepoSet.has(repoId)),
+    );
+
+    if (preferredJobStack?.name?.trim()) {
+      return preferredJobStack.name.trim();
+    }
+
+    const strongestTalentRepoId = Object.entries(stackScores)
+      .sort((left, right) => right[1] - left[1])[0]?.[0];
+
+    if (strongestTalentRepoId) {
+      return this.prettyTechRepoLabel(strongestTalentRepoId);
+    }
+
+    return `${job.seniority} ${job.title}`.trim();
+  }
+
+  private prettyTechRepoLabel(repoId: string): string {
+    const normalized = repoId.replace(/^repo:/, '');
+
+    if (normalized === 'dotnet') {
+      return '.NET';
+    }
+
+    if (normalized === 'csharp') {
+      return 'C#';
+    }
+
+    if (normalized === 'gcp') {
+      return 'Google Cloud';
+    }
+
+    return normalized
+      .split('-')
+      .map((part) => part ? `${part.charAt(0).toUpperCase()}${part.slice(1)}` : part)
+      .join(' ');
   }
 
   private refreshJobs(): void {

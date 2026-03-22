@@ -57,46 +57,25 @@ export class TalentDirectoryService {
   ensureSeeded(): void {
     const existing = this.load();
     if (existing.length) {
-      // Se o usuário já tinha um diretório "seedado" antigo (ex: dezenas de *@tailworks.local),
-      // a intenção agora é refletir somente talentos realmente cadastrados.
-      const hasAnyRealEmail = existing.some((item) => !item.email.toLocaleLowerCase('pt-BR').endsWith('@tailworks.local'));
-      const demoOnly = !hasAnyRealEmail;
+      const allowedSeeds = new Set(['janaina@gmail.com', 'thais@gmail.com']);
+      const hasLegacyDemoOnly = existing.every((item) => item.email.toLocaleLowerCase('pt-BR').endsWith('@tailworks.local'));
 
-      if (demoOnly && existing.length > 1) {
-        const breno = existing.find((item) => item.email.toLocaleLowerCase('pt-BR') === 'breno@tailworks.local')
-          ?? existing[0];
-        this.persist([breno]);
+      if (hasLegacyDemoOnly) {
+        this.persist(this.buildSeedList());
+        return;
+      }
+
+      const filtered = existing.filter((item) => !item.email.toLocaleLowerCase('pt-BR').endsWith('@tailworks.local'));
+      const next = filtered.filter((item) => allowedSeeds.has(item.email.toLocaleLowerCase('pt-BR')));
+
+      if (next.length !== existing.length && next.length > 0) {
+        this.persist(next);
       }
 
       return;
     }
 
-    const now = new Date().toISOString();
-
-    const seed: TalentRecord[] = [
-      {
-        id: 'talent-breno',
-        name: 'Breno Almeida',
-        email: 'breno@tailworks.local',
-        location: 'São Paulo - SP',
-        avatarUrl: this.defaultAvatarUrl,
-        visibleInEcosystem: true,
-        availableForHiring: true,
-        stacks: {
-          'repo:dotnet': 78,
-          'repo:csharp': 76,
-          'repo:aspnet-core': 70,
-          'repo:entity-framework': 62,
-          'repo:rest-api': 74,
-          'repo:sql-server': 66,
-          'repo:azure': 48,
-          'repo:docker': 44,
-        },
-        updatedAt: now,
-      },
-    ];
-
-    this.persist(seed);
+    this.persist(this.buildSeedList());
   }
 
   private load(): TalentRecord[] {
@@ -127,5 +106,49 @@ export class TalentDirectoryService {
 
   private persist(list: TalentRecord[]): void {
     this.repository.writeAll(list);
+  }
+
+  private buildSeedList(): TalentRecord[] {
+    const now = new Date().toISOString();
+
+    return [
+      {
+        id: 'talent-janaina',
+        name: 'Janaina Talento',
+        email: 'janaina@gmail.com',
+        location: 'Rio de Janeiro - RJ',
+        avatarUrl: this.defaultAvatarUrl,
+        visibleInEcosystem: true,
+        availableForHiring: true,
+        stacks: {
+          'repo:dotnet': 82,
+          'repo:csharp': 80,
+          'repo:aspnet-core': 72,
+          'repo:entity-framework': 67,
+          'repo:rest-api': 76,
+          'repo:sql-server': 71,
+          'repo:azure': 56,
+        },
+        updatedAt: now,
+      },
+      {
+        id: 'talent-thais',
+        name: 'Thais Talento',
+        email: 'thais@gmail.com',
+        location: 'São Paulo - SP',
+        avatarUrl: this.defaultAvatarUrl,
+        visibleInEcosystem: true,
+        availableForHiring: true,
+        stacks: {
+          'repo:react': 84,
+          'repo:typescript': 81,
+          'repo:javascript': 76,
+          'repo:html': 74,
+          'repo:css': 72,
+          'repo:nextjs': 61,
+        },
+        updatedAt: now,
+      },
+    ];
   }
 }

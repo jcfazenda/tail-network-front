@@ -1,5 +1,122 @@
 [
   {
+    "id": "38e54063-36a1-4791-a98a-46a53a4c7f0f",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "SERGIPE - SE",
+    "match": 68,
+    "talents": 1,
+    "radarCount": 1,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-03-22T15:37:49.137Z",
+    "updatedAt": "2026-03-22T15:37:49.137Z",
+    "title": "Backend .NET Sênior",
+    "company": "Banco Itaú",
+    "companyLogoUrl": "data:image/webp;base64,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",
+    "homeAnnouncementImageUrl": "",
+    "location": "Sergipe - SE",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "PJ",
+    "salaryRange": "16.522,40",
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 80
+      },
+      {
+        "name": "Entity Framework",
+        "match": 65
+      },
+      {
+        "name": "REST API",
+        "match": 75
+      },
+      {
+        "name": "SQL Server",
+        "match": 70
+      },
+      {
+        "name": "Azure",
+        "match": 40
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ]
+  },
+  {
     "id": "1fdb3199-71f4-4c3a-a56d-ae18d6a50a06",
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
