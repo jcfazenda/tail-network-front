@@ -17,12 +17,16 @@ export class TalentSystemSeedService {
   private readonly authService = inject(MockAuthService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
 
-  seedTalentsFromLab(): { accounts: number; profiles: number } {
+  async seedTalentsFromLab(): Promise<{ accounts: number; profiles: number }> {
     const candidates = this.matchingLabService.getDataset().candidates;
+    if (!candidates.length) {
+      return { accounts: 0, profiles: 0 };
+    }
+
     const profiles = candidates.map((candidate, index) => this.buildSeededTalentProfile(candidate, index));
     const accounts = profiles.map((profile, index) => this.toSignupDraft(profile, index));
     const accountCount = this.authService.seedTalentAccounts(accounts);
-    const profileCount = this.talentProfileStore.upsertProfiles(profiles);
+    const profileCount = await this.talentProfileStore.upsertProfiles(profiles);
     return { accounts: accountCount, profiles: profileCount };
   }
 
@@ -88,6 +92,7 @@ export class TalentSystemSeedService {
       sector: this.sectorFromRole(experience.role),
       actuation: 78 - (index * 6),
       appliedStacks: experience.stackIds.map((stackId) => ({
+        repoId: this.repoId(stackId),
         name: this.stackName(stackId),
         knowledge: this.stackKnowledge(candidate, stackId),
         description: `Uso prático de ${this.stackName(stackId)} em contexto real.`,
@@ -103,11 +108,13 @@ export class TalentSystemSeedService {
   }
 
   private buildFillerExperiences(candidate: MatchLabCandidate, missing: number): SeededExperienceDraft[] {
+    const fallbackCompanies = ['Accenture', 'CI&T', 'Stefanini', 'Capgemini', 'TIVIT'];
+
     return Array.from({ length: missing }, (_value, index) => {
       const primaryStacks = candidate.stacks.slice(0, 2);
       return {
         id: `${candidate.id}-filler-${index + 1}`,
-        company: `Base ${candidate.name.split(' ')[0]} ${index + 1}`,
+        company: fallbackCompanies[index % fallbackCompanies.length],
         role: `${candidate.seniority} Developer`,
         workModel: 'Presencial',
         startMonth: 'Jan',
@@ -122,6 +129,7 @@ export class TalentSystemSeedService {
         sector: 'Produto',
         actuation: 68 - (index * 5),
         appliedStacks: primaryStacks.map((stack) => ({
+          repoId: this.repoId(stack.stackId),
           name: stack.stackName,
           knowledge: stack.percent,
           description: `Atuação prática com ${stack.stackName}.`,

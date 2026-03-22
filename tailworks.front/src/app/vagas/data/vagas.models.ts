@@ -91,6 +91,7 @@ export interface MockJobCandidate {
 
 export interface MockJobRecord extends MockJobDraft {
   id: string;
+  code?: string;
   createdByRecruiterId?: string;
   createdByRecruiterName?: string;
   createdByRecruiterRole?: string;

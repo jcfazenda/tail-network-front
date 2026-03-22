@@ -53,7 +53,7 @@ export class MockAuthService {
   private readonly accountsStorageKey = 'tailworks:auth-accounts:v1';
   private readonly sessionStorageKey = 'tailworks:auth-session:v1';
   private readonly bootstrapStorageKey = 'tailworks:auth-bootstrap:v1';
-  private readonly defaultRecruiterEmail = 'julio.fazenda@itau.com.br';
+  private readonly defaultRecruiterEmail = 'julio@tailworks.com';
   private readonly defaultRecruiterPassword = 'julio@56';
   private readonly sessionSubject = new BehaviorSubject<AuthSession | null>(null);
   private readonly browserStorage = inject(BrowserStorageService);
@@ -103,6 +103,7 @@ export class MockAuthService {
       'tailworks:radar-categories-selection:v1',
       'tailworks:candidate-experience-formation-copy:v1',
       'tailworks:candidate-experience-logo-draft:v1',
+      'tailworks:matching-lab-dataset:v1',
       this.sessionStorageKey,
     ].forEach((key) => storage.removeItem(key));
 
@@ -177,7 +178,7 @@ export class MockAuthService {
     }
 
     const session = this.toSession(account);
-    this.persistSession(session);
+    await this.persistSession(session);
     return session;
   }
 
@@ -198,7 +199,7 @@ export class MockAuthService {
     }
 
     const session = this.toSession(account);
-    this.persistSession(session);
+    await this.persistSession(session);
     return session;
   }
 
@@ -334,6 +335,22 @@ export class MockAuthService {
     return nextAccount;
   }
 
+  listTalentAccounts(): AuthAccount[] {
+    return this.loadAccounts()
+      .filter((account) => account.canUseTalent && !account.canUseRecruiter)
+      .sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+  }
+
+  async syncAccountsFromRemote(): Promise<number> {
+    const remoteAccounts = await this.authSyncApi.readAll();
+    if (!remoteAccounts?.length) {
+      return this.loadAccounts().length;
+    }
+
+    this.persistAccounts(remoteAccounts.map((item) => this.normalizeAccount(item)));
+    return remoteAccounts.length;
+  }
+
   seedTalentAccounts(drafts: TalentSignupDraft[]): number {
     const nextAccounts = [...this.loadAccounts()];
 
@@ -386,6 +403,7 @@ export class MockAuthService {
       'tailworks:radar-categories-selection:v1',
       'tailworks:candidate-experience-formation-copy:v1',
       'tailworks:candidate-experience-logo-draft:v1',
+      'tailworks:matching-lab-dataset:v1',
     ].forEach((key) => storage.removeItem(key));
 
     storage.setItem('tailworks:recruiter-directory:v1', '[]');
@@ -413,21 +431,21 @@ export class MockAuthService {
     return session;
   }
 
-  private persistSession(session: AuthSession): void {
+  private async persistSession(session: AuthSession): Promise<void> {
     const storage = this.getStorage();
     storage?.setItem(this.sessionStorageKey, JSON.stringify(session));
     this.syncRecruiterWorkspace(session);
     this.syncTalentDirectory(session);
-    this.syncTalentWorkspace(session);
+    await this.syncTalentWorkspace(session);
     this.sessionSubject.next(session);
   }
 
-  private syncTalentWorkspace(session: AuthSession | null): void {
+  private async syncTalentWorkspace(session: AuthSession | null): Promise<void> {
     if (!session?.email || session.canUseTalent !== true || session.canUseRecruiter === true) {
       return;
     }
 
-    this.talentProfileStore.restoreProfileToCurrentWorkspace(session.email);
+    await this.talentProfileStore.restoreProfileToCurrentWorkspace(session.email);
   }
 
   private syncTalentDirectory(session: Pick<AuthSession, 'name' | 'email' | 'location' | 'canUseTalent' | 'canUseRecruiter'> | null): void {

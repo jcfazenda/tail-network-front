@@ -770,6 +770,7 @@ export class VagasMockService {
 
     return this.decorateTalentVisibility({
       id: existing?.id ?? this.createId(),
+      code: existing?.code ?? this.createJobCode(this.loadJobs(), existing?.id),
       createdByRecruiterId: existing?.createdByRecruiterId ?? recruiterIdentity.id,
       createdByRecruiterName: existing?.createdByRecruiterName ?? recruiterIdentity.name,
       createdByRecruiterRole: existing?.createdByRecruiterRole ?? recruiterIdentity.role,
@@ -810,6 +811,7 @@ export class VagasMockService {
     const acceptedJobId = this.findTalentAcceptedJobId(records);
     const normalized = records.map((record) => ({
       ...record,
+      code: record.code?.trim() || this.createJobCode(records, record.id),
       hiringDocuments: this.normalizeHiringDocuments(record.hiringDocuments),
       showSalaryRangeInCard: record.showSalaryRangeInCard ?? true,
       talentDecision: record.talentDecision,
@@ -976,6 +978,22 @@ export class VagasMockService {
     }
 
     return `vaga-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+  }
+
+  private createJobCode(existingJobs: MockJobRecord[], currentId?: string): string {
+    const usedCodes = new Set(
+      existingJobs
+        .filter((job) => job.id !== currentId)
+        .map((job) => job.code?.trim())
+        .filter((value): value is string => !!value),
+    );
+
+    let sequence = 1;
+    while (usedCodes.has(`VG-${String(sequence).padStart(4, '0')}`)) {
+      sequence += 1;
+    }
+
+    return `VG-${String(sequence).padStart(4, '0')}`;
   }
 
   private ensureRecruiterMetadata(job: MockJobRecord): MockJobRecord {

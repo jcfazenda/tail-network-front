@@ -1,42 +1,13 @@
 [
   {
-    "id": "auth-julio-recutador-sr",
-    "name": "Julio Recutador Sr.",
-    "email": "julio@tailworks.com",
+    "id": "auth-julio-fazenda-recruiter",
+    "name": "Julio Fazenda",
+    "email": "julio.fazenda@itau.com.br",
     "password": "julio@56",
     "canUseRecruiter": true,
     "canUseTalent": true,
-    "recruiterId": "julio-recutador-sr",
-    "company": "Criatti SA",
-    "location": "Rio de Janeiro - RJ"
-  },
-  {
-    "id": "auth-breno-recrutador-jr",
-    "name": "Breno Recrutador Jr.",
-    "email": "breno@tailworks.com",
-    "password": "breno@56",
-    "canUseRecruiter": true,
-    "canUseTalent": true,
-    "recruiterId": "breno-recrutador-jr",
-    "company": "Criatti SA",
-    "location": "Rio de Janeiro - RJ"
-  },
-  {
-    "id": "auth-talent-1774192243409",
-    "name": "Janaina Talento",
-    "email": "janaina@gmail.com",
-    "password": "janaina@56",
-    "canUseRecruiter": false,
-    "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
-  },
-  {
-    "id": "auth-talent-1774196047054",
-    "name": "Thais Talento",
-    "email": "thais@gmail.com",
-    "password": "thais@56",
-    "canUseRecruiter": false,
-    "canUseTalent": true,
+    "recruiterId": "julio-fazenda-recruiter",
+    "company": "Banco Itaú",
     "location": "Rio de Janeiro - RJ"
   }
 ]

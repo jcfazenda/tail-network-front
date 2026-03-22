@@ -123,6 +123,15 @@
                         >
                           <span class="material-symbols-rounded" aria-hidden="true">search</span>
                         </button>
+                        <button
+                          class="candidate-experience__stack-item-info"
+                          type="button"
+                          (click)="toggleExperienceStackGuide(index)"
+                          [class.candidate-experience__stack-item-info--active]="expandedExperienceGuideIndex === index"
+                          [attr.aria-label]="(expandedExperienceGuideIndex === index ? 'Ocultar' : 'Mostrar') + ' guia de ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">help</span>
+                        </button>
                       </div>
 
                       <div class="candidate-experience__stack-item-progress">
@@ -157,6 +166,90 @@
                         *ngIf="expandedExperienceStackDescriptionIndex === index && stack.description"
                         [innerHTML]="stack.description"
                       ></div>
+
+                      <div class="candidate-experience__stack-guide" *ngIf="expandedExperienceGuideIndex === index">
+                        <div class="candidate-experience__stack-guide-top">
+                          <span class="candidate-experience__stack-guide-name">{{ stack.name }}</span>
+                          <div class="candidate-experience__stack-guide-meter">
+                            <span>{{ stack.knowledge }}%</span>
+                            <span aria-hidden="true">→</span>
+                            <span>{{ percentLevelLabel(stack.knowledge) }}</span>
+                          </div>
+                        </div>
+
+                        <div class="candidate-experience__stack-guide-tagline" *ngIf="getExperienceGuideTagline(stack)">
+                          {{ getExperienceGuideTagline(stack) }}
+                        </div>
+
+                        <ng-container *ngIf="getExperienceStructuredGuide(stack) as guide">
+                          <div class="candidate-experience__stack-guide-section">
+                            <strong>O que significa dominar {{ stack.name }}</strong>
+                            <ul>
+                              <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
+                            </ul>
+                          </div>
+                        </ng-container>
+
+                        <div class="candidate-experience__stack-guide-section">
+                          <strong>Esperamos de você</strong>
+                          <ul>
+                            <li *ngFor="let row of getExperienceGuideExpectations(stack)">{{ row }}</li>
+                          </ul>
+                        </div>
+
+                        <ng-container *ngIf="getExperienceGuideSignals(stack) as signals">
+                          <div class="candidate-experience__stack-guide-section" *ngIf="signals.inTier.length">
+                            <strong>Sinais de que você está nesse nível</strong>
+                            <ul>
+                              <li *ngFor="let row of signals.inTier">{{ row }}</li>
+                            </ul>
+                          </div>
+
+                          <div class="candidate-experience__stack-guide-section" *ngIf="signals.notYet.length">
+                            <strong>Sinais de que ainda não está</strong>
+                            <ul>
+                              <li *ngFor="let row of signals.notYet">{{ row }}</li>
+                            </ul>
+                          </div>
+                        </ng-container>
+
+                        <div class="candidate-experience__stack-guide-cert">
+                          <div class="candidate-experience__stack-guide-cert-copy">
+                            <strong>Dica: você tem certificado?</strong>
+                            <span *ngIf="getExperienceCertificate(stack) as cert; else certEmpty">
+                              {{ cert.name }}
+                            </span>
+                            <ng-template #certEmpty>
+                              <span>Anexe um certificado dessa stack para reforçar sua posição no Radar.</span>
+                            </ng-template>
+                          </div>
+
+                          <div class="candidate-experience__stack-guide-cert-actions">
+                            <input
+                              #experienceCertInput
+                              type="file"
+                              hidden
+                              accept=".pdf,image/jpeg,image/png,image/webp"
+                              (change)="onExperienceStackCertificateSelected(index, $event)"
+                            />
+                            <button
+                              class="candidate-experience__stack-guide-cert-button"
+                              type="button"
+                              (click)="experienceCertInput.click()"
+                            >
+                              Anexar certificado
+                            </button>
+                            <button
+                              *ngIf="getExperienceCertificate(stack)"
+                              class="candidate-experience__stack-guide-cert-button candidate-experience__stack-guide-cert-button--ghost"
+                              type="button"
+                              (click)="clearExperienceStackCertificate(index)"
+                            >
+                              Remover
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -429,11 +522,12 @@
     <div class="candidate-experience__modal-body">
       <label class="candidate-experience__modal-field" *ngIf="editingExperienceStackIndex === null; else experienceStackReadonly">
         <span class="candidate-experience__modal-label">Stack</span>
-        <input
-          type="text"
-          [(ngModel)]="experienceStackDraftName"
-          placeholder="Ex: Kubernetes"
-        />
+        <select [(ngModel)]="experienceStackDraftRepoId">
+          <option value="">Selecione uma stack</option>
+          <option *ngFor="let option of availableExperienceStackOptions" [value]="option.id">
+            {{ option.name }}
+          </option>
+        </select>
       </label>
 
       <label class="candidate-experience__modal-field">

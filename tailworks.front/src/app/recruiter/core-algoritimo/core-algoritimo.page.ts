@@ -1,10 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthFacade } from '../../core/facades/auth.facade';
+import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
 import { MatchLabJob, MatchLabJobResult, MatchLabRankingEntry, MatchLabSeniority } from '../../core/matching-lab/matching-lab.models';
 import { TalentSystemSeedService } from '../../talent/talent-system-seed.service';
+import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.service';
+import { AuthAccount } from '../../auth/mock-auth.service';
+import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type ScoreBand = 'all' | 'high' | 'medium' | 'low';
 
@@ -16,17 +21,44 @@ type ScoreBand = 'all' | 'high' | 'medium' | 'low';
   styleUrls: ['./core-algoritimo.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CoreAlgoritimoPage {
+export class CoreAlgoritimoPage implements OnInit, OnDestroy {
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly authService = inject(AuthFacade);
+  private readonly jobsFacade = inject(JobsFacade);
+  private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly matchingLabService = inject(MatchingLabService);
   private readonly talentSystemSeedService = inject(TalentSystemSeedService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
 
-  readonly dataset = this.matchingLabService.getDataset();
+  dataset = this.matchingLabService.getDataset();
   selectedJobId = this.dataset.jobs[0]?.id ?? '';
   searchTerm = '';
   candidateSearch = '';
   seniorityFilter: MatchLabSeniority | 'all' = 'all';
   scoreBand: ScoreBand = 'all';
   seedStatus = '';
+  loginStatus = '';
+  private refreshTimer: number | null = null;
+
+  ngOnInit(): void {
+    void this.refreshDatasetFromProfiles();
+    if (typeof window !== 'undefined') {
+      this.refreshTimer = window.setInterval(() => {
+        void this.refreshDatasetFromProfiles(true);
+      }, 4000);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshTimer !== null && typeof window !== 'undefined') {
+      window.clearInterval(this.refreshTimer);
+    }
+  }
+
+  get hasDataset(): boolean {
+    return this.dataset.jobs.length > 0 && this.dataset.candidates.length > 0;
+  }
 
   get jobs(): MatchLabJob[] {
     const query = this.searchTerm.trim().toLocaleLowerCase('pt-BR');
@@ -77,6 +109,30 @@ export class CoreAlgoritimoPage {
     });
   }
 
+  get talentAccounts(): AuthAccount[] {
+    return this.authService.listTalentAccounts().slice(0, 24);
+  }
+
+  talentAccountForCandidate(entry: MatchLabRankingEntry): AuthAccount | null {
+    const seededEmail = this.seededTalentEmail(entry);
+    const byEmail = this.authService.listTalentAccounts().find((account) =>
+      account.email.trim().toLocaleLowerCase('pt-BR') === seededEmail,
+    );
+
+    if (byEmail) {
+      return byEmail;
+    }
+
+    const normalizedName = entry.candidate.name.trim().toLocaleLowerCase('pt-BR');
+    return this.authService.listTalentAccounts().find((account) =>
+      account.name.trim().toLocaleLowerCase('pt-BR') === normalizedName,
+    ) ?? null;
+  }
+
+  candidateEmail(entry: MatchLabRankingEntry): string {
+    return this.talentAccountForCandidate(entry)?.email ?? this.seededTalentEmail(entry);
+  }
+
   get strongFitCount(): number {
     return this.selectedResult.ranking.filter((entry) => entry.score >= 80).length;
   }
@@ -102,19 +158,62 @@ export class CoreAlgoritimoPage {
     this.selectedJobId = jobId;
   }
 
-  resetDataset(): void {
-    const next = this.matchingLabService.reset();
-    this.selectedJobId = next.jobs[0]?.id ?? '';
-    this.searchTerm = '';
-    this.candidateSearch = '';
-    this.seniorityFilter = 'all';
-    this.scoreBand = 'all';
+  async resetDataset(): Promise<void> {
+    await this.refreshDatasetFromProfiles(false);
     this.seedStatus = '';
   }
 
-  seedSystemTalents(): void {
-    const result = this.talentSystemSeedService.seedTalentsFromLab();
-    this.seedStatus = `${result.accounts} acessos de talento e ${result.profiles} perfis locais preparados no sistema.`;
+  async seedSystemTalents(): Promise<void> {
+    const generated = this.matchingLabService.generateLocalMass();
+    const result = await this.talentSystemSeedService.seedTalentsFromLab();
+    await this.refreshDatasetFromProfiles(false);
+    this.seedStatus = `${generated.jobs.length} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
+    this.loginStatus = '';
+  }
+
+  private async refreshDatasetFromProfiles(silent = false): Promise<void> {
+    const currentJobId = this.selectedJobId;
+    await this.authService.syncAccountsFromRemote();
+    await this.talentProfileStore.syncFromRemote();
+    const next = this.matchingLabService.reset();
+    this.dataset = next;
+    this.selectedJobId = next.jobs.some((job) => job.id === currentJobId)
+      ? currentJobId
+      : next.jobs[0]?.id ?? '';
+    if (!silent) {
+      this.searchTerm = '';
+      this.candidateSearch = '';
+      this.seniorityFilter = 'all';
+      this.scoreBand = 'all';
+    }
+    this.cdr.markForCheck();
+  }
+
+  async signInAsTalent(account: AuthAccount): Promise<void> {
+    const session = await this.authService.login(account.email, account.password);
+    if (!session) {
+      this.loginStatus = `Não foi possível entrar com ${account.name}.`;
+      return;
+    }
+
+    this.ecosystemEntryService.setMode('talent');
+    this.jobsFacade.signInAsTalent(session.name, session.location);
+    this.loginStatus = `Entrando como ${account.name}.`;
+    void this.router.navigateByUrl('/usuario/ecossistema');
+  }
+
+  async signInAsCandidateEntry(entry: MatchLabRankingEntry): Promise<void> {
+    const account = this.talentAccountForCandidate(entry) ?? {
+      id: `seeded-${entry.candidateId}`,
+      name: entry.candidate.name,
+      email: this.seededTalentEmail(entry),
+      password: this.seededTalentPassword(entry),
+      canUseRecruiter: false,
+      canUseTalent: true,
+      location: entry.candidate.location,
+    };
+
+    await this.signInAsTalent(account);
   }
 
   scoreLabel(score: number): string {
@@ -131,6 +230,42 @@ export class CoreAlgoritimoPage {
     return Math.max(6, Math.min(100, score));
   }
 
+  decisiveStackLabels(entry: MatchLabRankingEntry): string[] {
+    return entry.debug.stackBreakdown
+      .filter((item) => item.band === 'primary' && item.candidatePercent > 0)
+      .sort((left, right) => right.weightedContribution - left.weightedContribution)
+      .slice(0, 3)
+      .map((item) => `${item.stackName} ${item.candidatePercent}%`);
+  }
+
+  currentStackLabels(entry: MatchLabRankingEntry): string[] {
+    return [...entry.candidate.stacks]
+      .sort((left, right) => right.percent - left.percent)
+      .slice(0, 4)
+      .map((item) => `${item.stackName} ${item.percent}%`);
+  }
+
+  experienceStackLabels(entry: MatchLabRankingEntry): string[] {
+    return entry.debug.stackBreakdown
+      .filter((item) => item.candidateExperienceMonths > 0)
+      .sort((left, right) => right.candidateExperienceMonths - left.candidateExperienceMonths)
+      .slice(0, 4)
+      .map((item) => `${item.stackName} ${item.candidateExperienceMonths}m`);
+  }
+
+  sourceTagLabel(item: MatchLabRankingEntry['debug']['stackBreakdown'][number]): string {
+    if (item.candidatePercent > 0 && item.candidateExperienceMonths > 0) {
+      return 'Cadastro + experiência';
+    }
+    if (item.candidateExperienceMonths > 0) {
+      return 'Experiência';
+    }
+    if (item.candidatePercent > 0) {
+      return 'Cadastro';
+    }
+    return 'Sem aderência';
+  }
+
   formatSalary(job: MatchLabJob): string {
     if (!job.salaryMin || !job.salaryMax) {
       return 'R$ sob análise';
@@ -145,5 +280,32 @@ export class CoreAlgoritimoPage {
 
   trackRanking(_index: number, entry: MatchLabRankingEntry): string {
     return entry.candidateId;
+  }
+
+  trackTalentAccount(_index: number, account: AuthAccount): string {
+    return account.id;
+  }
+
+  private seededTalentEmail(entry: MatchLabRankingEntry): string {
+    const index = this.seededTalentIndex(entry);
+    return `${this.slug(entry.candidate.name)}.${index}@talent.local`;
+  }
+
+  private seededTalentPassword(entry: MatchLabRankingEntry): string {
+    return `talento@${String(this.seededTalentIndex(entry)).padStart(3, '0')}`;
+  }
+
+  private seededTalentIndex(entry: MatchLabRankingEntry): number {
+    const match = entry.candidateId.match(/(\d+)$/);
+    return Number(match?.[1] ?? '0');
+  }
+
+  private slug(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('pt-BR')
+      .replace(/[^a-z0-9]+/g, '.')
+      .replace(/^\.+|\.+$/g, '');
   }
 }

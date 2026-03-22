@@ -57,6 +57,14 @@ export class AuthFacade {
     return this.authService.registerTalent(draft);
   }
 
+  listTalentAccounts(): AuthAccount[] {
+    return this.authService.listTalentAccounts();
+  }
+
+  syncAccountsFromRemote(): Promise<number> {
+    return this.authService.syncAccountsFromRemote();
+  }
+
   resetWorkspace(): void {
     this.authService.resetWorkspace();
   }

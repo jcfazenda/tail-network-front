@@ -8,8 +8,8 @@
 
     <div class="core-algoritimo__hero-actions">
       <a class="core-algoritimo__ghost-action" routerLink="/vagas/cadastro">Nova vaga</a>
-      <button class="core-algoritimo__ghost-action" type="button" (click)="seedSystemTalents()">Dar carga</button>
-      <button class="core-algoritimo__primary-action" type="button" (click)="resetDataset()">Regerar massa local</button>
+      <button class="core-algoritimo__ghost-action" type="button" (click)="resetDataset()">Atualizar core</button>
+      <button class="core-algoritimo__primary-action" type="button" (click)="seedSystemTalents()">Gerar massa local</button>
     </div>
   </header>
 
@@ -17,7 +17,18 @@
     {{ seedStatus }}
   </div>
 
-  <section class="core-algoritimo__metrics">
+  <div class="core-algoritimo__status" *ngIf="loginStatus">
+    {{ loginStatus }}
+  </div>
+
+  <section class="core-algoritimo__empty" *ngIf="!hasDataset">
+    <div class="core-algoritimo__empty-copy">
+      <h2>Core zerado</h2>
+      <p>O laboratório está vazio. Clique em <strong>Gerar massa local</strong> para criar vagas, candidatos e acessos reais de talento.</p>
+    </div>
+  </section>
+
+  <section class="core-algoritimo__metrics" *ngIf="hasDataset">
     <article class="core-algoritimo__metric-card">
       <span>Vagas</span>
       <strong>{{ dataset.jobs.length }}</strong>
@@ -40,7 +51,7 @@
     </article>
   </section>
 
-  <section class="core-algoritimo__workspace">
+  <section class="core-algoritimo__workspace" *ngIf="hasDataset">
     <aside class="core-algoritimo__sidebar">
       <div class="core-algoritimo__panel core-algoritimo__panel--sticky">
         <div class="core-algoritimo__panel-head">
@@ -64,7 +75,7 @@
             (click)="selectJob(job.id)"
           >
             <div class="core-algoritimo__job-item-head">
-              <strong>{{ job.title }}</strong>
+              <strong>{{ job.code }} · {{ job.title }}</strong>
               <span>{{ job.seniority }}</span>
             </div>
             <div class="core-algoritimo__job-item-meta">{{ job.company }} · {{ job.location }}</div>
@@ -80,7 +91,7 @@
       <section class="core-algoritimo__panel core-algoritimo__panel--job">
         <div class="core-algoritimo__panel-head">
           <div>
-            <h2>{{ selectedJob.title }}</h2>
+            <h2>{{ selectedJob.code }} · {{ selectedJob.title }}</h2>
             <p>{{ selectedJob.company }} · {{ selectedJob.location }} · {{ selectedJob.workModel }}</p>
           </div>
 
@@ -162,6 +173,29 @@
         </div>
       </section>
 
+      <section class="core-algoritimo__panel core-algoritimo__panel--access">
+        <div class="core-algoritimo__panel-head">
+          <div>
+            <h2>Logar como talento</h2>
+            <p>Entre com um talento seedado para ajustar dados reais do perfil no sistema.</p>
+          </div>
+        </div>
+
+        <div class="core-algoritimo__access-grid">
+          <article class="core-algoritimo__access-card" *ngFor="let account of talentAccounts; trackBy: trackTalentAccount">
+            <div class="core-algoritimo__access-copy">
+              <strong>{{ account.name }}</strong>
+              <span>{{ account.email }}</span>
+              <small>{{ account.password }}</small>
+            </div>
+
+            <button class="core-algoritimo__primary-action" type="button" (click)="signInAsTalent(account)">
+              Entrar como talento
+            </button>
+          </article>
+        </div>
+      </section>
+
       <section class="core-algoritimo__ranking">
         <article class="core-algoritimo__ranking-card" *ngFor="let entry of visibleRanking; trackBy: trackRanking; let idx = index">
           <div class="core-algoritimo__ranking-head">
@@ -169,6 +203,12 @@
               <span class="core-algoritimo__position">#{{ idx + 1 }}</span>
               <h3>{{ entry.candidate.name }}</h3>
               <p>{{ entry.candidate.location }} · {{ entry.candidate.seniority }}</p>
+              <div class="core-algoritimo__candidate-access">
+                <span class="core-algoritimo__candidate-email">{{ candidateEmail(entry) }}</span>
+                <button class="core-algoritimo__ghost-action" type="button" (click)="signInAsCandidateEntry(entry)">
+                  Logar como ele
+                </button>
+              </div>
             </div>
 
             <div class="core-algoritimo__score-badge">
@@ -198,6 +238,35 @@
             </div>
           </div>
 
+          <div class="core-algoritimo__audit-grid">
+            <div class="core-algoritimo__audit-card">
+              <span class="core-algoritimo__audit-label">Stacks decisivas da vaga</span>
+              <div class="core-algoritimo__chips">
+                <span class="core-algoritimo__chip core-algoritimo__chip--primary" *ngFor="let label of decisiveStackLabels(entry)">
+                  {{ label }}
+                </span>
+              </div>
+            </div>
+
+            <div class="core-algoritimo__audit-card">
+              <span class="core-algoritimo__audit-label">Stacks atuais do talento</span>
+              <div class="core-algoritimo__chips">
+                <span class="core-algoritimo__chip" *ngFor="let label of currentStackLabels(entry)">
+                  {{ label }}
+                </span>
+              </div>
+            </div>
+
+            <div class="core-algoritimo__audit-card">
+              <span class="core-algoritimo__audit-label">Experiência prática que pesou</span>
+              <div class="core-algoritimo__chips">
+                <span class="core-algoritimo__chip" *ngFor="let label of experienceStackLabels(entry)">
+                  {{ label }}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div class="core-algoritimo__reason-list">
             <span class="core-algoritimo__reason" *ngFor="let reason of entry.debug.reasons">{{ reason }}</span>
           </div>
@@ -212,7 +281,10 @@
             </div>
 
             <div class="core-algoritimo__breakdown-row" *ngFor="let item of entry.debug.stackBreakdown">
-              <strong>{{ item.stackName }}</strong>
+              <strong>
+                {{ item.stackName }}
+                <small class="core-algoritimo__source-tag">{{ sourceTagLabel(item) }}</small>
+              </strong>
               <span>{{ item.vacancyPercent }}%</span>
               <span>{{ item.candidatePercent }}%</span>
               <span>{{ item.candidateExperienceMonths }}m</span>

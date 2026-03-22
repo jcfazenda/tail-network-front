@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthFacade } from '../../core/facades/auth.facade';
+import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { AlcanceRadarComponent, RadarLegendItem } from '../../vagas/cadastro/alcance-radar/alcance-radar.component';
 import { STACK_KNOWLEDGE_GUIDES, StackGuideTier, StackKnowledgeGuide } from './stack-knowledge-guides';
 
@@ -69,6 +71,21 @@ type FormationCopyDraft = {
   specialization: string;
 };
 
+type ExperienceDraft = {
+  startMonth?: string;
+  startYear?: string;
+  endMonth?: string;
+  endYear?: string;
+  currentlyWorkingHere?: boolean;
+  actuation?: number;
+  appliedStacks?: Array<{
+    repoId?: string;
+    name?: string;
+    knowledge?: number;
+    description?: string;
+  }>;
+};
+
 @Component({
   standalone: true,
   selector: 'app-stacks-page',
@@ -84,6 +101,7 @@ type FormationCopyDraft = {
 })
 export class StacksPage implements OnInit {
   private static readonly storageKey = 'tailworks:candidate-stacks-draft:v5';
+  private static readonly experiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
   private static readonly legacyV4StorageKey = 'tailworks:candidate-stacks-draft:v4';
   private static readonly legacyV3StorageKey = 'tailworks:candidate-stacks-draft:v3';
   private static readonly legacyStorageKey = 'tailworks:candidate-stacks-draft:v2';
@@ -92,6 +110,8 @@ export class StacksPage implements OnInit {
   private static readonly stackDescriptionMaxLength = 920;
 
   private readonly router = inject(Router);
+  private readonly authFacade = inject(AuthFacade);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
 
   readonly radarPreviewScore = 89;
   readonly radarPreviewItems: RadarLegendItem[] = [
@@ -349,6 +369,10 @@ export class StacksPage implements OnInit {
     return this.formationCopy.specialization;
   }
 
+  get visualStacks(): StackChip[] {
+    return this.primaryStacks;
+  }
+
   get stackModalTitle(): string {
     return this.editingStackIndex === null ? 'Adicionar Stack' : 'Editar Descrição';
   }
@@ -513,109 +537,139 @@ export class StacksPage implements OnInit {
   ngOnInit(): void {
     this.restoreBasicDraft();
     this.restoreFormationCopy();
+    this.restoreVisualStacksFromExperiences();
+  }
 
-    const stored = localStorage.getItem(StacksPage.storageKey);
-
-    if (stored) {
-      try {
-        const parsedDraft = JSON.parse(stored) as Partial<StoredStacksDraft>;
-        const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
-        const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
-        const restoredPrimary = primary
-          .filter((item): item is StackChip => Boolean(item?.name))
-          .map((item) => this.normalizeStackChip(item));
-        const restoredExtra = extra
-          .filter((item): item is StackChip => Boolean(item?.name))
-          .map((item) => this.normalizeStackChip(item));
-        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
-        this.primaryStacks = sanitized.primary;
-        this.extraStacks = sanitized.extra;
-        this.certificates = this.normalizeCertificates(parsedDraft.certificates);
-        this.persistStacks();
-        return;
-      } catch {
-        localStorage.removeItem(StacksPage.storageKey);
-      }
+  openVisualGuide(stack: StackChip): void {
+    const repoItem = this.findGuideItem(stack);
+    if (!repoItem) {
+      return;
     }
 
-    const legacyV4 = localStorage.getItem(StacksPage.legacyV4StorageKey);
+    this.activeGuidanceStack = repoItem;
+    this.activeGuidancePercent = stack.knowledge;
+  }
 
-    if (legacyV4) {
-      try {
-        const parsedDraft = JSON.parse(legacyV4) as Partial<StoredStacksDraft>;
-        const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
-        const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
-        // Versões anteriores semeavam automaticamente stacks em 10%. Se parecer seed, zera.
-        if (this.looksLikeLegacySeedDraft(primary, extra)) {
-          this.primaryStacks = [];
-          this.extraStacks = [];
-          this.persistStacks();
-          return;
+  toggleVisualGuide(stack: StackChip): void {
+    const repoItem = this.findGuideItem(stack);
+    if (!repoItem) {
+      return;
+    }
+
+    if (this.expandedGuideRepoId === repoItem.id) {
+      this.expandedGuideRepoId = null;
+      return;
+    }
+
+    this.openVisualGuide(stack);
+    this.expandedGuideRepoId = repoItem.id;
+  }
+
+  private restoreVisualStacksFromExperiences(): void {
+    const storedDraft = localStorage.getItem(StacksPage.storageKey);
+    const storedCertificates = storedDraft
+      ? this.normalizeCertificates((JSON.parse(storedDraft) as Partial<StoredStacksDraft>).certificates)
+      : {};
+    const rawExperiences = localStorage.getItem(StacksPage.experiencesStorageKey);
+    const experiences = rawExperiences ? (JSON.parse(rawExperiences) as ExperienceDraft[]) : [];
+
+    this.certificates = storedCertificates;
+    this.primaryStacks = this.buildAverageStacksFromExperiences(experiences);
+    this.extraStacks = [];
+    this.persistStacks();
+  }
+
+  private buildAverageStacksFromExperiences(experiences: ExperienceDraft[]): StackChip[] {
+    const grouped = new Map<string, { totalWeight: number; weightedScore: number; item: StackRepoItem }>();
+
+    for (const experience of experiences) {
+      const experienceWeight = this.getExperienceWeight(experience);
+      for (const stack of experience.appliedStacks ?? []) {
+        const item = this.resolveExperienceStackRepoItem(stack.repoId, stack.name);
+        if (!item) {
+          continue;
         }
 
-        const restoredPrimary = primary
-          .filter((item): item is StackChip => Boolean(item?.name))
-          .map((item) => this.normalizeStackChip(item));
-        const restoredExtra = extra
-          .filter((item): item is StackChip => Boolean(item?.name))
-          .map((item) => this.normalizeStackChip(item));
-        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
-        this.primaryStacks = sanitized.primary;
-        this.extraStacks = sanitized.extra;
-        this.certificates = this.normalizeCertificates(parsedDraft.certificates);
-        this.persistStacks();
-        return;
-      } catch {
-        localStorage.removeItem(StacksPage.legacyV4StorageKey);
+        const current = grouped.get(item.id) ?? { totalWeight: 0, weightedScore: 0, item };
+        const knowledge = Math.max(0, Math.min(100, Math.round(Number(stack.knowledge ?? 0))));
+        current.totalWeight += experienceWeight;
+        current.weightedScore += knowledge * experienceWeight;
+        grouped.set(item.id, current);
       }
     }
 
-    const legacyV3 = localStorage.getItem(StacksPage.legacyV3StorageKey);
+    return Array.from(grouped.values())
+      .map(({ weightedScore, totalWeight, item }) =>
+        this.createStackChip(item.name, Math.round(weightedScore / Math.max(totalWeight, 1)), '', item.category, item.id),
+      )
+      .sort((left, right) => right.knowledge - left.knowledge);
+  }
 
-    if (legacyV3) {
-      try {
-        const parsedDraft = JSON.parse(legacyV3) as Partial<StoredStacksDraft>;
-        const primary = Array.isArray(parsedDraft.primary) ? parsedDraft.primary : [];
-        const extra = Array.isArray(parsedDraft.extra) ? parsedDraft.extra : [];
-        const restoredPrimary = primary
-          .filter((item): item is StackChip => Boolean(item?.name))
-          .map((item) => this.normalizeStackChip(item));
-        const restoredExtra = extra
-          .filter((item): item is StackChip => Boolean(item?.name))
-          .map((item) => this.normalizeStackChip(item));
-        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, restoredExtra);
-        this.primaryStacks = sanitized.primary;
-        this.extraStacks = sanitized.extra;
-        this.certificates = this.normalizeCertificates(parsedDraft.certificates);
-        this.persistStacks();
-        return;
-      } catch {
-        localStorage.removeItem(StacksPage.legacyV3StorageKey);
-      }
+  private getExperienceWeight(experience: ExperienceDraft): number {
+    const months = this.getExperienceMonths(experience);
+    const actuation = Math.max(10, Math.min(100, Number(experience.actuation ?? 70)));
+    return months * (actuation / 100);
+  }
+
+  private getExperienceMonths(experience: ExperienceDraft): number {
+    const start = this.toComparableMonth(experience.startYear, experience.startMonth);
+    const end = experience.currentlyWorkingHere
+      ? this.toComparableMonth('2026', 'Mar')
+      : this.toComparableMonth(experience.endYear, experience.endMonth);
+
+    if (!start || !end) {
+      return 1;
     }
 
-    const legacy = localStorage.getItem(StacksPage.legacyStorageKey);
+    return Math.max(1, end - start + 1);
+  }
 
-    if (legacy) {
-      try {
-        const parsedStacks = JSON.parse(legacy) as Array<Partial<StackChip> & { name: string }>;
-        const restoredPrimary = parsedStacks.map((item) => this.normalizeStackChip(item));
-        const sanitized = this.sanitizeRestoredStacks(restoredPrimary, []);
-        this.primaryStacks = sanitized.primary;
-        this.extraStacks = sanitized.extra;
-        this.certificates = {};
-        this.persistStacks();
-        return;
-      } catch {
-        localStorage.removeItem(StacksPage.legacyStorageKey);
-      }
+  private toComparableMonth(year?: string, month?: string): number {
+    const monthMap: Record<string, number> = {
+      Jan: 1, Fev: 2, Mar: 3, Abr: 4, Mai: 5, Jun: 6,
+      Jul: 7, Ago: 8, Set: 9, Out: 10, Nov: 11, Dez: 12,
+    };
+    const parsedYear = Number(year ?? '');
+    const parsedMonth = month ? monthMap[month] : 0;
+    if (!Number.isFinite(parsedYear) || !parsedMonth) {
+      return 0;
+    }
+    return (parsedYear * 12) + parsedMonth;
+  }
+
+  private resolveExperienceStackRepoItem(repoId?: string, stackName?: string): StackRepoItem | null {
+    const knownItems = Object.values(this.stackRepository).flatMap((items) => items ?? []);
+    const repoMatch = repoId?.trim()
+      ? knownItems.find((item) => item.id === repoId.trim())
+      : null;
+
+    if (repoMatch) {
+      return this.normalizeVisualRepoItem(repoMatch);
     }
 
-    // Início "zerado": o usuário escolhe a categoria e marca o percentual a partir do repositório.
-    this.primaryStacks = [];
-    this.extraStacks = [];
-    this.certificates = {};
-    this.persistStacks();
+    const normalizedName = stackName?.trim().toLocaleLowerCase('pt-BR') ?? '';
+    const byName = knownItems.find((item) => item.name.toLocaleLowerCase('pt-BR') === normalizedName);
+    if (byName) {
+      return this.normalizeVisualRepoItem(byName);
+    }
+
+    return null;
+  }
+
+  private normalizeVisualRepoItem(item: StackRepoItem): StackRepoItem {
+    if (['repo:csharp', 'repo:aspnet-core', 'repo:entity-framework', 'repo:rest-api', 'repo:microservices', 'repo:rabbitmq'].includes(item.id)) {
+      return { id: 'repo:dotnet', name: '.NET / C#', category: 'backend' };
+    }
+
+    if (['repo:sql-server', 'repo:postgresql', 'repo:mysql', 'repo:mongodb', 'repo:redis', 'repo:elasticsearch'].includes(item.id)) {
+      return { id: 'repo:sql-server', name: 'SQL', category: 'database' };
+    }
+
+    return item;
+  }
+
+  private findGuideItem(stack: StackChip): StackRepoItem | null {
+    return this.resolveExperienceStackRepoItem(stack.id, stack.name);
   }
 
   getStackCertificate(repoId: string): CertificateMeta | null {
@@ -1250,6 +1304,16 @@ export class StacksPage implements OnInit {
       certificates: this.certificates,
     };
     localStorage.setItem(StacksPage.storageKey, JSON.stringify(draft));
+    this.syncSeededTalentProfile();
+  }
+
+  private syncSeededTalentProfile(): void {
+    const email = this.authFacade.getSession()?.email?.trim();
+    if (!email) {
+      return;
+    }
+
+    void this.talentProfileStore.syncCurrentWorkspace(email);
   }
 
   private scrollToSection(sectionId: string, fallbackRoute: string): void {

@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthFacade } from '../../core/facades/auth.facade';
+import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -44,6 +46,8 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
 
   private readonly router = inject(Router);
+  private readonly authFacade = inject(AuthFacade);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly photoUpdatedListener = (event: Event) => {
     const customEvent = event as CustomEvent<{ photoPreviewUrl?: string; photoFileName?: string }>;
     this.photoPreviewUrl = customEvent.detail?.photoPreviewUrl ?? this.photoPreviewUrl;
@@ -247,6 +251,16 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
         photoFileName: this.photoFileName,
       }),
     );
+    this.syncSeededTalentProfile();
+  }
+
+  private syncSeededTalentProfile(): void {
+    const email = this.authFacade.getSession()?.email?.trim();
+    if (!email) {
+      return;
+    }
+
+    void this.talentProfileStore.syncCurrentWorkspace(email);
   }
 
   private revokePhotoPreviewUrl(): void {

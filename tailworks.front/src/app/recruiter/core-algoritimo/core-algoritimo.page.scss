@@ -4,6 +4,7 @@
 }
 
 .core-algoritimo__hero,
+.core-algoritimo__empty,
 .core-algoritimo__metrics,
 .core-algoritimo__panel,
 .core-algoritimo__ranking-card,
@@ -22,6 +23,32 @@
   justify-content: space-between;
   gap: 20px;
   padding: 28px 30px;
+}
+
+.core-algoritimo__empty {
+  display: grid;
+  gap: 12px;
+  padding: 32px 30px;
+}
+
+.core-algoritimo__empty-copy {
+  display: grid;
+  gap: 8px;
+  max-width: 640px;
+}
+
+.core-algoritimo__empty-copy h2,
+.core-algoritimo__empty-copy p {
+  margin: 0;
+}
+
+.core-algoritimo__empty-copy h2 {
+  color: #172033;
+}
+
+.core-algoritimo__empty-copy p {
+  color: #5f6d80;
+  line-height: 1.6;
 }
 
 .core-algoritimo__hero-copy {
@@ -225,6 +252,25 @@
   font-size: 13px;
 }
 
+.core-algoritimo__candidate-access {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.core-algoritimo__candidate-email {
+  color: #6a7688;
+  font-size: 12px;
+}
+
+.core-algoritimo__candidate-access .core-algoritimo__ghost-action {
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
 .core-algoritimo__job-item-stacks,
 .core-algoritimo__chips,
 .core-algoritimo__reason-list {
@@ -284,6 +330,37 @@
   gap: 16px;
 }
 
+.core-algoritimo__access-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.core-algoritimo__access-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(227, 232, 239, 0.9);
+}
+
+.core-algoritimo__access-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.core-algoritimo__access-copy strong {
+  color: #172033;
+}
+
+.core-algoritimo__access-copy span,
+.core-algoritimo__access-copy small {
+  color: #6a7688;
+}
+
 .core-algoritimo__stack-group {
   display: grid;
   gap: 10px;
@@ -329,6 +406,29 @@
   display: grid;
   gap: 16px;
   padding: 20px;
+}
+
+.core-algoritimo__audit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.core-algoritimo__audit-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  border: 1px solid rgba(227, 232, 239, 0.9);
+}
+
+.core-algoritimo__audit-label {
+  color: #6a7688;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .core-algoritimo__score-badge {
@@ -385,6 +485,14 @@
   font-size: 13px;
 }
 
+.core-algoritimo__source-tag {
+  display: inline-flex;
+  margin-left: 8px;
+  color: #7c8798;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .core-algoritimo__score-track {
   position: relative;
   height: 8px;
@@ -414,8 +522,13 @@
   .core-algoritimo__metrics,
   .core-algoritimo__toolbar,
   .core-algoritimo__bands,
-  .core-algoritimo__score-grid {
+  .core-algoritimo__score-grid,
+  .core-algoritimo__audit-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .core-algoritimo__access-grid {
+    grid-template-columns: 1fr;
   }
 
   .core-algoritimo__hero {
@@ -432,7 +545,8 @@
   .core-algoritimo__metrics,
   .core-algoritimo__toolbar,
   .core-algoritimo__bands,
-  .core-algoritimo__score-grid {
+  .core-algoritimo__score-grid,
+  .core-algoritimo__audit-grid {
     grid-template-columns: 1fr;
   }
 

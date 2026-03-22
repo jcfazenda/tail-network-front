@@ -1,12 +1,11 @@
 <section class="candidate-stacks">
-  
   <header class="candidate-stacks__intro">
     <h1>Suas Stacks</h1>
     <p class="candidate-stacks__lead">
-      Selecione uma categoria e marque o seu nivel em cada tecnologia. Isso ajuda o Radar a entender seu perfil com mais precisão.
+      Esta tela mostra a média das stacks aplicadas nas suas experiências reais. Aqui a leitura é somente visual.
     </p>
     <p class="candidate-stacks__hint">
-      Comece pelo que você domina hoje e ajuste o restante com sinceridade: isso melhora o match do Radar.
+      Para ajustar percentuais, edite as stacks dentro de cada experiência. O Radar consolida tudo automaticamente.
     </p>
   </header>
 
@@ -22,14 +21,10 @@
   </div>
 
   <div class="candidate-stacks__editor-area">
-
-    <small class="candidate-stacks__error" *ngIf="stackError">{{ stackError }}</small>
-
     <div class="candidate-stacks__section">
-      
       <div class="candidate-stacks__section-head">
         <div class="candidate-stacks__section-title-row">
-          <h2>Stacks principais</h2>
+          <h2>Média das suas experiências</h2>
           <button
             class="candidate-stacks__help-button"
             type="button"
@@ -40,462 +35,169 @@
             <span class="material-symbols-rounded" aria-hidden="true">help</span>
           </button>
         </div>
-        <p>O núcleo do que você faz bem. Marque quantas tecnologias fizer sentido para o seu perfil.</p>
+        <p>Somente stacks realmente usadas nas empresas aparecem aqui, com a média calculada pelas suas experiências.</p>
       </div>
 
-      <div class="candidate-stacks__category-layout">
-        <div class="candidate-stacks__category-controls">
-          <div class="candidate-stacks__radio-group" role="radiogroup" aria-label="Categorias de stacks principais">
-            <label
-              class="candidate-stacks__radio"
-              *ngFor="let category of uiCategories"
-              [class.candidate-stacks__radio--checked]="selectedPrimaryCategory === category"
-              [class.candidate-stacks__radio--heat-muted]="getCategoryMax('primary', category) === 0"
-              [class.candidate-stacks__radio--heat-cold]="getCategoryMax('primary', category) > 0 && getCategoryMax('primary', category) < 45"
-              [class.candidate-stacks__radio--heat-hot]="getCategoryMax('primary', category) >= 45"
-              [style.--radio-avg]="getCategoryMax('primary', category)"
-            >
-              <input
-                type="radio"
-                name="primary-category"
-                [value]="category"
-                [checked]="selectedPrimaryCategory === category"
-                (change)="selectPrimaryCategory(category)"
-              />
-              <span class="candidate-stacks__radio-dot" aria-hidden="true"></span>
-              <span class="candidate-stacks__radio-label">{{ categoryLabels[category] }}</span>
-              <span
-                class="candidate-stacks__radio-count"
-                *ngIf="getCategoryMax('primary', category) > 0"
-                [attr.aria-label]="'Nível nessa categoria: ' + percentLevelLabel(getCategoryMax('primary', category)) + ' ' + getCategoryMax('primary', category) + '%'"
-              >
-                {{ percentLevelLabel(getCategoryMax('primary', category)) }} {{ getCategoryMax('primary', category) }}%
-              </span>
-            </label>
-          </div>
-        </div>
+      <div class="candidate-stacks__repo-layout">
+        <div class="candidate-stacks__category-box candidate-stacks__category-box--solid">
+          <div class="candidate-stacks__repo" *ngIf="visualStacks.length; else emptyStacksView">
+            <div class="candidate-stacks__repo-rows" aria-label="Stacks consolidadas a partir das experiências">
+              <div *ngFor="let stack of visualStacks; trackBy: trackByStackId" class="candidate-stacks__repo-entry">
+                <div class="candidate-stacks__repo-row">
+                  <div class="candidate-stacks__repo-row-left">
+                    <span class="candidate-stacks__repo-row-name">{{ stack.name }}</span>
+                  </div>
 
-        <div class="candidate-stacks__category-side">
-          <div class="candidate-stacks__category-topbar" *ngIf="showPrimaryCategoryPanel && selectedPrimaryCategory">
-            <div class="candidate-stacks__category-title">
-              <div class="candidate-stacks__category-title-main">{{ categoryLabels[selectedPrimaryCategory] }}</div>
-              <div class="candidate-stacks__category-title-sub">
-                Ajuste os percentuais abaixo. Tudo acima de 0% entra no seu perfil e passa a contar no Radar.
-              </div>
-            </div>
-          </div>
+                  <div class="candidate-stacks__repo-row-top">
+                    <span class="candidate-stacks__repo-row-status candidate-stacks__repo-row-status--right">
+                      {{ percentLevelLabel(stack.knowledge) }}
+                    </span>
+                  </div>
 
-          <div
-            class="candidate-stacks__repo-layout"
-            *ngIf="showPrimaryCategoryPanel && selectedPrimaryCategory"
-          >
-            <div class="candidate-stacks__category-box candidate-stacks__category-box--solid">
-              <div class="candidate-stacks__category-head"></div>
-
-              <div class="candidate-stacks__repo" *ngIf="primaryRepoOptions.length; else emptyPrimaryRepo">
-                <div class="candidate-stacks__repo-rows" aria-label="Stacks do repositório">
-                    <div *ngFor="let item of primaryRepoOptions" class="candidate-stacks__repo-entry">
-                      <div class="candidate-stacks__repo-row">
-                        <div class="candidate-stacks__repo-row-left">
-                          <span class="candidate-stacks__repo-row-name">{{ item.name }}</span>
-                        </div>
-
-                        <div class="candidate-stacks__repo-row-top">
-                          <span class="candidate-stacks__repo-row-status candidate-stacks__repo-row-status--right">
-                            {{ percentLevelLabel(getRepoKnowledge('primary', item.id)) }}
-                          </span>
-                        </div>
-
-                        <div class="candidate-stacks__repo-row-right">
-                        <div
-                          class="candidate-stacks__stack-item-slider"
-                          [style.--stack-progress]="getRepoKnowledge('primary', item.id) + '%'"
-                          [class.candidate-stacks__stack-item-slider--muted]="getRepoKnowledge('primary', item.id) < 10"
-                          [class.candidate-stacks__stack-item-slider--cold]="getRepoKnowledge('primary', item.id) >= 10 && getRepoKnowledge('primary', item.id) < 45"
-                          [class.candidate-stacks__stack-item-slider--hot]="getRepoKnowledge('primary', item.id) >= 45"
-                        >
-
-<input
-  class="candidate-stacks__stack-item-range"
-  type="range"
-  min="0"
-  max="100"
-  step="1"
-  [value]="getRepoKnowledge('primary', item.id)"
-  (input)="updateRepoKnowledge('primary', item, $any($event.target).value)"
-  (change)="updateRepoKnowledge('primary', item, $any($event.target).value)"
-  [attr.aria-label]="'Definir percentual de ' + item.name"
-/>
-
-                        </div>
-                        <div class="candidate-stacks__repo-row-meta">
-                          <span class="candidate-stacks__repo-row-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
-                          <span class="candidate-stacks__repo-row-meta-separator" aria-hidden="true">|</span>
-                          <div class="candidate-stacks__repo-row-actions">
-                            <button
-                              class="candidate-stacks__stack-item-edit"
-                              type="button"
-                              (click)="openRepoStackDescription('primary', item)"
-                              [attr.aria-label]="'Editar descrição de ' + item.name"
-                              title="Editar descrição"
-                            >
-                              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                            </button>
-                            <button
-                              class="candidate-stacks__stack-item-help"
-                              type="button"
-                              (click)="toggleInlineGuide(item)"
-                              [class.candidate-stacks__stack-item-help--active]="expandedGuideRepoId === item.id"
-                              [attr.aria-label]="'Entender o propósito de ' + item.name"
-                              title="O que se espera nessa stack"
-                            >
-                              <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                  <div class="candidate-stacks__repo-row-right">
+                    <div
+                      class="candidate-stacks__stack-item-slider"
+                      [style.--stack-progress]="stack.knowledge + '%'"
+                      [class.candidate-stacks__stack-item-slider--muted]="stack.knowledge < 10"
+                      [class.candidate-stacks__stack-item-slider--cold]="stack.knowledge >= 10 && stack.knowledge < 45"
+                      [class.candidate-stacks__stack-item-slider--hot]="stack.knowledge >= 45"
+                    >
+                      <input
+                        class="candidate-stacks__stack-item-range"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        [value]="stack.knowledge"
+                        disabled
+                        [attr.aria-label]="'Visualizar percentual de ' + stack.name"
+                      />
                     </div>
 
-                    <div class="candidate-stacks__repo-expand" *ngIf="expandedGuideRepoId === item.id">
-                      <div class="candidate-stacks__repo-guide-body">
-                        <div class="candidate-stacks__repo-guide-top">
-                          <span class="candidate-stacks__repo-guide-stack">{{ item.name }}</span>
-                          <div class="candidate-stacks__repo-guide-meter">
-                            <span class="candidate-stacks__repo-guide-meter-value">{{ getRepoKnowledge('primary', item.id) }}%</span>
-                            <span aria-hidden="true">→</span>
-                            <span class="candidate-stacks__repo-guide-meter-label">{{ percentLevelLabel(getRepoKnowledge('primary', item.id)) }}</span>
-                          </div>
-                        </div>
-
-                        <div class="candidate-stacks__repo-guide-subtitle-row" *ngIf="getGuideTagline(item.id)">
-                          <span class="candidate-stacks__repo-guide-subtitle">{{ getGuideTagline(item.id) }}</span>
-                        </div>
-
-                        <div class="candidate-stacks__repo-guide-rule" aria-hidden="true"></div>
-
-                        <ng-container *ngIf="getStructuredGuide(item.id) as guide; else fallbackGuideInline">
-                          <div class="candidate-stacks__repo-guide-section">
-                            <div class="candidate-stacks__repo-guide-section-title">
-                              O que significa dominar {{ item.name }}
-                            </div>
-                            <ul class="candidate-stacks__repo-guide-checklist">
-                              <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
-                            </ul>
-                          </div>
-
-                          <div class="candidate-stacks__repo-guide-section">
-                            <div class="candidate-stacks__repo-guide-section-title">Esperamos de você</div>
-                            <ul class="candidate-stacks__repo-guide-bullets">
-                              <li *ngFor="let row of getGuideExpectations(item.id, getRepoKnowledge('primary', item.id))">{{ row }}</li>
-                            </ul>
-                          </div>
-
-                          <ng-container *ngIf="getGuideSignals(item.id, getRepoKnowledge('primary', item.id)) as signals">
-                            <div class="candidate-stacks__repo-guide-section">
-                              <div class="candidate-stacks__repo-guide-section-title">Sinais de que você está nesse nível</div>
-                              <ul class="candidate-stacks__repo-guide-bullets">
-                                <li *ngFor="let row of signals.inTier">{{ row }}</li>
-                              </ul>
-                            </div>
-
-                            <div class="candidate-stacks__repo-guide-section">
-                              <div class="candidate-stacks__repo-guide-section-title">Sinais de que ainda não está</div>
-                              <ul class="candidate-stacks__repo-guide-bullets">
-                                <li *ngFor="let row of signals.notYet">{{ row }}</li>
-                              </ul>
-                            </div>
-                          </ng-container>
-
-                          <div
-                            class="candidate-stacks__repo-guide-split"
-                            *ngIf="(guide.commonTools?.length || 0) > 0 || (guide.usedByCompanies?.length || 0) > 0"
-                          >
-                            <div class="candidate-stacks__repo-guide-split-rule" aria-hidden="true"></div>
-
-                            <div
-                              class="candidate-stacks__repo-guide-split-grid"
-                              [class.candidate-stacks__repo-guide-split-grid--two]="guide.commonTools?.length && guide.usedByCompanies?.length"
-                            >
-                              <div class="candidate-stacks__repo-guide-split-col" *ngIf="guide.commonTools?.length">
-                                <div class="candidate-stacks__repo-guide-section-title">Ferramentas comuns</div>
-                                <ul class="candidate-stacks__repo-guide-bullets">
-                                  <li *ngFor="let row of guide.commonTools">{{ row }}</li>
-                                </ul>
-                              </div>
-
-                              <div
-                                class="candidate-stacks__repo-guide-split-divider"
-                                *ngIf="guide.commonTools?.length && guide.usedByCompanies?.length"
-                                aria-hidden="true"
-                              ></div>
-
-                              <div class="candidate-stacks__repo-guide-split-col candidate-stacks__repo-guide-split-col--right" *ngIf="guide.usedByCompanies?.length">
-                                <div class="candidate-stacks__repo-guide-section-title">Usado em empresas como</div>
-                                <div class="candidate-stacks__repo-guide-companies">
-                                  <span *ngFor="let row of guide.usedByCompanies">{{ row }}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="candidate-stacks__repo-guide-cert">
-                            <div class="candidate-stacks__repo-guide-cert-left">
-                              <div class="candidate-stacks__repo-guide-cert-head">
-                                <span class="material-symbols-rounded" aria-hidden="true">verified</span>
-                                <ng-container *ngIf="getStackCertificate(item.id); else certTitleEmpty">
-                                  <div class="candidate-stacks__repo-guide-cert-text">
-                                    Este certificado vai reforçar você no Radar.
-                                  </div>
-                                </ng-container>
-                                <ng-template #certTitleEmpty>
-                                  <div class="candidate-stacks__repo-guide-section-title">Dica: você tem certificado?</div>
-                                </ng-template>
-                              </div>
-                              <div class="candidate-stacks__repo-guide-cert-details">
-                                <ng-container *ngIf="getStackCertificate(item.id) as cert; else certEmpty">
-                                  <div class="candidate-stacks__repo-guide-cert-file">
-                                    {{ cert.name }}
-                                  </div>
-                                </ng-container>
-                                <ng-template #certEmpty>
-                                  <div class="candidate-stacks__repo-guide-cert-text">
-                                    Anexe um certificado dessa stack para reforçar sua posição no Radar.
-                                  </div>
-                                </ng-template>
-                              </div>
-                            </div>
-
-                            <div class="candidate-stacks__repo-guide-cert-actions">
-                              <input
-                                #stackCertInput
-                                type="file"
-                                accept="application/pdf,image/*"
-                                (change)="onStackCertificateSelected(item.id, $event)"
-                                hidden
-                              />
-                              <button
-                                class="candidate-stacks__repo-guide-cert-button"
-                                type="button"
-                                *ngIf="!getStackCertificate(item.id)"
-                                (click)="stackCertInput.click()"
-                              >
-                                Anexar certificado
-                              </button>
-                              <button
-                                class="candidate-stacks__repo-guide-cert-button candidate-stacks__repo-guide-cert-button--ghost"
-                                type="button"
-                                *ngIf="getStackCertificate(item.id)"
-                                (click)="clearStackCertificate(item.id)"
-                              >
-                                Remover
-                              </button>
-                            </div>
-                          </div>
-                        </ng-container>
-
-                        <ng-template #fallbackGuideInline>
-                          <div class="candidate-stacks__repo-guide-section">
-                            <div class="candidate-stacks__repo-guide-section-title">O que se espera nessa stack</div>
-                            <div class="candidate-stacks__repo-guide-copy">{{ getInfoSummary(item.id) }}</div>
-                            <ul class="candidate-stacks__purpose-list">
-                              <li *ngFor="let row of getInfoBullets(item.id)">{{ row }}</li>
-                            </ul>
-                          </div>
-                        </ng-template>
-
+                    <div class="candidate-stacks__repo-row-meta">
+                      <span class="candidate-stacks__repo-row-value">{{ stack.knowledge }}%</span>
+                      <span class="candidate-stacks__repo-row-meta-separator" aria-hidden="true">|</span>
+                      <div class="candidate-stacks__repo-row-actions">
+                        <button
+                          class="candidate-stacks__stack-item-help"
+                          type="button"
+                          (click)="toggleVisualGuide(stack)"
+                          [class.candidate-stacks__stack-item-help--active]="expandedGuideRepoId === stack.id"
+                          [attr.aria-label]="'Entender o propósito de ' + stack.name"
+                          title="O que se espera nessa stack"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <ng-template #emptyPrimaryRepo>
-                <div class="candidate-stacks__category-empty">
-                  <span class="candidate-stacks__category-empty-dot" aria-hidden="true"></span>
-                  <span>Nenhuma sugestão disponível para essa categoria ainda.</span>
+                <div class="candidate-stacks__repo-expand" *ngIf="expandedGuideRepoId === stack.id">
+                  <div class="candidate-stacks__repo-guide-body">
+                    <div class="candidate-stacks__repo-guide-top">
+                      <span class="candidate-stacks__repo-guide-stack">{{ stack.name }}</span>
+                      <div class="candidate-stacks__repo-guide-meter">
+                        <span class="candidate-stacks__repo-guide-meter-value">{{ stack.knowledge }}%</span>
+                        <span aria-hidden="true">→</span>
+                        <span class="candidate-stacks__repo-guide-meter-label">{{ percentLevelLabel(stack.knowledge) }}</span>
+                      </div>
+                    </div>
+
+                    <div class="candidate-stacks__repo-guide-subtitle-row" *ngIf="getGuideTagline(stack.id)">
+                      <span class="candidate-stacks__repo-guide-subtitle">{{ getGuideTagline(stack.id) }}</span>
+                    </div>
+
+                    <div class="candidate-stacks__repo-guide-rule" aria-hidden="true"></div>
+
+                    <ng-container *ngIf="getStructuredGuide(stack.id) as guide; else fallbackGuideInline">
+                      <div class="candidate-stacks__repo-guide-section">
+                        <div class="candidate-stacks__repo-guide-section-title">
+                          O que significa dominar {{ stack.name }}
+                        </div>
+                        <ul class="candidate-stacks__repo-guide-checklist">
+                          <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
+                        </ul>
+                      </div>
+
+                      <div class="candidate-stacks__repo-guide-section">
+                        <div class="candidate-stacks__repo-guide-section-title">Esperamos de você</div>
+                        <ul class="candidate-stacks__repo-guide-bullets">
+                          <li *ngFor="let row of getGuideExpectations(stack.id, stack.knowledge)">{{ row }}</li>
+                        </ul>
+                      </div>
+
+                      <ng-container *ngIf="getGuideSignals(stack.id, stack.knowledge) as signals">
+                        <div class="candidate-stacks__repo-guide-section">
+                          <div class="candidate-stacks__repo-guide-section-title">Sinais de que você está nesse nível</div>
+                          <ul class="candidate-stacks__repo-guide-bullets">
+                            <li *ngFor="let row of signals.inTier">{{ row }}</li>
+                          </ul>
+                        </div>
+
+                        <div class="candidate-stacks__repo-guide-section">
+                          <div class="candidate-stacks__repo-guide-section-title">Sinais de que ainda não está</div>
+                          <ul class="candidate-stacks__repo-guide-bullets">
+                            <li *ngFor="let row of signals.notYet">{{ row }}</li>
+                          </ul>
+                        </div>
+                      </ng-container>
+
+                      <div
+                        class="candidate-stacks__repo-guide-split"
+                        *ngIf="(guide.commonTools?.length || 0) > 0 || (guide.usedByCompanies?.length || 0) > 0"
+                      >
+                        <div class="candidate-stacks__repo-guide-split-rule" aria-hidden="true"></div>
+
+                        <div
+                          class="candidate-stacks__repo-guide-split-grid"
+                          [class.candidate-stacks__repo-guide-split-grid--two]="guide.commonTools?.length && guide.usedByCompanies?.length"
+                        >
+                          <div class="candidate-stacks__repo-guide-split-col" *ngIf="guide.commonTools?.length">
+                            <div class="candidate-stacks__repo-guide-section-title">Ferramentas comuns</div>
+                            <ul class="candidate-stacks__repo-guide-bullets">
+                              <li *ngFor="let row of guide.commonTools">{{ row }}</li>
+                            </ul>
+                          </div>
+
+                          <div
+                            class="candidate-stacks__repo-guide-split-divider"
+                            *ngIf="guide.commonTools?.length && guide.usedByCompanies?.length"
+                            aria-hidden="true"
+                          ></div>
+
+                          <div class="candidate-stacks__repo-guide-split-col candidate-stacks__repo-guide-split-col--right" *ngIf="guide.usedByCompanies?.length">
+                            <div class="candidate-stacks__repo-guide-section-title">Usado em empresas como</div>
+                            <div class="candidate-stacks__repo-guide-companies">
+                              <span *ngFor="let row of guide.usedByCompanies">{{ row }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <ng-template #fallbackGuideInline>
+                      <div class="candidate-stacks__repo-guide-section">
+                        <div class="candidate-stacks__repo-guide-section-title">O que significa dominar {{ stack.name }}</div>
+                        <ul class="candidate-stacks__repo-guide-bullets">
+                          <li *ngFor="let row of activeInfoBullets">{{ row }}</li>
+                        </ul>
+                      </div>
+                    </ng-template>
+                  </div>
                 </div>
-              </ng-template>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="candidate-stacks__helper">
-      <div class="candidate-stacks__helper-left">
-        <span class="material-symbols-rounded" aria-hidden="true">info</span>
-        <span>
-          Mova os percentuais para ver sua aderência e alcance no Ecossistema.
-        </span>
+          <ng-template #emptyStacksView>
+            <div class="candidate-stacks__empty-state">
+              <p>Nenhuma stack consolidada ainda.</p>
+              <span>Adicione stacks nas suas experiências para ver a média aparecer aqui.</span>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>
 </section>
-
-<div
-  class="candidate-stacks__modal-backdrop"
-  *ngIf="isStackModalOpen"
-  (click)="closeStackModal()"
->
-  <section class="candidate-stacks__modal" (click)="$event.stopPropagation()">
-    <div class="candidate-stacks__modal-header">
-      <h3 class="candidate-stacks__modal-title">{{ stackModalTitle }}</h3>
-      <button class="candidate-stacks__modal-close" type="button" (click)="closeStackModal()">
-        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-      </button>
-    </div>
-
-    <div class="candidate-stacks__modal-body">
-      <label class="candidate-stacks__modal-field" *ngIf="editingStackIndex === null; else stackReadonly">
-        <span class="candidate-stacks__modal-label">Stack</span>
-        <input
-          type="text"
-          [(ngModel)]="stackDraftName"
-          placeholder="Ex: Kubernetes"
-        />
-      </label>
-
-      <label class="candidate-stacks__modal-field">
-        <span class="candidate-stacks__modal-label">Tipo</span>
-        <select [(ngModel)]="stackDraftCategory">
-          <option value="backend">Back-end</option>
-          <option value="frontend">Front-end</option>
-          <option value="database">Banco de dados</option>
-          <option value="cloud">Cloud</option>
-          <option value="devops">DevOps</option>
-          <option value="data">Dados</option>
-          <option value="mobile">Mobile</option>
-          <option value="other">Outros</option>
-        </select>
-      </label>
-
-      <label class="candidate-stacks__modal-field">
-        <span class="candidate-stacks__modal-label">Descrição</span>
-        <div class="candidate-stacks__editor">
-          <div class="candidate-stacks__editor-toolbar">
-            <button
-              class="candidate-stacks__editor-tool"
-              type="button"
-              (mousedown)="$event.preventDefault(); applyDescriptionFormat('bold')"
-              aria-label="Negrito"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">format_bold</span>
-            </button>
-            <button
-              class="candidate-stacks__editor-tool"
-              type="button"
-              (mousedown)="$event.preventDefault(); applyDescriptionFormat('italic')"
-              aria-label="Itálico"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">format_italic</span>
-            </button>
-            <button
-              class="candidate-stacks__editor-tool"
-              type="button"
-              (mousedown)="$event.preventDefault(); applyDescriptionFormat('underline')"
-              aria-label="Sublinhar"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">format_underlined</span>
-            </button>
-            <button
-              class="candidate-stacks__editor-tool"
-              type="button"
-              (mousedown)="$event.preventDefault(); applyDescriptionFormat('insertUnorderedList')"
-              aria-label="Lista com marcadores"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
-            </button>
-            <button
-              class="candidate-stacks__editor-tool"
-              type="button"
-              (mousedown)="$event.preventDefault(); applyDescriptionFormat('insertOrderedList')"
-              aria-label="Lista numerada"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">format_list_numbered</span>
-            </button>
-            <button
-              class="candidate-stacks__editor-tool"
-              type="button"
-              (mousedown)="$event.preventDefault(); clearDescriptionFormat()"
-              aria-label="Limpar formatação"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">format_clear</span>
-            </button>
-          </div>
-
-          <div
-            #stackDescriptionEditor
-            class="candidate-stacks__editor-surface"
-            contenteditable="true"
-            data-placeholder="Adicione um contexto breve sobre essa stack."
-            (input)="onStackDescriptionInput($event)"
-          ></div>
-        </div>
-
-        <div class="candidate-stacks__editor-meta">
-          <small
-            class="candidate-stacks__editor-count"
-            [class.candidate-stacks__editor-count--limit]="isStackDescriptionOverLimit"
-          >
-            {{ stackDescriptionCharacters }} de {{ stackDescriptionMaxLength }}
-          </small>
-        </div>
-      </label>
-
-      <ng-template #stackReadonly>
-        <div class="candidate-stacks__modal-field">
-          <span class="candidate-stacks__modal-label">Stack</span>
-          <div class="candidate-stacks__modal-static">{{ stackDraftName }}</div>
-        </div>
-      </ng-template>
-
-      <small class="candidate-stacks__error" *ngIf="stackModalError">{{ stackModalError }}</small>
-
-      <div class="candidate-stacks__modal-actions">
-        <button class="candidate-stacks__modal-button candidate-stacks__modal-button--ghost" type="button" (click)="closeStackModal()">
-          Cancelar
-        </button>
-        <button
-          class="candidate-stacks__modal-button candidate-stacks__modal-button--primary"
-          type="button"
-          [disabled]="!canSaveStack"
-          (click)="saveStack()"
-        >
-          {{ stackModalSubmitLabel }}
-        </button>
-      </div>
-    </div>
-  </section>
-</div>
-
-<div
-  class="candidate-stacks__modal-backdrop"
-  *ngIf="isStrategyHelpModalOpen"
-  (click)="closeStrategyHelpModal()"
->
-  <section class="candidate-stacks__modal candidate-stacks__modal--help" (click)="$event.stopPropagation()">
-    <div class="candidate-stacks__modal-header">
-      <h3 class="candidate-stacks__modal-title">Como se destacar no Radar</h3>
-      <button class="candidate-stacks__modal-close" type="button" (click)="closeStrategyHelpModal()">
-        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-      </button>
-    </div>
-
-    <div class="candidate-stacks__modal-body">
-      <p class="candidate-stacks__help-copy">
-        O Recruiter geralmente escolhe 3 a 4 stacks onde você pode se destacar na vaga. Então, priorize o que você faz
-        de melhor e marque seus percentuais com sinceridade.
-      </p>
-
-      <div class="candidate-stacks__modal-actions">
-        <button
-          class="candidate-stacks__modal-button candidate-stacks__modal-button--primary"
-          type="button"
-          (click)="closeStrategyHelpModal()"
-        >
-          Entendi
-        </button>
-      </div>
-    </div>
-  </section>
-</div>

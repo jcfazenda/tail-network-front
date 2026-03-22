@@ -29,7 +29,7 @@ export class LoginPage implements OnDestroy {
   registerFlow: RegisterFlow = 'organization';
   returnUrl = '';
 
-  email = 'julio.fazenda@itau.com.br';
+  email = 'julio@tailworks.com';
   password = 'julio@56';
   errorMessage = '';
   successMessage = '';
@@ -69,7 +69,7 @@ export class LoginPage implements OnDestroy {
     this.authService.resetWorkspace();
     this.errorMessage = '';
     this.successMessage = '';
-    this.email = 'julio.fazenda@itau.com.br';
+    this.email = 'julio@tailworks.com';
     this.password = 'julio@56';
     this.accessView = 'register';
     this.registerFlow = 'organization';
@@ -185,7 +185,7 @@ export class LoginPage implements OnDestroy {
   private createRecruiterSignupDraft(): RecruiterSignupDraft {
     return {
       name: 'Julio Recutador Sr.',
-      email: 'julio.fazenda@itau.com.br',
+      email: 'julio@tailworks.com',
       password: 'julio@56',
       role: 'Recruiter Sr.',
       companyName: 'Criatti SA',

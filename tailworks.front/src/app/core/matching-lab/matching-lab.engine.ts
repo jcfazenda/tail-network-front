@@ -31,12 +31,12 @@ export class MatchingLabEngine {
       this.buildStackContribution(jobStack, candidateStackMap.get(jobStack.stackId), experienceMonthsMap.get(jobStack.stackId) ?? 0),
     );
 
-    const primaryScore = this.sumContribution(stackBreakdown, 'primary', 55);
-    const secondaryScore = this.sumContribution(stackBreakdown, 'secondary', 20);
+    const primaryScore = this.sumContribution(stackBreakdown, 'primary', 65);
+    const secondaryScore = this.sumContribution(stackBreakdown, 'secondary', 10);
     const experienceScore = this.computeExperienceScore(job, stackBreakdown);
     const seniorityScore = this.computeSeniorityScore(job.seniority, candidate.seniority);
     const coherenceScore = this.computeCoherenceScore(job, candidate, stackBreakdown);
-    const totalScore = this.round(primaryScore + secondaryScore + experienceScore + seniorityScore + coherenceScore);
+    const totalScore = this.round(Math.min(100, primaryScore + secondaryScore + experienceScore + seniorityScore + coherenceScore));
 
     return {
       jobId: job.id,
@@ -135,22 +135,26 @@ export class MatchingLabEngine {
     candidate: MatchLabCandidate,
     stackBreakdown: MatchLabStackContribution[],
   ): number {
-    const hasStrongPrimary = job.topStacks.some((stack) =>
+    const top3Hits = job.topStacks.filter((stack) =>
       stackBreakdown.some((item) => item.stackId === stack.stackId && item.candidatePercent >= 70),
-    );
+    ).length;
     const breadth = candidate.stacks.filter((stack) => stack.percent >= 40).length;
     const secondaryHits = stackBreakdown.filter((item) => item.band === 'secondary' && item.candidatePercent >= 30).length;
 
     let score = 0;
-    if (hasStrongPrimary) {
-      score += 2.2;
+    if (top3Hits >= 3) {
+      score += 5.4;
+    } else if (top3Hits === 2) {
+      score += 3.4;
+    } else if (top3Hits === 1) {
+      score += 1.8;
     }
     if (breadth >= 4) {
-      score += 1.6;
+      score += 1.2;
     }
-    score += Math.min(1.2, secondaryHits * 0.4);
+    score += Math.min(1.4, secondaryHits * 0.5);
 
-    return this.round(Math.min(5, score));
+    return this.round(Math.min(8, score));
   }
 
   private buildReasons(

@@ -11,6 +11,7 @@ export interface MatchLabStackWeight {
 
 export interface MatchLabJobSeed {
   id: string;
+  code: string;
   title: string;
   company: string;
   location: string;
@@ -24,6 +25,7 @@ export interface MatchLabJobSeed {
 
 export interface MatchLabJob {
   id: string;
+  code: string;
   title: string;
   company: string;
   location: string;

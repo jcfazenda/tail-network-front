@@ -311,7 +311,7 @@ export class RecruiterDirectoryService {
         this.createRecruiterRecord({
           id: this.defaultMasterId,
           name: 'Julio Fazenda',
-          email: 'julio.fazenda@itau.com.br',
+          email: 'julio@tailworks.com',
           role: 'Talent Acquisition Lead',
           company: companyName,
           isMaster: true,
