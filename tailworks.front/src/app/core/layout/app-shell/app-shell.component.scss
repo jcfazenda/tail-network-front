@@ -67,6 +67,8 @@
   grid-template-rows: 110px minmax(0, 1fr);
   height: 100vh;
   background: #f5efe2;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .shell__main--ecosystem{
@@ -105,6 +107,7 @@
   height: calc(100vh - 110px);
   overflow: hidden;
   background: #f5efe2;
+  overscroll-behavior: none;
 }
 
 .shell__content--candidate-basic{
@@ -186,10 +189,12 @@
 
   .shell__main--chat{
     grid-template-rows: 96px minmax(0, 1fr);
+    overflow: hidden;
   }
 
   .shell__content--chat{
     height: calc(100vh - 96px);
+    overflow: hidden;
   }
 
   .shell__content--template{

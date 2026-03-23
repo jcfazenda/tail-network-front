@@ -1,7 +1,7 @@
 .topbar{
-  position: relative;
-  top: auto;
-  z-index: 1;
+  position: sticky;
+  top: 0;
+  z-index: 500;
   min-height: 110px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -15,6 +15,7 @@
     inset 0 -1px 0 rgba(228, 228, 228, 0.8),
     0 10px 24px rgba(0, 0, 0, 0.04),
     0 18px 42px rgba(0, 0, 0, 0.05);
+  isolation: isolate;
 }
 
 .topbar__chat-profile{

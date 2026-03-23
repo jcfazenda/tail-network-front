@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, NgZone, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatJob } from '../domain/chat.models';
 
@@ -17,6 +17,8 @@ type MobileChatMessage = {
   styleUrl: './mobile-chat.component.scss',
 })
 export class MobileChatComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly ngZone = inject(NgZone);
   @Input({ required: true }) job!: ChatJob;
   @Input() startIndex = 0;
 
@@ -41,5 +43,20 @@ export class MobileChatComponent implements OnChanges {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     this.messages = [...this.messages, { sender: 'recruiter', text, time }];
     this.messageText = '';
+
+    window.setTimeout(() => {
+      this.ngZone.run(() => {
+        const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        this.messages = [
+          ...this.messages,
+          {
+            sender: 'candidate',
+            text: 'Perfeito, recebi sua mensagem. Posso seguir por aqui.',
+            time: replyTime,
+          },
+        ];
+        this.cdr.detectChanges();
+      });
+    }, 450);
   }
 }

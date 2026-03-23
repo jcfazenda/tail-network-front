@@ -2,3 +2,9 @@
   height: 100%;
   display: flex;
 }
+
+.mobile-chat-page > app-mobile-chat{
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
