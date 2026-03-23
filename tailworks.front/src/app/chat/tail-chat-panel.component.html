@@ -101,85 +101,27 @@
 
     <div class="chat-panel__conversation" *ngIf="selectedConversation as selected">
       <div class="chat-active__header">
+        <div class="chat-active__identity">
+          <span class="chat-active__identity-avatar-shell">
+            <img [src]="selected.avatar" [alt]="selected.name" class="chat-active__identity-avatar" />
+          </span>
+
+          <div class="chat-active__identity-copy">
+            <div class="chat-active__identity-name">{{ selected.name }}</div>
+            <div class="chat-active__identity-meta">
+              <span>{{ selected.location || 'Localidade nao informada' }}</span>
+              <span class="chat-active__identity-separator" aria-hidden="true">•</span>
+              <span>{{ selected.match }}% aderencia</span>
+            </div>
+          </div>
+        </div>
+
         <div class="chat-active__radar-note chat-active__radar-note--header" *ngIf="selected.radarOnly">
-          <span class="chat-active__radar-note-icon" aria-hidden="true"></span>
           <div class="chat-active__radar-note-text">
             Este profissional foi encontrado pelo radar e ainda nao iniciou candidatura para esta vaga.
           </div>
         </div>
-
-        <div class="chat-active__topcard">
-          <div class="chat-active__profile">
-            <div class="chat-active__avatar-column">
-              <div class="chat-active__avatar-wrap">
-                <img [src]="selected.avatar" [alt]="selected.name" class="chat-active__avatar" />
-                <span *ngIf="selected.radarOnly" class="chat-active__avatar-badge" aria-hidden="true"></span>
-              </div>
-              <div
-                class="chat-active__availability-label"
-                *ngIf="selectedAvailabilityLabel"
-                [class.chat-active__availability-label--radar]="selected.radarOnly"
-              >
-                Disponivel
-              </div>
-            </div>
-            <div class="chat-active__profile-text">
-              <div class="chat-active__name">{{ selected.name }}</div>
-            </div>
-          </div>
-
-          <div class="chat-active__fit-row" *ngIf="selected.match">
-            <div
-              class="chat-active__fit-track"
-              [class.chat-active__fit-track--success]="selectedFitNearTarget"
-              [class.chat-active__fit-track--warm]="!selectedFitNearTarget"
-              [style.--val]="selected.match"
-              [style.--val-pct]="selected.match + '%'"
-              [style.--delay]="'0ms'"
-            >
-              <div class="chat-active__fit-fill"></div>
-            </div>
-            <div class="chat-active__fit-meta">
-              <span class="chat-active__percent">{{ selected.match }}%</span>
-              <span class="chat-active__status">Aderente</span>
-            </div>
-          </div>
-        </div>
-
-        <section class="chat-active__stack-block" *ngIf="jobTechStack.length">
-          <div class="chat-active__stack-head">
-            <h4 class="chat-active__stack-title">Principais Stacks</h4>
-            <div class="chat-active__stack-actions">
-              <button type="button" class="chat-active__stack-cv chat-active__stack-cv--status" (click)="openCandidateModal('journey')">
-                <span class="material-symbols-rounded" aria-hidden="true">monitoring</span>
-                <span>Jornada</span>
-              </button>
-              <button type="button" class="chat-active__stack-cv" (click)="openCandidateModal('curriculum')">
-                <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                <span>Conversar</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="chat-active__stack">
-            <div class="stack-card__list">
-              <div class="stack-item" *ngFor="let item of jobTechStack">
-                <div class="stack-item__meta">
-                  <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
-                  <span class="stack-item__name">{{ item.name }}</span>
-                </div>
-
-                <div class="stack-item__progress">
-                  <span class="stack-item__track" aria-hidden="true">
-                    <span class="stack-item__fill" [style.width.%]="item.match"></span>
-                    <span class="stack-item__thumb" [style.left.%]="item.match"></span>
-                  </span>
-                  <span class="stack-item__value">{{ item.match }}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <div class="chat-active__radar-divider" aria-hidden="true"></div>
       </div>
 
       <div class="chat-active__messages">

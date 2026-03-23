@@ -1,4 +1,30 @@
 <header class="topbar" *ngIf="!isSelectionMode">
+  <ng-container *ngIf="isChatPage; else defaultTopbar">
+    <div class="topbar__chat-profile">
+      <button
+        class="topbar__chat-back"
+        type="button"
+        (click)="closeChatPage()"
+        aria-label="Voltar"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
+      </button>
+
+      <img class="topbar__chat-avatar" [src]="chatCandidateAvatarUrl" [alt]="chatCandidateName" />
+
+      <div class="topbar__chat-copy">
+        <span class="topbar__chat-name">{{ chatCandidateName }}</span>
+        <span class="topbar__chat-meta">{{ chatCandidateLocation }}</span>
+      </div>
+    </div>
+
+    <div class="topbar__chat-actions">
+      <button class="topbar__chat-chip" type="button" (click)="openChatModal('curriculum')">Curriculum</button>
+      <button class="topbar__chat-chip" type="button" (click)="openChatModal('journey')">Status</button>
+    </div>
+  </ng-container>
+
+  <ng-template #defaultTopbar>
   <div *ngIf="showSidebarProfileInPrimary" class="topbar__profile">
     <button
       class="topbar__avatar-trigger"
@@ -84,6 +110,7 @@
       </span>
     </button>
   </div>
+  </ng-template>
 </header>
 
 <div

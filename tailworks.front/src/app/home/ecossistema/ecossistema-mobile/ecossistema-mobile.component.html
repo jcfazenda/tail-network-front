@@ -315,15 +315,11 @@
         (openCandidateStatus)="vm.openRecruiterPanelCandidate($event)"
       ></app-panel-candidatos-list>
 
-      <app-tail-chat-panel
+      <app-mobile-chat
         *ngIf="vm.selectedChatJob"
-        [embedded]="true"
         [job]="vm.selectedChatJob"
         [startIndex]="vm.chatStartIndex"
-        [showConversationList]="false"
-        (openCandidateProfile)="vm.handleRecruiterCandidateProfile($event)"
-        (close)="vm.closeRecruiterChat()"
-      ></app-tail-chat-panel>
+      ></app-mobile-chat>
     </div>
   </aside>
 </ng-container>

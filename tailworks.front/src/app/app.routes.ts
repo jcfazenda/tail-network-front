@@ -66,6 +66,12 @@ export const routes: Routes = [
     canActivate: [recruiterAuthGuard],
   },
   {
+    path: 'chat/:jobId',
+    loadComponent: () => import('./chat/mobile-chat.page').then((m) => m.MobileChatPage),
+    data: { title: 'Chat' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
     path: 'recruiter/panel',
     loadComponent: () => import('./recruiter/recruiter-panel/recruiter-panel.page').then((m) => m.RecruiterPanelPage),
     data: { title: 'Recruiters' },

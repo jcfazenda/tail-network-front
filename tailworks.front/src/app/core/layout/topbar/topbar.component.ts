@@ -15,6 +15,7 @@ import { EcosystemSearchService } from '../ecosystem-search.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
 import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemViewFilterService } from '../ecosystem-view-filter.service';
+import { ChatSessionService } from '../../../chat/chat-session.service';
 
 type FormationCopyDraft = {
   endMonth?: string;
@@ -89,6 +90,7 @@ export class TopbarComponent {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly chatSessionService = inject(ChatSessionService);
   filterCompany = '';
   filterState = '';
   filterStack = '';
@@ -140,6 +142,28 @@ export class TopbarComponent {
 
   get isAnyEcosystem(): boolean {
     return this.primaryPath === '/home/ecossistema' || this.primaryPath === '/usuario/ecossistema';
+  }
+
+  get isChatPage(): boolean {
+    return this.primaryPath.startsWith('/chat/');
+  }
+
+  get chatCandidate() {
+    return this.chatSessionService.getJob()?.candidates?.[this.chatSessionService.getStartIndex()]
+      ?? this.chatSessionService.getJob()?.candidates?.[0]
+      ?? null;
+  }
+
+  get chatCandidateAvatarUrl(): string {
+    return this.chatCandidate?.avatar || '/assets/avatars/avatar-default.svg';
+  }
+
+  get chatCandidateName(): string {
+    return this.chatCandidate?.name || 'Candidato';
+  }
+
+  get chatCandidateLocation(): string {
+    return this.chatCandidate?.location || 'Localidade nao informada';
   }
 
   get hasSavedEcosystemFilters(): boolean {
@@ -539,6 +563,15 @@ export class TopbarComponent {
 
   openCreateJob(): void {
     void this.router.navigate(['/vagas/cadastro']);
+  }
+
+  closeChatPage(): void {
+    this.chatSessionService.clear();
+    void this.router.navigateByUrl('/home/ecossistema');
+  }
+
+  openChatModal(tab: 'curriculum' | 'journey'): void {
+    this.chatSessionService.openModal(tab);
   }
 
   openCandidateProfileSetup(): void {

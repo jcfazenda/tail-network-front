@@ -1,0 +1,25 @@
+<div class="mobile-chat">
+  <section class="mobile-chat__messages">
+    <article
+      class="mobile-chat__message-row"
+      *ngFor="let message of messages"
+      [class.mobile-chat__message-row--candidate]="message.sender === 'candidate'"
+      [class.mobile-chat__message-row--recruiter]="message.sender === 'recruiter'"
+    >
+      <div class="mobile-chat__bubble">
+        <span>{{ message.text }}</span>
+        <small>{{ message.time }}</small>
+      </div>
+    </article>
+  </section>
+
+  <footer class="mobile-chat__input">
+    <input
+      type="text"
+      placeholder="Digite uma mensagem..."
+      [(ngModel)]="messageText"
+      (keyup.enter)="sendMessage()"
+    />
+    <button type="button" (click)="sendMessage()">Enviar</button>
+  </footer>
+</div>

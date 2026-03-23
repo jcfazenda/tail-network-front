@@ -20,6 +20,7 @@ import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../chat/tail-chat-panel.component';
+import { ChatSessionService } from '../../chat/chat-session.service';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -125,6 +126,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly ecosystemViewFilterService = inject(EcosystemViewFilterService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly chatSessionService = inject(ChatSessionService);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
   private hiredRotationTimer: number | null = null;
@@ -1293,6 +1295,14 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     const candidates = this.sortedCandidatesForPanel(this.selectedJobPanel) as unknown as ChatCandidate[];
     const candidate = candidates[index];
     if (!candidate) {
+      return;
+    }
+
+    if (this.isCompactViewport) {
+      this.chatSessionService.set(this.selectedJobPanel, index);
+      void this.router.navigate(['/chat', this.selectedJobPanel.id], {
+        queryParams: { candidate: index },
+      });
       return;
     }
 

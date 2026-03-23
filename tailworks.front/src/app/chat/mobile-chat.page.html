@@ -1,0 +1,11 @@
+<main class="mobile-chat-page" *ngIf="job as activeJob">
+  <app-mobile-chat [job]="activeJob" [startIndex]="startIndex"></app-mobile-chat>
+</main>
+
+<app-candidate-profile-modal
+  *ngIf="job && selectedCandidate && session.activeModalTab() as activeModalTab"
+  [job]="job"
+  [candidate]="selectedCandidate"
+  [initialTab]="activeModalTab"
+  (close)="closeCandidateModal()"
+></app-candidate-profile-modal>

@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MockJobRecord } from '../../../vagas/data/vagas.models';
 import { PanelCandidatosListComponent } from '../../../panel-candidatos/panel-candidatos-list.component';
-import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../../chat/tail-chat-panel.component';
+import { ChatCandidate, ChatJob } from '../../../chat/tail-chat-panel.component';
+import { MobileChatComponent } from '../../../chat/mobile-chat';
 
 type HiredSpotlightCardLike = {
   name: string;
@@ -81,7 +82,7 @@ export type EcosistemaMobileViewModel = {
 @Component({
   standalone: true,
   selector: 'app-ecossistema-mobile',
-  imports: [CommonModule, PanelCandidatosListComponent, TailChatPanelComponent],
+  imports: [CommonModule, PanelCandidatosListComponent, MobileChatComponent],
   templateUrl: './ecossistema-mobile.component.html',
   styleUrl: './ecossistema-mobile.component.scss',
 })

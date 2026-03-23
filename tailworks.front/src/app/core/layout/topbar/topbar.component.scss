@@ -17,6 +17,71 @@
     0 18px 42px rgba(0, 0, 0, 0.05);
 }
 
+.topbar__chat-profile{
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 40px 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__chat-back{
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(15, 23, 42, 0.86);
+}
+
+.topbar__chat-avatar{
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.topbar__chat-copy{
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.topbar__chat-name{
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.topbar__chat-meta{
+  font-size: 0.84rem;
+  line-height: 1.2;
+  color: rgba(15, 23, 42, 0.58);
+}
+
+.topbar__chat-actions{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar__chat-chip{
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 .topbar:not(.topbar--candidate){
   grid-template-columns: auto minmax(420px, 1fr) auto;
   gap: 18px;
