@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core';
 import { JobsFacade } from '../../../core/facades/jobs.facade';
-import { ChatCandidate, ChatJob } from '../tail-chat-panel/tail-chat-panel.component';
+import { ChatCandidate, ChatJob } from '../../domain/chat.models';
 import { CandidateStage } from '../../../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
 

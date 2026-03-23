@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatJob } from '../components/tail-chat-panel/tail-chat-panel.component';
+import { ChatJob } from '../domain/chat.models';
 
 type MobileChatMessage = {
   sender: 'candidate' | 'recruiter';

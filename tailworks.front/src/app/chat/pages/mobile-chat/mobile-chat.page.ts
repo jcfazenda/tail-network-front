@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MobileChatComponent } from '../../mobile/mobile-chat.component';
 import { ChatSessionService } from '../../application/chat-session.service';
 import { CandidateProfileModalComponent } from '../../components/candidate-profile-modal/candidate-profile-modal.component';
-import { ChatCandidate } from '../../components/tail-chat-panel/tail-chat-panel.component';
+import { ChatCandidate } from '../../domain/chat.models';
 
 @Component({
   standalone: true,

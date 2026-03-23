@@ -549,7 +549,6 @@
 
       <div class="job-side-panel__content">
         <app-panel-candidatos-list
-          *ngIf="!selectedChatJob"
           [embedded]="true"
           [selectedJobPanel]="selectedJobPanel"
           [sortedCandidatesFor]="sortedCandidatesFor"
@@ -559,16 +558,6 @@
           (openCandidateProfile)="openCandidateProfileFromList($event)"
           (openCandidateStatus)="openCandidateStatusFromList($event)"
         ></app-panel-candidatos-list>
-
-        <app-tail-chat-panel
-          *ngIf="selectedChatJob"
-          [embedded]="true"
-          [job]="selectedChatJob"
-          [startIndex]="chatStartIndex"
-          [showConversationList]="false"
-          (openCandidateProfile)="openCandidateProfile($event)"
-          (close)="closeChat()">
-        </app-tail-chat-panel>
       </div>
     </aside>
 

@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { ChatJob } from '../components/tail-chat-panel/tail-chat-panel.component';
+import { ChatJob } from '../domain/chat.models';
 
 export type ChatSessionModalTab = 'journey' | 'curriculum';
 

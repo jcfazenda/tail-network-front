@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MockJobRecord } from '../../../vagas/data/vagas.models';
 import { PanelCandidatosListComponent } from '../../../panel-candidatos/panel-candidatos-list.component';
-import { ChatCandidate, ChatJob } from '../../../chat/components/tail-chat-panel/tail-chat-panel.component';
+import { ChatCandidate, ChatJob } from '../../../chat/domain/chat.models';
 import { MobileChatComponent } from '../../../chat/mobile/mobile-chat.component';
 
 type HiredSpotlightCardLike = {

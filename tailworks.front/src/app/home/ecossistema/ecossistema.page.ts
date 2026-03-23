@@ -19,7 +19,7 @@ import { EcosystemViewFilterService } from '../../core/layout/ecosystem-view-fil
 import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab/matching-lab.models';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
-import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../chat/components/tail-chat-panel/tail-chat-panel.component';
+import { ChatCandidate, ChatJob } from '../../chat/domain/chat.models';
 import { ChatSessionService } from '../../chat/application/chat-session.service';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
@@ -106,7 +106,7 @@ type JobCardTalentRow = {
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, TopbarComponent, EcossistemaMobileComponent, PanelCandidatosListComponent, TailChatPanelComponent],
+  imports: [CommonModule, TopbarComponent, EcossistemaMobileComponent, PanelCandidatosListComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
