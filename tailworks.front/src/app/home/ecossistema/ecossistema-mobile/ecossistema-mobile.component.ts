@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MockJobRecord } from '../../../vagas/data/vagas.models';
 import { PanelCandidatosListComponent } from '../../../panel-candidatos/panel-candidatos-list.component';
 import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../../chat/tail-chat-panel.component';
@@ -32,6 +32,9 @@ export type EcosistemaMobileViewModel = {
   ecoFilteredJobs: MockJobRecord[];
   selectedJobPanel: ChatJob | null;
   selectedChatJob: ChatJob | null;
+  openingRecruiterPanelJobId: string | null;
+  recruiterPanelProgressCurrent: number;
+  recruiterPanelProgressTotal: number;
   chatStartIndex: number;
   recruiterPanelDisplayName: string;
   recruiterPanelDisplayRole: string;
@@ -57,6 +60,8 @@ export type EcosistemaMobileViewModel = {
   talentJobMainStacks(view: TalentCompatibleJobViewLike): Array<{ name: string }>;
   trackByJob(index: number, job: MockJobRecord): unknown;
   topJobTechStacks(job: MockJobRecord): Array<{ name: string }>;
+  jobTalentCount(job: MockJobRecord): number;
+  jobInteractionExtraCount(job: MockJobRecord): number;
   openCreateJob(): void;
   openEditJob(jobId: string): void;
   openRecruiterCandidatesPanel(job: MockJobRecord): void;
@@ -79,7 +84,6 @@ export type EcosistemaMobileViewModel = {
   imports: [CommonModule, PanelCandidatosListComponent, TailChatPanelComponent],
   templateUrl: './ecossistema-mobile.component.html',
   styleUrl: './ecossistema-mobile.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EcossistemaMobileComponent {
   @Input({ required: true }) vm!: EcosistemaMobileViewModel;

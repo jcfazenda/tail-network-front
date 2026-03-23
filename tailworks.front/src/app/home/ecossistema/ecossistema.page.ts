@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild, effect, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, ViewChild, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
@@ -113,6 +113,7 @@ type JobCardTalentRow = {
 export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly ngZone = inject(NgZone);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly ecosystemSearchService = inject(EcosystemSearchService);
   private readonly browserStorage = inject(BrowserStorageService);
@@ -146,7 +147,12 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   readonly mobileVm = this;
   selectedJobPanel: ChatJob | null = null;
   selectedChatJob: ChatJob | null = null;
+  openingRecruiterPanelJobId: string | null = null;
+  recruiterPanelProgressCurrent = 0;
+  recruiterPanelProgressTotal = 0;
   chatStartIndex = 0;
+  private recruiterPanelWatchdogTimer: number | null = null;
+  private recruiterPanelCountdownTimer: number | null = null;
 
   readonly hiringCopy = [
     {
@@ -1192,27 +1198,74 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return Math.max(derivedTotal, totalCandidates, totalRadar, totalTalents);
   }
 
+  jobTalentCount(job: MockJobRecord): number {
+    if (!this.isTalentEcosystemMode) {
+      const algorithmCount = this.buildRadarPanelCandidates(job).length;
+      const syncedRadarCount = Math.max(0, job.radarCount ?? 0);
+      const syncedTalentsCount = Math.max(0, job.talents ?? 0);
+
+      return Math.max(algorithmCount, syncedRadarCount, syncedTalentsCount);
+    }
+
+    return Math.max(0, this.sortedCandidatesForPanel(job).length);
+  }
+
   async openRecruiterCandidatesPanel(job: MockJobRecord): Promise<void> {
     if (this.isTalentEcosystemMode) {
       return;
     }
 
-    await this.ensureSyncedTalentProfiles();
-    this.selectedJobPanel = this.asChatJob(job);
-    this.selectedChatJob = null;
-    this.chatStartIndex = 0;
+    this.clearRecruiterPanelTimers();
+    this.openingRecruiterPanelJobId = job.id;
+    this.recruiterPanelProgressCurrent = 0;
+    this.recruiterPanelProgressTotal = Math.max(1, this.jobTalentCount(job));
+    const totalSteps = this.recruiterPanelProgressTotal;
+    const stepDuration = Math.max(120, Math.round(5000 / totalSteps));
+    this.recruiterPanelCountdownTimer = window.setInterval(() => {
+      this.ngZone.run(() => {
+        if (this.recruiterPanelProgressCurrent < this.recruiterPanelProgressTotal) {
+          this.recruiterPanelProgressCurrent += 1;
+          this.cdr.detectChanges();
+        }
+      });
+    }, stepDuration);
+    this.recruiterPanelWatchdogTimer = window.setTimeout(() => {
+      this.ngZone.run(() => {
+        if (this.openingRecruiterPanelJobId === job.id && !this.selectedJobPanel) {
+          const freshestJob = this.jobsFacade.getJobById(job.id) ?? job;
+          this.selectedJobPanel = this.asChatJob(freshestJob);
+          this.selectedChatJob = null;
+          this.chatStartIndex = 0;
+          this.clearRecruiterPanelTimers();
+          this.openingRecruiterPanelJobId = null;
+          this.recruiterPanelProgressCurrent = 0;
+          this.recruiterPanelProgressTotal = 0;
+          this.cdr.detectChanges();
+        }
+      });
+    }, 5000);
     this.cdr.markForCheck();
+
+    void this.ensureSyncedTalentProfiles(1400);
   }
 
   closeRecruiterPanel(): void {
+    this.clearRecruiterPanelTimers();
     this.selectedChatJob = null;
     this.selectedJobPanel = null;
+    this.openingRecruiterPanelJobId = null;
+    this.recruiterPanelProgressCurrent = 0;
+    this.recruiterPanelProgressTotal = 0;
     this.chatStartIndex = 0;
     this.cdr.markForCheck();
   }
 
   closeRecruiterChat(): void {
+    this.clearRecruiterPanelTimers();
     this.selectedChatJob = null;
+    this.openingRecruiterPanelJobId = null;
+    this.recruiterPanelProgressCurrent = 0;
+    this.recruiterPanelProgressTotal = 0;
     this.chatStartIndex = 0;
     this.cdr.markForCheck();
   }
@@ -1383,9 +1436,29 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return this.fallbackRadarCandidates(job);
   }
 
-  private async ensureSyncedTalentProfiles(): Promise<void> {
-    await this.talentProfileStore.syncFromRemote();
+  private async ensureSyncedTalentProfiles(timeoutMs = 2000): Promise<void> {
+    const syncPromise = this.talentProfileStore.syncFromRemote().catch(() => null);
+    const timeoutPromise = new Promise<null>((resolve) => {
+      const timer = window.setTimeout(() => {
+        window.clearTimeout(timer);
+        resolve(null);
+      }, timeoutMs);
+    });
+
+    await Promise.race([syncPromise, timeoutPromise]);
     this.cdr.markForCheck();
+  }
+
+  private clearRecruiterPanelTimers(): void {
+    if (this.recruiterPanelWatchdogTimer !== null) {
+      window.clearTimeout(this.recruiterPanelWatchdogTimer);
+      this.recruiterPanelWatchdogTimer = null;
+    }
+
+    if (this.recruiterPanelCountdownTimer !== null) {
+      window.clearInterval(this.recruiterPanelCountdownTimer);
+      this.recruiterPanelCountdownTimer = null;
+    }
   }
 
   private buildRadarCandidatesFromMatchingLab(job: MockJobRecord): MockJobCandidate[] {

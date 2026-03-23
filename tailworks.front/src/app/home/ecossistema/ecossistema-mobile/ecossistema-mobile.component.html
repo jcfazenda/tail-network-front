@@ -174,19 +174,6 @@
           <div class="landing__mobile-job-card-title-row">
             <div class="landing__mobile-job-card-title">
               <span>{{ job.title }}</span>
-              <button
-                class="landing__mobile-job-card-title-action"
-                type="button"
-                aria-label="Abrir painel de candidatos"
-                (click)="vm.openRecruiterCandidatesPanel(job)"
-              >
-                <img
-                  class="landing__mobile-job-card-title-icon"
-                  src="/assets/icons/chat.svg"
-                  alt=""
-                  aria-hidden="true"
-                />
-              </button>
             </div>
 
             <div
@@ -208,7 +195,18 @@
               </span>
             </div>
 
-            <button class="landing__mobile-job-card-action" type="button" (click)="vm.openEditJob(job.id)">editar</button>
+            <div class="landing__mobile-job-card-actions">
+              <button
+                class="landing__mobile-job-card-action"
+                type="button"
+                (click)="vm.openRecruiterCandidatesPanel(job)"
+                aria-label="Abrir talentos da vaga"
+                [disabled]="vm.openingRecruiterPanelJobId === job.id"
+              >
+                Talentos {{ vm.jobTalentCount(job) }}
+              </button>
+              <button class="landing__mobile-job-card-action" type="button" (click)="vm.openEditJob(job.id)">editar</button>
+            </div>
           </div>
         </article>
       </ng-container>
@@ -231,6 +229,27 @@
     <footer class="landing__mobile-footer">CRIATTI Technologies @direitos 2026</footer>
   </section>
 </main>
+
+<ng-container *ngIf="vm.openingRecruiterPanelJobId && !vm.selectedJobPanel && !vm.isTalentEcosystemMode && vm.isCompactViewport">
+  <div class="landing__mobile-panel-backdrop"></div>
+
+  <aside class="landing__mobile-loading-panel" aria-label="Abrindo candidatos">
+    <div class="landing__mobile-loading-card">
+      <span class="material-symbols-rounded landing__mobile-loading-icon" aria-hidden="true">hourglass_top</span>
+      <strong>Aguarde...</strong>
+      <p>abrindo candidatos</p>
+      <span class="landing__mobile-loading-progress-text" *ngIf="vm.recruiterPanelProgressTotal > 0">
+        {{ vm.recruiterPanelProgressCurrent }} / {{ vm.recruiterPanelProgressTotal }} candidatos
+      </span>
+      <div class="landing__mobile-loading-progress" *ngIf="vm.recruiterPanelProgressTotal > 0">
+        <span
+          class="landing__mobile-loading-progress-fill"
+          [style.width.%]="(vm.recruiterPanelProgressCurrent / vm.recruiterPanelProgressTotal) * 100"
+        ></span>
+      </div>
+    </div>
+  </aside>
+</ng-container>
 
 <ng-container *ngIf="vm.selectedJobPanel && !vm.isTalentEcosystemMode && vm.isCompactViewport">
   <div class="landing__mobile-panel-backdrop" (click)="vm.closeRecruiterPanel()"></div>

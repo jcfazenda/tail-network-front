@@ -14,6 +14,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -190,6 +198,14 @@
         "portfolio": "https://portfolio.tail/thais.talento",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -374,6 +390,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -556,6 +580,14 @@
         "portfolio": "https://portfolio.tail/marina.prado",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -770,6 +802,14 @@
         "portfolio": "https://portfolio.tail/felipe.barros",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -1022,6 +1062,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -1192,6 +1240,14 @@
         "portfolio": "https://portfolio.tail/gustavo.leal",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -1369,6 +1425,14 @@
         "portfolio": "https://portfolio.tail/camila.moura",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em AWS",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -1558,6 +1622,14 @@
         "portfolio": "https://portfolio.tail/diego.matos",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -1772,6 +1844,14 @@
         "portfolio": "https://portfolio.tail/bianca.pires",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -2036,6 +2116,14 @@
         "formation": "Pós-graduação em Engenharia de Software"
       }
     },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -2212,6 +2300,14 @@
         "portfolio": "https://portfolio.tail/priscila.faria",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -2396,6 +2492,14 @@
         "formation": "Tecnólogo em Análise e Desenvolvimento"
       }
     },
+    "formationCopy": {
+      "graduation": "Tecnólogo em Análise e Desenvolvimento",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -2578,6 +2682,14 @@
         "portfolio": "https://portfolio.tail/patricia.coelho",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -2792,6 +2904,14 @@
         "portfolio": "https://portfolio.tail/vinicius.rocha",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -3044,6 +3164,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -3214,6 +3342,14 @@
         "portfolio": "https://portfolio.tail/matheus.teles",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -3391,6 +3527,14 @@
         "portfolio": "https://portfolio.tail/daniela.paixao",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Docker",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -3580,6 +3724,14 @@
         "portfolio": "https://portfolio.tail/caio.araujo",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -3794,6 +3946,14 @@
         "portfolio": "https://portfolio.tail/larissa.mota",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -4058,6 +4218,14 @@
         "formation": "Pós-graduação em Engenharia de Software"
       }
     },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -4234,6 +4402,14 @@
         "portfolio": "https://portfolio.tail/amanda.silveira",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -4418,6 +4594,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -4600,6 +4784,14 @@
         "portfolio": "https://portfolio.tail/vanessa.nunes",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -4814,6 +5006,14 @@
         "portfolio": "https://portfolio.tail/thiago.porto",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -5066,6 +5266,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -5236,6 +5444,14 @@
         "portfolio": "https://portfolio.tail/leonardo.brito",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -5413,6 +5629,14 @@
         "portfolio": "https://portfolio.tail/fernanda.luz",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em AWS",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -5602,6 +5826,14 @@
         "portfolio": "https://portfolio.tail/igor.santana",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -5816,6 +6048,14 @@
         "portfolio": "https://portfolio.tail/juliana.neves",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -6080,6 +6320,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -6256,6 +6504,14 @@
         "portfolio": "https://portfolio.tail/sabrina.peixoto",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -6440,6 +6696,14 @@
         "formation": "Pós-graduação em Engenharia de Software"
       }
     },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -6622,6 +6886,14 @@
         "portfolio": "https://portfolio.tail/natalia.torres",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -6836,6 +7108,14 @@
         "portfolio": "https://portfolio.tail/pedro.lemos",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -7088,6 +7368,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -7258,6 +7546,14 @@
         "portfolio": "https://portfolio.tail/vitor.aguiar",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -7435,6 +7731,14 @@
         "portfolio": "https://portfolio.tail/tatiane.melo",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Docker",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -7624,6 +7928,14 @@
         "portfolio": "https://portfolio.tail/cesar.campos",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -7838,6 +8150,14 @@
         "portfolio": "https://portfolio.tail/raquel.pinho",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -8102,6 +8422,14 @@
         "formation": "Mestrado em Computação"
       }
     },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -8278,6 +8606,14 @@
         "portfolio": "https://portfolio.tail/livia.teixeira",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -8462,6 +8798,14 @@
         "formation": "Tecnólogo em Análise e Desenvolvimento"
       }
     },
+    "formationCopy": {
+      "graduation": "Tecnólogo em Análise e Desenvolvimento",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -8644,6 +8988,14 @@
         "portfolio": "https://portfolio.tail/gabriela.dias",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -8858,6 +9210,14 @@
         "portfolio": "https://portfolio.tail/enzo.tavares",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -9110,6 +9470,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -9280,6 +9648,14 @@
         "portfolio": "https://portfolio.tail/vinicius.marins",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -9457,6 +9833,14 @@
         "portfolio": "https://portfolio.tail/beatriz.mello",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em AWS",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -9646,6 +10030,14 @@
         "portfolio": "https://portfolio.tail/ramon.xavier",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -9860,6 +10252,14 @@
         "portfolio": "https://portfolio.tail/nicole.antunes",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -10124,6 +10524,14 @@
         "formation": "Pós-graduação em Engenharia de Software"
       }
     },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -10300,6 +10708,14 @@
         "portfolio": "https://portfolio.tail/clara.azevedo",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -10484,6 +10900,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -10666,6 +11090,14 @@
         "portfolio": "https://portfolio.tail/mirela.goulart",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -10880,6 +11312,14 @@
         "portfolio": "https://portfolio.tail/davi.ribeiro",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -11132,6 +11572,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -11302,6 +11750,14 @@
         "portfolio": "https://portfolio.tail/samuel.pacheco",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -11479,6 +11935,14 @@
         "portfolio": "https://portfolio.tail/evelyn.soares",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Docker",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -11668,6 +12132,14 @@
         "portfolio": "https://portfolio.tail/nicolas.furtado",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -11882,6 +12354,14 @@
         "portfolio": "https://portfolio.tail/isabela.pacheco",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -12146,6 +12626,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -12322,6 +12810,14 @@
         "portfolio": "https://portfolio.tail/helena.macedo",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -12506,6 +13002,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -12688,6 +13192,14 @@
         "portfolio": "https://portfolio.tail/marcela.reis",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -12902,6 +13414,14 @@
         "portfolio": "https://portfolio.tail/danilo.amaral",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -13154,6 +13674,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -13324,6 +13852,14 @@
         "portfolio": "https://portfolio.tail/rodrigo.cezar",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -13501,6 +14037,14 @@
         "portfolio": "https://portfolio.tail/flavia.bittencourt",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em AWS",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -13690,6 +14234,14 @@
         "portfolio": "https://portfolio.tail/tiago.cunha",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -13904,6 +14456,14 @@
         "portfolio": "https://portfolio.tail/nina.ferraz",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -14168,6 +14728,14 @@
         "formation": "Pós-graduação em Engenharia de Software"
       }
     },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -14344,6 +14912,14 @@
         "portfolio": "https://portfolio.tail/elaine.gomes",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -14528,6 +15104,14 @@
         "formation": "Tecnólogo em Análise e Desenvolvimento"
       }
     },
+    "formationCopy": {
+      "graduation": "Tecnólogo em Análise e Desenvolvimento",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -14710,6 +15294,14 @@
         "portfolio": "https://portfolio.tail/malu.bernardes",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -14924,6 +15516,14 @@
         "portfolio": "https://portfolio.tail/wesley.moura",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -15176,6 +15776,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -15346,6 +15954,14 @@
         "portfolio": "https://portfolio.tail/heitor.lobo",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -15523,6 +16139,14 @@
         "portfolio": "https://portfolio.tail/lorena.cardoso",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Docker",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -15712,6 +16336,14 @@
         "portfolio": "https://portfolio.tail/luan.bessa",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -15926,6 +16558,14 @@
         "portfolio": "https://portfolio.tail/jade.montenegro",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -16190,6 +16830,14 @@
         "formation": "Mestrado em Computação"
       }
     },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -16366,6 +17014,14 @@
         "portfolio": "https://portfolio.tail/yasmin.falcao",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -16550,6 +17206,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -16732,6 +17396,14 @@
         "portfolio": "https://portfolio.tail/nathalia.pena",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -16946,6 +17618,14 @@
         "portfolio": "https://portfolio.tail/fernando.chaves",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -17198,6 +17878,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -17368,6 +18056,14 @@
         "portfolio": "https://portfolio.tail/ruan.sales",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -17545,6 +18241,14 @@
         "portfolio": "https://portfolio.tail/rita.carvalho",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em AWS",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -17734,6 +18438,14 @@
         "portfolio": "https://portfolio.tail/douglas.freire",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -17948,6 +18660,14 @@
         "portfolio": "https://portfolio.tail/mariana.gama",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -18212,6 +18932,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -18388,6 +19116,14 @@
         "portfolio": "https://portfolio.tail/vivian.soares",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Java / Spring",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -18572,6 +19308,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Angular",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -18754,6 +19498,14 @@
         "portfolio": "https://portfolio.tail/taina.lopes",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -18968,6 +19720,14 @@
         "portfolio": "https://portfolio.tail/marcos.veiga",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em .NET / C#",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -19220,6 +19980,14 @@
         "formation": "Bacharelado em Sistemas de Informação"
       }
     },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em Flutter",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
+    },
     "stacksDraft": {
       "primary": [
         {
@@ -19390,6 +20158,14 @@
         "portfolio": "https://portfolio.tail/ciro.valente",
         "formation": "Bacharelado em Sistemas de Informação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Bacharelado em Sistemas de Informação",
+      "specialization": "Especialização em React Native",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -19567,6 +20343,14 @@
         "portfolio": "https://portfolio.tail/leticia.braga",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em Docker",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -19756,6 +20540,14 @@
         "portfolio": "https://portfolio.tail/fabio.maciel",
         "formation": "Pós-graduação em Engenharia de Software"
       }
+    },
+    "formationCopy": {
+      "graduation": "Pós-graduação em Engenharia de Software",
+      "specialization": "Especialização em SQL / Dados",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [
@@ -19970,6 +20762,14 @@
         "portfolio": "https://portfolio.tail/karen.assis",
         "formation": "Mestrado em Computação"
       }
+    },
+    "formationCopy": {
+      "graduation": "Mestrado em Computação",
+      "specialization": "Especialização em IA / ML",
+      "endMonth": "Dez",
+      "endYear": "2025",
+      "graduated": true,
+      "educationStatus": "Concluído"
     },
     "stacksDraft": {
       "primary": [

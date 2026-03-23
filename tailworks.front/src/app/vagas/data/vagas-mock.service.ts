@@ -9,6 +9,8 @@ import { JobsRepository } from './jobs.repository';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { JobsSyncApiService } from './jobs-sync-api.service';
 import { MatchLabDataset } from '../../core/matching-lab/matching-lab.models';
+import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
+import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type CandidateBasicProfile = {
   name: string;
@@ -58,6 +60,8 @@ export class VagasMockService {
   private readonly jobsRepository = inject(JobsRepository);
   private readonly matchDomainService = inject(MatchDomainService);
   private readonly jobsSyncApi = inject(JobsSyncApiService);
+  private readonly matchingLabService = inject(MatchingLabService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly jobsChangedSubject = new Subject<void>();
   private cache: MockJobRecord[] | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
@@ -361,33 +365,9 @@ export class VagasMockService {
     }
 
     const recruiter = this.getCurrentRecruiterIdentity();
-    const talentByName = new Map(
-      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
-    );
     const currentJobs = this.loadJobs().filter((job) => !job.id.startsWith('lab-'));
 
     const seededJobs = dataset.results.map((result, index) => {
-      const radarEntries = result.ranking
-        .filter((entry) => entry.score >= 60)
-        .slice(0, 18);
-      const topRanking = radarEntries.slice(0, 4);
-      const candidates: MockJobCandidate[] = topRanking.map((entry, rankingIndex) => {
-        const talent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
-        return {
-          id: `${result.job.id}-candidate-${rankingIndex + 1}`,
-          name: entry.candidate.name,
-          role: entry.candidate.summary,
-          location: entry.candidate.location,
-          match: entry.score,
-          minutesAgo: 5 + rankingIndex,
-          status: 'online',
-          avatar: talent?.avatarUrl?.trim() || this.fallbackTalentAvatar,
-          stage: 'radar',
-          radarOnly: true,
-          source: 'seed',
-        };
-      });
-
       const createdAt = new Date(Date.now() - (index * 60_000)).toISOString();
 
       return this.decorateTalentVisibility({
@@ -418,14 +398,14 @@ export class VagasMockService {
         recruiterWatcherIds: [recruiter.id],
         priority: 'Carga local',
         match: result.ranking[0]?.score ?? 0,
-        talents: radarEntries.length,
-        radarCount: radarEntries.length,
+        talents: 0,
+        radarCount: 0,
         ageLabel: 'Agora',
         postedLabel: 'Carga local',
-        avatars: candidates.map((candidate) => candidate.avatar).slice(0, 4),
-        extraCount: Math.max(0, radarEntries.length - 4),
+        avatars: [],
+        extraCount: 0,
         status: 'ativas',
-        candidates,
+        candidates: [],
         createdAt,
         updatedAt: createdAt,
       });
@@ -1201,19 +1181,119 @@ export class VagasMockService {
   private decorateTalentVisibility(job: MockJobRecord, context?: { acceptedJobId?: string | null; acceptedCandidateNames?: Set<string> }): MockJobRecord {
     const canonicalJob = this.collapseTalentCandidates(job);
     const jobWithTalentState = this.withDerivedTalentState(canonicalJob);
-    const acceptedJobId = context?.acceptedJobId ?? null;
     const acceptedCandidateNames = context?.acceptedCandidateNames ?? new Set<string>();
-    const radarTalents = this.collectRadarTalents(jobWithTalentState, acceptedJobId, acceptedCandidateNames);
-    const highlightedAvatars = radarTalents.map((talent) => talent.avatarUrl.trim()).filter(Boolean);
-    const totalRadar = radarTalents.length;
+    const realtimeRadarCandidates = this.buildRealtimeRadarCandidates(jobWithTalentState, acceptedCandidateNames);
+    const labRadarCandidates = this.buildLabRadarCandidates(jobWithTalentState, acceptedCandidateNames);
+    const fallbackRadarCandidates = jobWithTalentState.candidates.filter((candidate) => this.getEffectiveCandidateStage(candidate) === 'radar');
+    const effectiveRadarCandidates = realtimeRadarCandidates.length
+      ? realtimeRadarCandidates
+      : labRadarCandidates.length
+        ? labRadarCandidates
+        : fallbackRadarCandidates;
+    const highlightedAvatars = effectiveRadarCandidates
+      .map((candidate) => candidate.avatar?.trim() ?? '')
+      .filter(Boolean);
+    const totalRadar = effectiveRadarCandidates.length;
+    const nonRadarCandidates = jobWithTalentState.candidates.filter((candidate) => this.getEffectiveCandidateStage(candidate) !== 'radar');
+    const candidates = labRadarCandidates.length
+      ? [...nonRadarCandidates, ...effectiveRadarCandidates]
+      : realtimeRadarCandidates.length
+        ? [...nonRadarCandidates, ...effectiveRadarCandidates]
+        : jobWithTalentState.candidates;
 
     return {
       ...jobWithTalentState,
-      talents: Math.max(jobWithTalentState.candidates.length, totalRadar),
+      candidates,
+      talents: Math.max(candidates.length, totalRadar),
       radarCount: totalRadar,
       avatars: highlightedAvatars.slice(0, 3),
       extraCount: Math.max(0, totalRadar - Math.min(3, highlightedAvatars.length)),
     };
+  }
+
+  private buildLabRadarCandidates(job: MockJobRecord, acceptedCandidateNames: Set<string>): MockJobCandidate[] {
+    if (!job.id.startsWith('lab-')) {
+      return [];
+    }
+
+    const jobId = job.id.replace(/^lab-/, '');
+    const result = this.matchingLabService.getDataset().results.find((entry) => entry.job.id === jobId);
+    if (!result) {
+      return [];
+    }
+
+    const talentByName = new Map(
+      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
+    );
+
+    return result.ranking
+      .filter((entry) => entry.score >= 50)
+      .filter((entry) => !acceptedCandidateNames.has(entry.candidate.name.trim().toLocaleLowerCase('pt-BR')))
+      .map((entry, index) => {
+        const talent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
+
+        return {
+          id: `${result.job.id}-candidate-${index + 1}`,
+          name: entry.candidate.name,
+          role: entry.candidate.summary,
+          location: entry.candidate.location,
+          match: entry.score,
+          minutesAgo: 5 + index,
+          status: 'online',
+          avatar: talent?.avatarUrl?.trim() || this.fallbackTalentAvatar,
+          stage: 'radar',
+          radarOnly: true,
+          source: 'seed',
+          availabilityLabel: 'Disponibilidade imediata',
+        } satisfies MockJobCandidate;
+      });
+  }
+
+  private buildRealtimeRadarCandidates(job: MockJobRecord, acceptedCandidateNames: Set<string>): MockJobCandidate[] {
+    const jobProfile = this.matchDomainService.buildJobProfile({
+      techStack: job.techStack,
+      seniority: job.seniority,
+      responsibilitySections: job.responsibilitySections,
+    });
+
+    if (!jobProfile.requiredRepoIds.length) {
+      return [];
+    }
+
+    const talentByName = new Map(
+      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
+    );
+
+    return this.talentProfileStore.listMatchCandidates()
+      .filter((candidate) => !acceptedCandidateNames.has(candidate.name.trim().toLocaleLowerCase('pt-BR')))
+      .map((candidate, index) => {
+        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, {
+          stackScores: Object.fromEntries(candidate.stacks.map((stack) => [stack.stackId, stack.percent])),
+          experiences: candidate.experiences.map((experience) => ({
+            role: experience.role,
+            positionLevel: candidate.seniority,
+            appliedStacks: experience.stackIds,
+          })),
+        });
+        const talent = talentByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
+
+        return {
+          id: `realtime-${job.id}-${index + 1}`,
+          name: candidate.name,
+          role: candidate.summary,
+          location: candidate.location,
+          match: score.overallScore,
+          minutesAgo: 5 + index,
+          status: 'online' as const,
+          avatar: talent?.avatarUrl?.trim() || this.fallbackTalentAvatar,
+          stage: 'radar',
+          radarOnly: true,
+          source: 'seed' as const,
+          availabilityLabel: 'Disponibilidade imediata',
+        } satisfies MockJobCandidate;
+      })
+      .filter((candidate) => candidate.match >= 50)
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
   }
 
   private matchingLabCompanyLogoUrl(company: string): string {
