@@ -67,7 +67,7 @@ export const routes: Routes = [
   },
   {
     path: 'chat/:jobId',
-    loadComponent: () => import('./chat/mobile-chat.page').then((m) => m.MobileChatPage),
+    loadComponent: () => import('./chat/pages/mobile-chat/mobile-chat.page').then((m) => m.MobileChatPage),
     data: { title: 'Chat' },
     canActivate: [recruiterAuthGuard],
   },

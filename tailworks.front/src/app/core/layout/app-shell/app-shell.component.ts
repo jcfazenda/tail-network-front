@@ -60,7 +60,15 @@ export class AppShellComponent {
     return this.primaryPath === '/home/ecossistema';
   }
 
+  get isChatPage(): boolean {
+    return this.primaryPath.startsWith('/chat/');
+  }
+
   get hasSidebar(): boolean {
+    if (this.isChatPage) {
+      return false;
+    }
+
     if (this.isCandidateEcosystem) {
       return this.isCompactSidebarMode;
     }

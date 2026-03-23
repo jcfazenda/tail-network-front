@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatJob } from './tail-chat-panel.component';
+import { ChatJob } from '../components/tail-chat-panel/tail-chat-panel.component';
 
 type MobileChatMessage = {
   sender: 'candidate' | 'recruiter';
@@ -13,8 +13,8 @@ type MobileChatMessage = {
   standalone: true,
   selector: 'app-mobile-chat',
   imports: [CommonModule, FormsModule],
-  templateUrl: './mobile-chat.html',
-  styleUrl: './mobile-chat.scss',
+  templateUrl: './mobile-chat.component.html',
+  styleUrl: './mobile-chat.component.scss',
 })
 export class MobileChatComponent implements OnChanges {
   @Input({ required: true }) job!: ChatJob;

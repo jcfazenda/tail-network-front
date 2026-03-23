@@ -1,15 +1,6 @@
 <header class="topbar" *ngIf="!isSelectionMode">
   <ng-container *ngIf="isChatPage; else defaultTopbar">
     <div class="topbar__chat-profile">
-      <button
-        class="topbar__chat-back"
-        type="button"
-        (click)="closeChatPage()"
-        aria-label="Voltar"
-      >
-        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
-      </button>
-
       <img class="topbar__chat-avatar" [src]="chatCandidateAvatarUrl" [alt]="chatCandidateName" />
 
       <div class="topbar__chat-copy">

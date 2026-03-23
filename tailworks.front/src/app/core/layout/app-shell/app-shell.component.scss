@@ -63,6 +63,12 @@
   background: #f7f9fc;
 }
 
+.shell__main--chat{
+  grid-template-rows: 110px minmax(0, 1fr);
+  height: 100vh;
+  background: #f5efe2;
+}
+
 .shell__main--ecosystem{
   grid-template-rows: 96px minmax(0, 1fr);
   height: 100vh;
@@ -91,6 +97,14 @@
 
 .shell__content--candidate{
   background: transparent;
+}
+
+.shell__content--chat{
+  padding: 0;
+  min-height: 0;
+  height: calc(100vh - 110px);
+  overflow: hidden;
+  background: #f5efe2;
 }
 
 .shell__content--candidate-basic{
@@ -168,6 +182,14 @@
 
   .shell__content--candidate-basic{
     padding-top: 64px;
+  }
+
+  .shell__main--chat{
+    grid-template-rows: 96px minmax(0, 1fr);
+  }
+
+  .shell__content--chat{
+    height: calc(100vh - 96px);
   }
 
   .shell__content--template{

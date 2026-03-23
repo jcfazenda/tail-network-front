@@ -15,7 +15,7 @@ import { EcosystemSearchService } from '../ecosystem-search.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
 import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemViewFilterService } from '../ecosystem-view-filter.service';
-import { ChatSessionService } from '../../../chat/chat-session.service';
+import { ChatSessionService } from '../../../chat/application/chat-session.service';
 
 type FormationCopyDraft = {
   endMonth?: string;

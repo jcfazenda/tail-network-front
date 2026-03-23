@@ -19,8 +19,8 @@ import { EcosystemViewFilterService } from '../../core/layout/ecosystem-view-fil
 import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab/matching-lab.models';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
-import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../chat/tail-chat-panel.component';
-import { ChatSessionService } from '../../chat/chat-session.service';
+import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../../chat/components/tail-chat-panel/tail-chat-panel.component';
+import { ChatSessionService } from '../../chat/application/chat-session.service';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CandidateProfileModalComponent } from '../chat/candidate-profile-modal.component';
-import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/tail-chat-panel.component';
+import { CandidateProfileModalComponent } from '../chat/components/candidate-profile-modal/candidate-profile-modal.component';
+import { ChatCandidate, ChatJob, TailChatPanelComponent } from '../chat/components/tail-chat-panel/tail-chat-panel.component';
 import { JobsFacade } from '../core/facades/jobs.facade';
 import { BrowserStorageService } from '../core/storage/browser-storage.service';
 import { PanelCandidatosListComponent } from '../panel-candidatos/panel-candidatos-list.component';

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnChanges, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { JobsFacade } from '../core/facades/jobs.facade';
+import { JobsFacade } from '../../../core/facades/jobs.facade';
 
 export interface ChatCandidate {
   id?: string;
