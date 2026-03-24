@@ -65,6 +65,10 @@ export class AuthFacade {
     return this.authService.syncAccountsFromRemote();
   }
 
+  clearSeededTalentAccounts(): Promise<number> {
+    return this.authService.clearSeededTalentAccounts();
+  }
+
   resetWorkspace(): Promise<void> {
     return this.authService.resetWorkspace();
   }

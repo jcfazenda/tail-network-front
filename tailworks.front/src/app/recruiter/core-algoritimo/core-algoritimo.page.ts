@@ -21,6 +21,7 @@ import { CoreMatchSpotlightComponent, CoreMatchSpotlightViewModel } from './core
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoreAlgoritimoPage implements OnInit, OnDestroy {
+  private static readonly jobCardTalentThreshold = 50;
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly authService = inject(AuthFacade);
@@ -70,72 +71,34 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     );
   }
 
-  get selectedResult(): MatchLabJobResult {
-    return this.dataset.results.find((result) => result.job.id === this.selectedJobId) ?? this.dataset.results[0];
+  get selectedResult(): MatchLabJobResult | null {
+    return this.dataset.results.find((result) => result.job.id === this.selectedJobId) ?? this.dataset.results[0] ?? null;
   }
 
-  get selectedJob(): MatchLabJob {
-    return this.selectedResult.job;
+  get selectedJob(): MatchLabJob | null {
+    return this.selectedResult?.job ?? null;
   }
 
   get spotlightEntry(): MatchLabRankingEntry | null {
-    return this.visibleRanking[0] ?? this.selectedResult.ranking[0] ?? null;
+    return this.visibleRanking[0] ?? this.selectedResult?.ranking[0] ?? null;
   }
 
   get spotlightViewModel(): CoreMatchSpotlightViewModel | null {
-    const entry = this.spotlightEntry;
-    if (!entry) {
-      return null;
-    }
+    return this.spotlightEntry ? this.buildSpotlightViewModel(this.spotlightEntry) : null;
+  }
 
-    return {
-      avatar: this.initials(entry.candidate.name),
-      candidateName: entry.candidate.name,
-      candidateMeta: `${entry.candidate.location} , ${entry.candidate.seniority}`,
-      candidateRole: entry.candidate.summary,
-      score: entry.score,
-      scoreLabel: this.scoreLabel(entry.score),
-      scoreTone: this.scoreTone(entry.score),
-      requirements: this.vacancyStacks(entry).map((stack) => ({
-        label: stack.stackName,
-        minimumPercent: stack.vacancyPercent,
-        checked: stack.candidatePercent >= stack.vacancyPercent,
-      })),
-      companyExperiencePercent: this.spotlightExperiencePercent(entry),
-      skills: this.candidateStacks(entry).map((stack) => ({
-        label: stack.stackName,
-        percent: stack.candidatePercent,
-      })),
-      alternativeTasks: this.selectedJob.secondaryStacks.slice(0, 3).map((stack) => `Experiência com ${stack.stackName}.`),
-      breakdownRows: this.breakdownStacks(entry).map((item) => ({
-        label: item.stackName,
-        source: this.sourceTagLabel(item),
-        candidatePercent: item.candidatePercent,
-        vacancyPercent: item.vacancyPercent,
-        strengthLabel: this.strengthLabel(item.weightedContribution),
-        strengthPercent: item.weightedContribution,
-        hasCheck: item.candidateExperienceMonths > 0,
-        timeLabel: `${item.candidateExperienceMonths}m`,
-      })),
-      contributionSegments: this.contributionSegments(entry).map((segment) => ({
-        width: segment.width,
-        tone: segment.tone,
-      })),
-      insights: [
-        {
-          label: 'Principal gap',
-          value: this.spotlightGap(entry),
-        },
-        {
-          label: 'Maior força',
-          value: this.spotlightStrength(entry),
-          warm: true,
-        },
-      ],
-    };
+  get visibleSpotlights(): Array<{ entry: MatchLabRankingEntry; viewModel: CoreMatchSpotlightViewModel }> {
+    return this.visibleRanking.map((entry) => ({
+      entry,
+      viewModel: this.buildSpotlightViewModel(entry),
+    }));
   }
 
   get visibleRanking(): MatchLabRankingEntry[] {
+    if (!this.selectedResult) {
+      return [];
+    }
+
     const query = this.candidateSearch.trim().toLocaleLowerCase('pt-BR');
 
     return this.selectedResult.ranking.filter((entry) => {
@@ -203,16 +166,21 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   }
 
   get laboratoryStackPressure(): Array<{ name: string; percent: number }> {
-    const stackMap = new Map<string, number>();
+    const stackMap = new Map<string, { total: number; count: number }>();
     for (const job of this.jobs) {
       for (const stack of [...job.topStacks, ...job.secondaryStacks]) {
-        const current = stackMap.get(stack.stackName) ?? 0;
-        stackMap.set(stack.stackName, Math.max(current, stack.percent));
+        const current = stackMap.get(stack.stackName) ?? { total: 0, count: 0 };
+        current.total += stack.percent;
+        current.count += 1;
+        stackMap.set(stack.stackName, current);
       }
     }
 
     return [...stackMap.entries()]
-      .map(([name, percent]) => ({ name, percent }))
+      .map(([name, value]) => ({
+        name,
+        percent: this.matchingStackPressurePercent(value.total, value.count),
+      }))
       .sort((left, right) => right.percent - left.percent)
       .slice(0, 7);
   }
@@ -222,7 +190,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   }
 
   get totalRankingCount(): number {
-    return this.selectedResult.ranking.length;
+    return this.selectedResult?.ranking.length ?? 0;
   }
 
   selectJob(jobId: string): void {
@@ -237,9 +205,19 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   async seedSystemTalents(): Promise<void> {
     const generated = this.matchingLabService.generateLocalMass();
     const jobs = await this.jobsFacade.seedJobsFromMatchingLab(generated);
-    const result = await this.talentSystemSeedService.seedTalentsFromLab();
+    const result = await this.talentSystemSeedService.seedTalentsFromLab(generated);
     await this.refreshDatasetFromProfiles(false);
     this.seedStatus = `${jobs} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
+    this.loginStatus = '';
+  }
+
+  async clearLabLoad(): Promise<void> {
+    this.matchingLabService.clear();
+    await this.jobsFacade.clearLabJobsAndSync();
+    await this.authService.clearSeededTalentAccounts();
+    await this.talentProfileStore.clearSeededProfiles();
+    await this.refreshDatasetFromProfiles(false);
+    this.seedStatus = 'Carga do laboratório removida.';
     this.loginStatus = '';
   }
 
@@ -324,6 +302,15 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
       .map((stack) => ({ name: stack.stackName, percent: stack.percent }));
   }
 
+  jobBoostStacks(job: MatchLabJob): string[] {
+    const topNames = new Set(job.topStacks.map((stack) => stack.stackId));
+    return [...job.stacks]
+      .filter((stack) => !topNames.has(stack.stackId))
+      .sort((left, right) => right.percent - left.percent)
+      .slice(0, 3)
+      .map((stack) => `${stack.stackName} ${stack.percent}%`);
+  }
+
   jobSalarySingle(job: MatchLabJob): string {
     if (job.salaryMax) {
       return job.salaryMax.toLocaleString('pt-BR', {
@@ -361,6 +348,10 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
   stackPressureWidth(percent: number): number {
     return Math.max(8, Math.min(100, percent));
+  }
+
+  trackCandidate(_index: number, item: { entry: MatchLabRankingEntry; viewModel: CoreMatchSpotlightViewModel }): string {
+    return item.entry.candidateId;
   }
 
   initials(name: string): string {
@@ -448,7 +439,9 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   }
 
   jobCandidateCount(jobId: string): number {
-    return this.dataset.results.find((item) => item.job.id === jobId)?.ranking.length ?? 0;
+    return this.dataset.results.find((item) => item.job.id === jobId)?.ranking
+      .filter((entry) => entry.score >= CoreAlgoritimoPage.jobCardTalentThreshold)
+      .length ?? 0;
   }
 
   scoreIcon(score: number): string {
@@ -517,6 +510,101 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
   trackJob(_index: number, job: MatchLabJob): string {
     return job.id;
+  }
+
+  private buildSpotlightViewModel(entry: MatchLabRankingEntry): CoreMatchSpotlightViewModel {
+    return {
+      avatar: this.initials(entry.candidate.name),
+      candidateName: entry.candidate.name,
+      candidateMeta: `${entry.candidate.location} , ${entry.candidate.seniority}`,
+      candidateRole: entry.candidate.summary,
+      score: entry.score,
+      scoreBarPercent: entry.score,
+      scoreLabel: this.scoreLabel(entry.score),
+      scoreTone: this.scoreTone(entry.score),
+      requirements: this.vacancyStacks(entry).map((stack) => ({
+        label: stack.stackName,
+        minimumPercent: stack.vacancyPercent,
+        checked: stack.candidatePercent >= stack.vacancyPercent,
+      })),
+      companyExperiencePercent: this.spotlightExperiencePercent(entry),
+      skills: this.candidateStacks(entry).map((stack) => ({
+        label: stack.stackName,
+        percent: stack.candidatePercent,
+      })),
+      alternativeTasks: this.buildAlternativeTasks(entry),
+      breakdownRows: this.breakdownStacks(entry).map((item) => ({
+        label: item.stackName,
+        source: this.sourceTagLabel(item),
+        candidatePercent: item.candidatePercent,
+        vacancyPercent: item.vacancyPercent,
+        strengthLabel: this.strengthLabel(item.weightedContribution),
+        strengthPercent: item.weightedContribution,
+        hasCheck: item.candidateExperienceMonths > 0,
+        timeLabel: `${item.candidateExperienceMonths}m`,
+      })),
+      contributionSegments: this.contributionSegments(entry).map((segment) => ({
+        width: segment.width,
+        tone: segment.tone,
+      })),
+      insights: [
+        {
+          label: 'Principal gap',
+          value: this.spotlightGap(entry),
+        },
+        {
+          label: 'Maior força',
+          value: this.spotlightStrength(entry),
+          warm: true,
+        },
+      ],
+    };
+  }
+
+  private buildAlternativeTasks(entry: MatchLabRankingEntry): string[] {
+    const tasks: string[] = [];
+    const relevantByStackId = new Map(entry.debug.stackBreakdown.map((item) => [item.stackId, item]));
+
+    for (const experience of entry.candidate.experiences) {
+      const relevantStacks = experience.stackIds
+        .map((stackId) => relevantByStackId.get(stackId))
+        .filter((item): item is NonNullable<typeof item> => !!item)
+        .sort((left, right) => right.weightedContribution - left.weightedContribution)
+        .slice(0, 2);
+
+      if (!relevantStacks.length) {
+        continue;
+      }
+
+      const names = relevantStacks.map((item) => item.stackName).join(' e ');
+      tasks.push(`Experiência com ${names} na ${experience.company}.`);
+    }
+
+    const mainGap = [...entry.debug.stackBreakdown]
+      .filter((item) => item.vacancyPercent > item.candidatePercent)
+      .sort((left, right) => (right.vacancyPercent - right.candidatePercent) - (left.vacancyPercent - left.candidatePercent))[0];
+
+    if (mainGap) {
+      tasks.push(`Reforçar ${mainGap.stackName} para se aproximar dos ${mainGap.vacancyPercent}% da vaga.`);
+    }
+
+    const strongest = [...entry.debug.stackBreakdown]
+      .filter((item) => item.candidateExperienceMonths > 0)
+      .sort((left, right) => right.candidateExperienceMonths - left.candidateExperienceMonths)[0];
+
+    if (strongest) {
+      tasks.push(`Uso prático de ${strongest.stackName} por ${strongest.candidateExperienceMonths}m.`);
+    }
+
+    return Array.from(new Set(tasks)).slice(0, 3);
+  }
+
+  private matchingStackPressurePercent(totalPercent: number, occurrenceCount: number): number {
+    if (!occurrenceCount) {
+      return 0;
+    }
+
+    return Math.round(Math.max(0, Math.min(100, totalPercent / occurrenceCount)));
   }
 
   trackRanking(_index: number, entry: MatchLabRankingEntry): string {

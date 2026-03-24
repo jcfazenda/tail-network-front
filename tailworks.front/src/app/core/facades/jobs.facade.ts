@@ -49,6 +49,10 @@ export class JobsFacade {
     return this.jobsService.syncFromRemote();
   }
 
+  clearLabJobsAndSync(): Promise<number> {
+    return this.jobsService.clearLabJobsAndSync();
+  }
+
   signInAsTalent(name: string, location?: string): void {
     this.jobsService.signInAsTalent(name, location);
   }

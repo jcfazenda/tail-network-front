@@ -1,12 +1,14 @@
 :host {
   display: block;
+  width: 100%;
+  min-width: 0;
 }
 
 .core-match-spotlight__surface {
   display: grid;
   gap: 18px;
   padding: 26px 28px;
-  width: min(100%, 620px);
+  width: 100%;
   border-radius: 34px;
   border: 1px solid rgba(223, 229, 236, 0.92);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 250, 253, 0.99));

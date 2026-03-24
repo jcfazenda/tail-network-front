@@ -49,6 +49,7 @@ export interface CoreMatchSpotlightViewModel {
   candidateMeta: string;
   candidateRole: string;
   score: number;
+  scoreBarPercent: number;
   scoreLabel: string;
   scoreTone: CoreMatchTone;
   requirements: CoreMatchRequirementRowViewModel[];

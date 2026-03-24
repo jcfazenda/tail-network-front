@@ -31,29 +31,28 @@ export class MatchingLabService {
     }
 
     const stored = this.browserStorage.readJson<Pick<MatchLabDataset, 'jobs' | 'candidates'>>(MatchingLabService.storageKey);
-    const jobs = stored?.jobs?.length ? stored.jobs : this.buildJobsFromPublishedLabRecords();
-    const storedCandidates = stored?.candidates?.length ? stored.candidates : [];
+    const publishedJobs = this.buildJobsFromPublishedLabRecords();
     const rankableCandidates = this.talentProfileStore.listRankableCandidates();
     const syncedCandidates = rankableCandidates.map((item) => item.candidate);
-    const candidates = syncedCandidates.length ? syncedCandidates : storedCandidates;
+    const jobs = publishedJobs.length ? publishedJobs : (stored?.jobs?.length ? stored.jobs : []);
+    const candidates = syncedCandidates.length ? syncedCandidates : (stored?.candidates?.length ? stored.candidates : []);
 
     if (!jobs.length || !candidates.length) {
       this.cache = this.emptyDataset;
       return this.cache;
     }
 
-    const results = rankableCandidates.length
-      ? jobs.map((job) => this.rankCandidatesForJob(job, rankableCandidates))
-      : jobs.map((job) => this.engine.rankCandidatesForJob(job, candidates));
+    const results = jobs.map((job) => this.engine.rankCandidatesForJob(job, candidates));
 
     this.cache = { jobs, candidates, results };
     return this.cache;
   }
 
   generateLocalMass(): MatchLabDataset {
+    const seed = Date.now();
     const dataset = {
-      jobs: buildMatchingLabJobs(),
-      candidates: buildMatchingLabCandidates(),
+      jobs: buildMatchingLabJobs(seed),
+      candidates: buildMatchingLabCandidates(seed),
     };
     this.browserStorage.writeJson(MatchingLabService.storageKey, dataset);
     this.cache = undefined;

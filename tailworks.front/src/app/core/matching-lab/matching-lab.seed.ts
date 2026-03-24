@@ -111,7 +111,7 @@ const ARCHETYPES: CandidateArchetype[] = [
   archetype('ml-engineer', 'Especialista', 'Modelagem, inferência e produto com IA.', [['python', 90], ['ml', 92], ['data', 58], ['gcp', 46], ['aws', 28]], [['react', 20]], [{ role: 'ML Engineer', companyName: 'CI&T', months: 26, stackIds: ['python', 'ml', 'data'] }, { role: 'AI Engineer', companyName: 'Claro', months: 16, stackIds: ['python', 'ml', 'gcp'] }]),
 ];
 
-export function buildMatchingLabJobs(): MatchLabJob[] {
+export function buildMatchingLabJobs(seed = 0): MatchLabJob[] {
   return JOB_SEEDS.map((seed) => ({
     ...seed,
     stacks: normalizeStacks(seed.stackWeights),
@@ -120,15 +120,16 @@ export function buildMatchingLabJobs(): MatchLabJob[] {
   }));
 }
 
-export function buildMatchingLabCandidates(): MatchLabCandidate[] {
+export function buildMatchingLabCandidates(seed = 0): MatchLabCandidate[] {
   return CANDIDATE_NAMES.map((name, index) => {
-    const archetype = ARCHETYPES[index % ARCHETYPES.length];
-    const location = LOCATIONS[index % LOCATIONS.length];
-    const seniority = rotateSeniority(archetype.seniority, index);
-    const stackWeights = mutateStacks(archetype.primaryStacks, archetype.supportStacks ?? [], index);
-    const experiences = buildExperiences(archetype, index);
+    const candidateSeed = seed + (index * 97);
+    const archetype = ARCHETYPES[(index + seededOffset(candidateSeed, 3)) % ARCHETYPES.length];
+    const location = LOCATIONS[(index + seededOffset(candidateSeed, 5)) % LOCATIONS.length];
+    const stackWeights = mutateStacks(archetype.primaryStacks, archetype.supportStacks ?? [], index, candidateSeed);
+    const experiences = buildExperiences(archetype, index, candidateSeed);
+    const seniority = deriveSeniorityFromExperiences(experiences, archetype.seniority);
 
-    const seed: MatchLabCandidateSeed = {
+    const candidateSeedData: MatchLabCandidateSeed = {
       id: `candidate-${String(index + 1).padStart(3, '0')}`,
       name,
       location,
@@ -139,13 +140,13 @@ export function buildMatchingLabCandidates(): MatchLabCandidate[] {
     };
 
     return {
-      id: seed.id,
-      name: seed.name,
-      location: seed.location,
-      seniority: seed.seniority,
-      summary: seed.summary,
-      stacks: normalizeStacks(seed.stackWeights),
-      experiences: seed.experiences,
+      id: candidateSeedData.id,
+      name: candidateSeedData.name,
+      location: candidateSeedData.location,
+      seniority: candidateSeedData.seniority,
+      summary: candidateSeedData.summary,
+      stacks: normalizeStacks(candidateSeedData.stackWeights),
+      experiences: candidateSeedData.experiences,
     };
   });
 }
@@ -208,28 +209,31 @@ function mutateStacks(
   primaryStacks: Array<[string, number]>,
   supportStacks: Array<[string, number]>,
   index: number,
+  seed: number,
 ): Record<string, number> {
-  const spread = (index % 5) - 2;
+  const spread = seededOffset(seed, 5) - 2;
   const weights: Record<string, number> = {};
 
   for (const [stackId, base] of [...primaryStacks, ...supportStacks]) {
-    const modifier = ((index + stackId.length) % 4) - 1;
-    weights[stackId] = Math.max(8, Math.min(96, base + spread + modifier));
+    const modifier = seededOffset(seed + stackId.length + index, 7) - 3;
+    const volatility = seededOffset(seed + (stackId.length * 13), 9) - 4;
+    weights[stackId] = Math.max(8, Math.min(96, base + spread + modifier + volatility));
   }
 
   return weights;
 }
 
-function buildExperiences(archetype: CandidateArchetype, index: number): MatchLabCandidateExperience[] {
-  const desiredCount = (index % 5) + 1;
+function buildExperiences(archetype: CandidateArchetype, index: number, seed: number): MatchLabCandidateExperience[] {
+  const desiredCount = (seededOffset(seed, 5)) + 1;
 
   return Array.from({ length: desiredCount }, (_value, trackIndex) => {
-    const baseTrack = archetype.experienceTracks[trackIndex % archetype.experienceTracks.length];
+    const baseTrack = archetype.experienceTracks[(trackIndex + seededOffset(seed + trackIndex, archetype.experienceTracks.length)) % archetype.experienceTracks.length];
     const endYear = 2026 - (trackIndex + 1);
-    const startYear = endYear - Math.max(1, Math.floor((baseTrack.months + ((index + trackIndex) % 10)) / 12));
+    const startYear = endYear - Math.max(1, Math.floor((baseTrack.months + seededOffset(seed + index + trackIndex, 18)) / 12));
     const stackIds = [
       ...baseTrack.stackIds,
-      ...(trackIndex % 2 === 0 ? archetype.primaryStacks.slice(0, 2).map(([stackId]) => stackId) : []),
+      ...(trackIndex % 2 === 0 ? archetype.primaryStacks.slice(0, 2 + seededOffset(seed + trackIndex, 2)).map(([stackId]) => stackId) : []),
+      ...pickSupportStacks(archetype.supportStacks ?? [], seed + trackIndex),
     ].filter((stackId, position, array) => array.indexOf(stackId) === position);
 
     return {
@@ -239,15 +243,58 @@ function buildExperiences(archetype: CandidateArchetype, index: number): MatchLa
       start: `${startYear}-01-01`,
       end: trackIndex === 0 && index % 3 === 0 ? undefined : `${endYear}-01-01`,
       stackIds,
-      summary: `${baseTrack.role} usando ${stackIds.map((stackId) => stackName(stackId)).join(', ')} em contexto real.`,
+      summary: `${baseTrack.role} usando ${stackIds.map((stackId) => stackName(stackId)).join(', ')} em contexto real e entregas críticas.`,
     };
   });
 }
 
-function rotateSeniority(base: MatchLabSeniority, index: number): MatchLabSeniority {
-  const ladder: MatchLabSeniority[] = ['Junior', 'Pleno', 'Senior', 'Especialista'];
-  const baseIndex = ladder.indexOf(base);
-  const movement = index % 6 === 0 ? -1 : index % 8 === 0 ? 1 : 0;
-  const nextIndex = Math.max(0, Math.min(ladder.length - 1, baseIndex + movement));
-  return ladder[nextIndex];
+function seededOffset(seed: number, mod: number): number {
+  if (mod <= 0) {
+    return 0;
+  }
+
+  const value = Math.abs(Math.sin(seed * 12.9898) * 43758.5453);
+  return Math.floor(value) % mod;
+}
+
+function pickSupportStacks(stacks: Array<[string, number]>, seed: number): string[] {
+  if (!stacks.length) {
+    return [];
+  }
+
+  const count = Math.min(stacks.length, seededOffset(seed, 2));
+  return stacks
+    .slice()
+    .sort((left, right) => seededOffset(seed + left[0].length, 11) - seededOffset(seed + right[0].length, 11))
+    .slice(0, count)
+    .map(([stackId]) => stackId);
+}
+
+function deriveSeniorityFromExperiences(
+  experiences: MatchLabCandidateExperience[],
+  fallback: MatchLabSeniority,
+): MatchLabSeniority {
+  const totalMonths = experiences.reduce((sum, experience) => sum + monthDiff(experience.start, experience.end), 0);
+  const normalizedRoles = experiences.map((experience) => experience.role.toLocaleLowerCase('pt-BR'));
+
+  if (totalMonths >= 144 || (normalizedRoles.some((role) => role.includes('lead') || role.includes('staff')) && totalMonths >= 96)) {
+    return 'Especialista';
+  }
+
+  if (totalMonths >= 72 || (normalizedRoles.some((role) => role.includes('senior')) && totalMonths >= 48)) {
+    return 'Senior';
+  }
+
+  if (totalMonths >= 24 || normalizedRoles.some((role) => role.includes('pleno') || role.includes('mid'))) {
+    return 'Pleno';
+  }
+
+  return fallback === 'Especialista' && totalMonths < 72 ? 'Senior' : fallback === 'Senior' && totalMonths < 24 ? 'Pleno' : fallback === 'Pleno' && totalMonths < 12 ? 'Junior' : fallback;
+}
+
+function monthDiff(start: string, end?: string): number {
+  const startDate = new Date(start);
+  const endDate = end ? new Date(end) : new Date('2026-03-01');
+  const diffMonths = ((endDate.getFullYear() - startDate.getFullYear()) * 12) + (endDate.getMonth() - startDate.getMonth());
+  return Math.max(1, diffMonths);
 }

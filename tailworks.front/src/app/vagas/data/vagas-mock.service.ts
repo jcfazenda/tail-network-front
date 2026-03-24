@@ -367,6 +367,17 @@ export class VagasMockService {
     await this.jobsSyncApi.writeAll([]);
   }
 
+  async clearLabJobsAndSync(): Promise<number> {
+    const retained = this.loadJobs().filter((job) => !job.id.startsWith('lab-'));
+    const removed = (this.cache ?? this.loadJobs()).length - retained.length;
+    this.cache = retained;
+    this.jobsRepository.writeAll(retained);
+    this.broadcastSync();
+    this.emitJobsChanged();
+    await this.pushRemoteSnapshot();
+    return Math.max(0, removed);
+  }
+
   async seedJobsFromMatchingLab(dataset: MatchLabDataset): Promise<number> {
     if (!dataset.jobs.length || !dataset.results.length) {
       return 0;

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { MatchingLabService } from '../core/matching-lab/matching-lab.service';
-import { MatchLabCandidate, MatchLabSeniority } from '../core/matching-lab/matching-lab.models';
+import { MatchLabCandidate, MatchLabDataset, MatchLabSeniority } from '../core/matching-lab/matching-lab.models';
 import { MockAuthService, TalentSignupDraft } from '../auth/mock-auth.service';
 import {
   SeededCandidateBasicDraft,
@@ -17,8 +17,10 @@ export class TalentSystemSeedService {
   private readonly authService = inject(MockAuthService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
 
-  async seedTalentsFromLab(): Promise<{ accounts: number; profiles: number }> {
-    const candidates = this.matchingLabService.getDataset().candidates;
+  async seedTalentsFromLab(dataset?: Pick<MatchLabDataset, 'candidates'>): Promise<{ accounts: number; profiles: number }> {
+    const candidates = dataset?.candidates?.length
+      ? dataset.candidates
+      : this.matchingLabService.getDataset().candidates;
     if (!candidates.length) {
       return { accounts: 0, profiles: 0 };
     }

@@ -62,6 +62,11 @@ export class TalentDirectoryService {
     this.persist([]);
   }
 
+  clearSeededTalents(): void {
+    const retained = this.load().filter((talent) => !talent.email.toLocaleLowerCase('pt-BR').endsWith('@talent.local'));
+    this.persist(retained);
+  }
+
   ensureSeeded(): void {
     if (this.browserStorage.getItem(TalentDirectoryService.suppressSeedStorageKey) === 'true') {
       return;

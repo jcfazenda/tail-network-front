@@ -13,6 +13,9 @@ export type MatchExperienceSignal = {
   positionLevel?: string;
   companySegment?: string;
   appliedStacks?: string[];
+  appliedRepoIds?: string[];
+  months?: number;
+  actuation?: number;
 };
 
 export type MatchTalentProfile = {

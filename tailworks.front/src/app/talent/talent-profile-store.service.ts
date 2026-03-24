@@ -272,9 +272,15 @@ export class TalentProfileStoreService {
       role: experience.role,
       positionLevel: experience.positionLevel,
       companySegment: experience.companySegment,
+      appliedRepoIds: (experience.appliedStacks ?? [])
+        .flatMap((stack) => stack.repoId?.trim()
+          ? [stack.repoId.trim()]
+          : this.matchRepoIdsFromStackName(stack.name)),
       appliedStacks: (experience.appliedStacks ?? [])
         .map((stack) => stack.name?.trim())
         .filter((name): name is string => !!name),
+      months: this.getExperienceMonths(experience),
+      actuation: Math.max(10, Math.min(100, Number(experience.actuation ?? 70))),
     }));
 
     return { stackScores, experiences };
@@ -342,6 +348,13 @@ export class TalentProfileStoreService {
     await this.syncApi.writeAll([]);
   }
 
+  async clearSeededProfiles(): Promise<number> {
+    const retained = this.listProfiles().filter((profile) => !profile.email.toLocaleLowerCase('pt-BR').endsWith('@talent.local'));
+    this.browserStorage.writeJson(TalentProfileStoreService.storageKey, retained);
+    await this.syncApi.writeAll(retained);
+    return retained.length;
+  }
+
   private mergeProfiles(existing: SeededTalentProfile[], incoming: SeededTalentProfile[]): SeededTalentProfile[] {
     const byEmail = new Map(existing.map((profile) => [profile.email.toLocaleLowerCase('pt-BR'), profile]));
 
@@ -353,14 +366,16 @@ export class TalentProfileStoreService {
   }
 
   private resolveSeniority(experiences: SeededExperienceDraft[]): MatchLabCandidate['seniority'] {
-    const levels = experiences.map((experience) => experience.positionLevel);
-    if (levels.includes('Tech Lead')) {
+    const totalMonths = experiences.reduce((sum, experience) => sum + this.getExperienceMonths(experience), 0);
+    const levels = new Set(experiences.map((experience) => experience.positionLevel));
+
+    if (totalMonths >= 144 || (levels.has('Tech Lead') && totalMonths >= 96)) {
       return 'Especialista';
     }
-    if (levels.includes('Sênior')) {
+    if (totalMonths >= 72 || (levels.has('Sênior') && totalMonths >= 48)) {
       return 'Senior';
     }
-    if (levels.includes('Pleno')) {
+    if (totalMonths >= 24 || levels.has('Pleno')) {
       return 'Pleno';
     }
     return 'Junior';
@@ -582,5 +597,42 @@ export class TalentProfileStoreService {
     if (normalized.includes('node')) return 'repo:nodejs';
     if (normalized.includes('qa')) return 'repo:qa-automation';
     return `repo:${normalized.replace(/\s+/g, '-')}`;
+  }
+
+  private matchRepoIdsFromStackName(stackName: string): string[] {
+    const repoIds = new Set<string>();
+    for (const stackId of this.toLabStackIdsFromName(stackName)) {
+      repoIds.add(this.toRepoId(this.normalizeSeededStackName(this.toRepoId(stackName), stackName)));
+      repoIds.add(this.repoIdFromLabStackId(stackId));
+    }
+
+    return Array.from(repoIds).filter(Boolean);
+  }
+
+  private repoIdFromLabStackId(stackId: string): string {
+    const map: Record<string, string> = {
+      dotnet: 'repo:dotnet',
+      java: 'repo:java',
+      node: 'repo:nodejs',
+      angular: 'repo:angular',
+      react: 'repo:react',
+      typescript: 'repo:typescript',
+      flutter: 'repo:flutter',
+      'react-native': 'repo:react-native',
+      python: 'repo:python',
+      data: 'repo:sql-server',
+      ml: 'repo:python-ml',
+      aws: 'repo:aws',
+      azure: 'repo:azure',
+      gcp: 'repo:gcp',
+      docker: 'repo:docker',
+      kubernetes: 'repo:kubernetes',
+      qa: 'repo:qa-automation',
+      security: 'repo:security',
+      ux: 'repo:ux',
+      figma: 'repo:figma',
+    };
+
+    return map[stackId] ?? `repo:${stackId}`;
   }
 }

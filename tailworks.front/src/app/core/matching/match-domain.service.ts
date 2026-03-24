@@ -131,11 +131,35 @@ export class MatchDomainService {
 
     const required = new Set(requiredRepoIds);
     const scores = experiences.map((experience) => {
-      const repoIds = this.mapTechLabelsToRepoIds(experience.appliedStacks ?? []);
+      const repoIds = experience.appliedRepoIds?.length
+        ? experience.appliedRepoIds
+        : this.mapTechLabelsToRepoIds(experience.appliedStacks ?? []);
       const overlap = repoIds.filter((repoId) => required.has(repoId)).length;
-      const coverage = repoIds.length ? overlap / repoIds.length : 0;
-      return Math.round((coverage * 72) + this.scorePositionLevel(experience.positionLevel));
-    });
+      if (!overlap) {
+        return 0;
+      }
+
+      const coverageByRequirement = overlap / Math.max(required.size, 1);
+      const focusOnRequired = overlap / Math.max(repoIds.length, 1);
+      const monthsScore = Math.min(16, Math.round((Math.max(1, experience.months ?? 0) / 48) * 16));
+      const actuationScore = Math.min(8, Math.round((Math.max(10, Math.min(100, experience.actuation ?? 70)) / 100) * 8));
+      const levelScore = Math.min(8, Math.round(this.scorePositionLevel(experience.positionLevel) / 3));
+
+      return Math.round(
+        (coverageByRequirement * 60)
+        + (focusOnRequired * 16)
+        + monthsScore
+        + actuationScore
+        + levelScore
+      );
+    })
+      .filter((score) => score > 0)
+      .sort((left, right) => right - left)
+      .slice(0, 3);
+
+    if (!scores.length) {
+      return 0;
+    }
 
     return this.clampScore(this.average(scores));
   }

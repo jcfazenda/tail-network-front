@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <button class="core-match-spotlight__login-button" type="button" (click)="loginAs.emit()">Logar como</button>
+    <button class="core-match-spotlight__login-button" type="button" (click)="loginAs.emit()">LOGAR</button>
   </header>
 
   <section class="core-match-spotlight__skills">
@@ -30,7 +30,7 @@
 
     <div class="core-match-spotlight__tasks">
       <div class="core-match-spotlight__task-row" *ngFor="let task of viewModel.alternativeTasks">
-        <span class="material-symbols-rounded" aria-hidden="true">check_box</span>
+        <span class="material-symbols-rounded" aria-hidden="true">check</span>
         <span>{{ task }}</span>
       </div>
     </div>
@@ -45,7 +45,7 @@
     <div class="core-match-spotlight__summary-score">{{ viewModel.score }}%</div>
 
     <div class="core-match-spotlight__summary-bar">
-      <span [style.width.%]="viewModel.score"></span>
+      <span [style.width.%]="viewModel.scoreBarPercent"></span>
     </div>
   </section>
 </section>

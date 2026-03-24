@@ -383,6 +383,18 @@ export class MockAuthService {
     return drafts.length;
   }
 
+  async clearSeededTalentAccounts(): Promise<number> {
+    const nextAccounts = this.loadAccounts().filter((account) =>
+      account.canUseRecruiter
+      || !account.email.toLocaleLowerCase('pt-BR').endsWith('@talent.local'),
+    );
+
+    this.persistAccounts(nextAccounts);
+    this.talentDirectoryService.clearSeededTalents();
+    await this.authSyncApi.writeAll(nextAccounts);
+    return nextAccounts.length;
+  }
+
   async resetWorkspace(): Promise<void> {
     const storage = this.getStorage();
     if (!storage) {
