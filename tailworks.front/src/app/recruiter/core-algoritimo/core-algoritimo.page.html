@@ -88,17 +88,13 @@
           </div>
         </div>
       </article>
-
-      <div class="core-algoritimo__candidates-grid">
-        <app-core-match-spotlight
-          *ngFor="let candidate of visibleSpotlights; trackBy: trackCandidate"
-          [viewModel]="candidate.viewModel"
-          (loginAs)="signInAsCandidateEntry(candidate.entry)"
-        ></app-core-match-spotlight>
-      </div>
+ 
     </div>
 
+    
     <div class="core-algoritimo__right-column">
+
+      
 
       <!-- Abertura do Modal de Vagas -->
       <section class="core-algoritimo__jobs-panel core-algoritimo__jobs-panel--selector">
@@ -136,7 +132,14 @@
     </div>
 
   </section>
-
+  
+        <div class="core-algoritimo__candidates-grid">
+        <app-core-match-spotlight
+          *ngFor="let candidate of visibleSpotlights; trackBy: trackCandidate"
+          [viewModel]="candidate.viewModel"
+          (loginAs)="signInAsCandidateEntry(candidate.entry)"
+        ></app-core-match-spotlight>
+      </div>
   <section class="core-algoritimo__empty" *ngIf="!hasDataset">
     <div class="core-algoritimo__empty-copy">
       <h2>Nenhuma carga disponível</h2>
