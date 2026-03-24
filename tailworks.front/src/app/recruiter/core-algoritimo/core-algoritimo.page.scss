@@ -728,10 +728,8 @@
   border-top: 1px dashed rgba(220, 226, 234, 0.96);
 }
 
-.core-algoritimo__selected-insights {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+.core-algoritimo__selected-insights { 
+  grid-template-columns: 1fr; 
 }
 
 .core-algoritimo__selected-metric {
@@ -1233,11 +1231,23 @@
   cursor: pointer;
 }
 
+.core-algoritimo__modal {
+  width: min(860px, 100%);
+  max-height: min(88vh, 920px);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 249, 252, 0.99));
+  border: 1px solid rgba(221, 227, 235, 0.9);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.22);
+}
+
 .core-algoritimo__modal-list {
   overflow: auto;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
   padding: 20px 24px 24px;
 }
 
@@ -1351,12 +1361,7 @@
   .core-algoritimo__modal-backdrop {
     padding: 12px;
   }
-
-  .core-algoritimo__modal {
-    max-height: 92vh;
-    border-radius: 20px;
-  }
-
+ 
   .core-algoritimo__modal-head,
   .core-algoritimo__modal-list {
     padding-left: 16px;
