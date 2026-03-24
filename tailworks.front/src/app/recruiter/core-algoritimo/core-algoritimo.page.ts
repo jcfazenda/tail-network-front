@@ -42,6 +42,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   scoreThreshold = 0;
   seedStatus = '';
   loginStatus = '';
+  isJobsModalOpen = false;
   private refreshTimer: number | null = null;
 
   ngOnInit(): void {
@@ -196,8 +197,24 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     return this.selectedResult?.ranking.length ?? 0;
   }
 
+  openJobsModal(): void {
+    this.isJobsModalOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closeJobsModal(): void {
+    this.isJobsModalOpen = false;
+    this.cdr.markForCheck();
+  }
+
   selectJob(jobId: string): void {
     this.selectedJobId = jobId;
+    this.cdr.markForCheck();
+  }
+
+  selectJobFromModal(jobId: string): void {
+    this.selectJob(jobId);
+    this.closeJobsModal();
   }
 
   async resetDataset(): Promise<void> {
@@ -235,6 +252,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     await this.refreshDatasetFromProfiles(false);
     this.seedStatus = 'Sistema operacional zerado: empresas, vagas, talentos e perfis removidos.';
     this.loginStatus = '';
+    this.closeJobsModal();
   }
 
   private async refreshDatasetFromProfiles(silent = false): Promise<void> {

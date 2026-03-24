@@ -1,6 +1,6 @@
 <section class="core-match-spotlight__surface">
   <header class="core-match-spotlight__candidate-strip">
-      <div class="core-match-spotlight__candidate-left">
+    <div class="core-match-spotlight__candidate-left">
       <div class="core-match-spotlight__avatar">{{ viewModel.avatar }}</div>
       <div class="core-match-spotlight__candidate-copy">
         <strong>{{ viewModel.candidateName }}</strong>
@@ -11,30 +11,36 @@
     <button class="core-match-spotlight__login-button" type="button" (click)="loginAs.emit()">LOGAR</button>
   </header>
 
-  <section class="core-match-spotlight__skills">
-    <div class="core-match-spotlight__skill-row" *ngFor="let row of viewModel.skills">
-      <div class="core-match-spotlight__skill-name">
-        <strong>{{ row.label }}</strong>
+  <div class="core-match-spotlight__content-split">
+    <section class="core-match-spotlight__section core-match-spotlight__section--tasks">
+      <h3 class="core-match-spotlight__label">Tasks Alternativas que reforçam o perfil:</h3>
+
+      <div class="core-match-spotlight__tasks">
+        <div class="core-match-spotlight__task-row" *ngFor="let task of viewModel.alternativeTasks">
+          <span class="core-match-spotlight__task-line" aria-hidden="true"></span>
+          <span class="core-match-spotlight__task-text">{{ task }}</span>
+        </div>
       </div>
+    </section>
 
-      <div class="core-match-spotlight__skill-bar">
-        <span [style.width.%]="row.percent"></span>
+    <section class="core-match-spotlight__skills">
+      <h3 class="core-match-spotlight__label">Stacks principais</h3>
+
+      <div class="core-match-spotlight__skills-list">
+        <div class="core-match-spotlight__skill-row" *ngFor="let row of viewModel.skills">
+          <div class="core-match-spotlight__skill-name">
+            <strong>{{ row.label }}</strong>
+          </div>
+
+          <div class="core-match-spotlight__skill-bar">
+            <span [style.width.%]="row.percent"></span>
+          </div>
+
+          <div class="core-match-spotlight__skill-percent">{{ row.percent }}%</div>
+        </div>
       </div>
-
-      <div class="core-match-spotlight__skill-percent">{{ row.percent }}%</div>
-    </div>
-  </section>
-
-  <section class="core-match-spotlight__section">
-    <h3>Tasks Alternativas que reforçam o perfil:</h3>
-
-    <div class="core-match-spotlight__tasks">
-      <div class="core-match-spotlight__task-row" *ngFor="let task of viewModel.alternativeTasks">
-        <span class="material-symbols-rounded" aria-hidden="true">check</span>
-        <span>{{ task }}</span>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <section class="core-match-spotlight__section core-match-spotlight__section--summary">
     <div class="core-match-spotlight__summary-copy">

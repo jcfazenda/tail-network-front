@@ -782,7 +782,8 @@
 }
 
 .core-algoritimo__hero,
-.core-algoritimo__stack-pressure {
+.core-algoritimo__stack-pressure,
+.core-algoritimo__jobs-panel {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 252, 0.98));
   border: 1px solid rgba(221, 227, 235, 0.9);
   border-radius: 20px;
@@ -790,10 +791,13 @@
 }
 
 .core-algoritimo__jobs-panel {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.core-algoritimo__jobs-panel--selector {
+  padding: 18px 20px;
 }
 
 .core-algoritimo__hero {
@@ -858,7 +862,9 @@
 }
 
 .core-algoritimo__hero-kpi-icon .material-symbols-rounded,
-.core-algoritimo__hero-action .material-symbols-rounded {
+.core-algoritimo__hero-action .material-symbols-rounded,
+.core-algoritimo__open-modal .material-symbols-rounded,
+.core-algoritimo__modal-close .material-symbols-rounded {
   font-size: 14px;
 }
 
@@ -897,15 +903,17 @@
   box-shadow: 0 14px 26px rgba(40, 100, 240, 0.18);
 }
 
+/* Stacks contidas  nos cards criados  */
 .core-algoritimo__stack-pressure {
   padding: 18px 20px;
   display: grid;
   gap: 12px;
+  border: 0;
 }
 
 .core-algoritimo__stack-pressure-row {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr) 48px;
+  grid-template-columns: 170px minmax(0, 1fr) 38px;
   align-items: center;
   gap: 14px;
 }
@@ -921,15 +929,15 @@
   width: 13px;
   height: 13px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #a25d17, #e5a11b);
+  background: linear-gradient(135deg, #cd9b6a, #e5a11b);
   flex-shrink: 0;
 }
 
 .core-algoritimo__stack-pressure-label strong,
 .core-algoritimo__stack-pressure-value {
   color: #2c3445;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 10px;
+  font-weight: 400;
 }
 
 .core-algoritimo__stack-pressure-bar {
@@ -947,22 +955,48 @@
   background: linear-gradient(90deg, #9f5b17 0%, #c97e18 50%, #efb321 100%);
 }
 
-.core-algoritimo__jobs-panel {
-  padding: 0;
+.core-algoritimo__jobs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.core-algoritimo__jobs-head-copy {
   display: grid;
-  gap: 14px;
+  gap: 4px;
+}
+
+.core-algoritimo__jobs-head h2,
+.core-algoritimo__jobs-head p {
+  margin: 0;
 }
 
 .core-algoritimo__jobs-head h2 {
-  margin: 0;
   color: #1e2738;
   font-size: 13px;
   font-weight: 800;
 }
 
-.core-algoritimo__jobs-list {
-  display: grid;
-  gap: 14px;
+.core-algoritimo__jobs-head p {
+  color: #6f7d90;
+  font-size: 12px;
+}
+
+.core-algoritimo__open-modal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(210, 218, 229, 0.92);
+  border-radius: 14px;
+  background: #ffffff;
+  color: #314154;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
 }
 
 .core-algoritimo__job-card {
@@ -995,6 +1029,10 @@
     0 0 0 2px rgba(232, 123, 46, 0.08),
     0 14px 32px rgba(15, 23, 42, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.core-algoritimo__job-card--mini {
+  margin-top: 6px;
 }
 
 .core-algoritimo__job-head {
@@ -1129,6 +1167,80 @@
   color: #216447;
 }
 
+/* Modal */
+.core-algoritimo__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(4px);
+}
+
+.core-algoritimo__modal {
+  width: min(1120px, 100%);
+  max-height: min(88vh, 920px);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 249, 252, 0.99));
+  border: 1px solid rgba(221, 227, 235, 0.9);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.22);
+}
+
+.core-algoritimo__modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid rgba(224, 230, 238, 0.8);
+}
+
+.core-algoritimo__modal-head-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.core-algoritimo__modal-head-copy h2,
+.core-algoritimo__modal-head-copy p {
+  margin: 0;
+}
+
+.core-algoritimo__modal-head-copy h2 {
+  color: #172033;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.core-algoritimo__modal-head-copy p {
+  color: #667486;
+  font-size: 13px;
+}
+
+.core-algoritimo__modal-close {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(210, 218, 229, 0.92);
+  border-radius: 14px;
+  background: #fff;
+  color: #314154;
+  cursor: pointer;
+}
+
+.core-algoritimo__modal-list {
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 20px 24px 24px;
+}
+
 @media (max-width: 960px) {
   .core-algoritimo {
     justify-content: stretch;
@@ -1190,8 +1302,14 @@
     justify-content: flex-start;
   }
 
-  .core-algoritimo__selected-insights {
+  .core-algoritimo__selected-insights,
+  .core-algoritimo__modal-list {
     grid-template-columns: 1fr;
+  }
+
+  .core-algoritimo__jobs-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -1228,5 +1346,20 @@
 
   .core-algoritimo__job-summary {
     font-size: 14px;
+  }
+
+  .core-algoritimo__modal-backdrop {
+    padding: 12px;
+  }
+
+  .core-algoritimo__modal {
+    max-height: 92vh;
+    border-radius: 20px;
+  }
+
+  .core-algoritimo__modal-head,
+  .core-algoritimo__modal-list {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }

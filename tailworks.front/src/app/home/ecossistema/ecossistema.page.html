@@ -48,6 +48,7 @@
           </div>
         </div>
 
+      <!-- + 12 contratações desde ontem -->
         <div class="ecosystem-desktop__radar-list">
           <div class="ecosystem-desktop__radar-row" *ngFor="let category of radarCategories; trackBy: trackByRadarCategory">
             <div class="ecosystem-desktop__radar-label">
@@ -65,7 +66,9 @@
       </section>
 
       <section class="ecosystem-desktop__section">
+        
         <ng-container *ngIf="isTalentEcosystemMode; else recruiterDesktopJobs">
+
           <div class="ecosystem-desktop__tabs-shell ecosystem-desktop__tabs-shell--talent">
             <div class="ecosystem-desktop__tabs">
               <button
@@ -128,20 +131,14 @@
               </div>
             </article>
           </div>
+          
         </ng-container>
 
         <ng-template #recruiterDesktopJobs>
-          <div class="ecosystem-desktop__board-head">
-            <div class="ecosystem-desktop__board-summary">
-              <article class="ecosystem-desktop__board-kpi" *ngFor="let item of recruiterBoardSummary">
-                <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
-                <div class="ecosystem-desktop__board-kpi-copy">
-                  <strong>{{ item.value }}</strong>
-                  <small>{{ item.suffix }}</small>
-                </div>
-              </article>
-            </div>
 
+          <div class="ecosystem-desktop__board-head">
+ 
+            <!-- descktop  -->
             <div class="ecosystem-desktop__tabs-shell">
               <div class="ecosystem-desktop__tabs">
                 <button
@@ -158,6 +155,7 @@
                 </button>
               </div>
             </div>
+
           </div>
 
           <div class="ecosystem-desktop__jobs-grid" *ngIf="ecoFilteredJobs.length; else desktopEmptyState">
@@ -324,6 +322,7 @@
               </div>
             </article>
           </div>
+
         </ng-template>
 
         <ng-template #desktopEmptyState>

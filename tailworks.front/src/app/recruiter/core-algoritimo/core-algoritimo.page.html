@@ -39,8 +39,12 @@
   </section>
 
   <section class="core-algoritimo__workspace" *ngIf="hasDataset">
+    
     <div class="core-algoritimo__left-column">
+    
+      <!-- Card Selecionado -->
       <article class="core-algoritimo__job-card core-algoritimo__job-card--selected" *ngIf="selectedJob as selectedJobItem">
+        
         <div class="core-algoritimo__job-head">
           <div class="core-algoritimo__job-brand">
             <div class="core-algoritimo__job-logo">{{ initials(selectedJobItem.company) }}</div>
@@ -95,7 +99,24 @@
     </div>
 
     <div class="core-algoritimo__right-column">
+
+      <!-- Abertura do Modal de Vagas -->
+      <section class="core-algoritimo__jobs-panel core-algoritimo__jobs-panel--selector">
+        <header class="core-algoritimo__jobs-head">
+          <div class="core-algoritimo__jobs-head-copy">
+            <h2>Vagas Criadas em Laboratório</h2>
+            <p>Escolha uma vaga para atualizar o ranking exibido.</p>
+          </div>
+
+          <button class="core-algoritimo__open-modal" type="button" (click)="openJobsModal()">
+            <span class="material-symbols-rounded" aria-hidden="true">dashboard_customize</span>
+            <span>Vagas</span>
+          </button>
+        </header> 
+
+      <!-- Stacks contidas  nos cards criados -->
       <section class="core-algoritimo__stack-pressure">
+
         <div class="core-algoritimo__stack-pressure-row" *ngFor="let item of laboratoryStackPressure">
           <div class="core-algoritimo__stack-pressure-label">
             <span class="core-algoritimo__stack-dot"></span>
@@ -110,64 +131,10 @@
         </div>
       </section>
 
-      <section class="core-algoritimo__jobs-panel">
-        <header class="core-algoritimo__jobs-head">
-          <h2>Vagas Criadas em Laboratório</h2>
-        </header>
+      </section> 
 
-        <div class="core-algoritimo__jobs-list">
-          <article
-            class="core-algoritimo__job-card"
-            *ngFor="let job of jobs; trackBy: trackJob"
-            [class.core-algoritimo__job-card--active]="job.id === selectedJobId"
-            (click)="selectJob(job.id)"
-          >
-            <div class="core-algoritimo__job-head">
-              <div class="core-algoritimo__job-brand">
-                <div class="core-algoritimo__job-logo">{{ initials(job.company) }}</div>
-                <div class="core-algoritimo__job-brand-copy">
-                  <strong>{{ job.company }}</strong>
-                  <span>{{ job.location }}</span>
-                </div>
-              </div>
-
-              <div class="core-algoritimo__job-meta-chips">
-                <span class="core-algoritimo__job-meta-chip">{{ job.code }}</span>
-                <span class="core-algoritimo__job-meta-chip">{{ jobWorkModelLabel(job) }}</span>
-              </div>
-            </div>
-
-            <div class="core-algoritimo__job-title-row">
-              <h3>{{ job.title }}</h3>
-              <strong class="core-algoritimo__job-salary" *ngIf="jobSalarySingle(job) as salary">{{ salary }}</strong>
-            </div>
-
-            <p class="core-algoritimo__job-summary">{{ job.summary }}</p>
-
-            <div class="core-algoritimo__job-boost" *ngIf="jobBoostStacks(job).length">
-              <strong>Sobe pontuação:</strong>
-              <span>{{ jobBoostStacks(job).join(' | ') }}</span>
-            </div>
-
-            <div class="core-algoritimo__job-footer">
-              <div class="core-algoritimo__job-stack-bars">
-                <div class="core-algoritimo__job-stack-bar-row" *ngFor="let stack of jobPrimaryStacks(job)">
-                  <span class="core-algoritimo__job-stack-bar-name">{{ stack.name }}</span>
-                  <div class="core-algoritimo__job-stack-bar-track">
-                    <span [style.width.%]="stack.percent"></span>
-                  </div>
-                  <strong class="core-algoritimo__job-stack-bar-value">{{ stack.percent }}%</strong>
-                </div>
-              </div>
-
-              <div class="core-algoritimo__job-actions">
-                <span class="core-algoritimo__job-action-pill">talentos {{ jobCandidateCount(job.id) }}</span>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
     </div>
+
   </section>
 
   <section class="core-algoritimo__empty" *ngIf="!hasDataset">
@@ -186,4 +153,84 @@
       <span>Limpar carga</span>
     </button>
   </section>
+
+  <!-- Modal de Vagas -->
+  <div
+    class="core-algoritimo__modal-backdrop"
+    *ngIf="isJobsModalOpen"
+    (click)="closeJobsModal()"
+  >
+    <section
+      class="core-algoritimo__modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="jobs-modal-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="core-algoritimo__modal-head">
+        <div class="core-algoritimo__modal-head-copy">
+          <h2 id="jobs-modal-title">Vagas Criadas em Laboratório</h2>
+          <p>Selecione um card para trocar a vaga ativa do laboratório.</p>
+        </div>
+
+        <button class="core-algoritimo__modal-close" type="button" (click)="closeJobsModal()">
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+        </button>
+      </header>
+
+      <div class="core-algoritimo__modal-list">
+        <article
+          class="core-algoritimo__job-card"
+          *ngFor="let job of jobs; trackBy: trackJob"
+          [class.core-algoritimo__job-card--active]="job.id === selectedJobId"
+          (click)="selectJobFromModal(job.id)"
+        >
+          <div class="core-algoritimo__job-head">
+            <div class="core-algoritimo__job-brand">
+              <div class="core-algoritimo__job-logo">{{ initials(job.company) }}</div>
+              <div class="core-algoritimo__job-brand-copy">
+                <strong>{{ job.company }}</strong>
+                <span>{{ job.location }}</span>
+              </div>
+            </div>
+
+            <div class="core-algoritimo__job-meta-chips">
+              <span class="core-algoritimo__job-meta-chip">{{ job.code }}</span>
+              <span class="core-algoritimo__job-meta-chip">{{ jobWorkModelLabel(job) }}</span>
+            </div>
+          </div>
+
+          <div class="core-algoritimo__job-title-row">
+            <h3>{{ job.title }}</h3>
+            <strong class="core-algoritimo__job-salary" *ngIf="jobSalarySingle(job) as salary">{{ salary }}</strong>
+          </div>
+
+          <p class="core-algoritimo__job-summary">{{ job.summary }}</p>
+
+          <div class="core-algoritimo__job-boost" *ngIf="jobBoostStacks(job).length">
+            <strong>Sobe pontuação:</strong>
+            <span>{{ jobBoostStacks(job).join(' | ') }}</span>
+          </div>
+
+          <div class="core-algoritimo__job-footer">
+            <div class="core-algoritimo__job-stack-bars">
+              <div class="core-algoritimo__job-stack-bar-row" *ngFor="let stack of jobPrimaryStacks(job)">
+                <span class="core-algoritimo__job-stack-bar-name">{{ stack.name }}</span>
+                <div class="core-algoritimo__job-stack-bar-track">
+                  <span [style.width.%]="stack.percent"></span>
+                </div>
+                <strong class="core-algoritimo__job-stack-bar-value">{{ stack.percent }}%</strong>
+              </div>
+            </div>
+
+            <div class="core-algoritimo__job-actions">
+              <span class="core-algoritimo__job-action-pill">talentos {{ jobCandidateCount(job.id) }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  
 </section>
