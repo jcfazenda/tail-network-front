@@ -92,10 +92,17 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   }
 
   get visibleSpotlights(): Array<{ entry: MatchLabRankingEntry; viewModel: CoreMatchSpotlightViewModel }> {
-    return this.visibleRanking.map((entry) => ({
+
+    
+    let _entry = this.visibleRanking.map((entry) => ({
       entry,
       viewModel: this.buildSpotlightViewModel(entry),
     }));
+
+    console.log(_entry);
+    return _entry; 
+    
+
   }
 
   get visibleRanking(): MatchLabRankingEntry[] {
@@ -105,7 +112,8 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
     const query = this.candidateSearch.trim().toLocaleLowerCase('pt-BR');
 
-    return this.selectedResult.ranking.filter((entry) => {
+    return this.selectedResult.ranking.filter((entry) => { 
+      
       if (this.seniorityFilter !== 'all' && entry.candidate.seniority !== this.seniorityFilter) {
         return false;
       }
