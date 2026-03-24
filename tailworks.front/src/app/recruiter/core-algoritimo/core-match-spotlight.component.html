@@ -1,0 +1,51 @@
+<section class="core-match-spotlight__surface">
+  <header class="core-match-spotlight__candidate-strip">
+      <div class="core-match-spotlight__candidate-left">
+      <div class="core-match-spotlight__avatar">{{ viewModel.avatar }}</div>
+      <div class="core-match-spotlight__candidate-copy">
+        <strong>{{ viewModel.candidateName }}</strong>
+        <span>{{ viewModel.candidateMeta }}</span>
+      </div>
+    </div>
+
+    <button class="core-match-spotlight__login-button" type="button" (click)="loginAs.emit()">Logar como</button>
+  </header>
+
+  <section class="core-match-spotlight__skills">
+    <div class="core-match-spotlight__skill-row" *ngFor="let row of viewModel.skills">
+      <div class="core-match-spotlight__skill-name">
+        <strong>{{ row.label }}</strong>
+      </div>
+
+      <div class="core-match-spotlight__skill-bar">
+        <span [style.width.%]="row.percent"></span>
+      </div>
+
+      <div class="core-match-spotlight__skill-percent">{{ row.percent }}%</div>
+    </div>
+  </section>
+
+  <section class="core-match-spotlight__section">
+    <h3>Tasks Alternativas que reforçam o perfil:</h3>
+
+    <div class="core-match-spotlight__tasks">
+      <div class="core-match-spotlight__task-row" *ngFor="let task of viewModel.alternativeTasks">
+        <span class="material-symbols-rounded" aria-hidden="true">check_box</span>
+        <span>{{ task }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="core-match-spotlight__section core-match-spotlight__section--summary">
+    <div class="core-match-spotlight__summary-copy">
+      <h3>Média de aderência a vaga</h3>
+      <p>Experiência de uso nas empresas e staks adicionais</p>
+    </div>
+
+    <div class="core-match-spotlight__summary-score">{{ viewModel.score }}%</div>
+
+    <div class="core-match-spotlight__summary-bar">
+      <span [style.width.%]="viewModel.score"></span>
+    </div>
+  </section>
+</section>

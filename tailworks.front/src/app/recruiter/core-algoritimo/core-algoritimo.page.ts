@@ -10,11 +10,12 @@ import { TalentSystemSeedService } from '../../talent/talent-system-seed.service
 import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.service';
 import { AuthAccount } from '../../auth/mock-auth.service';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
+import { CoreMatchSpotlightComponent, CoreMatchSpotlightViewModel } from './core-match-spotlight.component';
 
 @Component({
   standalone: true,
   selector: 'app-core-algoritimo-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CoreMatchSpotlightComponent],
   templateUrl: './core-algoritimo.page.html',
   styleUrls: ['./core-algoritimo.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,6 +80,59 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
   get spotlightEntry(): MatchLabRankingEntry | null {
     return this.visibleRanking[0] ?? this.selectedResult.ranking[0] ?? null;
+  }
+
+  get spotlightViewModel(): CoreMatchSpotlightViewModel | null {
+    const entry = this.spotlightEntry;
+    if (!entry) {
+      return null;
+    }
+
+    return {
+      avatar: this.initials(entry.candidate.name),
+      candidateName: entry.candidate.name,
+      candidateMeta: `${entry.candidate.location} , ${entry.candidate.seniority}`,
+      candidateRole: entry.candidate.summary,
+      score: entry.score,
+      scoreLabel: this.scoreLabel(entry.score),
+      scoreTone: this.scoreTone(entry.score),
+      requirements: this.vacancyStacks(entry).map((stack) => ({
+        label: stack.stackName,
+        minimumPercent: stack.vacancyPercent,
+        checked: stack.candidatePercent >= stack.vacancyPercent,
+      })),
+      companyExperiencePercent: this.spotlightExperiencePercent(entry),
+      skills: this.candidateStacks(entry).map((stack) => ({
+        label: stack.stackName,
+        percent: stack.candidatePercent,
+      })),
+      alternativeTasks: this.selectedJob.secondaryStacks.slice(0, 3).map((stack) => `Experiência com ${stack.stackName}.`),
+      breakdownRows: this.breakdownStacks(entry).map((item) => ({
+        label: item.stackName,
+        source: this.sourceTagLabel(item),
+        candidatePercent: item.candidatePercent,
+        vacancyPercent: item.vacancyPercent,
+        strengthLabel: this.strengthLabel(item.weightedContribution),
+        strengthPercent: item.weightedContribution,
+        hasCheck: item.candidateExperienceMonths > 0,
+        timeLabel: `${item.candidateExperienceMonths}m`,
+      })),
+      contributionSegments: this.contributionSegments(entry).map((segment) => ({
+        width: segment.width,
+        tone: segment.tone,
+      })),
+      insights: [
+        {
+          label: 'Principal gap',
+          value: this.spotlightGap(entry),
+        },
+        {
+          label: 'Maior força',
+          value: this.spotlightStrength(entry),
+          warm: true,
+        },
+      ],
+    };
   }
 
   get visibleRanking(): MatchLabRankingEntry[] {
@@ -344,12 +398,23 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
       .slice(0, 3);
   }
 
+  breakdownStacks(entry: MatchLabRankingEntry): MatchLabRankingEntry['debug']['stackBreakdown'] {
+    return [...entry.debug.stackBreakdown]
+      .filter((item) => item.vacancyPercent > 0)
+      .sort((left, right) => right.vacancyPercent - left.vacancyPercent)
+      .slice(0, 5);
+  }
+
   experienceBarWidth(entry: MatchLabRankingEntry, months: number): number {
     const topMonths = this.experienceStacks(entry)[0]?.candidateExperienceMonths ?? 0;
     if (!topMonths || !months) {
       return 8;
     }
     return Math.max(8, Math.round((months / topMonths) * 100));
+  }
+
+  experienceStackPercent(entry: MatchLabRankingEntry, months: number): number {
+    return this.experienceBarWidth(entry, months);
   }
 
   summaryPercent(count: number): number {
@@ -430,6 +495,16 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
       return 'Cadastro';
     }
     return 'Sem aderência';
+  }
+
+  strengthLabel(value: number): string {
+    if (value >= 85) {
+      return 'Alta';
+    }
+    if (value >= 60) {
+      return 'Média';
+    }
+    return 'Baixa';
   }
 
   formatSalary(job: MatchLabJob): string {
