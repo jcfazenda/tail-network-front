@@ -21,7 +21,6 @@ import { CoreMatchSpotlightComponent, CoreMatchSpotlightViewModel } from './core
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoreAlgoritimoPage implements OnInit, OnDestroy {
-  private static readonly jobCardTalentThreshold = 50;
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly authService = inject(AuthFacade);
@@ -439,8 +438,16 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   }
 
   jobCandidateCount(jobId: string): number {
-    return this.dataset.results.find((item) => item.job.id === jobId)?.ranking
-      .filter((entry) => entry.score >= CoreAlgoritimoPage.jobCardTalentThreshold)
+    const syncedJob = this.jobsFacade.getJobById(jobId) ?? this.jobsFacade.getJobById(`lab-${jobId}`);
+    if (syncedJob) {
+      return Math.max(0, syncedJob.radarCount ?? 0);
+    }
+
+    const result = this.dataset.results.find((item) => item.job.id === jobId);
+    const threshold = result ? this.jobRadarAdherenceThreshold(result.job) : 50;
+
+    return result?.ranking
+      .filter((entry) => entry.score >= threshold)
       .length ?? 0;
   }
 
@@ -605,6 +612,20 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     }
 
     return Math.round(Math.max(0, Math.min(100, totalPercent / occurrenceCount)));
+  }
+
+  private jobRadarAdherenceThreshold(job: MatchLabJob): number {
+    const primaryStacks = [...job.topStacks]
+      .filter((stack) => Number.isFinite(stack.percent) && stack.percent > 0)
+      .sort((left, right) => right.percent - left.percent)
+      .slice(0, 3);
+
+    if (!primaryStacks.length) {
+      return 50;
+    }
+
+    const average = primaryStacks.reduce((sum, stack) => sum + stack.percent, 0) / primaryStacks.length;
+    return Math.max(35, Math.min(95, Math.round(average)));
   }
 
   trackRanking(_index: number, entry: MatchLabRankingEntry): string {

@@ -1281,8 +1281,10 @@ export class VagasMockService {
       this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
     );
 
+    const adherenceThreshold = this.jobRadarAdherenceThreshold(job);
+
     return result.ranking
-      .filter((entry) => entry.score >= 50)
+      .filter((entry) => entry.score >= adherenceThreshold)
       .filter((entry) => !acceptedCandidateNames.has(entry.candidate.name.trim().toLocaleLowerCase('pt-BR')))
       .map((entry, index) => {
         const talent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
@@ -1319,6 +1321,8 @@ export class VagasMockService {
       this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
     );
 
+    const adherenceThreshold = this.jobRadarAdherenceThreshold(job);
+
     return this.talentProfileStore.listRankableCandidates()
       .filter(({ candidate }) => !acceptedCandidateNames.has(candidate.name.trim().toLocaleLowerCase('pt-BR')))
       .map(({ candidate, talentProfile }, index) => {
@@ -1340,8 +1344,22 @@ export class VagasMockService {
           availabilityLabel: 'Disponibilidade imediata',
         } satisfies MockJobCandidate;
       })
-      .filter((candidate) => candidate.match >= 50)
+      .filter((candidate) => candidate.match >= adherenceThreshold)
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
+  }
+
+  private jobRadarAdherenceThreshold(job: MockJobRecord): number {
+    const primaryStacks = [...(job.techStack ?? [])]
+      .filter((stack) => Number.isFinite(stack.match) && stack.match > 0)
+      .sort((left, right) => right.match - left.match)
+      .slice(0, 3);
+
+    if (!primaryStacks.length) {
+      return 50;
+    }
+
+    const average = primaryStacks.reduce((sum, stack) => sum + stack.match, 0) / primaryStacks.length;
+    return Math.max(35, Math.min(95, Math.round(average)));
   }
 
   private matchingLabCompanyLogoUrl(company: string): string {

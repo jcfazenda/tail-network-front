@@ -139,7 +139,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
   private readonly brandOrangeMid = { r: 188, g: 109, b: 24 };
   private readonly brandOrangeLight = { r: 242, g: 179, b: 26 };
-  private readonly talentAdherenceThreshold = 50;
   private static readonly candidateStacksStorageKey = 'tailworks:candidate-stacks-draft:v5';
   private static readonly candidateExperiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
 
@@ -657,7 +656,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         };
       })
       .filter((view) => this.ecoFilter !== 'radar' || (
-        view.score.overallScore >= this.talentAdherenceThreshold
+        view.score.overallScore >= this.jobRadarAdherenceThreshold(view.job)
         && view.score.matchedRepoIds.length > 0
       ))
       .sort((left, right) =>
@@ -1405,6 +1404,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
     );
 
+    const adherenceThreshold = this.jobRadarAdherenceThreshold(job);
+
     const rankedProfiles = this.talentProfileStore.listRankableCandidates()
       .map(({ candidate, talentProfile }, index) => {
         const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
@@ -1429,7 +1430,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
           availabilityLabel: 'Disponibilidade imediata',
         } satisfies MockJobCandidate;
       })
-      .filter((candidate) => candidate.match >= this.talentAdherenceThreshold)
+      .filter((candidate) => candidate.match >= adherenceThreshold)
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
 
     if (rankedProfiles.length) {
@@ -1500,7 +1501,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     );
 
     return result.ranking
-      .filter((entry: MatchLabRankingEntry) => entry.score >= this.talentAdherenceThreshold)
+      .filter((entry: MatchLabRankingEntry) => entry.score >= this.jobRadarAdherenceThreshold(job))
       .map((entry, index) => {
         const directoryTalent = talentByName.get(entry.candidate.name.trim().toLocaleLowerCase('pt-BR'));
         const compactRole = entry.debug.stackBreakdown
@@ -1532,6 +1533,20 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return [...(job.candidates ?? [])]
       .filter((candidate) => (this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar') === 'radar')
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
+  }
+
+  private jobRadarAdherenceThreshold(job: MockJobRecord): number {
+    const primaryStacks = [...(job.techStack ?? [])]
+      .filter((stack) => Number.isFinite(stack.match) && stack.match > 0)
+      .sort((left, right) => right.match - left.match)
+      .slice(0, 3);
+
+    if (!primaryStacks.length) {
+      return 50;
+    }
+
+    const average = primaryStacks.reduce((sum, stack) => sum + stack.match, 0) / primaryStacks.length;
+    return Math.max(35, Math.min(95, Math.round(average)));
   }
 
   private candidateMatchesRecruiterPanelFilter(candidate: MockJobCandidate): boolean {

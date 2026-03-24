@@ -69,7 +69,7 @@ export class AppShellComponent {
   }
 
   get hasSidebar(): boolean {
-    if (this.isChatPage || this.isCoreAlgorithmPage) {
+    if (this.isChatPage) {
       return false;
     }
 
