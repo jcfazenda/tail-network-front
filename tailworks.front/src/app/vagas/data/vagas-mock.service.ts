@@ -49,6 +49,7 @@ type TalentWorkflowActions = {
 export class VagasMockService {
   private readonly storageKey = 'tailworks.front.mock-vagas.publish-only';
   private readonly syncChannelName = 'tailworks.front.mock-vagas.sync';
+  private readonly resetLockStorageKey = 'tailworks.front.mock-vagas.reset-lock';
   private readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private readonly fallbackTalentAvatar = '/assets/avatars/avatar-default.svg';
   private readonly fallbackTalentCandidateName = 'Julio Fazenda';
@@ -290,6 +291,7 @@ export class VagasMockService {
     const nextJobs = [record, ...jobs];
     this.notifyTalentAboutNewVacancies(jobs, nextJobs);
     this.cache = nextJobs;
+    this.disableResetLock();
     this.persist();
     return record;
   }
@@ -306,6 +308,7 @@ export class VagasMockService {
     const nextJobs = [record, ...jobs.filter((job) => job.id !== id)];
     this.notifyTalentAboutNewVacancies(jobs, nextJobs);
     this.cache = nextJobs;
+    this.disableResetLock();
     this.persist();
     return record;
   }
@@ -328,6 +331,7 @@ export class VagasMockService {
     const nextJobs = jobs.map((job) => (job.id === id ? updatedJob : job));
     this.notifyTalentAboutNewVacancies(jobs, nextJobs);
     this.cache = nextJobs;
+    this.disableResetLock();
     this.persist();
     return updatedJob;
   }
@@ -335,12 +339,14 @@ export class VagasMockService {
   publishOnlyJob(command: SaveMockJobCommand): MockJobRecord {
     const record = this.buildRecord(command);
     this.cache = [record];
+    this.disableResetLock();
     this.persist();
     return record;
   }
 
   clearJobs(): void {
     this.cache = [];
+    this.enableResetLock();
 
     const storage = this.getStorage();
     if (!storage) {
@@ -361,6 +367,7 @@ export class VagasMockService {
 
   async clearJobsAndSync(): Promise<void> {
     this.cache = [];
+    this.enableResetLock();
     this.jobsRepository.writeAll([]);
     this.broadcastSync();
     this.emitJobsChanged();
@@ -371,6 +378,9 @@ export class VagasMockService {
     const retained = this.loadJobs().filter((job) => !job.id.startsWith('lab-'));
     const removed = (this.cache ?? this.loadJobs()).length - retained.length;
     this.cache = retained;
+    if (retained.length) {
+      this.disableResetLock();
+    }
     this.jobsRepository.writeAll(retained);
     this.broadcastSync();
     this.emitJobsChanged();
@@ -431,6 +441,7 @@ export class VagasMockService {
     });
 
     this.cache = [...seededJobs, ...currentJobs];
+    this.disableResetLock();
     this.jobsRepository.writeAll(this.cache);
     this.broadcastSync();
     this.emitJobsChanged();
@@ -445,6 +456,11 @@ export class VagasMockService {
   deleteJob(id: string): void {
     const jobs = this.loadJobs();
     this.cache = jobs.filter((job) => job.id !== id);
+    if (this.cache.length) {
+      this.disableResetLock();
+    } else {
+      this.enableResetLock();
+    }
     this.persist();
   }
 
@@ -465,6 +481,7 @@ export class VagasMockService {
           }
         : job
     ));
+    this.disableResetLock();
     this.persist();
   }
 
@@ -749,6 +766,20 @@ export class VagasMockService {
     const localJobs = this.jobsRepository.readAll() ?? [];
     const remoteJobs = await this.jobsSyncApi.readAll();
 
+    if (this.isResetLocked()) {
+      this.cache = [];
+      this.jobsRepository.writeAll([]);
+      this.broadcastSync();
+      this.emitJobsChanged();
+
+      if (remoteJobs?.length) {
+        await this.jobsSyncApi.writeAll([]);
+      }
+
+      this.startRemotePolling();
+      return;
+    }
+
     if (remoteJobs) {
       const localRaw = JSON.stringify(localJobs);
       const remoteRaw = JSON.stringify(remoteJobs);
@@ -760,7 +791,7 @@ export class VagasMockService {
           this.applyRemoteJobs(remoteJobs);
         }
       } else if (!remoteJobs.length && localJobs.length > 0) {
-        await this.jobsSyncApi.writeAll(localJobs);
+        this.applyRemoteJobs([]);
       }
     }
 
@@ -790,10 +821,31 @@ export class VagasMockService {
         return;
       }
 
+      if (this.isResetLocked()) {
+        const localRaw = this.jobsRepository.readRaw() ?? '[]';
+        if (localRaw !== '[]') {
+          this.cache = [];
+          this.jobsRepository.writeAll([]);
+          this.broadcastSync();
+          this.emitJobsChanged();
+        }
+
+        if (remoteJobs.length) {
+          await this.jobsSyncApi.writeAll([]);
+        }
+
+        return;
+      }
+
       const localRaw = this.jobsRepository.readRaw() ?? '[]';
       const remoteRaw = JSON.stringify(remoteJobs);
 
       if (remoteRaw === localRaw) {
+        return;
+      }
+
+      if (!remoteJobs.length) {
+        this.applyRemoteJobs([]);
         return;
       }
 
@@ -820,6 +872,9 @@ export class VagasMockService {
   private applyRemoteJobs(remoteJobs: MockJobRecord[]): void {
     const previousJobs = this.cache ?? this.jobsRepository.readAll() ?? [];
     const normalizedJobs = remoteJobs.length ? this.normalizeJobs(remoteJobs) : [];
+    if (normalizedJobs.length) {
+      this.disableResetLock();
+    }
     this.notifyTalentAboutNewVacancies(previousJobs, normalizedJobs);
     this.cache = normalizedJobs;
     this.jobsRepository.writeAll(normalizedJobs);
@@ -856,6 +911,10 @@ export class VagasMockService {
   }
 
   private shouldPreferLocalJobs(localJobs: MockJobRecord[], remoteJobs: MockJobRecord[]): boolean {
+    if (this.isResetLocked()) {
+      return false;
+    }
+
     if (!localJobs.length) {
       return false;
     }
@@ -876,6 +935,18 @@ export class VagasMockService {
 
   private getStorage(): Storage | null {
     return this.browserStorage.storage;
+  }
+
+  private isResetLocked(): boolean {
+    return this.browserStorage.getItem(this.resetLockStorageKey) === '1';
+  }
+
+  private enableResetLock(): void {
+    this.browserStorage.setItem(this.resetLockStorageKey, '1');
+  }
+
+  private disableResetLock(): void {
+    this.browserStorage.removeItem(this.resetLockStorageKey);
   }
 
   private buildRecord(command: SaveMockJobCommand, existing?: MockJobRecord): MockJobRecord {

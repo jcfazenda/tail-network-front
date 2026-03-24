@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { MatchingLabService } from '../core/matching-lab/matching-lab.service';
 import { MatchLabCandidate, MatchLabDataset, MatchLabSeniority } from '../core/matching-lab/matching-lab.models';
 import { MockAuthService, TalentSignupDraft } from '../auth/mock-auth.service';
+import { EmpresaDirectoryService } from '../empresa/empresa-directory.service';
+import { CompanyRecord } from '../empresa/empresa.models';
 import {
   SeededCandidateBasicDraft,
   SeededExperienceDraft,
@@ -16,23 +18,25 @@ export class TalentSystemSeedService {
   private readonly matchingLabService = inject(MatchingLabService);
   private readonly authService = inject(MockAuthService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
 
-  async seedTalentsFromLab(dataset?: Pick<MatchLabDataset, 'candidates'>): Promise<{ accounts: number; profiles: number }> {
+  async seedTalentsFromLab(dataset?: Pick<MatchLabDataset, 'candidates' | 'jobs'>): Promise<{ accounts: number; profiles: number; companies: number }> {
     const candidates = dataset?.candidates?.length
       ? dataset.candidates
       : this.matchingLabService.getDataset().candidates;
     if (!candidates.length) {
-      return { accounts: 0, profiles: 0 };
+      return { accounts: 0, profiles: 0, companies: 0 };
     }
 
-    const profiles = candidates.map((candidate, index) => this.buildSeededTalentProfile(candidate, index));
+    const companyMap = this.ensureCompaniesFromDataset(dataset, candidates);
+    const profiles = candidates.map((candidate, index) => this.buildSeededTalentProfile(candidate, index, companyMap));
     const accounts = profiles.map((profile, index) => this.toSignupDraft(profile, index));
     const accountCount = this.authService.seedTalentAccounts(accounts);
     const profileCount = await this.talentProfileStore.upsertProfiles(profiles);
-    return { accounts: accountCount, profiles: profileCount };
+    return { accounts: accountCount, profiles: profileCount, companies: companyMap.size };
   }
 
-  private buildSeededTalentProfile(candidate: MatchLabCandidate, index: number): SeededTalentProfile {
+  private buildSeededTalentProfile(candidate: MatchLabCandidate, index: number, companyMap: Map<string, CompanyRecord>): SeededTalentProfile {
     const email = this.emailFromCandidate(candidate.name, index);
     const [city, state] = this.extractLocationParts(candidate.location);
 
@@ -60,7 +64,7 @@ export class TalentSystemSeedService {
         educationStatus: 'Concluído',
       },
       stacksDraft: this.toStacksDraft(candidate),
-      experiencesDraft: this.toExperienceDrafts(candidate),
+      experiencesDraft: this.toExperienceDrafts(candidate, companyMap),
     };
   }
 
@@ -84,9 +88,10 @@ export class TalentSystemSeedService {
     };
   }
 
-  private toExperienceDrafts(candidate: MatchLabCandidate): SeededExperienceDraft[] {
+  private toExperienceDrafts(candidate: MatchLabCandidate, companyMap: Map<string, CompanyRecord>): SeededExperienceDraft[] {
     const experiences = candidate.experiences.slice(0, 5).map((experience, index) => ({
       id: experience.id,
+      companyId: companyMap.get(experience.company)?.id,
       company: experience.company,
       role: experience.role,
       workModel: (index % 3 === 0 ? 'Remoto' : index % 2 === 0 ? 'Híbrido' : 'Presencial') as SeededExperienceDraft['workModel'],
@@ -113,18 +118,20 @@ export class TalentSystemSeedService {
       return experiences;
     }
 
-    const filler = this.buildFillerExperiences(candidate, 3 - experiences.length);
+    const filler = this.buildFillerExperiences(candidate, 3 - experiences.length, companyMap);
     return [...experiences, ...filler];
   }
 
-  private buildFillerExperiences(candidate: MatchLabCandidate, missing: number): SeededExperienceDraft[] {
+  private buildFillerExperiences(candidate: MatchLabCandidate, missing: number, companyMap: Map<string, CompanyRecord>): SeededExperienceDraft[] {
     const fallbackCompanies = ['Accenture', 'CI&T', 'Stefanini', 'Capgemini', 'TIVIT'];
 
     return Array.from({ length: missing }, (_value, index) => {
       const primaryStacks = candidate.stacks.slice(0, 2);
+      const company = fallbackCompanies[index % fallbackCompanies.length];
       return {
         id: `${candidate.id}-filler-${index + 1}`,
-        company: fallbackCompanies[index % fallbackCompanies.length],
+        companyId: companyMap.get(company)?.id,
+        company,
         role: `${candidate.seniority} Developer`,
         workModel: 'Presencial',
         startMonth: 'Jan',
@@ -146,6 +153,73 @@ export class TalentSystemSeedService {
         })),
       };
     });
+  }
+
+  private ensureCompaniesFromDataset(
+    dataset: Pick<MatchLabDataset, 'candidates' | 'jobs'> | undefined,
+    candidates: MatchLabCandidate[],
+  ): Map<string, CompanyRecord> {
+    const names = new Set<string>();
+
+    for (const job of dataset?.jobs ?? this.matchingLabService.getDataset().jobs) {
+      if (job.company?.trim()) {
+        names.add(job.company.trim());
+      }
+    }
+
+    for (const candidate of candidates) {
+      for (const experience of candidate.experiences) {
+        if (experience.company?.trim()) {
+          names.add(experience.company.trim());
+        }
+      }
+    }
+
+    const companies = [...names]
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'))
+      .map((name) => this.companyDirectoryService.saveCompany({
+        name,
+        sector: this.companySector(name),
+        location: this.companyLocation(name),
+        description: `Empresa sincronizada pela carga do laboratório para uso compartilhado do sistema.`,
+        followers: '0 seguidores',
+        linkedinCount: '0 no LinkedIn',
+        logoLabel: name.slice(0, 2).toLowerCase(),
+        logoUrl: '',
+        website: '',
+        emailDomain: this.companyEmailDomain(name),
+        monthlyHiringCount: 0,
+        active: true,
+        notes: 'Criada automaticamente pela massa operacional do Core.',
+      }));
+
+    return new Map(companies.map((company) => [company.name, company]));
+  }
+
+  private companySector(name: string): string {
+    const normalized = name.toLocaleLowerCase('pt-BR');
+    if (normalized.includes('bank') || normalized.includes('banco') || normalized.includes('ita') || normalized.includes('nubank')) {
+      return 'Serviços financeiros';
+    }
+    if (normalized.includes('consult') || normalized.includes('accenture') || normalized.includes('stefanini') || normalized.includes('capgemini') || normalized.includes('ci&t')) {
+      return 'Consultoria e tecnologia';
+    }
+    return 'Tecnologia';
+  }
+
+  private companyLocation(name: string): string {
+    const normalized = name.toLocaleLowerCase('pt-BR');
+    if (normalized.includes('itau') || normalized.includes('accenture')) {
+      return 'São Paulo - SP';
+    }
+    if (normalized.includes('ci&t')) {
+      return 'Campinas - SP';
+    }
+    return 'Brasil';
+  }
+
+  private companyEmailDomain(name: string): string {
+    return this.slug(name).replace(/\.+/g, '') + '.com.br';
   }
 
   private toStackChip(stackId: string, stackName: string, knowledge: number): SeededStackChip {

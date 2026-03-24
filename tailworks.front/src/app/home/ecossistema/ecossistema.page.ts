@@ -3,6 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { Router } from '@angular/router';
 import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
+import { AuthFacade } from '../../core/facades/auth.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
 import { CandidateStage, MockJobCandidate, MockJobRecord, TechStackItem, WorkModel } from '../../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
@@ -112,6 +113,7 @@ type JobCardTalentRow = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EcossistemaPage implements AfterViewInit, OnDestroy {
+  private readonly authFacade = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly jobsFacade = inject(JobsFacade);
   private readonly ngZone = inject(NgZone);
@@ -1686,15 +1688,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private refreshJobs(): void {
-    let jobs = this.jobsFacade.getJobs();
-    const dataset = this.matchingLabService.getDataset();
-
-    if (dataset.jobs.length && !jobs.some((job) => job.id.startsWith('lab-'))) {
-      this.jobsFacade.seedJobsFromMatchingLab(dataset);
-      jobs = this.jobsFacade.getJobs();
-    }
-
-    this.jobsSnapshot = jobs;
+    this.jobsSnapshot = this.jobsFacade.getJobs();
   }
 
   private matchesSavedFilters(
@@ -1727,6 +1721,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private readTalentProfile(): MatchTalentProfile {
+    const sessionEmail = this.authFacade.getSession()?.email?.trim() ?? '';
+    const syncedProfile = sessionEmail
+      ? this.talentProfileStore.getMatchTalentProfileByEmail(sessionEmail)
+      : null;
+
+    if (syncedProfile) {
+      return syncedProfile;
+    }
+
     const storedStacks = this.browserStorage.readJson<StoredCandidateStacksDraft>(EcossistemaPage.candidateStacksStorageKey);
     const storedExperiences = this.browserStorage.readJson<StoredCandidateExperience[]>(EcossistemaPage.candidateExperiencesStorageKey) ?? [];
     const stackScores: Record<string, number> = {};
@@ -1760,6 +1763,11 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private scoreTalentForJob(job: MockJobRecord, talentProfile: MatchTalentProfile): MatchScoreBreakdown {
+    const sharedLabScore = this.readSharedLabScoreForCurrentTalent(job);
+    if (sharedLabScore) {
+      return sharedLabScore;
+    }
+
     const hasProfileData = Object.keys(talentProfile.stackScores).length > 0 || (talentProfile.experiences?.length ?? 0) > 0;
     if (!hasProfileData) {
       const fallback = this.matchDomainService.clampScore(job.match || this.matchDomainService.estimateJobReadinessFromTechStack(job.techStack));
@@ -1779,6 +1787,48 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     });
 
     return this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
+  }
+
+  private readSharedLabScoreForCurrentTalent(job: MockJobRecord): MatchScoreBreakdown | null {
+    if (!job.id.startsWith('lab-')) {
+      return null;
+    }
+
+    const session = this.authFacade.getSession();
+    const sessionName = session?.name?.trim().toLocaleLowerCase('pt-BR') ?? '';
+    const sessionEmail = session?.email?.trim() ?? '';
+    const profileName = this.talentProfileStore.findProfileByEmail(sessionEmail)?.basicDraft.profile?.name?.trim().toLocaleLowerCase('pt-BR') ?? '';
+    const candidateName = profileName || sessionName;
+
+    if (!candidateName) {
+      return null;
+    }
+
+    const result = this.matchingLabService.getDataset().results.find((entry) => `lab-${entry.job.id}` === job.id);
+    const rankingEntry = result?.ranking.find((entry) =>
+      entry.candidate.name.trim().toLocaleLowerCase('pt-BR') === candidateName,
+    );
+
+    if (!rankingEntry) {
+      return null;
+    }
+
+    const matchedRepoIds = rankingEntry.debug.stackBreakdown
+      .filter((item) => item.candidatePercent > 0)
+      .map((item) => `repo:${item.stackId}`);
+    const missingRepoIds = rankingEntry.debug.stackBreakdown
+      .filter((item) => item.vacancyPercent > 0 && item.candidatePercent <= 0)
+      .map((item) => `repo:${item.stackId}`);
+
+    return {
+      overallScore: this.matchDomainService.clampScore(rankingEntry.score),
+      stackScore: this.matchDomainService.clampScore(
+        rankingEntry.debug.primaryScore + rankingEntry.debug.secondaryScore,
+      ),
+      experienceScore: this.matchDomainService.clampScore(rankingEntry.debug.experienceScore),
+      matchedRepoIds,
+      missingRepoIds,
+    };
   }
 
   private pickStacksByRepoIds(techStack: TechStackItem[], repoIds: string[]): TechStackItem[] {

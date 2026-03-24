@@ -97,6 +97,12 @@ export class EmpresaDirectoryService {
     this.changesSubject.next();
   }
 
+  clearDirectory(): void {
+    this.cache = [];
+    this.repository.writeAll([]);
+    this.changesSubject.next();
+  }
+
   private loadDirectory(): CompanyRecord[] {
     if (this.cache) {
       return this.cache;
@@ -109,8 +115,7 @@ export class EmpresaDirectoryService {
     }
 
     if (!stored.length) {
-      this.cache = this.defaultCompanies();
-      this.persist(false);
+      this.cache = [];
       return this.cache;
     }
 

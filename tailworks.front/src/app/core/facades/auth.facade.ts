@@ -69,6 +69,10 @@ export class AuthFacade {
     return this.authService.clearSeededTalentAccounts();
   }
 
+  clearTalentAccounts(): Promise<number> {
+    return this.authService.clearTalentAccounts();
+  }
+
   resetWorkspace(): Promise<void> {
     return this.authService.resetWorkspace();
   }

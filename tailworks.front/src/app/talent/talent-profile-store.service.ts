@@ -37,6 +37,7 @@ export type SeededStacksDraft = {
 
 export type SeededExperienceDraft = {
   id: string;
+  companyId?: string;
   company: string;
   role: string;
   workModel: 'Presencial' | 'Híbrido' | 'Remoto';
@@ -223,6 +224,22 @@ export class TalentProfileStoreService {
     return this.listProfiles().find((profile) =>
       profile.basicDraft.profile?.name?.trim().toLocaleLowerCase('pt-BR') === normalizedName,
     ) ?? null;
+  }
+
+  findProfileByEmail(email: string): SeededTalentProfile | null {
+    const normalizedEmail = email.trim().toLocaleLowerCase('pt-BR');
+    if (!normalizedEmail) {
+      return null;
+    }
+
+    return this.listProfiles().find((profile) =>
+      profile.email.trim().toLocaleLowerCase('pt-BR') === normalizedEmail,
+    ) ?? null;
+  }
+
+  getMatchTalentProfileByEmail(email: string): MatchTalentProfile | null {
+    const profile = this.findProfileByEmail(email);
+    return profile ? this.toMatchTalentProfile(profile) : null;
   }
 
   private buildCandidateSummary(profile: SeededTalentProfile): string {

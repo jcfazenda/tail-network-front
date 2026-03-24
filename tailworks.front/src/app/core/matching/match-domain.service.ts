@@ -54,13 +54,26 @@ export class MatchDomainService {
   }): MatchJobProfile {
     return {
       techStack: input.techStack.map((item) => ({ ...item })),
-      requiredRepoIds: this.mapTechLabelsToRepoIds(input.techStack.map((item) => item.name)),
+      requiredRepoIds: this.mapPrimaryTechLabelsToRepoIds(input.techStack.map((item) => item.name)),
       desiredSeniority: input.seniority?.trim(),
       responsibilityKeywords: (input.responsibilitySections ?? [])
         .flatMap((section) => section.items)
         .map((item) => this.normalizeText(item))
         .filter(Boolean),
     };
+  }
+
+  mapPrimaryTechLabelsToRepoIds(labels: string[]): string[] {
+    const repoIds: string[] = [];
+
+    for (const label of labels) {
+      const primary = this.mapPrimaryTechLabelToRepoId(label);
+      if (primary) {
+        this.pushUnique(repoIds, primary);
+      }
+    }
+
+    return repoIds;
   }
 
   mapTechLabelsToRepoIds(labels: string[]): string[] {
@@ -201,5 +214,17 @@ export class MatchDomainService {
     if (!list.includes(value)) {
       list.push(value);
     }
+  }
+
+  private mapPrimaryTechLabelToRepoId(label: string): string | null {
+    const normalized = this.normalizeText(label);
+
+    for (const entry of this.techAliasMap) {
+      if (entry.aliases.some((alias) => normalized.includes(alias))) {
+        return entry.repoId;
+      }
+    }
+
+    return null;
   }
 }

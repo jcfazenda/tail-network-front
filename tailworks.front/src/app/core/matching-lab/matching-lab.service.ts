@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { MatchingLabEngine } from './matching-lab.engine';
 import { buildMatchingLabCandidates, buildMatchingLabJobs } from './matching-lab.seed';
 import { MatchLabDataset, MatchLabJob, MatchLabJobResult, MatchLabRankingEntry, MatchLabScoreDebug, MatchLabStackContribution, MatchLabStackWeight, MatchLabWorkModel, MatchLabSeniority } from './matching-lab.models';
 import { RankableTalentCandidate, TalentProfileStoreService } from '../../talent/talent-profile-store.service';
@@ -12,7 +11,6 @@ import { MatchDomainService } from '../matching/match-domain.service';
 export class MatchingLabService {
   static readonly storageKey = 'tailworks:matching-lab-dataset:v1';
 
-  private readonly engine = new MatchingLabEngine();
   private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly jobsRepository = inject(JobsRepository);
@@ -32,7 +30,7 @@ export class MatchingLabService {
 
     const stored = this.browserStorage.readJson<Pick<MatchLabDataset, 'jobs' | 'candidates'>>(MatchingLabService.storageKey);
     const publishedJobs = this.buildJobsFromPublishedLabRecords();
-    const rankableCandidates = this.talentProfileStore.listRankableCandidates();
+    const rankableCandidates = this.resolveRankableCandidates(stored?.candidates ?? []);
     const syncedCandidates = rankableCandidates.map((item) => item.candidate);
     const jobs = publishedJobs.length ? publishedJobs : (stored?.jobs?.length ? stored.jobs : []);
     const candidates = syncedCandidates.length ? syncedCandidates : (stored?.candidates?.length ? stored.candidates : []);
@@ -42,10 +40,31 @@ export class MatchingLabService {
       return this.cache;
     }
 
-    const results = jobs.map((job) => this.engine.rankCandidatesForJob(job, candidates));
+    const results = jobs.map((job) => this.rankCandidatesForJob(job, rankableCandidates));
 
     this.cache = { jobs, candidates, results };
     return this.cache;
+  }
+
+  private resolveRankableCandidates(storedCandidates: MatchLabDataset['candidates']): RankableTalentCandidate[] {
+    const synced = this.talentProfileStore.listRankableCandidates();
+    if (synced.length) {
+      return synced;
+    }
+
+    return storedCandidates.map((candidate) => ({
+      candidate,
+      talentProfile: {
+        stackScores: Object.fromEntries(
+          candidate.stacks.map((stack) => [`repo:${stack.stackId}`, this.matchDomainService.clampScore(stack.percent)]),
+        ),
+        experiences: candidate.experiences.map((experience) => ({
+          role: experience.role,
+          appliedRepoIds: experience.stackIds.map((stackId) => `repo:${stackId}`),
+          months: this.monthDiff(experience.start, experience.end),
+        })),
+      },
+    }));
   }
 
   generateLocalMass(): MatchLabDataset {

@@ -11,6 +11,8 @@ import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.servic
 import { AuthAccount } from '../../auth/mock-auth.service';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { CoreMatchSpotlightComponent, CoreMatchSpotlightViewModel } from './core-match-spotlight.component';
+import { EmpresaDirectoryService } from '../../empresa/empresa-directory.service';
+import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 
 @Component({
   standalone: true,
@@ -29,6 +31,8 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   private readonly matchingLabService = inject(MatchingLabService);
   private readonly talentSystemSeedService = inject(TalentSystemSeedService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private readonly companyDirectoryService = inject(EmpresaDirectoryService);
+  private readonly browserStorage = inject(BrowserStorageService);
 
   dataset = this.matchingLabService.getDataset();
   selectedJobId = this.dataset.jobs[0]?.id ?? '';
@@ -206,17 +210,30 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     const jobs = await this.jobsFacade.seedJobsFromMatchingLab(generated);
     const result = await this.talentSystemSeedService.seedTalentsFromLab(generated);
     await this.refreshDatasetFromProfiles(false);
-    this.seedStatus = `${jobs} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
+    this.seedStatus = `${result.companies} empresas, ${jobs} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
     this.loginStatus = '';
   }
 
   async clearLabLoad(): Promise<void> {
     this.matchingLabService.clear();
-    await this.jobsFacade.clearLabJobsAndSync();
-    await this.authService.clearSeededTalentAccounts();
-    await this.talentProfileStore.clearSeededProfiles();
+    await this.jobsFacade.clearJobsAndSync();
+    await this.authService.clearTalentAccounts();
+    await this.talentProfileStore.clear();
+    this.companyDirectoryService.clearDirectory();
+    this.browserStorage.removeByPrefixes([
+      'tailworks.front.mock-vagas.',
+      'tailworks:matching-lab-',
+      'tailworks:matching-lab',
+      'tailworks:company-directory',
+      'tailworks:talent-directory',
+      'tailworks:seeded-talent-profiles',
+      'tailworks:candidate-',
+      'tailworks.front.ecosystem-entry-mode',
+      'tailworks:recruiter-workspace',
+      'tailworks:recruiter-directory',
+    ]);
     await this.refreshDatasetFromProfiles(false);
-    this.seedStatus = 'Carga do laboratório removida.';
+    this.seedStatus = 'Sistema operacional zerado: empresas, vagas, talentos e perfis removidos.';
     this.loginStatus = '';
   }
 

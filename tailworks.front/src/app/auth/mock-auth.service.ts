@@ -395,6 +395,14 @@ export class MockAuthService {
     return nextAccounts.length;
   }
 
+  async clearTalentAccounts(): Promise<number> {
+    const nextAccounts = this.loadAccounts().filter((account) => account.canUseRecruiter);
+    this.persistAccounts(nextAccounts);
+    this.talentDirectoryService.clearDirectory();
+    await this.authSyncApi.writeAll(nextAccounts);
+    return nextAccounts.length;
+  }
+
   async resetWorkspace(): Promise<void> {
     const storage = this.getStorage();
     if (!storage) {

@@ -256,8 +256,7 @@ export class RecruiterDirectoryService {
     }
 
     if (!stored.length) {
-      this.cache = this.defaultCompanySeeds('Banco Itaú');
-      this.persist(false);
+      this.cache = [];
       return this.cache;
     }
 

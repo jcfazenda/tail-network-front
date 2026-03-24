@@ -53,6 +53,10 @@ export class JobsFacade {
     return this.jobsService.clearLabJobsAndSync();
   }
 
+  clearJobsAndSync(): Promise<void> {
+    return this.jobsService.clearJobsAndSync();
+  }
+
   signInAsTalent(name: string, location?: string): void {
     this.jobsService.signInAsTalent(name, location);
   }
