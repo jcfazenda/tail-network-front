@@ -329,19 +329,19 @@ export class SidebarComponent {
   }
 
   handleTreeItemClick(item: CandidateTreeItem): void {
-    if (item.icon !== 'logout') {
-      return;
+    if (item.icon === 'logout') {
+      this.authService.logout();
     }
 
-    this.authService.logout();
+    this.hideSidebarOnCompactViewport();
   }
 
   handleFlatItemClick(item: NavItem): void {
-    if (item.icon !== 'logout') {
-      return;
+    if (item.icon === 'logout') {
+      this.authService.logout();
     }
 
-    this.authService.logout();
+    this.hideSidebarOnCompactViewport();
   }
 
   hideSidebar(): void {
@@ -439,5 +439,13 @@ export class SidebarComponent {
     };
 
     this.browserStorage.setItem(SidebarComponent.basicDraftStorageKey, JSON.stringify(nextDraft));
+  }
+
+  private hideSidebarOnCompactViewport(): void {
+    if (!this.sidebarVisibilityService.isCompactViewport()) {
+      return;
+    }
+
+    this.sidebarVisibilityService.hide();
   }
 }

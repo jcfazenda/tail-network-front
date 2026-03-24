@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { TalentDirectoryRepository } from './talent-directory.repository';
+import { BrowserStorageService } from '../core/storage/browser-storage.service';
 
 export type TalentStackProfile = Record<string, number>;
 
@@ -17,8 +18,10 @@ export type TalentRecord = {
 
 @Injectable({ providedIn: 'root' })
 export class TalentDirectoryService {
+  private static readonly suppressSeedStorageKey = 'tailworks:talent-directory:suppress-seed:v1';
   private readonly defaultAvatarUrl = '/assets/avatars/avatar-default.svg';
   private readonly repository = inject(TalentDirectoryRepository);
+  private readonly browserStorage = inject(BrowserStorageService);
 
   listTalents(): TalentRecord[] {
     this.ensureSeeded();
@@ -54,7 +57,16 @@ export class TalentDirectoryService {
     return next;
   }
 
+  clearDirectory(): void {
+    this.browserStorage.setItem(TalentDirectoryService.suppressSeedStorageKey, 'true');
+    this.persist([]);
+  }
+
   ensureSeeded(): void {
+    if (this.browserStorage.getItem(TalentDirectoryService.suppressSeedStorageKey) === 'true') {
+      return;
+    }
+
     const existing = this.load();
     if (existing.length) {
       const allowedSeeds = new Set(['janaina@gmail.com', 'thais@gmail.com']);
@@ -105,6 +117,10 @@ export class TalentDirectoryService {
   }
 
   private persist(list: TalentRecord[]): void {
+    if (list.length) {
+      this.browserStorage.removeItem(TalentDirectoryService.suppressSeedStorageKey);
+    }
+
     this.repository.writeAll(list);
   }
 

@@ -65,8 +65,8 @@ export class LoginPage implements OnDestroy {
     this.successMessage = '';
   }
 
-  resetWorkspace(): void {
-    this.authService.resetWorkspace();
+  async resetWorkspace(): Promise<void> {
+    await this.authService.resetWorkspace();
     this.errorMessage = '';
     this.successMessage = '';
     this.email = 'julio@tailworks.com';

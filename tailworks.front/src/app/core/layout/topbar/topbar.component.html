@@ -227,6 +227,11 @@
     </div>
 
     <label class="topbar-filter-modal__field">
+      <span>Código da vaga</span>
+      <input [(ngModel)]="filterCode" type="text" placeholder="VG-0001" />
+    </label>
+
+    <label class="topbar-filter-modal__field">
       <span>Empresa</span>
       <select [(ngModel)]="filterCompany">
         <option value="">Todas</option>

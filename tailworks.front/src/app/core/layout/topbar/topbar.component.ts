@@ -94,6 +94,7 @@ export class TopbarComponent {
   filterCompany = '';
   filterState = '';
   filterStack = '';
+  filterCode = '';
   filterView = 'radar';
   isFilterPopupOpen = false;
   private readonly currentUrl = toSignal(
@@ -168,7 +169,7 @@ export class TopbarComponent {
 
   get hasSavedEcosystemFilters(): boolean {
     const filters = this.ecosystemJobFiltersService.filters();
-    return !!(filters.company || filters.state || filters.stack);
+    return !!(filters.code || filters.company || filters.state || filters.stack);
   }
 
   get showMobileEcosystemViewFilter(): boolean {
@@ -584,6 +585,7 @@ export class TopbarComponent {
 
   openEcosystemFilters(): void {
     const filters = this.ecosystemJobFiltersService.filters();
+    this.filterCode = filters.code;
     this.filterCompany = filters.company;
     this.filterState = filters.state;
     this.filterStack = filters.stack;
@@ -596,6 +598,7 @@ export class TopbarComponent {
   }
 
   clearEcosystemFilters(): void {
+    this.filterCode = '';
     this.filterCompany = '';
     this.filterState = '';
     this.filterStack = '';
@@ -606,6 +609,7 @@ export class TopbarComponent {
 
   confirmEcosystemFilters(): void {
     this.ecosystemJobFiltersService.setFilters({
+      code: this.filterCode,
       company: this.filterCompany,
       state: this.filterState,
       stack: this.filterStack,
@@ -695,9 +699,14 @@ export class TopbarComponent {
   }
 
   private matchesDraftFilters(job: MockJobRecord): boolean {
+    const code = this.filterCode.trim().toUpperCase();
     const company = this.filterCompany.trim();
     const state = this.filterState.trim();
     const stack = this.filterStack.trim();
+
+    if (code && (job.code?.trim().toUpperCase() ?? '') !== code) {
+      return false;
+    }
 
     if (company && job.company !== company) {
       return false;

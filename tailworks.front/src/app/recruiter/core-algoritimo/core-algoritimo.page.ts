@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthFacade } from '../../core/facades/auth.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
@@ -11,12 +11,10 @@ import { EcosystemEntryService } from '../../usuario/home/ecosystem-entry.servic
 import { AuthAccount } from '../../auth/mock-auth.service';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
-type ScoreBand = 'all' | 'high' | 'medium' | 'low';
-
 @Component({
   standalone: true,
   selector: 'app-core-algoritimo-page',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './core-algoritimo.page.html',
   styleUrls: ['./core-algoritimo.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +34,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   searchTerm = '';
   candidateSearch = '';
   seniorityFilter: MatchLabSeniority | 'all' = 'all';
-  scoreBand: ScoreBand = 'all';
+  scoreThreshold = 0;
   seedStatus = '';
   loginStatus = '';
   private refreshTimer: number | null = null;
@@ -79,6 +77,10 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     return this.selectedResult.job;
   }
 
+  get spotlightEntry(): MatchLabRankingEntry | null {
+    return this.visibleRanking[0] ?? this.selectedResult.ranking[0] ?? null;
+  }
+
   get visibleRanking(): MatchLabRankingEntry[] {
     const query = this.candidateSearch.trim().toLocaleLowerCase('pt-BR');
 
@@ -87,15 +89,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
         return false;
       }
 
-      if (this.scoreBand === 'high' && entry.score < 80) {
-        return false;
-      }
-
-      if (this.scoreBand === 'medium' && (entry.score < 60 || entry.score >= 80)) {
-        return false;
-      }
-
-      if (this.scoreBand === 'low' && entry.score >= 60) {
+      if (entry.score < this.scoreThreshold) {
         return false;
       }
 
@@ -107,10 +101,6 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
         .toLocaleLowerCase('pt-BR')
         .includes(query);
     });
-  }
-
-  get talentAccounts(): AuthAccount[] {
-    return this.authService.listTalentAccounts().slice(0, 24);
   }
 
   talentAccountForCandidate(entry: MatchLabRankingEntry): AuthAccount | null {
@@ -134,24 +124,51 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   }
 
   get strongFitCount(): number {
-    return this.selectedResult.ranking.filter((entry) => entry.score >= 80).length;
+    return this.visibleRanking.filter((entry) => entry.score >= 80).length;
   }
 
   get mediumFitCount(): number {
-    return this.selectedResult.ranking.filter((entry) => entry.score >= 60 && entry.score < 80).length;
+    return this.visibleRanking.filter((entry) => entry.score >= 60 && entry.score < 80).length;
   }
 
   get lowFitCount(): number {
-    return this.selectedResult.ranking.filter((entry) => entry.score < 60).length;
+    return this.visibleRanking.filter((entry) => entry.score < 60).length;
   }
 
   get averageScore(): number {
-    const ranking = this.selectedResult.ranking;
+    const ranking = this.visibleRanking;
     if (!ranking.length) {
       return 0;
     }
 
     return Math.round(ranking.reduce((sum, entry) => sum + entry.score, 0) / ranking.length);
+  }
+
+  get filteredJobsCount(): number {
+    return this.jobs.length;
+  }
+
+  get laboratoryStackPressure(): Array<{ name: string; percent: number }> {
+    const stackMap = new Map<string, number>();
+    for (const job of this.jobs) {
+      for (const stack of [...job.topStacks, ...job.secondaryStacks]) {
+        const current = stackMap.get(stack.stackName) ?? 0;
+        stackMap.set(stack.stackName, Math.max(current, stack.percent));
+      }
+    }
+
+    return [...stackMap.entries()]
+      .map(([name, percent]) => ({ name, percent }))
+      .sort((left, right) => right.percent - left.percent)
+      .slice(0, 7);
+  }
+
+  get visibleRankingCount(): number {
+    return this.visibleRanking.length;
+  }
+
+  get totalRankingCount(): number {
+    return this.selectedResult.ranking.length;
   }
 
   selectJob(jobId: string): void {
@@ -165,7 +182,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
   async seedSystemTalents(): Promise<void> {
     const generated = this.matchingLabService.generateLocalMass();
-    const jobs = this.jobsFacade.seedJobsFromMatchingLab(generated);
+    const jobs = await this.jobsFacade.seedJobsFromMatchingLab(generated);
     const result = await this.talentSystemSeedService.seedTalentsFromLab();
     await this.refreshDatasetFromProfiles(false);
     this.seedStatus = `${jobs} vagas, ${generated.candidates.length} candidatos, ${result.accounts} acessos e ${result.profiles} perfis preparados no sistema.`;
@@ -175,6 +192,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   private async refreshDatasetFromProfiles(silent = false): Promise<void> {
     const currentJobId = this.selectedJobId;
     await this.authService.syncAccountsFromRemote();
+    await this.jobsFacade.syncFromRemote();
     await this.talentProfileStore.syncFromRemote();
     const next = this.matchingLabService.reset();
     this.dataset = next;
@@ -185,7 +203,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
       this.searchTerm = '';
       this.candidateSearch = '';
       this.seniorityFilter = 'all';
-      this.scoreBand = 'all';
+      this.scoreThreshold = 0;
     }
     this.cdr.markForCheck();
   }
@@ -229,6 +247,153 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
 
   scoreBarWidth(score: number): number {
     return Math.max(6, Math.min(100, score));
+  }
+
+  scoreTone(score: number): 'high' | 'medium' | 'low' {
+    if (score >= 80) {
+      return 'high';
+    }
+    if (score >= 60) {
+      return 'medium';
+    }
+    return 'low';
+  }
+
+  scoreThresholdLabel(): string {
+    return `${this.scoreThreshold}%+`;
+  }
+
+  jobPrimaryStacks(job: MatchLabJob): Array<{ name: string; percent: number }> {
+    return [...job.topStacks]
+      .sort((left, right) => right.percent - left.percent)
+      .slice(0, 3)
+      .map((stack) => ({ name: stack.stackName, percent: stack.percent }));
+  }
+
+  jobSalarySingle(job: MatchLabJob): string {
+    if (job.salaryMax) {
+      return job.salaryMax.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    if (job.salaryMin) {
+      return job.salaryMin.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    return '';
+  }
+
+  jobWorkModelLabel(job: MatchLabJob): string {
+    const value = (job.workModel || '').trim();
+    if (!value) {
+      return 'HOME';
+    }
+
+    if (value.toLocaleLowerCase('pt-BR').includes('hibr')) {
+      return 'HIBRIDO';
+    }
+
+    if (value.toLocaleLowerCase('pt-BR').includes('pres')) {
+      return 'PRESENCIAL';
+    }
+
+    return 'HOME';
+  }
+
+  stackPressureWidth(percent: number): number {
+    return Math.max(8, Math.min(100, percent));
+  }
+
+  initials(name: string): string {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join('');
+  }
+
+  candidateRole(entry: MatchLabRankingEntry): string {
+    const topStack = [...entry.candidate.stacks].sort((left, right) => right.percent - left.percent)[0]?.stackName;
+    return topStack ? `${entry.candidate.seniority} · ${topStack}` : entry.candidate.seniority;
+  }
+
+  vacancyStacks(entry: MatchLabRankingEntry): MatchLabRankingEntry['debug']['stackBreakdown'] {
+    return [...entry.debug.stackBreakdown]
+      .filter((item) => item.vacancyPercent > 0)
+      .sort((left, right) => right.vacancyPercent - left.vacancyPercent)
+      .slice(0, 3);
+  }
+
+  candidateStacks(entry: MatchLabRankingEntry): MatchLabRankingEntry['debug']['stackBreakdown'] {
+    return [...entry.debug.stackBreakdown]
+      .filter((item) => item.candidatePercent > 0)
+      .sort((left, right) => right.candidatePercent - left.candidatePercent)
+      .slice(0, 3);
+  }
+
+  experienceStacks(entry: MatchLabRankingEntry): MatchLabRankingEntry['debug']['stackBreakdown'] {
+    return [...entry.debug.stackBreakdown]
+      .filter((item) => item.candidateExperienceMonths > 0)
+      .sort((left, right) => right.candidateExperienceMonths - left.candidateExperienceMonths)
+      .slice(0, 3);
+  }
+
+  experienceBarWidth(entry: MatchLabRankingEntry, months: number): number {
+    const topMonths = this.experienceStacks(entry)[0]?.candidateExperienceMonths ?? 0;
+    if (!topMonths || !months) {
+      return 8;
+    }
+    return Math.max(8, Math.round((months / topMonths) * 100));
+  }
+
+  summaryPercent(count: number): number {
+    if (!this.visibleRankingCount) {
+      return 0;
+    }
+    return Math.round((count / this.visibleRankingCount) * 100);
+  }
+
+  contributionSegments(entry: MatchLabRankingEntry): Array<{ label: string; width: number; tone: string }> {
+    const segments = [
+      { label: 'Primary', value: entry.debug.primaryScore, tone: 'high' },
+      { label: 'Secondary', value: entry.debug.secondaryScore, tone: 'medium' },
+      { label: 'Experience', value: entry.debug.experienceScore, tone: 'accent' },
+      { label: 'Coherence', value: entry.debug.coherenceScore + entry.debug.seniorityScore, tone: 'neutral' },
+    ];
+    const total = segments.reduce((sum, segment) => sum + segment.value, 0);
+    return segments.map((segment) => ({
+      label: segment.label,
+      tone: segment.tone,
+      width: total > 0 ? Math.max(6, Math.round((segment.value / total) * 100)) : 0,
+    }));
+  }
+
+  jobAverage(jobId: string): number {
+    const result = this.dataset.results.find((item) => item.job.id === jobId);
+    if (!result?.ranking.length) {
+      return 0;
+    }
+    return Math.round(result.ranking.reduce((sum, entry) => sum + entry.score, 0) / result.ranking.length);
+  }
+
+  jobCandidateCount(jobId: string): number {
+    return this.dataset.results.find((item) => item.job.id === jobId)?.ranking.length ?? 0;
+  }
+
+  scoreIcon(score: number): string {
+    if (score >= 80) {
+      return 'trending_up';
+    }
+    if (score >= 60) {
+      return 'trending_flat';
+    }
+    return 'south';
   }
 
   decisiveStackLabels(entry: MatchLabRankingEntry): string[] {
@@ -283,8 +448,44 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     return entry.candidateId;
   }
 
-  trackTalentAccount(_index: number, account: AuthAccount): string {
-    return account.id;
+  spotlightPrimaryPercent(entry: MatchLabRankingEntry): number {
+    return this.normalizeMetric(entry.debug.primaryScore, 55);
+  }
+
+  spotlightSecondaryPercent(entry: MatchLabRankingEntry): number {
+    return this.normalizeMetric(entry.debug.secondaryScore, 20);
+  }
+
+  spotlightExperiencePercent(entry: MatchLabRankingEntry): number {
+    return this.normalizeMetric(entry.debug.experienceScore, 15);
+  }
+
+  spotlightExperienceYears(entry: MatchLabRankingEntry): number {
+    const topMonths = this.experienceStacks(entry)[0]?.candidateExperienceMonths ?? 0;
+    return Math.max(1, Math.round(topMonths / 12));
+  }
+
+  spotlightGap(entry: MatchLabRankingEntry): string {
+    const gap = [...entry.debug.stackBreakdown]
+      .filter((item) => item.vacancyPercent > 0 && item.candidatePercent === 0)
+      .sort((left, right) => right.vacancyPercent - left.vacancyPercent)[0];
+
+    return gap ? `${gap.stackName} sem aderência` : 'Gap crítico não identificado';
+  }
+
+  spotlightStrength(entry: MatchLabRankingEntry): string {
+    const best = [...entry.debug.stackBreakdown]
+      .sort((left, right) => right.weightedContribution - left.weightedContribution)[0];
+
+    return best ? `${best.stackName} + experiência prática` : 'Perfil equilibrado';
+  }
+
+  private normalizeMetric(value: number, max: number): number {
+    if (!max) {
+      return 0;
+    }
+
+    return Math.max(8, Math.min(100, Math.round((value / max) * 100)));
   }
 
   private seededTalentEmail(entry: MatchLabRankingEntry): string {

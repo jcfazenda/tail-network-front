@@ -64,8 +64,12 @@ export class AppShellComponent {
     return this.primaryPath.startsWith('/chat/');
   }
 
+  get isCoreAlgorithmPage(): boolean {
+    return this.primaryPath === '/recruiter/core-algoritimo';
+  }
+
   get hasSidebar(): boolean {
-    if (this.isChatPage) {
+    if (this.isChatPage || this.isCoreAlgorithmPage) {
       return false;
     }
 
@@ -85,18 +89,10 @@ export class AppShellComponent {
   }
 
   get shouldReserveSidebarSpace(): boolean {
-    if (this.isTemplateEcosystem) {
-      return false;
-    }
-
     return this.hasSidebar && this.sidebarVisibilityService.shouldReserveLayoutSpace();
   }
 
   get isSidebarOverlayVisible(): boolean {
-    if (this.isTemplateEcosystem) {
-      return this.hasSidebar && this.isSidebarOpen;
-    }
-
     return this.hasSidebar && this.isSidebarOpen && this.isCompactSidebarMode;
   }
 
@@ -105,7 +101,7 @@ export class AppShellComponent {
   }
 
   get sidebarComponentInputs(): { overlayMode: boolean } {
-    return { overlayMode: this.isTemplateEcosystem };
+    return { overlayMode: this.isCompactSidebarMode };
   }
 
   private get primaryPath(): string {

@@ -7,6 +7,7 @@ import { BrowserStorageService } from '../core/storage/browser-storage.service';
 import { AuthSyncApiService } from './auth-sync-api.service';
 import { TalentDirectoryService } from '../talent/talent-directory.service';
 import { TalentProfileStoreService } from '../talent/talent-profile-store.service';
+import { MatchingLabService } from '../core/matching-lab/matching-lab.service';
 
 export type RecruiterInviteDraft = {
   name: string;
@@ -59,6 +60,7 @@ export class MockAuthService {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly authSyncApi = inject(AuthSyncApiService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private readonly matchingLabService = inject(MatchingLabService);
 
   readonly session$ = this.sessionSubject.asObservable();
 
@@ -112,7 +114,7 @@ export class MockAuthService {
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
     this.vagasMockService.clearPublishedJobsForTesting();
-    this.talentProfileStore.clear();
+    void this.talentProfileStore.clear();
     this.ensureDefaultMockAccess();
     storage.setItem(this.bootstrapStorageKey, 'done');
   }
@@ -381,7 +383,7 @@ export class MockAuthService {
     return drafts.length;
   }
 
-  resetWorkspace(): void {
+  async resetWorkspace(): Promise<void> {
     const storage = this.getStorage();
     if (!storage) {
       return;
@@ -399,9 +401,11 @@ export class MockAuthService {
     this.companyDirectoryService.resetDirectory();
     this.recruiterDirectoryService.resetDirectory();
     this.recruiterDirectoryService.clearCurrentWorkspace();
-    this.vagasMockService.clearPublishedJobsForTesting();
-    this.talentProfileStore.clear();
-    void this.authSyncApi.writeAll([]);
+    this.talentDirectoryService.clearDirectory();
+    this.matchingLabService.clear();
+    await this.vagasMockService.clearJobsAndSync();
+    await this.talentProfileStore.clear();
+    await this.authSyncApi.writeAll([]);
     this.sessionSubject.next(null);
   }
 

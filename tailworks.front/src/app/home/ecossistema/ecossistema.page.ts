@@ -393,6 +393,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.refreshMobileHiredDeck();
     this.restoreRadarCategorySelection();
     this.refreshJobs();
+    void this.ensureSyncedJobs();
     void this.ensureSyncedTalentProfiles();
     this.subscriptions.add(
       this.jobsFacade.jobsChanged$.subscribe(() => {
@@ -1126,6 +1127,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return this.topJobTechStacks(view.job);
   }
 
+  talentJobAdherence(view: TalentCompatibleJobView): number {
+    return this.matchDomainService.clampScore(view.score.overallScore);
+  }
+
   talentJobMissingStacks(view: TalentCompatibleJobView): TechStackItem[] {
     return view.missingStacks;
   }
@@ -1400,16 +1405,9 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
     );
 
-    const rankedProfiles = this.talentProfileStore.listMatchCandidates()
-      .map((candidate, index) => {
-        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, {
-          stackScores: Object.fromEntries(candidate.stacks.map((stack) => [stack.stackId, stack.percent])),
-          experiences: candidate.experiences.map((experience) => ({
-            role: experience.role,
-            positionLevel: candidate.seniority,
-            appliedStacks: experience.stackIds.map((stackId) => this.prettyTechRepoLabel(stackId)),
-          })),
-        });
+    const rankedProfiles = this.talentProfileStore.listRankableCandidates()
+      .map(({ candidate, talentProfile }, index) => {
+        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
         const directoryTalent = talentByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
 
         return {
@@ -1417,7 +1415,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
           name: candidate.name,
           role: this.jobRadarTalentStacks(
             job,
-            Object.fromEntries(candidate.stacks.map((stack) => [stack.stackId, stack.percent])),
+            talentProfile.stackScores,
             score.matchedRepoIds,
           ).join(' / '),
           location: directoryTalent?.location || candidate.location,
@@ -1456,6 +1454,20 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     });
 
     await Promise.race([syncPromise, timeoutPromise]);
+    this.cdr.markForCheck();
+  }
+
+  private async ensureSyncedJobs(timeoutMs = 2500): Promise<void> {
+    const syncPromise = this.jobsFacade.syncFromRemote().catch(() => null);
+    const timeoutPromise = new Promise<null>((resolve) => {
+      const timer = window.setTimeout(() => {
+        window.clearTimeout(timer);
+        resolve(null);
+      }, timeoutMs);
+    });
+
+    await Promise.race([syncPromise, timeoutPromise]);
+    this.refreshJobs();
     this.cdr.markForCheck();
   }
 
@@ -1672,8 +1684,12 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   private matchesSavedFilters(
     job: MockJobRecord,
-    filters: { company: string; state: string; stack: string },
+    filters: { code: string; company: string; state: string; stack: string },
   ): boolean {
+    if (filters.code && (job.code?.trim().toUpperCase() ?? '') !== filters.code.trim().toUpperCase()) {
+      return false;
+    }
+
     if (filters.company && job.company !== filters.company) {
       return false;
     }

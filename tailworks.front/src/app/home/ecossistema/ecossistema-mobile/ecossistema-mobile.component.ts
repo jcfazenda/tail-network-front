@@ -59,6 +59,7 @@ export type EcosistemaMobileViewModel = {
   jobCardLocation(job: MockJobRecord): string;
   jobCardWorkModel(job: MockJobRecord): string;
   talentJobMainStacks(view: TalentCompatibleJobViewLike): Array<{ name: string }>;
+  talentJobAdherence(view: TalentCompatibleJobViewLike): number;
   trackByJob(index: number, job: MockJobRecord): unknown;
   topJobTechStacks(job: MockJobRecord): Array<{ name: string }>;
   jobTalentCount(job: MockJobRecord): number;

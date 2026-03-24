@@ -41,8 +41,12 @@ export class JobsFacade {
     return this.jobsService.canCurrentRecruiterAccessJob(job);
   }
 
-  seedJobsFromMatchingLab(dataset: MatchLabDataset): number {
+  seedJobsFromMatchingLab(dataset: MatchLabDataset): Promise<number> {
     return this.jobsService.seedJobsFromMatchingLab(dataset);
+  }
+
+  syncFromRemote(): Promise<void> {
+    return this.jobsService.syncFromRemote();
   }
 
   signInAsTalent(name: string, location?: string): void {

@@ -359,7 +359,15 @@ export class VagasMockService {
     this.clearJobs();
   }
 
-  seedJobsFromMatchingLab(dataset: MatchLabDataset): number {
+  async clearJobsAndSync(): Promise<void> {
+    this.cache = [];
+    this.jobsRepository.writeAll([]);
+    this.broadcastSync();
+    this.emitJobsChanged();
+    await this.jobsSyncApi.writeAll([]);
+  }
+
+  async seedJobsFromMatchingLab(dataset: MatchLabDataset): Promise<number> {
     if (!dataset.jobs.length || !dataset.results.length) {
       return 0;
     }
@@ -412,8 +420,15 @@ export class VagasMockService {
     });
 
     this.cache = [...seededJobs, ...currentJobs];
-    this.persist();
+    this.jobsRepository.writeAll(this.cache);
+    this.broadcastSync();
+    this.emitJobsChanged();
+    await this.pushRemoteSnapshot();
     return seededJobs.length;
+  }
+
+  async syncFromRemote(): Promise<void> {
+    await this.pullRemoteSnapshot();
   }
 
   deleteJob(id: string): void {
@@ -728,7 +743,11 @@ export class VagasMockService {
       const remoteRaw = JSON.stringify(remoteJobs);
 
       if (remoteJobs.length > 0 && remoteRaw !== localRaw) {
-        this.applyRemoteJobs(remoteJobs);
+        if (this.shouldPreferLocalJobs(localJobs, remoteJobs)) {
+          await this.jobsSyncApi.writeAll(localJobs);
+        } else {
+          this.applyRemoteJobs(remoteJobs);
+        }
       } else if (!remoteJobs.length && localJobs.length > 0) {
         await this.jobsSyncApi.writeAll(localJobs);
       }
@@ -764,6 +783,12 @@ export class VagasMockService {
       const remoteRaw = JSON.stringify(remoteJobs);
 
       if (remoteRaw === localRaw) {
+        return;
+      }
+
+      const localJobs = this.jobsRepository.readAll() ?? [];
+      if (this.shouldPreferLocalJobs(localJobs, remoteJobs)) {
+        await this.jobsSyncApi.writeAll(localJobs);
         return;
       }
 
@@ -817,6 +842,25 @@ export class VagasMockService {
 
   private emitJobsChanged(): void {
     this.zone.run(() => this.jobsChangedSubject.next());
+  }
+
+  private shouldPreferLocalJobs(localJobs: MockJobRecord[], remoteJobs: MockJobRecord[]): boolean {
+    if (!localJobs.length) {
+      return false;
+    }
+
+    if (!remoteJobs.length) {
+      return true;
+    }
+
+    return this.getLatestUpdatedAt(localJobs) > this.getLatestUpdatedAt(remoteJobs);
+  }
+
+  private getLatestUpdatedAt(jobs: Array<Pick<MockJobRecord, 'updatedAt'>>): number {
+    return jobs.reduce((latest, job) => {
+      const value = Date.parse(job.updatedAt ?? '');
+      return Number.isFinite(value) ? Math.max(latest, value) : latest;
+    }, 0);
   }
 
   private getStorage(): Storage | null {
@@ -1264,17 +1308,10 @@ export class VagasMockService {
       this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
     );
 
-    return this.talentProfileStore.listMatchCandidates()
-      .filter((candidate) => !acceptedCandidateNames.has(candidate.name.trim().toLocaleLowerCase('pt-BR')))
-      .map((candidate, index) => {
-        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, {
-          stackScores: Object.fromEntries(candidate.stacks.map((stack) => [stack.stackId, stack.percent])),
-          experiences: candidate.experiences.map((experience) => ({
-            role: experience.role,
-            positionLevel: candidate.seniority,
-            appliedStacks: experience.stackIds,
-          })),
-        });
+    return this.talentProfileStore.listRankableCandidates()
+      .filter(({ candidate }) => !acceptedCandidateNames.has(candidate.name.trim().toLocaleLowerCase('pt-BR')))
+      .map(({ candidate, talentProfile }, index) => {
+        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
         const talent = talentByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
 
         return {

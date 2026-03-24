@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BrowserStorageService } from '../core/storage/browser-storage.service';
 import { TalentProfileSyncApiService } from './talent-profile-sync-api.service';
 import { MatchLabCandidate } from '../core/matching-lab/matching-lab.models';
+import { MatchExperienceSignal, MatchTalentProfile } from '../core/matching/match-domain.models';
 
 export type SeededCandidateBasicDraft = {
   profile?: {
@@ -79,6 +80,11 @@ export type SeededTalentProfile = {
   };
   stacksDraft: SeededStacksDraft;
   experiencesDraft: SeededExperienceDraft[];
+};
+
+export type RankableTalentCandidate = {
+  candidate: MatchLabCandidate;
+  talentProfile: MatchTalentProfile;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -185,6 +191,33 @@ export class TalentProfileStoreService {
     }));
   }
 
+  listRankableCandidates(): RankableTalentCandidate[] {
+    return this.listProfiles().map((profile, index) => ({
+      candidate: {
+        id: `seeded-${index + 1}`,
+        name: profile.basicDraft.profile?.name?.trim() || `Talento ${index + 1}`,
+        location: profile.basicDraft.profile?.location?.trim() || 'Brasil',
+        seniority: this.resolveSeniority(profile.experiencesDraft),
+        summary: this.buildCandidateSummary(profile),
+        stacks: this.toMatchStacks(profile),
+        experiences: profile.experiencesDraft.map((experience) => ({
+          id: experience.id,
+          company: experience.company,
+          role: experience.role,
+          start: `${experience.startYear}-${this.monthNumber(experience.startMonth)}-01`,
+          end: experience.currentlyWorkingHere ? undefined : `${experience.endYear}-${this.monthNumber(experience.endMonth)}-01`,
+          stackIds: experience.appliedStacks.flatMap((stack) =>
+            stack.repoId?.trim()
+              ? [this.toLabStackId(stack.repoId)]
+              : this.toLabStackIdsFromName(stack.name),
+          ),
+          summary: experience.responsibilities,
+        })),
+      },
+      talentProfile: this.toMatchTalentProfile(profile),
+    }));
+  }
+
   findProfileByName(name: string): SeededTalentProfile | null {
     const normalizedName = name.trim().toLocaleLowerCase('pt-BR');
     return this.listProfiles().find((profile) =>
@@ -220,6 +253,31 @@ export class TalentProfileStoreService {
     }
 
     return Array.from(byStackId.values()).sort((left, right) => right.percent - left.percent);
+  }
+
+  private toMatchTalentProfile(profile: SeededTalentProfile): MatchTalentProfile {
+    const stackScores: Record<string, number> = {};
+
+    for (const stack of [...(profile.stacksDraft.primary ?? []), ...(profile.stacksDraft.extra ?? [])]) {
+      const repoId = stack.id?.trim() || this.toRepoId(stack.name);
+      if (!repoId) {
+        continue;
+      }
+
+      const knowledge = Math.max(0, Math.min(100, Math.round(Number(stack.knowledge ?? 0))));
+      stackScores[repoId] = Math.max(stackScores[repoId] ?? 0, knowledge);
+    }
+
+    const experiences: MatchExperienceSignal[] = profile.experiencesDraft.map((experience) => ({
+      role: experience.role,
+      positionLevel: experience.positionLevel,
+      companySegment: experience.companySegment,
+      appliedStacks: (experience.appliedStacks ?? [])
+        .map((stack) => stack.name?.trim())
+        .filter((name): name is string => !!name),
+    }));
+
+    return { stackScores, experiences };
   }
 
   private deriveStacksDraftFromExperiences(
@@ -274,14 +332,14 @@ export class TalentProfileStoreService {
     };
   }
 
-  clear(): void {
+  async clear(): Promise<void> {
     this.browserStorage.removeItem(TalentProfileStoreService.storageKey);
     this.browserStorage.removeItem(TalentProfileStoreService.basicDraftStorageKey);
     this.browserStorage.removeItem(TalentProfileStoreService.stacksDraftStorageKey);
     this.browserStorage.removeItem(TalentProfileStoreService.experiencesDraftStorageKey);
     this.browserStorage.removeItem(TalentProfileStoreService.ecosystemVisibilityStorageKey);
     this.browserStorage.removeItem(TalentProfileStoreService.candidacyAvailabilityStorageKey);
-    void this.syncApi.writeAll([]);
+    await this.syncApi.writeAll([]);
   }
 
   private mergeProfiles(existing: SeededTalentProfile[], incoming: SeededTalentProfile[]): SeededTalentProfile[] {

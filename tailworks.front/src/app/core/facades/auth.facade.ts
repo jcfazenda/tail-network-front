@@ -65,7 +65,7 @@ export class AuthFacade {
     return this.authService.syncAccountsFromRemote();
   }
 
-  resetWorkspace(): void {
-    this.authService.resetWorkspace();
+  resetWorkspace(): Promise<void> {
+    return this.authService.resetWorkspace();
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { BrowserStorageService } from '../storage/browser-storage.service';
 
 export type EcosystemJobFilters = {
+  code: string;
   company: string;
   state: string;
   stack: string;
@@ -16,6 +17,7 @@ export class EcosystemJobFiltersService {
 
   setFilters(filters: EcosystemJobFilters): void {
     const next: EcosystemJobFilters = {
+      code: filters.code?.trim().toUpperCase() ?? '',
       company: filters.company?.trim() ?? '',
       state: filters.state?.trim() ?? '',
       stack: filters.stack?.trim() ?? '',
@@ -26,12 +28,13 @@ export class EcosystemJobFiltersService {
   }
 
   clear(): void {
-    this.setFilters({ company: '', state: '', stack: '' });
+    this.setFilters({ code: '', company: '', state: '', stack: '' });
   }
 
   private readStoredFilters(): EcosystemJobFilters {
     const stored = this.browserStorage.readJson<Partial<EcosystemJobFilters>>(this.storageKey);
     return {
+      code: stored?.code?.trim().toUpperCase() ?? '',
       company: stored?.company?.trim() ?? '',
       state: stored?.state?.trim() ?? '',
       stack: stored?.stack?.trim() ?? '',

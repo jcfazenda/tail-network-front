@@ -62,9 +62,9 @@ export class HomePage {
     void this.router.navigateByUrl('/usuario/ecossistema');
   }
 
-  protected resetWorkspace(event: Event): void {
+  protected async resetWorkspace(event: Event): Promise<void> {
     event.preventDefault();
-    this.authService.resetWorkspace();
+    await this.authService.resetWorkspace();
     this.ecosystemEntryService.setMode('recruiter');
     void this.router.navigateByUrl('/login');
   }

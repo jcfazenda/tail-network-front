@@ -3175,52 +3175,62 @@
     "stacksDraft": {
       "primary": [
         {
-          "id": "repo:rabbitmq",
-          "name": "RabbitMQ",
-          "short": "RabbitMQ",
-          "tone": "neutral",
-          "category": "other",
-          "knowledge": 86,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
-        },
-        {
           "id": "repo:flutter",
           "name": "Flutter",
           "short": "Flutter",
           "tone": "neutral",
           "category": "mobile",
-          "knowledge": 84,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
-        },
-        {
-          "id": "repo:rest-api",
-          "name": ".NET / C#",
-          "short": ".NET / C#",
-          "tone": "neutral",
-          "category": "other",
-          "knowledge": 70,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
-        },
-        {
-          "id": "repo:java",
-          "name": "Java / Spring",
-          "short": "Java / Spring",
-          "tone": "gold",
-          "category": "backend",
-          "knowledge": 70,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
+          "knowledge": 93,
+          "description": "Dominio declarado em Flutter com foco em compatibilidade de radar."
         },
         {
           "id": "repo:ux",
           "name": "UX / UI",
           "short": "UX / UI",
           "tone": "neutral",
-          "category": "other",
+          "category": "frontend",
           "knowledge": 42,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
+          "description": "Dominio declarado em UX / UI com foco em compatibilidade de radar."
+        },
+        {
+          "id": "repo:aws",
+          "name": "AWS",
+          "short": "AWS",
+          "tone": "azure",
+          "category": "cloud",
+          "knowledge": 29,
+          "description": "Dominio declarado em AWS com foco em compatibilidade de radar."
         }
       ],
-      "extra": []
+      "extra": [
+        {
+          "id": "repo:qa-automation",
+          "name": "QA Automação",
+          "short": "QA Automação",
+          "tone": "neutral",
+          "category": "devops",
+          "knowledge": 26,
+          "description": "Dominio declarado em QA Automação com foco em compatibilidade de radar."
+        },
+        {
+          "id": "repo:typescript",
+          "name": "TypeScript",
+          "short": "TypeScript",
+          "tone": "orange",
+          "category": "frontend",
+          "knowledge": 22,
+          "description": "Dominio declarado em TypeScript com foco em compatibilidade de radar."
+        },
+        {
+          "id": "repo:react-native",
+          "name": "React Native",
+          "short": "React Native",
+          "tone": "neutral",
+          "category": "mobile",
+          "knowledge": 20,
+          "description": "Dominio declarado em React Native com foco em compatibilidade de radar."
+        }
+      ]
     },
     "experiencesDraft": [
       {
@@ -3251,55 +3261,6 @@
             "name": "UX / UI",
             "knowledge": 42,
             "description": "Uso prático de UX / UI em contexto real."
-          },
-          {
-            "repoId": "repo:rabbitmq",
-            "name": "RabbitMQ",
-            "knowledge": 86,
-            "description": ""
-          }
-        ]
-      },
-      {
-        "id": "candidate-016-filler-2",
-        "company": "CI&T",
-        "role": "Pleno Developer",
-        "workModel": "Presencial",
-        "startMonth": "Jan",
-        "startYear": "2019",
-        "endMonth": "Dez",
-        "endYear": "2020",
-        "currentlyWorkingHere": false,
-        "responsibilities": "Experiência complementar para reforçar contexto técnico e histórico realista.",
-        "positionLevel": "Pleno",
-        "companySize": "Startup",
-        "companySegment": "Tecnologia",
-        "sector": "Produto",
-        "actuation": 63,
-        "appliedStacks": [
-          {
-            "repoId": "repo:flutter",
-            "name": "Flutter",
-            "knowledge": 60,
-            "description": "Atuação prática com Flutter."
-          },
-          {
-            "repoId": "repo:ux",
-            "name": "UX / UI",
-            "knowledge": 42,
-            "description": "Atuação prática com UX / UI."
-          },
-          {
-            "repoId": "repo:rest-api",
-            "name": "REST API",
-            "knowledge": 70,
-            "description": ""
-          },
-          {
-            "repoId": "repo:java",
-            "name": "Java / Spring",
-            "knowledge": 70,
-            "description": ""
           }
         ]
       },
@@ -3319,6 +3280,37 @@
         "companySegment": "Tecnologia",
         "sector": "Produto",
         "actuation": 68,
+        "appliedStacks": [
+          {
+            "repoId": "repo:flutter",
+            "name": "Flutter",
+            "knowledge": 93,
+            "description": "Atuação prática com Flutter."
+          },
+          {
+            "repoId": "repo:ux",
+            "name": "UX / UI",
+            "knowledge": 42,
+            "description": "Atuação prática com UX / UI."
+          }
+        ]
+      },
+      {
+        "id": "candidate-016-filler-2",
+        "company": "CI&T",
+        "role": "Pleno Developer",
+        "workModel": "Presencial",
+        "startMonth": "Jan",
+        "startYear": "2019",
+        "endMonth": "Dez",
+        "endYear": "2020",
+        "currentlyWorkingHere": false,
+        "responsibilities": "Experiência complementar para reforçar contexto técnico e histórico realista.",
+        "positionLevel": "Pleno",
+        "companySize": "Startup",
+        "companySegment": "Tecnologia",
+        "sector": "Produto",
+        "actuation": 63,
         "appliedStacks": [
           {
             "repoId": "repo:flutter",

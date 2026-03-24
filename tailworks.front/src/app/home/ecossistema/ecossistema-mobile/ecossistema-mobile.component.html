@@ -103,7 +103,10 @@
               </div>
             </div>
 
-            <span class="landing__mobile-job-card-workmodel">{{ vm.jobCardWorkModel(view.job) }}</span>
+            <div class="landing__mobile-job-card-meta">
+              <span class="landing__mobile-job-card-code" *ngIf="view.job.code">{{ view.job.code }}</span>
+              <span class="landing__mobile-job-card-workmodel">{{ vm.jobCardWorkModel(view.job) }}</span>
+            </div>
           </div>
 
           <div class="landing__mobile-job-card-title-row">
@@ -128,7 +131,9 @@
               </span>
             </div>
 
-            <a class="landing__mobile-job-card-action" href="/usuario/minhas-candidaturas">candidatar</a>
+            <span class="landing__mobile-job-card-adherence">
+              Aderência {{ vm.talentJobAdherence(view) }}%
+            </span>
           </div>
         </article>
       </ng-container>

@@ -1,302 +1,246 @@
 <section class="core-algoritimo">
-  <header class="core-algoritimo__hero">
+  <section class="core-algoritimo__hero" *ngIf="hasDataset">
     <div class="core-algoritimo__hero-copy">
-      <span class="core-algoritimo__eyebrow">Matching Lab Local</span>
       <h1>Cérebro de compatibilidade</h1>
-      <p>Ambiente local para calibrar vagas, stacks, experiência e desempate entre 100 candidatos e 20 vagas.</p>
+      <p>Inteligência para recrutamento e seleção em escala</p>
     </div>
 
-    <div class="core-algoritimo__hero-actions">
-      <a class="core-algoritimo__ghost-action" routerLink="/vagas/cadastro">Nova vaga</a>
-      <button class="core-algoritimo__ghost-action" type="button" (click)="resetDataset()">Atualizar core</button>
-      <button class="core-algoritimo__primary-action" type="button" (click)="seedSystemTalents()">Gerar massa local</button>
+    <div class="core-algoritimo__hero-kpis">
+      <article class="core-algoritimo__hero-kpi">
+        <div class="core-algoritimo__hero-kpi-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">work</span>
+        </div>
+        <div class="core-algoritimo__hero-kpi-copy">
+          <span>Vagas</span>
+          <strong>{{ filteredJobsCount }}</strong>
+        </div>
+      </article>
+
+      <article class="core-algoritimo__hero-kpi">
+        <div class="core-algoritimo__hero-kpi-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">person_search</span>
+        </div>
+        <div class="core-algoritimo__hero-kpi-copy">
+          <span>Candidatos</span>
+          <strong>{{ visibleRankingCount }}</strong>
+        </div>
+      </article>
+
+      <button class="core-algoritimo__hero-action" type="button" (click)="seedSystemTalents()">
+        <span class="material-symbols-rounded" aria-hidden="true">bolt</span>
+        <span>Gerar massa</span>
+      </button>
     </div>
-  </header>
-
-  <div class="core-algoritimo__status" *ngIf="seedStatus">
-    {{ seedStatus }}
-  </div>
-
-  <div class="core-algoritimo__status" *ngIf="loginStatus">
-    {{ loginStatus }}
-  </div>
-
-  <section class="core-algoritimo__empty" *ngIf="!hasDataset">
-    <div class="core-algoritimo__empty-copy">
-      <h2>Core zerado</h2>
-      <p>O laboratório está vazio. Clique em <strong>Gerar massa local</strong> para criar vagas, candidatos e acessos reais de talento.</p>
-    </div>
-  </section>
-
-  <section class="core-algoritimo__metrics" *ngIf="hasDataset">
-    <article class="core-algoritimo__metric-card">
-      <span>Vagas</span>
-      <strong>{{ dataset.jobs.length }}</strong>
-      <small>Massa fixa e diversa</small>
-    </article>
-    <article class="core-algoritimo__metric-card">
-      <span>Candidatos</span>
-      <strong>{{ dataset.candidates.length }}</strong>
-      <small>Perfis cruzados</small>
-    </article>
-    <article class="core-algoritimo__metric-card">
-      <span>Média da vaga</span>
-      <strong>{{ averageScore }}%</strong>
-      <small>Score médio do ranking atual</small>
-    </article>
-    <article class="core-algoritimo__metric-card">
-      <span>Top fit</span>
-      <strong>{{ strongFitCount }}</strong>
-      <small>Candidatos 80%+</small>
-    </article>
   </section>
 
   <section class="core-algoritimo__workspace" *ngIf="hasDataset">
-    <aside class="core-algoritimo__sidebar">
-      <div class="core-algoritimo__panel core-algoritimo__panel--sticky">
-        <div class="core-algoritimo__panel-head">
-          <div>
-            <h2>Vagas do laboratório</h2>
-            <p>Escolha uma vaga para inspecionar o ranking completo.</p>
-          </div>
-        </div>
-
-        <label class="core-algoritimo__search">
-          <span class="material-symbols-rounded" aria-hidden="true">search</span>
-          <input type="search" [(ngModel)]="searchTerm" placeholder="Buscar vaga, empresa ou localidade" />
-        </label>
-
-        <div class="core-algoritimo__job-list">
-          <button
-            *ngFor="let job of jobs; trackBy: trackJob"
-            class="core-algoritimo__job-item"
-            type="button"
-            [class.core-algoritimo__job-item--active]="job.id === selectedJobId"
-            (click)="selectJob(job.id)"
-          >
-            <div class="core-algoritimo__job-item-head">
-              <strong>{{ job.code }} · {{ job.title }}</strong>
-              <span>{{ job.seniority }}</span>
-            </div>
-            <div class="core-algoritimo__job-item-meta">{{ job.company }} · {{ job.location }}</div>
-            <div class="core-algoritimo__job-item-stacks">
-              <span *ngFor="let stack of job.topStacks">{{ stack.stackName }} {{ stack.percent }}%</span>
-            </div>
-          </button>
-        </div>
-      </div>
-    </aside>
-
-    <main class="core-algoritimo__main">
-      <section class="core-algoritimo__panel core-algoritimo__panel--job">
-        <div class="core-algoritimo__panel-head">
-          <div>
-            <h2>{{ selectedJob.code }} · {{ selectedJob.title }}</h2>
-            <p>{{ selectedJob.company }} · {{ selectedJob.location }} · {{ selectedJob.workModel }}</p>
-          </div>
-
-          <div class="core-algoritimo__salary">{{ formatSalary(selectedJob) }}</div>
-        </div>
-
-        <p class="core-algoritimo__job-summary">{{ selectedJob.summary }}</p>
-
-        <div class="core-algoritimo__job-groups">
-          <div class="core-algoritimo__stack-group">
-            <span class="core-algoritimo__group-label">Stacks decisivas</span>
-            <div class="core-algoritimo__chips">
-              <span class="core-algoritimo__chip core-algoritimo__chip--primary" *ngFor="let stack of selectedJob.topStacks">
-                {{ stack.stackName }} {{ stack.percent }}%
-              </span>
-            </div>
-          </div>
-
-          <div class="core-algoritimo__stack-group">
-            <span class="core-algoritimo__group-label">Stacks secundárias</span>
-            <div class="core-algoritimo__chips">
-              <span class="core-algoritimo__chip" *ngFor="let stack of selectedJob.secondaryStacks">
-                {{ stack.stackName }} {{ stack.percent }}%
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="core-algoritimo__panel core-algoritimo__panel--filters">
-        <div class="core-algoritimo__panel-head">
-          <div>
-            <h2>Observação do ranking</h2>
-            <p>Filtre para validar comportamento, desempate e coerência do score.</p>
-          </div>
-        </div>
-
-        <div class="core-algoritimo__toolbar">
-          <label class="core-algoritimo__search">
-            <span class="material-symbols-rounded" aria-hidden="true">person_search</span>
-            <input type="search" [(ngModel)]="candidateSearch" placeholder="Buscar candidato no ranking" />
-          </label>
-
-          <label class="core-algoritimo__select">
-            <span>Senioridade</span>
-            <select [(ngModel)]="seniorityFilter">
-              <option value="all">Todas</option>
-              <option value="Junior">Junior</option>
-              <option value="Pleno">Pleno</option>
-              <option value="Senior">Senior</option>
-              <option value="Especialista">Especialista</option>
-            </select>
-          </label>
-
-          <label class="core-algoritimo__select">
-            <span>Faixa de score</span>
-            <select [(ngModel)]="scoreBand">
-              <option value="all">Todas</option>
-              <option value="high">80%+</option>
-              <option value="medium">60-79%</option>
-              <option value="low">Abaixo de 60%</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="core-algoritimo__bands">
-          <article class="core-algoritimo__band-card">
-            <strong>{{ strongFitCount }}</strong>
-            <span>Alta aderência</span>
-          </article>
-          <article class="core-algoritimo__band-card">
-            <strong>{{ mediumFitCount }}</strong>
-            <span>Boa aderência</span>
-          </article>
-          <article class="core-algoritimo__band-card">
-            <strong>{{ lowFitCount }}</strong>
-            <span>Baixa aderência</span>
-          </article>
-        </div>
-      </section>
-
-      <section class="core-algoritimo__panel core-algoritimo__panel--access">
-        <div class="core-algoritimo__panel-head">
-          <div>
-            <h2>Logar como talento</h2>
-            <p>Entre com um talento seedado para ajustar dados reais do perfil no sistema.</p>
-          </div>
-        </div>
-
-        <div class="core-algoritimo__access-grid">
-          <article class="core-algoritimo__access-card" *ngFor="let account of talentAccounts; trackBy: trackTalentAccount">
-            <div class="core-algoritimo__access-copy">
-              <strong>{{ account.name }}</strong>
-              <span>{{ account.email }}</span>
-              <small>{{ account.password }}</small>
-            </div>
-
-            <button class="core-algoritimo__primary-action" type="button" (click)="signInAsTalent(account)">
-              Entrar como talento
-            </button>
-          </article>
-        </div>
-      </section>
-
-      <section class="core-algoritimo__ranking">
-        <article class="core-algoritimo__ranking-card" *ngFor="let entry of visibleRanking; trackBy: trackRanking; let idx = index">
-          <div class="core-algoritimo__ranking-head">
-            <div>
-              <span class="core-algoritimo__position">#{{ idx + 1 }}</span>
-              <h3>{{ entry.candidate.name }}</h3>
-              <p>{{ entry.candidate.location }} · {{ entry.candidate.seniority }}</p>
-              <div class="core-algoritimo__candidate-access">
-                <span class="core-algoritimo__candidate-email">{{ candidateEmail(entry) }}</span>
-                <button class="core-algoritimo__ghost-action" type="button" (click)="signInAsCandidateEntry(entry)">
-                  Logar como ele
-                </button>
+    <div class="core-algoritimo__left-column">
+      <ng-container *ngIf="spotlightEntry as entry">
+        <section class="core-algoritimo__candidate-hero">
+          <div class="core-algoritimo__candidate-top">
+            <div class="core-algoritimo__candidate-identity">
+              <div class="core-algoritimo__candidate-avatar">{{ initials(entry.candidate.name) }}</div>
+              <div class="core-algoritimo__candidate-copy">
+                <h2>{{ entry.candidate.name }}</h2>
+                <div class="core-algoritimo__candidate-meta">{{ entry.candidate.location }} , {{ entry.candidate.seniority }}</div>
+                <div class="core-algoritimo__candidate-role">{{ entry.candidate.summary }}</div>
               </div>
             </div>
 
-            <div class="core-algoritimo__score-badge">
+            <div class="core-algoritimo__candidate-score" [attr.data-tone]="scoreTone(entry.score)">
               <strong>{{ entry.score }}%</strong>
               <span>{{ scoreLabel(entry.score) }}</span>
             </div>
           </div>
 
-          <p class="core-algoritimo__candidate-summary">{{ entry.candidate.summary }}</p>
-
-          <div class="core-algoritimo__score-grid">
-            <div class="core-algoritimo__score-tile">
+          <div class="core-algoritimo__candidate-metrics">
+            <article class="core-algoritimo__candidate-metric">
               <span>Stacks principais</span>
-              <strong>{{ entry.debug.primaryScore }} pts</strong>
-            </div>
-            <div class="core-algoritimo__score-tile">
+              <div class="core-algoritimo__candidate-metric-bar">
+                <span class="core-algoritimo__candidate-metric-fill core-algoritimo__candidate-metric-fill--primary" [style.width.%]="spotlightPrimaryPercent(entry)"></span>
+              </div>
+              <strong>{{ entry.debug.primaryScore }} pts <small>{{ spotlightPrimaryPercent(entry) }}%</small></strong>
+            </article>
+
+            <article class="core-algoritimo__candidate-metric">
               <span>Secundárias</span>
-              <strong>{{ entry.debug.secondaryScore }} pts</strong>
-            </div>
-            <div class="core-algoritimo__score-tile">
+              <div class="core-algoritimo__candidate-metric-bar">
+                <span class="core-algoritimo__candidate-metric-fill core-algoritimo__candidate-metric-fill--secondary" [style.width.%]="spotlightSecondaryPercent(entry)"></span>
+              </div>
+              <strong>{{ entry.debug.secondaryScore }} pts <small>{{ spotlightSecondaryPercent(entry) }}%</small></strong>
+            </article>
+
+            <article class="core-algoritimo__candidate-metric">
               <span>Experiência</span>
-              <strong>{{ entry.debug.experienceScore }} pts</strong>
-            </div>
-            <div class="core-algoritimo__score-tile">
-              <span>Coerência</span>
-              <strong>{{ entry.debug.coherenceScore + entry.debug.seniorityScore }} pts</strong>
-            </div>
+              <div class="core-algoritimo__candidate-metric-bar">
+                <span class="core-algoritimo__candidate-metric-fill core-algoritimo__candidate-metric-fill--experience" [style.width.%]="spotlightExperiencePercent(entry)"></span>
+              </div>
+              <strong>{{ entry.debug.experienceScore }} pts <small>{{ spotlightExperiencePercent(entry) }}%</small></strong>
+            </article>
           </div>
+        </section>
 
-          <div class="core-algoritimo__audit-grid">
-            <div class="core-algoritimo__audit-card">
-              <span class="core-algoritimo__audit-label">Stacks decisivas da vaga</span>
-              <div class="core-algoritimo__chips">
-                <span class="core-algoritimo__chip core-algoritimo__chip--primary" *ngFor="let label of decisiveStackLabels(entry)">
-                  {{ label }}
-                </span>
+        <section class="core-algoritimo__candidate-grid">
+          <article class="core-algoritimo__candidate-panel">
+            <h3>Stacks da vaga</h3>
+            <div class="core-algoritimo__candidate-stack-list">
+              <div class="core-algoritimo__candidate-stack-row" *ngFor="let stack of vacancyStacks(entry)">
+                <div class="core-algoritimo__candidate-stack-chip core-algoritimo__candidate-stack-chip--expected">
+                  {{ stack.stackName }} {{ stack.vacancyPercent }}%
+                </div>
+                <div class="core-algoritimo__candidate-stack-track">
+                  <span [style.width.%]="stack.vacancyPercent"></span>
+                </div>
               </div>
             </div>
+          </article>
 
-            <div class="core-algoritimo__audit-card">
-              <span class="core-algoritimo__audit-label">Stacks atuais do talento</span>
-              <div class="core-algoritimo__chips">
-                <span class="core-algoritimo__chip" *ngFor="let label of currentStackLabels(entry)">
-                  {{ label }}
-                </span>
+          <article class="core-algoritimo__candidate-panel">
+            <h3>Stacks do candidato</h3>
+            <div class="core-algoritimo__candidate-stack-list">
+              <div class="core-algoritimo__candidate-stack-row" *ngFor="let stack of candidateStacks(entry)">
+                <div class="core-algoritimo__candidate-stack-chip">
+                  {{ stack.stackName }}
+                </div>
+                <div class="core-algoritimo__candidate-stack-track">
+                  <span class="core-algoritimo__candidate-stack-fill--blue" [style.width.%]="stack.candidatePercent"></span>
+                </div>
+                <strong>{{ stack.candidatePercent }}%</strong>
               </div>
             </div>
+          </article>
 
-            <div class="core-algoritimo__audit-card">
-              <span class="core-algoritimo__audit-label">Experiência prática que pesou</span>
-              <div class="core-algoritimo__chips">
-                <span class="core-algoritimo__chip" *ngFor="let label of experienceStackLabels(entry)">
-                  {{ label }}
-                </span>
+          <article class="core-algoritimo__candidate-panel">
+            <h3>Experiência prática</h3>
+            <div class="core-algoritimo__candidate-experience-summary">
+              <strong>{{ spotlightExperienceYears(entry) }}</strong>
+              <span>anos experiência</span>
+            </div>
+            <div class="core-algoritimo__candidate-stack-list">
+              <div class="core-algoritimo__candidate-stack-row" *ngFor="let stack of experienceStacks(entry)">
+                <div class="core-algoritimo__candidate-stack-chip core-algoritimo__candidate-stack-chip--muted">
+                  {{ stack.stackName }}
+                </div>
+                <div class="core-algoritimo__candidate-stack-track">
+                  <span class="core-algoritimo__candidate-stack-fill--green" [style.width.%]="experienceBarWidth(entry, stack.candidateExperienceMonths)"></span>
+                </div>
+                <strong>{{ stack.candidateExperienceMonths }}m</strong>
               </div>
             </div>
-          </div>
+          </article>
+        </section>
 
-          <div class="core-algoritimo__reason-list">
-            <span class="core-algoritimo__reason" *ngFor="let reason of entry.debug.reasons">{{ reason }}</span>
-          </div>
-
-          <div class="core-algoritimo__breakdown">
-            <div class="core-algoritimo__breakdown-head">
-              <span>Stack</span>
-              <span>Vaga</span>
-              <span>Talento</span>
-              <span>Exp.</span>
+        <section class="core-algoritimo__candidate-breakdown">
+          <div class="core-algoritimo__candidate-breakdown-main">
+            <header class="core-algoritimo__candidate-breakdown-head">
+              <h3>Match Breakdown</h3>
+              <span>Match</span>
+              <span>Valor</span>
               <span>Contribuição</span>
+            </header>
+
+            <div class="core-algoritimo__candidate-breakdown-list">
+              <article class="core-algoritimo__candidate-breakdown-row" *ngFor="let item of vacancyStacks(entry)">
+                <div class="core-algoritimo__candidate-breakdown-name">
+                  <strong>{{ item.stackName }}</strong>
+                  <span>{{ sourceTagLabel(item) }}</span>
+                </div>
+
+                <div class="core-algoritimo__candidate-breakdown-bar">
+                  <span [style.width.%]="item.candidatePercent || 8"></span>
+                </div>
+
+                <strong class="core-algoritimo__candidate-breakdown-value">{{ item.vacancyPercent }}%</strong>
+                <strong class="core-algoritimo__candidate-breakdown-value">{{ item.weightedContribution }}%</strong>
+              </article>
             </div>
 
-            <div class="core-algoritimo__breakdown-row" *ngFor="let item of entry.debug.stackBreakdown">
-              <strong>
-                {{ item.stackName }}
-                <small class="core-algoritimo__source-tag">{{ sourceTagLabel(item) }}</small>
-              </strong>
-              <span>{{ item.vacancyPercent }}%</span>
-              <span>{{ item.candidatePercent }}%</span>
-              <span>{{ item.candidateExperienceMonths }}m</span>
-              <span>{{ item.weightedContribution }}%</span>
+            <div class="core-algoritimo__candidate-contribution-bar">
+              <span
+                *ngFor="let segment of contributionSegments(entry)"
+                [style.width.%]="segment.width"
+                [attr.data-tone]="segment.tone"
+              ></span>
             </div>
           </div>
 
-          <div class="core-algoritimo__score-track" aria-hidden="true">
-            <span [style.width.%]="scoreBarWidth(entry.score)"></span>
+          <aside class="core-algoritimo__candidate-insight">
+            <h4>Insight</h4>
+            <div class="core-algoritimo__candidate-insight-card">
+              <span>Principal gap</span>
+              <strong>{{ spotlightGap(entry) }}</strong>
+            </div>
+            <div class="core-algoritimo__candidate-insight-card core-algoritimo__candidate-insight-card--warm">
+              <span>Maior força</span>
+              <strong>{{ spotlightStrength(entry) }}</strong>
+            </div>
+          </aside>
+        </section>
+      </ng-container>
+    </div>
+
+    <div class="core-algoritimo__right-column">
+      <section class="core-algoritimo__stack-pressure">
+        <div class="core-algoritimo__stack-pressure-row" *ngFor="let item of laboratoryStackPressure">
+          <div class="core-algoritimo__stack-pressure-label">
+            <span class="core-algoritimo__stack-dot"></span>
+            <strong>{{ item.name }}</strong>
           </div>
-        </article>
+
+          <div class="core-algoritimo__stack-pressure-bar">
+            <span [style.width.%]="stackPressureWidth(item.percent)"></span>
+          </div>
+
+          <strong class="core-algoritimo__stack-pressure-value">{{ item.percent }}%</strong>
+        </div>
       </section>
-    </main>
+
+      <section class="core-algoritimo__jobs-panel">
+        <header class="core-algoritimo__jobs-head">
+          <h2>Vagas Criadas em Laboratório</h2>
+        </header>
+
+        <div class="core-algoritimo__jobs-list">
+          <article
+            class="core-algoritimo__job-card"
+            *ngFor="let job of jobs; trackBy: trackJob"
+            [class.core-algoritimo__job-card--active]="job.id === selectedJobId"
+            (click)="selectJob(job.id)"
+          >
+            <div class="core-algoritimo__job-head">
+              <div class="core-algoritimo__job-brand">
+                <div class="core-algoritimo__job-logo">{{ initials(job.company) }}</div>
+                <div class="core-algoritimo__job-brand-copy">
+                  <strong>{{ job.company }}</strong>
+                  <span>{{ job.location }}</span>
+                </div>
+              </div>
+
+              <div class="core-algoritimo__job-meta-chips">
+                <span class="core-algoritimo__job-meta-chip">{{ job.code }}</span>
+                <span class="core-algoritimo__job-meta-chip">{{ jobWorkModelLabel(job) }}</span>
+              </div>
+            </div>
+
+            <div class="core-algoritimo__job-title-row">
+              <h3>{{ job.title }}</h3>
+              <strong class="core-algoritimo__job-salary" *ngIf="jobSalarySingle(job) as salary">{{ salary }}</strong>
+            </div>
+
+            <p class="core-algoritimo__job-summary">{{ job.summary }}</p>
+
+            <div class="core-algoritimo__job-footer">
+              <div class="core-algoritimo__job-chips">
+                <span class="core-algoritimo__job-chip" *ngFor="let stack of jobPrimaryStacks(job)">{{ stack.name }}</span>
+              </div>
+
+              <div class="core-algoritimo__job-actions">
+                <span class="core-algoritimo__job-action-pill">talentos {{ jobCandidateCount(job.id) }}</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
   </section>
 </section>
