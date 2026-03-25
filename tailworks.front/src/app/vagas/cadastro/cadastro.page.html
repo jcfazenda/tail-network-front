@@ -18,10 +18,20 @@
           >
             {{ editingJobStatusLabel }}
           </button>
-          <button class="job-create__hero-button job-create__hero-button--ghost" type="button" (click)="openSummaryPanel()">
+
+          <button
+            class="job-create__hero-button job-create__hero-button--ghost"
+            type="button"
+            (click)="openSummaryPanel()"
+          >
             Detalhes
           </button>
-          <button class="job-create__hero-button job-create__hero-button--primary" type="button" (click)="publishJob()">
+
+          <button
+            class="job-create__hero-button job-create__hero-button--primary"
+            type="button"
+            (click)="publishJob()"
+          >
             {{ isEditingJob ? 'Salvar' : 'Publicar' }}
           </button>
         </div>
@@ -30,7 +40,54 @@
 
     <section class="job-create__content">
       <section class="job-create__layout">
-      <div class="job-create__main">
+
+<div class="job-create__main">
+
+  <div class="job-create-tabs" role="tablist" aria-label="Seções do cadastro da vaga">
+
+    <button
+      type="button"
+      class="job-create-tabs__tab"
+      [class.job-create-tabs__tab--active]="activeJobTab === 'info'"
+      (click)="selectJobTab('info')"
+    >
+      Informações da Vaga
+    </button>
+
+    <button
+      type="button"
+      class="job-create-tabs__tab"
+      [class.job-create-tabs__tab--active]="activeJobTab === 'benefits'"
+      (click)="selectJobTab('benefits')"
+    >
+      Benefícios
+    </button>
+
+    <button
+      type="button"
+      class="job-create-tabs__tab"
+      [class.job-create-tabs__tab--active]="activeJobTab === 'documents'"
+      (click)="selectJobTab('documents')"
+    >
+      Documentos
+    </button>
+
+    <button
+      type="button"
+      class="job-create-tabs__tab"
+      [class.job-create-tabs__tab--active]="activeJobTab === 'experience'"
+      (click)="selectJobTab('experience')"
+    >
+      Experiências e Requisitos
+    </button>
+
+  </div>
+
+  <div class="job-create-tabs__panel">
+    <ng-container [ngSwitch]="activeJobTab">
+
+      <!-- TAB: INFORMAÇÕES -->
+      <div class="job-create-tabs__content" *ngSwitchCase="'info'">
         <section class="job-home-announcement">
           <input
             #companyLogoInput
@@ -39,6 +96,7 @@
             accept=".jpg,.jpeg,.png,.gif,.webp"
             (change)="onCompanyLogoSelected($event)"
           />
+
           <input
             #homeAnnouncementImageInput
             class="summary-card__company-logo-input"
@@ -69,13 +127,19 @@
                       (keydown)="onCompanyLogoKeydown($event, companyLogoInput)"
                       aria-label="Trocar logo da empresa"
                       title="Trocar logo da empresa"
-                    >{{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}</button>
+                    >
+                      {{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}
+                    </button>
 
                     <div class="summary-card__company-meta">
                       <div class="summary-card__company-name-row">
                         <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
-                        <div class="summary-card__company-followers summary-card__company-followers--inline">{{ currentCompanyProfile.followers }}</div>
-                        <span class="summary-card__company-verified material-symbols-rounded" aria-hidden="true">check_circle</span>
+                        <div class="summary-card__company-followers summary-card__company-followers--inline">
+                          {{ currentCompanyProfile.followers }}
+                        </div>
+                        <span class="summary-card__company-verified material-symbols-rounded" aria-hidden="true">
+                          check_circle
+                        </span>
                       </div>
                       <div class="summary-card__company-size">+ de 10.001 funcionários</div>
                     </div>
@@ -87,7 +151,9 @@
                   <span>{{ jobDraft.location }}</span>
                 </div>
 
-                <small class="summary-card__company-logo-error" *ngIf="companyLogoError">{{ companyLogoError }}</small>
+                <small class="summary-card__company-logo-error" *ngIf="companyLogoError">
+                  {{ companyLogoError }}
+                </small>
               </div>
             </div>
 
@@ -120,209 +186,420 @@
                 </span>
               </button>
 
-              <small class="summary-card__company-logo-error" *ngIf="homeAnnouncementImageError">{{ homeAnnouncementImageError }}</small>
+              <small class="summary-card__company-logo-error" *ngIf="homeAnnouncementImageError">
+                {{ homeAnnouncementImageError }}
+              </small>
             </div>
           </div>
         </section>
 
         <section class="job-info-block">
-        <h2 class="job-info-block__title">Informações do Card</h2>
+          <h2 class="job-info-block__title">Informações do Card</h2>
 
-        <div class="job-info-card">
-          <div class="job-info-card__grid">
-            <label class="field field--title">
-              <span class="field__label field__label--soft">Título da vaga</span>
-              <input
-                type="text"
-                name="title"
-                placeholder="Ex: Backend .NET Sênior"
-                [(ngModel)]="jobDraft.title"
-              />
-            </label>
+          <div class="job-info-card">
+            <div class="job-info-card__grid">
+              <label class="field field--title">
+                <span class="field__label field__label--soft">Título da vaga</span>
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Ex: Backend .NET Sênior"
+                  [(ngModel)]="jobDraft.title"
+                />
+              </label>
 
-            <label class="field">
-              <span class="field__label field__label--soft">Tipo de trabalho</span>
-              <div class="work-model-list">
-                <label
-                  class="option-card option-card--work-model"
-                  *ngFor="let item of workModels"
-                  [class.option-card--active]="item === jobDraft.workModel"
-                  (click)="selectWorkModel(item)"
-                >
-                  <input
-                    class="option-card__input"
-                    type="radio"
-                    name="workModel"
-                    [value]="item"
-                    [(ngModel)]="jobDraft.workModel"
-                    (ngModelChange)="selectWorkModel($event)"
-                  />
-                  <span class="option-card__vee" aria-hidden="true"></span>
-                  <span class="option-card__label">{{ item }}</span>
-                </label>
-              </div>
-            </label>
-
-            <label class="field field--select-elevated">
-              <span class="field__label field__label--soft">Empresa</span>
-              <span class="select-shell">
-                <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">apartment</span>
-                <select name="company" [(ngModel)]="jobDraft.company" (ngModelChange)="onCompanyChange($event)">
-                  <option *ngFor="let item of companyOptions" [value]="item">{{ item }}</option>
-                </select>
-                <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
-              </span>
-            </label>
-
-            <label class="field field--select-elevated">
-              <span class="field__label field__label--soft">Localidade</span>
-              <span class="select-shell">
-                <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">location_on</span>
-                <select name="location" [(ngModel)]="jobDraft.location">
-                  <option *ngFor="let item of locationOptions" [value]="item">{{ item }}</option>
-                </select>
-                <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
-              </span>
-            </label>
-
-            <div class="field field--full">
-              <div class="contract-settings">
-                <div class="contract-settings__group contract-settings__group--compensation">
-                  <div class="contract-settings__head">
-                    <span class="field__label field__label--soft">Tipo de contratação</span>
-                  </div>
-
-                  <div class="contract-type-list">
-                    <label
-                      class="option-card option-card--contract-type"
-                      *ngFor="let item of contractTypes"
-                      [class.option-card--active]="item === contractType"
-                    >
-                      <input class="option-card__input" type="radio" name="contractType" [value]="item" [(ngModel)]="contractType" />
-                      <span class="option-card__vee" aria-hidden="true"></span>
-                      <span class="option-card__label">{{ item }}</span>
-                    </label>
-                  </div>
+              <label class="field">
+                <span class="field__label field__label--soft">Tipo de trabalho</span>
+                <div class="work-model-list">
+                  <label
+                    class="option-card option-card--work-model"
+                    *ngFor="let item of workModels"
+                    [class.option-card--active]="item === jobDraft.workModel"
+                    (click)="selectWorkModel(item)"
+                  >
+                    <input
+                      class="option-card__input"
+                      type="radio"
+                      name="workModel"
+                      [value]="item"
+                      [(ngModel)]="jobDraft.workModel"
+                      (ngModelChange)="selectWorkModel($event)"
+                    />
+                    <span class="option-card__vee" aria-hidden="true"></span>
+                    <span class="option-card__label">{{ item }}</span>
+                  </label>
                 </div>
+              </label>
 
-                <div class="contract-settings__group contract-settings__group--candidate-suggestion">
-                  <div class="salary-shell salary-shell--toggle salary-shell--toggle-card">
-                    <div class="salary-shell__toggle-head">
-                      <span class="salary-shell__prefix salary-shell__prefix--toggle material-symbols-rounded" aria-hidden="true">payments</span>
+              <label class="field field--select-elevated">
+                <span class="field__label field__label--soft">Empresa</span>
+                <span class="select-shell">
+                  <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">apartment</span>
+                  <select name="company" [(ngModel)]="jobDraft.company" (ngModelChange)="onCompanyChange($event)">
+                    <option *ngFor="let item of companyOptions" [value]="item">{{ item }}</option>
+                  </select>
+                  <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
+                </span>
+              </label>
 
-                      <span class="salary-shell__copy">
-                        <span class="salary-shell__title">Candidato pode colocar um valor</span>
-                        <span class="salary-shell__hint">Aparece para o candidato sugerir quando visualizar a vaga</span>
-                      </span>
+              <label class="field field--select-elevated">
+                <span class="field__label field__label--soft">Localidade</span>
+                <span class="select-shell">
+                  <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">location_on</span>
+                  <select name="location" [(ngModel)]="jobDraft.location">
+                    <option *ngFor="let item of locationOptions" [value]="item">{{ item }}</option>
+                  </select>
+                  <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
+                </span>
+              </label>
 
-                      <span class="visibility-toggle visibility-toggle--inside">
-                        <input
-                          type="checkbox"
-                          name="allowCandidateSalarySuggestion"
-                          [(ngModel)]="allowCandidateSalarySuggestion"
-                        />
-                        <span class="visibility-toggle__track" aria-hidden="true">
-                          <span class="visibility-toggle__thumb"></span>
-                        </span>
-                      </span>
+              <div class="field field--full">
+                <div class="contract-settings">
+                  <div class="contract-settings__group contract-settings__group--compensation">
+                    <div class="contract-settings__head">
+                      <span class="field__label field__label--soft">Tipo de contratação</span>
                     </div>
 
-                    <div class="salary-shell__embedded">
-                      <span class="field__label field__label--soft salary-shell__embedded-label">Valor da vaga</span>
-
-                      <label class="salary-shell salary-shell--embedded">
-                        <span class="salary-shell__prefix">R$</span>
+                    <div class="contract-type-list">
+                      <label
+                        class="option-card option-card--contract-type"
+                        *ngFor="let item of contractTypes"
+                        [class.option-card--active]="item === contractType"
+                      >
                         <input
-                          type="text"
-                          name="salaryRange"
-                          inputmode="numeric"
-                          pattern="[0-9]*"
-                          placeholder="0.00,00"
-                          [ngModel]="salaryRange"
-                          (beforeinput)="onSalaryRangeBeforeInput($event)"
-                          (ngModelChange)="onSalaryRangeChange($event)"
+                          class="option-card__input"
+                          type="radio"
+                          name="contractType"
+                          [value]="item"
+                          [(ngModel)]="contractType"
                         />
+                        <span class="option-card__vee" aria-hidden="true"></span>
+                        <span class="option-card__label">{{ item }}</span>
                       </label>
+                    </div>
+                  </div>
 
-                      <label class="visibility-toggle visibility-toggle--compensation visibility-toggle--embedded">
-                        <input
-                          type="checkbox"
-                          name="showSalaryRangeInCard"
-                          [(ngModel)]="showSalaryRangeInCard"
-                        />
-                        <span class="visibility-toggle__track" aria-hidden="true">
-                          <span class="visibility-toggle__thumb"></span>
+                  <div class="contract-settings__group contract-settings__group--candidate-suggestion">
+                    <div class="salary-shell salary-shell--toggle salary-shell--toggle-card">
+                      <div class="salary-shell__toggle-head">
+                        <span class="salary-shell__prefix salary-shell__prefix--toggle material-symbols-rounded" aria-hidden="true">
+                          payments
                         </span>
-                        <span class="visibility-toggle__text">Mostrar no card</span>
-                      </label>
+
+                        <span class="salary-shell__copy">
+                          <span class="salary-shell__title">Candidato pode colocar um valor</span>
+                          <span class="salary-shell__hint">
+                            Aparece para o candidato sugerir quando visualizar a vaga
+                          </span>
+                        </span>
+
+                        <span class="visibility-toggle visibility-toggle--inside">
+                          <input
+                            type="checkbox"
+                            name="allowCandidateSalarySuggestion"
+                            [(ngModel)]="allowCandidateSalarySuggestion"
+                          />
+                          <span class="visibility-toggle__track" aria-hidden="true">
+                            <span class="visibility-toggle__thumb"></span>
+                          </span>
+                        </span>
+                      </div>
+
+                      <div class="salary-shell__embedded">
+                        <span class="field__label field__label--soft salary-shell__embedded-label">Valor da vaga</span>
+
+                        <label class="salary-shell salary-shell--embedded">
+                          <span class="salary-shell__prefix">R$</span>
+                          <input
+                            type="text"
+                            name="salaryRange"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            placeholder="0.00,00"
+                            [ngModel]="salaryRange"
+                            (beforeinput)="onSalaryRangeBeforeInput($event)"
+                            (ngModelChange)="onSalaryRangeChange($event)"
+                          />
+                        </label>
+
+                        <label class="visibility-toggle visibility-toggle--compensation visibility-toggle--embedded">
+                          <input
+                            type="checkbox"
+                            name="showSalaryRangeInCard"
+                            [(ngModel)]="showSalaryRangeInCard"
+                          />
+                          <span class="visibility-toggle__track" aria-hidden="true">
+                            <span class="visibility-toggle__thumb"></span>
+                          </span>
+                          <span class="visibility-toggle__text">Mostrar no card</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
-        </div>
-        </section>
-
-        <section class="job-create__support-row">
-          <div class="job-create__support-main">
-            <section class="benefits-block">
-              <div class="benefits-card">
-                <div class="resource-card__header">
-                  <h2 class="resource-card__title">Benefícios</h2>
-                  <button class="benefits-card__add" type="button" (click)="openBenefitModal()">
-                    <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                    <span>Adicionar</span>
-                  </button>
-                </div>
-
-                <div class="benefits-card__list">
-                  <button class="benefit-entry" type="button" *ngFor="let item of selectedBenefits; let i = index" (click)="editBenefit(i)">
-                    <div class="benefit-entry__head">
-                      <div class="benefit-entry__content">
-                        <div class="benefit-entry__title-wrap">
-                          <span class="benefit-entry__icon material-symbols-rounded" aria-hidden="true">check_circle</span>
-                          <span class="benefit-entry__title">{{ item.title }}</span>
-                        </div>
-                        <p class="benefit-entry__description" *ngIf="item.description">{{ item.description }}</p>
-                      </div>
-                      <div class="benefit-entry__meta">
-                        <span class="benefit-entry__side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <section class="documents-block">
-              <div class="documents-card">
-                <div class="resource-card__header">
-                  <h2 class="resource-card__title">Documentos para validação de contratação.</h2>
-                  <button class="benefits-card__add" type="button" (click)="openDocumentModal()">
-                    <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                    <span>Adicionar</span>
-                  </button>
-                </div>
-
-                <div class="documents-card__list">
-                  <button class="documents-card__item" type="button" *ngFor="let item of selectedDocuments; let i = index" (click)="editDocument(i)">
-                    <span class="documents-card__item-marker material-symbols-rounded" aria-hidden="true">description</span>
-                    <span class="documents-card__item-label">{{ item }}</span>
-                  </button>
-                </div>
-
-                <p class="documents-card__notice">
-                  <span class="documents-card__notice-icon material-symbols-rounded" aria-hidden="true">warning</span>
-                  <span>Esses documentos so serão vistos pelo recrutador caso o candidato clique em Aceitar.</span>
-                </p>
-              </div>
-            </section>
-          </div>
-
         </section>
       </div>
+
+      <!-- TAB: BENEFÍCIOS -->
+      <div class="job-create-tabs__content" *ngSwitchCase="'benefits'">
+        <section class="benefits-block">
+          <div class="benefits-card" style="border: 0;">
+            <div class="resource-card__header">
+              <h2 class="resource-card__title">Benefícios</h2>
+              <button class="benefits-card__add" type="button" (click)="openBenefitModal()">
+                <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                <span>Adicionar</span>
+              </button>
+            </div>
+
+            <div class="benefits-card__list">
+              <button
+                class="benefit-entry"
+                type="button"
+                *ngFor="let item of selectedBenefits; let i = index"
+                (click)="editBenefit(i)"
+              >
+                <div class="benefit-entry__head">
+                  <div class="benefit-entry__content">
+                    <div class="benefit-entry__title-wrap">
+                      <span class="benefit-entry__icon material-symbols-rounded" aria-hidden="true">check_circle</span>
+                      <span class="benefit-entry__title">{{ item.title }}</span>
+                    </div>
+                    <p class="benefit-entry__description" *ngIf="item.description">{{ item.description }}</p>
+                  </div>
+
+                  <div class="benefit-entry__meta">
+                    <span class="benefit-entry__side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: DOCUMENTOS -->
+      <div class="job-create-tabs__content" *ngSwitchCase="'documents'">
+        <section class="documents-block">
+          <div class="documents-card"  style="border: 0;">
+            <div class="resource-card__header">
+              <h2 class="resource-card__title">Documentos para validação de contratação.</h2>
+              <button class="benefits-card__add" type="button" (click)="openDocumentModal()">
+                <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+                <span>Adicionar</span>
+              </button>
+            </div>
+
+            <div class="documents-card__list">
+              <button
+                class="documents-card__item"
+                type="button"
+                *ngFor="let item of selectedDocuments; let i = index"
+                (click)="editDocument(i)"
+              >
+                <span class="documents-card__item-marker material-symbols-rounded" aria-hidden="true">description</span>
+                <span class="documents-card__item-label">{{ item }}</span>
+              </button>
+            </div>
+
+            <p class="documents-card__notice">
+              <span class="documents-card__notice-icon material-symbols-rounded" aria-hidden="true">warning</span>
+              <span>Esses documentos so serão vistos pelo recrutador caso o candidato clique em Aceitar.</span>
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <div class="job-create-tabs__content" *ngSwitchCase="'experience'">
+        <section class="experience-block">
+ 
+                 <section class="candidate-experience__experience-stacks">
+                  <div class="candidate-experience__experience-stacks-head">
+                    <strong>Stacks aplicadas nesta experiência</strong>
+                    <button
+                      class="candidate-experience__experience-stack-add"
+                      type="button"
+                      (click)="openCreateExperienceStackModal()"
+                      aria-label="Adicionar stack aplicada nesta experiência"
+                      title="Adicionar stack aplicada nesta experiência"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                    </button>
+                  </div>
+
+                  <div class="candidate-experience__stack-list" *ngIf="currentExperienceStacks.length; else emptyExperienceStacks">
+                    <div
+                      class="candidate-experience__stack-item"
+                      *ngFor="let stack of currentExperienceStacks; let index = index; trackBy: trackByExperienceStackName"
+                    >
+                      <div class="candidate-experience__stack-item-meta">
+                        <button
+                          class="candidate-experience__stack-item-edit"
+                          type="button"
+                          (click)="openEditExperienceStackModal(index)"
+                          [attr.aria-label]="'Editar descrição de ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                        </button>
+                        <span class="candidate-experience__stack-item-name">{{ stack.name }}</span>
+                        <button
+                          *ngIf="stack.description"
+                          class="candidate-experience__stack-item-info"
+                          type="button"
+                          (click)="toggleExperienceStackDescription(index)"
+                          [class.candidate-experience__stack-item-info--active]="expandedExperienceStackDescriptionIndex === index"
+                          [attr.aria-label]="(expandedExperienceStackDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                        </button>
+                        <button
+                          class="candidate-experience__stack-item-info"
+                          type="button"
+                          (click)="toggleExperienceStackGuide(index)"
+                          [class.candidate-experience__stack-item-info--active]="expandedExperienceGuideIndex === index"
+                          [attr.aria-label]="(expandedExperienceGuideIndex === index ? 'Ocultar' : 'Mostrar') + ' guia de ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">help</span>
+                        </button>
+                      </div>
+
+                      <div class="candidate-experience__stack-item-progress">
+                        <div
+                          class="candidate-experience__stack-item-slider"
+                          [style.--stack-progress]="stack.knowledge + '%'"
+                        >
+                          <input
+                            class="candidate-experience__stack-item-range"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="1"
+                            [value]="stack.knowledge"
+                            (input)="updateExperienceStackKnowledge(index, $any($event.target).value)"
+                            [attr.aria-label]="'Ajustar percentual de ' + stack.name"
+                          />
+                        </div>
+                        <span class="candidate-experience__stack-item-value">{{ stack.knowledge }}%</span>
+                        <button
+                          class="candidate-experience__stack-item-remove"
+                          type="button"
+                          (click)="removeExperienceStack(index)"
+                          [attr.aria-label]="'Remover ' + stack.name"
+                        >
+                          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                        </button>
+                      </div>
+
+                      <div
+                        class="candidate-experience__stack-item-description"
+                        *ngIf="expandedExperienceStackDescriptionIndex === index && stack.description"
+                        [innerHTML]="stack.description"
+                      ></div>
+
+                      <div class="candidate-experience__stack-guide" *ngIf="expandedExperienceGuideIndex === index">
+                        <div class="candidate-experience__stack-guide-top">
+                          <span class="candidate-experience__stack-guide-name">{{ stack.name }}</span>
+                          <div class="candidate-experience__stack-guide-meter">
+                            <span>{{ stack.knowledge }}%</span>
+                            <span aria-hidden="true">→</span>
+                            <span>{{ percentLevelLabel(stack.knowledge) }}</span>
+                          </div>
+                        </div>
+
+                        <div class="candidate-experience__stack-guide-tagline" *ngIf="getExperienceGuideTagline(stack)">
+                          {{ getExperienceGuideTagline(stack) }}
+                        </div>
+
+                        <ng-container *ngIf="getExperienceStructuredGuide(stack) as guide">
+                          <div class="candidate-experience__stack-guide-section">
+                            <strong>O que significa dominar {{ stack.name }}</strong>
+                            <ul>
+                              <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
+                            </ul>
+                          </div>
+                        </ng-container>
+
+                        <div class="candidate-experience__stack-guide-section">
+                          <strong>Esperamos de você</strong>
+                          <ul>
+                            <li *ngFor="let row of getExperienceGuideExpectations(stack)">{{ row }}</li>
+                          </ul>
+                        </div>
+
+                        <ng-container *ngIf="getExperienceGuideSignals(stack) as signals">
+                          <div class="candidate-experience__stack-guide-section" *ngIf="signals.inTier.length">
+                            <strong>Sinais de que você está nesse nível</strong>
+                            <ul>
+                              <li *ngFor="let row of signals.inTier">{{ row }}</li>
+                            </ul>
+                          </div>
+
+                          <div class="candidate-experience__stack-guide-section" *ngIf="signals.notYet.length">
+                            <strong>Sinais de que ainda não está</strong>
+                            <ul>
+                              <li *ngFor="let row of signals.notYet">{{ row }}</li>
+                            </ul>
+                          </div>
+                        </ng-container>
+
+                        <div class="candidate-experience__stack-guide-cert">
+                          <div class="candidate-experience__stack-guide-cert-copy">
+                            <strong>Dica: você tem certificado?</strong>
+                            <span *ngIf="getExperienceCertificate(stack) as cert; else certEmpty">
+                              {{ cert.name }}
+                            </span>
+                            <ng-template #certEmpty>
+                              <span>Anexe um certificado dessa stack para reforçar sua posição no Radar.</span>
+                            </ng-template>
+                          </div>
+
+                          <div class="candidate-experience__stack-guide-cert-actions">
+                            <input
+                              #experienceCertInput
+                              type="file"
+                              hidden
+                              accept=".pdf,image/jpeg,image/png,image/webp"
+                              (change)="onExperienceStackCertificateSelected(index, $event)"
+                            />
+                            <button
+                              class="candidate-experience__stack-guide-cert-button"
+                              type="button"
+                              (click)="experienceCertInput.click()"
+                            >
+                              Anexar certificado
+                            </button>
+                            <button
+                              *ngIf="getExperienceCertificate(stack)"
+                              class="candidate-experience__stack-guide-cert-button candidate-experience__stack-guide-cert-button--ghost"
+                              type="button"
+                              (click)="clearExperienceStackCertificate(index)"
+                            >
+                              Remover
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ng-template #emptyExperienceStacks>
+                    <span class="candidate-experience__experience-stacks-empty">
+                      Adicione as stacks que você aplicou nesta empresa.
+                    </span>
+                  </ng-template>
+                </section>
+                
+        </section>
+      </div>
+
+    </ng-container>
+  </div>
+</div>
+
+
       </section>
     </section>
   </div>
@@ -344,6 +621,7 @@
             >
               Detalhes
             </button>
+
             <button
               class="summary-card__tab"
               type="button"
@@ -352,6 +630,7 @@
             >
               Beneficios
             </button>
+
             <button
               class="summary-card__tab"
               type="button"
@@ -386,9 +665,7 @@
                       (click)="openJobSummaryModal('back')"
                     >
                       <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path
-                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
-                        ></path>
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"></path>
                       </svg>
                     </button>
                   </div>
@@ -409,9 +686,7 @@
                       (click)="editResponsibilitySection(section.id)"
                     >
                       <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path
-                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
-                        ></path>
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"></path>
                       </svg>
                     </button>
                   </div>
@@ -473,7 +748,9 @@
                             <span class="summary-card__contract-offer-label">Proposta da Empresa</span>
                           </div>
                           <div class="summary-card__contract-offer-body">
-                            <span class="summary-card__fact-money" [class.summary-card__fact-money--empty]="!hasSalaryRangeValue">{{ contractSalaryDisplay }}</span>
+                            <span class="summary-card__fact-money" [class.summary-card__fact-money--empty]="!hasSalaryRangeValue">
+                              {{ contractSalaryDisplay }}
+                            </span>
                             <span class="summary-card__contract-switch-chip summary-card__contract-switch-chip--active">
                               {{ contractType }}
                             </span>
@@ -484,7 +761,6 @@
                           <span class="summary-card__fact-label">Sugestão do candidato</span>
                           <span class="summary-card__fact-value">{{ candidateSalarySuggestionDisplay }}</span>
                         </div>
-
                       </div>
                     </div>
                   </div>
@@ -513,9 +789,7 @@
                       (click)="openJobSummaryModal('front')"
                     >
                       <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path
-                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
-                        ></path>
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"></path>
                       </svg>
                     </button>
                   </div>
@@ -593,9 +867,15 @@
                           >
                             Excluir
                           </button>
-                          <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeTechStackModal()">
+
+                          <button
+                            class="summary-modal__button summary-modal__button--ghost"
+                            type="button"
+                            (click)="closeTechStackModal()"
+                          >
                             Cancelar
                           </button>
+
                           <button
                             class="summary-modal__button summary-modal__button--primary"
                             type="button"
@@ -609,7 +889,6 @@
                     </div>
                   </ng-template>
                 </div>
-
               </div>
             </div>
 
@@ -636,7 +915,11 @@
                         >
                           &lt;
                         </button>
-                        <span class="summary-card__carousel-page">{{ frontResponsibilityPageNumber }} / {{ frontResponsibilitySections.length }}</span>
+
+                        <span class="summary-card__carousel-page">
+                          {{ frontResponsibilityPageNumber }} / {{ frontResponsibilitySections.length }}
+                        </span>
+
                         <button
                           class="summary-card__carousel-button"
                           type="button"
@@ -672,9 +955,7 @@
                       (click)="editResponsibilitySection(section.id)"
                     >
                       <svg class="summary-card__section-edit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path
-                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"
-                        ></path>
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.21a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 1 0-1.41 1.41l2.34 2.34a.996.996 0 0 0 1.41 0z"></path>
                       </svg>
                     </button>
                   </div>
@@ -687,7 +968,6 @@
                       </li>
                     </ul>
                   </div>
-
                 </section>
 
                 <ng-template #emptyFrontResponsibilitySections>
@@ -793,10 +1073,20 @@
         >
           Excluir vaga
         </button>
-        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeJobActionsModal()">
+
+        <button
+          class="summary-modal__button summary-modal__button--ghost"
+          type="button"
+          (click)="closeJobActionsModal()"
+        >
           Cancelar
         </button>
-        <button class="summary-modal__button summary-modal__button--primary" type="button" (click)="saveEditedJobStatus()">
+
+        <button
+          class="summary-modal__button summary-modal__button--primary"
+          type="button"
+          (click)="saveEditedJobStatus()"
+        >
           Salvar status
         </button>
       </div>
@@ -855,9 +1145,15 @@
         >
           Excluir
         </button>
-        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeBenefitModal()">
+
+        <button
+          class="summary-modal__button summary-modal__button--ghost"
+          type="button"
+          (click)="closeBenefitModal()"
+        >
           Cancelar
         </button>
+
         <button
           class="summary-modal__button summary-modal__button--primary"
           type="button"
@@ -903,9 +1199,15 @@
         >
           Excluir
         </button>
-        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeDocumentModal()">
+
+        <button
+          class="summary-modal__button summary-modal__button--ghost"
+          type="button"
+          (click)="closeDocumentModal()"
+        >
           Cancelar
         </button>
+
         <button
           class="summary-modal__button summary-modal__button--primary"
           type="button"
@@ -1019,9 +1321,15 @@
         >
           Excluir bloco
         </button>
-        <button class="summary-modal__button summary-modal__button--ghost" type="button" (click)="closeResponsibilityModal()">
+
+        <button
+          class="summary-modal__button summary-modal__button--ghost"
+          type="button"
+          (click)="closeResponsibilityModal()"
+        >
           Cancelar
         </button>
+
         <button
           class="summary-modal__button summary-modal__button--primary"
           type="button"

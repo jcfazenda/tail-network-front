@@ -7,7 +7,32 @@ import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs'; 
+
+/* ************************************** EXPERIENCE ************************************** */
+import { STACK_KNOWLEDGE_GUIDES, StackGuideTier, StackKnowledgeGuide } from '../../usuario/stacks/stack-knowledge-guides';
+type ExperienceStackCertificate = {
+  name: string;
+  type: string;
+  size: number;
+  updatedAt: string;
+};
+
+type ExperienceStackChip = {
+  repoId?: string;
+  name: string;
+  knowledge: number;
+  description: string;
+  certificate?: ExperienceStackCertificate;
+};
+
+type ExperienceStackRepoItem = {
+  id: string;
+  name: string;
+};
+
+type SeniorityLevel = 'jr' | 'pleno' | 'senior' | 'especialista';
+/* ************************************** EXPERIENCE ************************************** */
 
 type RefinementItem = string;
 type SummaryPageId = 'front' | 'back';
@@ -50,10 +75,18 @@ type ConfettiPiece = {
   selector: 'app-cadastro-page',
   imports: [CommonModule, FormsModule],
   templateUrl: './cadastro.page.html',
-  styleUrls: ['./cadastro.page.scss'],
+  styleUrls: ['./cadastro.page.scss', 
+              './../../usuario/experiencia/experiencia.page.identity.scss', 
+              './../../usuario/experiencia/experiencia.page.editor.scss',
+              './../../usuario/experiencia/experiencia.page.modal.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
+
 export class CadastroPage implements OnDestroy {
+ 
+  
   private readonly brazilStateAbbreviations: Record<string, string> = {
     Acre: 'AC',
     Alagoas: 'AL',
@@ -262,6 +295,361 @@ export class CadastroPage implements OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+
+  /* ************************************** EXPERIENCE ************************************** */
+  
+readonly trackByExperienceStackName = (_index: number, stack: ExperienceStackChip): string => stack.name;
+
+readonly experienceStackCatalog: ExperienceStackRepoItem[] = [
+  { id: 'repo:dotnet', name: '.NET / C#' },
+  { id: 'repo:csharp', name: 'C#' },
+  { id: 'repo:aspnet-core', name: 'ASP.NET Core' },
+  { id: 'repo:entity-framework', name: 'Entity Framework' },
+  { id: 'repo:rest-api', name: 'REST API' },
+  { id: 'repo:microservices', name: 'Microservices' },
+  { id: 'repo:rabbitmq', name: 'RabbitMQ' },
+  { id: 'repo:kafka', name: 'Kafka' },
+  { id: 'repo:java', name: 'Java / Spring' },
+  { id: 'repo:nodejs', name: 'Node.js' },
+  { id: 'repo:angular', name: 'Angular' },
+  { id: 'repo:react', name: 'React' },
+  { id: 'repo:typescript', name: 'TypeScript' },
+  { id: 'repo:javascript', name: 'JavaScript' },
+  { id: 'repo:html', name: 'HTML' },
+  { id: 'repo:css', name: 'CSS' },
+  { id: 'repo:sql-server', name: 'SQL Server' },
+  { id: 'repo:postgresql', name: 'PostgreSQL' },
+  { id: 'repo:mysql', name: 'MySQL' },
+  { id: 'repo:mongodb', name: 'MongoDB' },
+  { id: 'repo:redis', name: 'Redis' },
+  { id: 'repo:elasticsearch', name: 'Elasticsearch' },
+  { id: 'repo:aws', name: 'AWS' },
+  { id: 'repo:azure', name: 'Azure' },
+  { id: 'repo:gcp', name: 'Google Cloud' },
+  { id: 'repo:cloudwatch', name: 'Cloud Monitoring' },
+  { id: 'repo:serverless', name: 'Serverless' },
+  { id: 'repo:docker', name: 'Docker' },
+  { id: 'repo:kubernetes', name: 'Kubernetes' },
+  { id: 'repo:terraform', name: 'Terraform' },
+  { id: 'repo:github-actions', name: 'GitHub Actions' },
+  { id: 'repo:gitlab-ci', name: 'GitLab CI' },
+  { id: 'repo:linux', name: 'Linux' },
+  { id: 'repo:nginx', name: 'Nginx' },
+  { id: 'repo:flutter', name: 'Flutter' },
+  { id: 'repo:react-native', name: 'React Native' },
+  { id: 'repo:kotlin', name: 'Kotlin' },
+  { id: 'repo:swift', name: 'Swift' },
+  { id: 'repo:android', name: 'Android' },
+  { id: 'repo:ios', name: 'iOS' },
+  { id: 'repo:python', name: 'Python' },
+  { id: 'repo:python-ml', name: 'IA / ML' },
+  { id: 'repo:qa-automation', name: 'QA Automação' },
+  { id: 'repo:security', name: 'Segurança' },
+  { id: 'repo:ux', name: 'UX / UI' },
+  { id: 'repo:figma', name: 'Figma' },
+];
+
+private readonly acceptedCertificateMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+private readonly maxCertificateSizeBytes = 8 * 1024 * 1024;
+
+private readonly stackPurposeCopy: Record<string, { summary: string; levels: Record<SeniorityLevel, string[]> }> = {
+  'repo:dotnet': {
+    summary: 'Capacidade de construir APIs, serviços e sustentação backend com qualidade, segurança e performance.',
+    levels: {
+      jr: ['Implementa rotinas simples, entende controllers, serviços e consultas com orientação.'],
+      pleno: ['Modela camadas, validações e integrações com autonomia e cuidado com qualidade.'],
+      senior: ['Desenha soluções, melhora performance e define padrões consistentes para o time.'],
+      especialista: ['Define arquitetura, resolve gargalos complexos e eleva a plataforma técnica.'],
+    },
+  },
+  'repo:angular': {
+    summary: 'Construção de interfaces, componentes e fluxos com foco em organização, performance e UX.',
+    levels: {
+      jr: ['Cria componentes e mantém telas existentes com apoio do time.'],
+      pleno: ['Estrutura módulos, estados e componentes reutilizáveis com autonomia.'],
+      senior: ['Orquestra arquitetura front, performance e boas práticas de design system.'],
+      especialista: ['Define padrões escaláveis de frontend e eleva a experiência do produto.'],
+    },
+  },
+  'repo:azure': {
+    summary: 'Uso prático de serviços cloud com governança, segurança, deploy e operação.',
+    levels: {
+      jr: ['Navega em recursos básicos e executa rotinas guiadas em cloud.'],
+      pleno: ['Configura ambientes, monitora recursos e automatiza fluxos recorrentes.'],
+      senior: ['Desenha arquitetura cloud e responde por observabilidade e segurança.'],
+      especialista: ['Resolve desenho de plataforma, custo, segurança e escala em alto nível.'],
+    },
+  },
+};
+
+isExperienceStackModalOpen = false;
+editingExperienceStackIndex: number | null = null;
+expandedExperienceStackDescriptionIndex: number | null = null;
+expandedExperienceGuideIndex: number | null = null;
+experienceStackDraftName = '';
+experienceStackDraftRepoId = '';
+experienceStackDraftDescription = '';
+experienceStackModalError = '';
+
+experienceStacks: ExperienceStackChip[] = [
+  { name: '.NET / C#', knowledge: 92, description: '', repoId: 'repo:dotnet' },
+  { name: 'Entity Framework', knowledge: 65, description: '', repoId: 'repo:entity-framework' },
+  { name: 'REST API', knowledge: 75, description: '', repoId: 'repo:rest-api' },
+  { name: 'SQL Server', knowledge: 70, description: '', repoId: 'repo:sql-server' },
+  { name: 'Azure', knowledge: 40, description: '', repoId: 'repo:azure' },
+];
+
+get currentExperienceStacks(): ExperienceStackChip[] {
+  return this.experienceStacks;
+}
+
+openCreateExperienceStackModal(): void {
+  this.editingExperienceStackIndex = null;
+  this.experienceStackDraftName = '';
+  this.experienceStackDraftRepoId = '';
+  this.experienceStackDraftDescription = '';
+  this.experienceStackModalError = '';
+  this.isExperienceStackModalOpen = true;
+}
+
+openEditExperienceStackModal(index: number): void {
+  const current = this.currentExperienceStacks[index];
+  if (!current) {
+    return;
+  }
+
+  this.editingExperienceStackIndex = index;
+  this.experienceStackDraftName = current.name;
+  this.experienceStackDraftRepoId = current.repoId ?? this.findExperienceStackOptionByName(current.name)?.id ?? '';
+  this.experienceStackDraftDescription = current.description ?? '';
+  this.experienceStackModalError = '';
+  this.isExperienceStackModalOpen = true;
+}
+
+closeExperienceStackModal(): void {
+  this.isExperienceStackModalOpen = false;
+  this.editingExperienceStackIndex = null;
+  this.experienceStackDraftName = '';
+  this.experienceStackDraftRepoId = '';
+  this.experienceStackDraftDescription = '';
+  this.experienceStackModalError = '';
+}
+
+toggleExperienceStackDescription(index: number): void {
+  const current = this.currentExperienceStacks[index];
+
+  if (!current?.description?.trim()) {
+    return;
+  }
+
+  this.expandedExperienceStackDescriptionIndex =
+    this.expandedExperienceStackDescriptionIndex === index ? null : index;
+}
+
+toggleExperienceStackGuide(index: number): void {
+  this.expandedExperienceGuideIndex =
+    this.expandedExperienceGuideIndex === index ? null : index;
+}
+
+removeExperienceStack(index: number): void {
+  if (!this.currentExperienceStacks[index]) {
+    return;
+  }
+
+  this.experienceStacks = this.experienceStacks.filter((_, itemIndex) => itemIndex !== index);
+
+  if (this.expandedExperienceStackDescriptionIndex === index) {
+    this.expandedExperienceStackDescriptionIndex = null;
+  } else if (
+    this.expandedExperienceStackDescriptionIndex !== null &&
+    this.expandedExperienceStackDescriptionIndex > index
+  ) {
+    this.expandedExperienceStackDescriptionIndex -= 1;
+  }
+
+  if (this.expandedExperienceGuideIndex === index) {
+    this.expandedExperienceGuideIndex = null;
+  } else if (
+    this.expandedExperienceGuideIndex !== null &&
+    this.expandedExperienceGuideIndex > index
+  ) {
+    this.expandedExperienceGuideIndex -= 1;
+  }
+}
+
+updateExperienceStackKnowledge(index: number, nextValue: number | string): void {
+  const current = this.currentExperienceStacks[index];
+  if (!current) {
+    return;
+  }
+
+  const parsedValue = Number(nextValue);
+  if (Number.isNaN(parsedValue)) {
+    return;
+  }
+
+  const knowledge = Math.max(0, Math.min(100, Math.round(parsedValue)));
+
+  this.experienceStacks = this.experienceStacks.map((item, itemIndex) =>
+    itemIndex === index
+      ? {
+          ...item,
+          knowledge,
+        }
+      : item,
+  );
+}
+
+percentLevelLabel(percent: number): string {
+  if (percent >= 95) return 'Especialista';
+  if (percent >= 80) return 'Senior';
+  if (percent >= 60) return 'Avançado';
+  if (percent >= 45) return 'Intermediário';
+  if (percent >= 20) return 'Básico';
+  if (percent > 0) return 'Iniciante';
+  return 'Não marcado';
+}
+
+getExperienceGuideTagline(stack: ExperienceStackChip): string {
+  const repoId = stack.repoId ?? this.findExperienceStackOptionByName(stack.name)?.id ?? '';
+  return STACK_KNOWLEDGE_GUIDES[repoId]?.tagline ?? '';
+}
+
+getExperienceStructuredGuide(stack: ExperienceStackChip): StackKnowledgeGuide | null {
+  const repoId = stack.repoId ?? this.findExperienceStackOptionByName(stack.name)?.id ?? '';
+  return STACK_KNOWLEDGE_GUIDES[repoId] ?? null;
+}
+
+getExperienceGuideExpectations(stack: ExperienceStackChip): string[] {
+  const repoId = stack.repoId ?? this.findExperienceStackOptionByName(stack.name)?.id ?? '';
+  const guide = STACK_KNOWLEDGE_GUIDES[repoId];
+  const tier = this.getExpectationTierFromPercent(stack.knowledge);
+  const custom = guide?.expectationsByTier?.[tier];
+
+  if (custom?.length) {
+    return custom;
+  }
+
+  return this.stackPurposeCopy[repoId]?.levels[this.mapTierToFallbackLevel(tier)] ?? [];
+}
+
+getExperienceGuideSignals(stack: ExperienceStackChip): { inTier: string[]; notYet: string[] } | null {
+  const repoId = stack.repoId ?? this.findExperienceStackOptionByName(stack.name)?.id ?? '';
+  const guide = STACK_KNOWLEDGE_GUIDES[repoId];
+  const tier = this.getExpectationTierFromPercent(stack.knowledge);
+  const signals = guide?.signalsByTier?.[tier];
+
+  if (signals?.inTier?.length || signals?.notYet?.length) {
+    return {
+      inTier: signals?.inTier ?? [],
+      notYet: signals?.notYet ?? [],
+    };
+  }
+
+  return null;
+}
+
+getExperienceCertificate(stack: ExperienceStackChip): ExperienceStackCertificate | null {
+  return stack.certificate ?? null;
+}
+
+onExperienceStackCertificateSelected(index: number, event: Event): void {
+  const input = event.target as HTMLInputElement | null;
+  const file = input?.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  if (!this.acceptedCertificateMimeTypes.includes(file.type)) {
+    this.experienceStackModalError = 'Use PDF, JPG, PNG ou WEBP para o certificado.';
+    if (input) input.value = '';
+    return;
+  }
+
+  if (file.size > this.maxCertificateSizeBytes) {
+    this.experienceStackModalError = 'O certificado deve ter no máximo 8MB.';
+    if (input) input.value = '';
+    return;
+  }
+
+  this.experienceStacks = this.experienceStacks.map((item, itemIndex) =>
+    itemIndex === index
+      ? {
+          ...item,
+          certificate: {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            updatedAt: new Date().toISOString(),
+          },
+        }
+      : item,
+  );
+
+  if (input) {
+    input.value = '';
+  }
+}
+
+clearExperienceStackCertificate(index: number): void {
+  this.experienceStacks = this.experienceStacks.map((item, itemIndex) =>
+    itemIndex === index
+      ? {
+          ...item,
+          certificate: undefined,
+        }
+      : item,
+  );
+}
+
+private createExperienceStackChip(
+  name: string,
+  knowledge?: number,
+  description?: string,
+  repoId?: string,
+  certificate?: ExperienceStackCertificate,
+): ExperienceStackChip {
+  return {
+    repoId: repoId?.trim() || this.findExperienceStackOptionByName(name)?.id,
+    name: name.trim(),
+    knowledge: typeof knowledge === 'number' ? Math.max(0, Math.min(100, Math.round(knowledge))) : 70,
+    description: description?.trim() ?? '',
+    certificate,
+  };
+}
+
+private findExperienceStackOptionByName(name: string): ExperienceStackRepoItem | undefined {
+  const normalized = name.trim().toLocaleLowerCase('pt-BR');
+  return this.experienceStackCatalog.find((item) => item.name.toLocaleLowerCase('pt-BR') === normalized);
+}
+
+private getExpectationTierFromPercent(percent: number): StackGuideTier {
+  if (percent >= 95) return 'especialista';
+  if (percent >= 80) return 'senior';
+  if (percent >= 60) return 'avancado';
+  if (percent >= 45) return 'intermediario';
+  if (percent >= 20) return 'basico';
+  return 'iniciante';
+}
+
+private mapTierToFallbackLevel(tier: StackGuideTier): SeniorityLevel {
+  switch (tier) {
+    case 'iniciante':
+    case 'basico':
+      return 'jr';
+    case 'intermediario':
+      return 'pleno';
+    case 'avancado':
+    case 'senior':
+      return 'senior';
+    case 'especialista':
+      return 'especialista';
+  }
+}
+ 
+  /* ************************************** EXPERIENCE ************************************** */
+
   readonly companyProfiles: Record<string, CompanySummaryProfile> = {
     'Banco Itaú': {
       name: 'Banco Itaú',
@@ -910,6 +1298,7 @@ export class CadastroPage implements OnDestroy {
   selectedDocuments = [...this.initialDocumentOptions];
   selectedTechStackItems = this.initialTechStackItems.map((item) => ({ ...item }));
 
+  
   get previewAderencia(): number {
     return Math.max(
       42,
@@ -1896,4 +2285,16 @@ export class CadastroPage implements OnDestroy {
     this.summarySectionCounter += 1;
     return `summary-section-${nextId}`;
   }
+
+  activeJobTab: 'info' | 'benefits' | 'documents' | 'experience' = 'info';
+
+  selectJobTab(tab: 'info' | 'benefits' | 'documents' | 'experience'): void {
+    this.activeJobTab = tab;
+  }
+
+
+
+
+
+
 }
