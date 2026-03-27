@@ -102,16 +102,32 @@ export class MatchDomainService {
       };
     }
 
-    const matchedRepoIds = job.requiredRepoIds.filter((repoId) => (talent.stackScores[repoId] ?? 0) > 0);
+    const rankedRequiredRepoIds = job.techStack
+      .slice()
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .map((stack) => this.mapPrimaryTechLabelToRepoId(stack.name))
+      .filter((value): value is string => !!value)
+      .filter((repoId, index, list) => list.indexOf(repoId) === index);
+
+    const primaryRepoIds = rankedRequiredRepoIds.slice(0, 3);
+    const secondaryRepoIds = rankedRequiredRepoIds.slice(3);
+    const effectiveScores = new Map<string, number>();
+
+    for (const repoId of job.requiredRepoIds) {
+      effectiveScores.set(repoId, this.resolveEffectiveStackScore(repoId, talent));
+    }
+
+    const matchedRepoIds = job.requiredRepoIds.filter((repoId) => (effectiveScores.get(repoId) ?? 0) > 0);
     const missingRepoIds = job.requiredRepoIds.filter((repoId) => !matchedRepoIds.includes(repoId));
-    const stackScore = this.average(job.requiredRepoIds.map((repoId) => this.clampScore(talent.stackScores[repoId] ?? 0)));
-    const experienceScore = this.scoreExperienceSignals(job.requiredRepoIds, talent.experiences ?? []);
-    const overallScore = experienceScore > 0
-      ? Math.round((stackScore * 0.82) + (experienceScore * 0.18))
-      : stackScore;
+    const primaryStackScore = this.scoreRequiredGroup(primaryRepoIds, job.techStack, effectiveScores);
+    const secondaryStackScore = this.scoreRequiredGroup(secondaryRepoIds, job.techStack, effectiveScores);
+    const stackScore = this.clampScore(Math.round((primaryStackScore * 0.88) + (secondaryStackScore * 0.12)));
+    const experienceScore = this.scoreExperienceSignals(primaryRepoIds.length ? primaryRepoIds : job.requiredRepoIds, talent.experiences ?? []);
+    const topStackCoverageBonus = this.scoreTopStackCoverage(primaryRepoIds, effectiveScores);
+    const overallScore = this.clampScore(Math.round((stackScore * 0.78) + (experienceScore * 0.17) + topStackCoverageBonus));
 
     return {
-      overallScore: this.clampScore(overallScore),
+      overallScore,
       stackScore,
       experienceScore,
       matchedRepoIds,
@@ -137,6 +153,48 @@ export class MatchDomainService {
     return Math.max(0, Math.min(100, Math.round(score)));
   }
 
+  resolveEffectiveStackScore(repoId: string, talent: MatchTalentProfile): number {
+    const declaredScore = this.clampScore(talent.stackScores[repoId] ?? 0);
+    const experienceMonths = this.getExperienceMonthsForRepo(repoId, talent.experiences ?? []);
+    const inferredScore = this.inferStackLevelFromExperienceMonths(experienceMonths);
+
+    if (experienceMonths <= 0) {
+      return Math.min(declaredScore, 35);
+    }
+
+    const blended = Math.round((inferredScore * 0.82) + (declaredScore * 0.18));
+    return this.clampScore(Math.min(blended, inferredScore + 8));
+  }
+
+  getExperienceMonthsForRepo(repoId: string, experiences: MatchExperienceSignal[]): number {
+    return Math.round(experiences.reduce((total, experience) => {
+      const repoIds = experience.appliedRepoIds?.length
+        ? experience.appliedRepoIds
+        : this.mapTechLabelsToRepoIds(experience.appliedStacks ?? []);
+
+      if (!repoIds.includes(repoId)) {
+        return total;
+      }
+
+      const months = Math.max(1, Number(experience.months ?? 0));
+      const actuationFactor = Math.max(0.35, Math.min(1, Number(experience.actuation ?? 70) / 100));
+      return total + (months * actuationFactor);
+    }, 0));
+  }
+
+  inferStackLevelFromExperienceMonths(months: number): number {
+    if (months >= 60) return 96;
+    if (months >= 48) return 90;
+    if (months >= 36) return 84;
+    if (months >= 24) return 74;
+    if (months >= 18) return 66;
+    if (months >= 12) return 58;
+    if (months >= 6) return 44;
+    if (months >= 3) return 30;
+    if (months > 0) return 18;
+    return 0;
+  }
+
   private scoreExperienceSignals(requiredRepoIds: string[], experiences: MatchExperienceSignal[]): number {
     if (!experiences.length) {
       return 0;
@@ -154,13 +212,14 @@ export class MatchDomainService {
 
       const coverageByRequirement = overlap / Math.max(required.size, 1);
       const focusOnRequired = overlap / Math.max(repoIds.length, 1);
-      const monthsScore = Math.min(16, Math.round((Math.max(1, experience.months ?? 0) / 48) * 16));
-      const actuationScore = Math.min(8, Math.round((Math.max(10, Math.min(100, experience.actuation ?? 70)) / 100) * 8));
+      const weightedMonths = Math.max(1, Math.round((Math.max(1, Number(experience.months ?? 0)) * Math.max(0.35, Math.min(1, Number(experience.actuation ?? 70) / 100)))));
+      const monthsScore = Math.min(18, Math.round((weightedMonths / 48) * 18));
+      const actuationScore = Math.min(6, Math.round((Math.max(10, Math.min(100, experience.actuation ?? 70)) / 100) * 6));
       const levelScore = Math.min(8, Math.round(this.scorePositionLevel(experience.positionLevel) / 3));
 
       return Math.round(
-        (coverageByRequirement * 60)
-        + (focusOnRequired * 16)
+        (coverageByRequirement * 62)
+        + (focusOnRequired * 14)
         + monthsScore
         + actuationScore
         + levelScore
@@ -175,6 +234,57 @@ export class MatchDomainService {
     }
 
     return this.clampScore(this.average(scores));
+  }
+
+  private scoreRequiredGroup(
+    repoIds: string[],
+    techStack: TechStackItem[],
+    effectiveScores: Map<string, number>,
+  ): number {
+    if (!repoIds.length) {
+      return 0;
+    }
+
+    const weightByRepoId = new Map(
+      techStack
+        .map((item) => [this.mapPrimaryTechLabelToRepoId(item.name), this.clampScore(item.match)] as const)
+        .filter((entry): entry is readonly [string, number] => !!entry[0]),
+    );
+
+    const totalWeight = repoIds.reduce((sum, repoId) => sum + (weightByRepoId.get(repoId) ?? 0), 0);
+    if (totalWeight <= 0) {
+      return this.average(repoIds.map((repoId) => effectiveScores.get(repoId) ?? 0));
+    }
+
+    const weightedCoverage = repoIds.reduce((sum, repoId) => {
+      const requiredPercent = Math.max(1, weightByRepoId.get(repoId) ?? 0);
+      const candidatePercent = effectiveScores.get(repoId) ?? 0;
+      const coverage = Math.min(1, candidatePercent / requiredPercent);
+      return sum + (coverage * requiredPercent);
+    }, 0);
+
+    return this.clampScore(Math.round((weightedCoverage / totalWeight) * 100));
+  }
+
+  private scoreTopStackCoverage(repoIds: string[], effectiveScores: Map<string, number>): number {
+    if (!repoIds.length) {
+      return 0;
+    }
+
+    const average = this.average(repoIds.map((repoId) => effectiveScores.get(repoId) ?? 0));
+    if (average >= 85) {
+      return 7;
+    }
+    if (average >= 75) {
+      return 5;
+    }
+    if (average >= 60) {
+      return 3;
+    }
+    if (average >= 45) {
+      return 1;
+    }
+    return 0;
   }
 
   private scorePositionLevel(positionLevel?: string): number {

@@ -192,6 +192,12 @@
   min-width: 0;
 }
 
+.core-match-spotlight__skill-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
 .core-match-spotlight__skill-name strong {
   color: #5f6c7f;
   font-size: 10px;
@@ -199,6 +205,66 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.core-match-spotlight__skill-copy span {
+  color: #8a95a6;
+  font-size: 9px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.core-match-spotlight__skill-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.core-match-spotlight__skill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.core-match-spotlight__skill-badge--empty {
+  background: rgba(207, 214, 223, 0.9);
+  color: #5f6c7f;
+}
+
+.core-match-spotlight__skill-badge--base {
+  background: rgba(216, 223, 233, 0.95);
+  color: #526072;
+}
+
+.core-match-spotlight__skill-badge--junior {
+  background: rgba(193, 220, 255, 0.95);
+  color: #285a93;
+}
+
+.core-match-spotlight__skill-badge--pleno {
+  background: rgba(198, 235, 215, 0.95);
+  color: #1f6a49;
+}
+
+.core-match-spotlight__skill-badge--senior {
+  background: rgba(255, 224, 184, 0.96);
+  color: #8a4b07;
+}
+
+.core-match-spotlight__skill-badge--especialista {
+  background: rgba(244, 204, 255, 0.96);
+  color: #7a2f93;
 }
 
 .core-match-spotlight__skill-bar {

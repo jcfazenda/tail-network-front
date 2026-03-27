@@ -13,6 +13,7 @@ import { TalentProfileStoreService } from '../../talent/talent-profile-store.ser
 import { CoreMatchSpotlightComponent, CoreMatchSpotlightViewModel } from './core-match-spotlight.component';
 import { EmpresaDirectoryService } from '../../empresa/empresa-directory.service';
 import { BrowserStorageService } from '../../core/storage/browser-storage.service';
+import { MatchDomainService } from '../../core/matching/match-domain.service';
 
 @Component({
   standalone: true,
@@ -29,6 +30,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
   private readonly jobsFacade = inject(JobsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
   private readonly matchingLabService = inject(MatchingLabService);
+  private readonly matchDomainService = inject(MatchDomainService);
   private readonly talentSystemSeedService = inject(TalentSystemSeedService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly companyDirectoryService = inject(EmpresaDirectoryService);
@@ -581,6 +583,10 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
       skills: this.candidateStacks(entry).map((stack) => ({
         label: stack.stackName,
         percent: stack.candidatePercent,
+        levelLabel: this.inferredStackLevelLabel(stack.candidateExperienceMonths),
+        levelTone: this.inferredStackLevelTone(stack.candidateExperienceMonths),
+        monthsLabel: this.inferredStackMonthsLabel(stack.candidateExperienceMonths),
+        levelGuide: this.inferredStackLevelGuide(),
       })),
       alternativeTasks: this.buildAlternativeTasks(entry),
       breakdownRows: this.breakdownStacks(entry).map((item) => ({
@@ -713,6 +719,65 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     }
 
     return Math.max(8, Math.min(100, Math.round((value / max) * 100)));
+  }
+
+  private inferredStackLevelLabel(months: number): string {
+    const inferredScore = this.matchDomainService.inferStackLevelFromExperienceMonths(months);
+
+    if (inferredScore >= 90) {
+      return 'Especialista inferido';
+    }
+    if (inferredScore >= 84) {
+      return 'Senior inferido';
+    }
+    if (inferredScore >= 66) {
+      return 'Pleno inferido';
+    }
+    if (inferredScore >= 44) {
+      return 'Junior inferido';
+    }
+    if (inferredScore >= 18) {
+      return 'Base inferida';
+    }
+    return 'Sem lastro';
+  }
+
+  private inferredStackMonthsLabel(months: number): string {
+    if (months <= 0) {
+      return 'sem empresa';
+    }
+
+    if (months >= 12) {
+      const years = Math.round((months / 12) * 10) / 10;
+      return `${years}a em empresa`;
+    }
+
+    return `${months}m em empresa`;
+  }
+
+  private inferredStackLevelTone(months: number): 'empty' | 'base' | 'junior' | 'pleno' | 'senior' | 'especialista' {
+    const inferredScore = this.matchDomainService.inferStackLevelFromExperienceMonths(months);
+
+    if (inferredScore >= 90) {
+      return 'especialista';
+    }
+    if (inferredScore >= 84) {
+      return 'senior';
+    }
+    if (inferredScore >= 66) {
+      return 'pleno';
+    }
+    if (inferredScore >= 44) {
+      return 'junior';
+    }
+    if (inferredScore >= 18) {
+      return 'base';
+    }
+    return 'empty';
+  }
+
+  private inferredStackLevelGuide(): string {
+    return 'Régua inferida por tempo em empresa: sem lastro 0m, base 1-5m, junior 6-17m, pleno 18-35m, senior 36-47m, especialista 48m+.';
   }
 
   private seededTalentEmail(entry: MatchLabRankingEntry): string {

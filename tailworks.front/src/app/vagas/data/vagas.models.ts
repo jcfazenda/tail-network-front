@@ -27,6 +27,21 @@ export interface TechStackItem {
   match: number;
 }
 
+export interface ExperienceStackCertificate {
+  name: string;
+  type: string;
+  size: number;
+  updatedAt: string;
+}
+
+export interface ExperienceStackItem {
+  repoId?: string;
+  name: string;
+  knowledge: number;
+  description: string;
+  certificate?: ExperienceStackCertificate;
+}
+
 export interface JobBenefitItem {
   title: string;
   sideLabel?: string;
@@ -63,6 +78,7 @@ export interface MockJobDraft extends VagaPanelDraft {
   benefits: JobBenefitItem[];
   hiringDocuments: string[];
   techStack: TechStackItem[];
+  experienceStacks?: ExperienceStackItem[];
   differentials: string[];
   responsibilitySections: JobResponsibilitySection[];
 }

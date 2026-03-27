@@ -160,6 +160,71 @@
   align-content: start;
 }
 
+.candidate-modal__stack-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.candidate-modal__stack-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.candidate-modal__stack-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(15, 23, 42, 0.46);
+  font-size: 10px;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.candidate-modal__stack-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.candidate-modal__stack-badge--empty {
+  background: rgba(207, 214, 223, 0.9);
+  color: #5f6c7f;
+}
+
+.candidate-modal__stack-badge--base {
+  background: rgba(216, 223, 233, 0.95);
+  color: #526072;
+}
+
+.candidate-modal__stack-badge--junior {
+  background: rgba(193, 220, 255, 0.95);
+  color: #285a93;
+}
+
+.candidate-modal__stack-badge--pleno {
+  background: rgba(198, 235, 215, 0.95);
+  color: #1f6a49;
+}
+
+.candidate-modal__stack-badge--senior {
+  background: rgba(255, 224, 184, 0.96);
+  color: #8a4b07;
+}
+
+.candidate-modal__stack-badge--especialista {
+  background: rgba(244, 204, 255, 0.96);
+  color: #7a2f93;
+}
+
 .candidate-modal__status-panel{
   display: grid;
   gap: 14px;

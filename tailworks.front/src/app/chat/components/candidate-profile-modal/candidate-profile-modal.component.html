@@ -315,8 +315,23 @@
                 <div class="stack-card__list">
                   <div class="stack-item" *ngFor="let stack of currentExperiencePreviewStacks">
                     <div class="stack-item__meta">
-                      <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
-                      <span class="stack-item__name">{{ stack.name }}</span>
+                      <div class="candidate-modal__stack-copy">
+                        <div class="candidate-modal__stack-name-row">
+                          <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                          <span class="stack-item__name">{{ stack.name }}</span>
+                        </div>
+                        <div class="candidate-modal__stack-meta" *ngIf="currentExperience as experience">
+                          <span
+                            class="candidate-modal__stack-badge"
+                            [ngClass]="'candidate-modal__stack-badge--' + experienceStackLevelTone(experience, stack)"
+                            [attr.title]="experienceStackLevelGuide()"
+                            [attr.aria-label]="experienceStackLevelGuide()"
+                          >
+                            {{ experienceStackLevelLabel(experience, stack) }}
+                          </span>
+                          <span>{{ experienceMonthsLabel(experience) }}</span>
+                        </div>
+                      </div>
                     </div>
 
                     <div class="stack-item__progress">

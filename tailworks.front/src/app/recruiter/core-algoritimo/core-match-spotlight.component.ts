@@ -19,6 +19,10 @@ export interface CoreMatchRequirementRowViewModel {
 export interface CoreMatchSkillRowViewModel {
   label: string;
   percent: number;
+  levelLabel: string;
+  levelTone: 'empty' | 'base' | 'junior' | 'pleno' | 'senior' | 'especialista';
+  monthsLabel: string;
+  levelGuide: string;
 }
 
 export interface CoreMatchBreakdownRowViewModel {

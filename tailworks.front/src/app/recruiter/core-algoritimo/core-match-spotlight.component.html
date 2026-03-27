@@ -31,7 +31,20 @@
       <div class="core-match-spotlight__skills-list">
         <div class="core-match-spotlight__skill-row" *ngFor="let row of viewModel.skills">
           <div class="core-match-spotlight__skill-name">
-            <strong>{{ row.label }}</strong>
+            <div class="core-match-spotlight__skill-copy">
+              <strong>{{ row.label }}</strong>
+              <div class="core-match-spotlight__skill-meta">
+                <span
+                  class="core-match-spotlight__skill-badge"
+                  [ngClass]="'core-match-spotlight__skill-badge--' + row.levelTone"
+                  [attr.title]="row.levelGuide"
+                  [attr.aria-label]="row.levelGuide"
+                >
+                  {{ row.levelLabel }}
+                </span>
+                <span>{{ row.monthsLabel }}</span>
+              </div>
+            </div>
           </div>
 
           <div class="core-match-spotlight__skill-bar">

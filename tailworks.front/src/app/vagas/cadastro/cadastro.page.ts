@@ -6,25 +6,13 @@ import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
-import { ContractType, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
+import { ContractType, ExperienceStackCertificate, ExperienceStackItem, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { Subscription } from 'rxjs'; 
 
 /* ************************************** EXPERIENCE ************************************** */
 import { STACK_KNOWLEDGE_GUIDES, StackGuideTier, StackKnowledgeGuide } from '../../usuario/stacks/stack-knowledge-guides';
-type ExperienceStackCertificate = {
-  name: string;
-  type: string;
-  size: number;
-  updatedAt: string;
-};
 
-type ExperienceStackChip = {
-  repoId?: string;
-  name: string;
-  knowledge: number;
-  description: string;
-  certificate?: ExperienceStackCertificate;
-};
+type ExperienceStackChip = ExperienceStackItem;
 
 type ExperienceStackRepoItem = {
   id: string;
@@ -351,6 +339,7 @@ readonly experienceStackCatalog: ExperienceStackRepoItem[] = [
 
 private readonly acceptedCertificateMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
 private readonly maxCertificateSizeBytes = 8 * 1024 * 1024;
+private static readonly stackDescriptionMaxLength = 920;
 
 private readonly stackPurposeCopy: Record<string, { summary: string; levels: Record<SeniorityLevel, string[]> }> = {
   'repo:dotnet': {
@@ -401,6 +390,61 @@ experienceStacks: ExperienceStackChip[] = [
 
 get currentExperienceStacks(): ExperienceStackChip[] {
   return this.experienceStacks;
+}
+
+get experienceStackModalTitle(): string {
+  return this.editingExperienceStackIndex === null ? 'Adicionar stack' : 'Editar stack aplicada';
+}
+
+get experienceStackModalSubmitLabel(): string {
+  return this.editingExperienceStackIndex === null ? 'Adicionar' : 'Salvar';
+}
+
+get experienceStackDescriptionCharacters(): number {
+  return this.getRichContentPlainText(this.experienceStackDraftDescription).length;
+}
+
+get isExperienceStackDescriptionOverLimit(): boolean {
+  return this.experienceStackDescriptionCharacters > CadastroPage.stackDescriptionMaxLength;
+}
+
+get canSaveExperienceStack(): boolean {
+  if (this.isExperienceStackDescriptionOverLimit) {
+    return false;
+  }
+
+  return this.editingExperienceStackIndex !== null || this.experienceStackDraftRepoId.trim().length > 0;
+}
+
+get availableExperienceStackOptions(): ExperienceStackRepoItem[] {
+  const used = new Set(
+    this.currentExperienceStacks
+      .filter((_stack, index) => index !== this.editingExperienceStackIndex)
+      .map((stack) => stack.repoId ?? this.findExperienceStackOptionByName(stack.name)?.id)
+      .filter((value): value is string => !!value),
+  );
+
+  return this.experienceStackCatalog.filter((item) => !used.has(item.id));
+}
+
+get cardTechStackItems(): TechStackItem[] {
+  if (this.experienceStacks.length) {
+    return this.experienceStacks.map((item) => ({
+      name: item.name,
+      match: item.knowledge,
+    }));
+  }
+
+  return this.selectedTechStackItems.map((item) => ({ ...item }));
+}
+
+editCardTechStack(index: number): void {
+  if (this.experienceStacks.length) {
+    this.openEditExperienceStackModal(index);
+    return;
+  }
+
+  this.editTechStack(index);
 }
 
 openCreateExperienceStackModal(): void {
@@ -603,6 +647,65 @@ clearExperienceStackCertificate(index: number): void {
   );
 }
 
+saveExperienceStack(): void {
+  const selectedOption = this.experienceStackCatalog.find((item) => item.id === this.experienceStackDraftRepoId);
+  const trimmedName = (selectedOption?.name ?? this.experienceStackDraftName).trim();
+  const description = this.experienceStackDraftDescription.trim();
+  this.experienceStackModalError = '';
+
+  if (this.isExperienceStackDescriptionOverLimit) {
+    this.experienceStackModalError = 'A descrição excedeu o limite de caracteres.';
+    return;
+  }
+
+  if (this.editingExperienceStackIndex !== null) {
+    const current = this.currentExperienceStacks[this.editingExperienceStackIndex];
+
+    if (!current) {
+      return;
+    }
+
+    this.experienceStacks = this.experienceStacks.map((item, index) =>
+      index === this.editingExperienceStackIndex
+        ? {
+            ...item,
+            description,
+          }
+        : item,
+    );
+    this.closeExperienceStackModal();
+    return;
+  }
+
+  if (!trimmedName) {
+    this.experienceStackModalError = 'Selecione uma stack para adicionar.';
+    return;
+  }
+
+  const duplicated = this.currentExperienceStacks.some(
+    (item) => item.name.toLocaleLowerCase('pt-BR') === trimmedName.toLocaleLowerCase('pt-BR'),
+  );
+
+  if (duplicated) {
+    this.experienceStackModalError = 'Essa stack já foi adicionada nesta experiência.';
+    return;
+  }
+
+  this.experienceStacks = [
+    ...this.experienceStacks,
+    this.createExperienceStackChip(trimmedName, undefined, description, selectedOption?.id),
+  ];
+  this.closeExperienceStackModal();
+}
+
+onExperienceStackDescriptionInput(event: Event): void {
+  this.experienceStackDraftDescription = (event.target as HTMLTextAreaElement).value;
+
+  if (!this.isExperienceStackDescriptionOverLimit && this.experienceStackModalError === 'A descrição excedeu o limite de caracteres.') {
+    this.experienceStackModalError = '';
+  }
+}
+
 private createExperienceStackChip(
   name: string,
   knowledge?: number,
@@ -646,6 +749,21 @@ private mapTierToFallbackLevel(tier: StackGuideTier): SeniorityLevel {
     case 'especialista':
       return 'especialista';
   }
+}
+
+private getRichContentPlainText(value: string): string {
+  if (!value.trim()) {
+    return '';
+  }
+
+  return value
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li|ul|ol|h1|h2|h3|h4|h5|h6)>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
  
   /* ************************************** EXPERIENCE ************************************** */
@@ -1302,7 +1420,7 @@ private mapTierToFallbackLevel(tier: StackGuideTier): SeniorityLevel {
   get previewAderencia(): number {
     return Math.max(
       42,
-      Math.min(99, this.matchDomainService.estimateJobReadinessFromTechStack(this.selectedTechStackItems)),
+      Math.min(99, this.matchDomainService.estimateJobReadinessFromTechStack(this.cardTechStackItems)),
     );
   }
 
@@ -2040,6 +2158,13 @@ private mapTierToFallbackLevel(tier: StackGuideTier): SeniorityLevel {
     this.selectedBenefits = job.benefits.map((item) => ({ ...item }));
     this.selectedDocuments = [...job.hiringDocuments];
     this.selectedTechStackItems = job.techStack.map((item) => ({ ...item }));
+    this.experienceStacks = (job.experienceStacks ?? []).map((item) => this.createExperienceStackChip(
+      item.name,
+      item.knowledge,
+      item.description,
+      item.repoId,
+      item.certificate,
+    ));
     this.selectedRefinementOptions = [...job.differentials];
     this.responsibilitySections = job.responsibilitySections.map((section) => ({
       ...section,
@@ -2187,7 +2312,8 @@ private mapTierToFallbackLevel(tier: StackGuideTier): SeniorityLevel {
       allowCandidateSalarySuggestion: this.allowCandidateSalarySuggestion,
       benefits: this.selectedBenefits.map((item) => ({ ...item })),
       hiringDocuments: [...this.selectedDocuments],
-      techStack: this.selectedTechStackItems.map((item) => ({ ...item })),
+      techStack: this.cardTechStackItems.map((item) => ({ ...item })),
+      experienceStacks: this.experienceStacks.map((item) => ({ ...item })),
       differentials: [...this.selectedRefinementOptions],
       responsibilitySections: this.responsibilitySections.map((section) => ({
         ...section,

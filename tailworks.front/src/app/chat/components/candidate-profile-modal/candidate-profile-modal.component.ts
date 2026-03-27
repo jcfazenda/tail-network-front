@@ -4,6 +4,7 @@ import { JobsFacade } from '../../../core/facades/jobs.facade';
 import { ChatCandidate, ChatJob } from '../../domain/chat.models';
 import { CandidateStage } from '../../../vagas/data/vagas.models';
 import { Subscription } from 'rxjs';
+import { MatchDomainService } from '../../../core/matching/match-domain.service';
 
 type CandidateModalTab = 'journey' | 'curriculum';
 
@@ -46,6 +47,7 @@ type ExperienceEntry = {
 };
 
 type ExperienceAppliedStack = {
+  repoId?: string;
   name: string;
   knowledge: number;
   description: string;
@@ -113,6 +115,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
     ['dezembro', 12],
   ]);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly matchDomainService = inject(MatchDomainService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
@@ -181,6 +184,47 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
     }
 
     return this.currentExperience.appliedStacks;
+  }
+
+  experienceStackLevelLabel(experience: ExperienceEntry, _stack: ExperienceAppliedStack): string {
+    const inferredScore = this.matchDomainService.inferStackLevelFromExperienceMonths(this.experienceMonths(experience));
+
+    if (inferredScore >= 90) return 'Especialista inferido';
+    if (inferredScore >= 84) return 'Senior inferido';
+    if (inferredScore >= 66) return 'Pleno inferido';
+    if (inferredScore >= 44) return 'Junior inferido';
+    if (inferredScore >= 18) return 'Base inferida';
+    return 'Sem lastro';
+  }
+
+  experienceStackLevelTone(experience: ExperienceEntry, _stack: ExperienceAppliedStack): 'empty' | 'base' | 'junior' | 'pleno' | 'senior' | 'especialista' {
+    const inferredScore = this.matchDomainService.inferStackLevelFromExperienceMonths(this.experienceMonths(experience));
+
+    if (inferredScore >= 90) return 'especialista';
+    if (inferredScore >= 84) return 'senior';
+    if (inferredScore >= 66) return 'pleno';
+    if (inferredScore >= 44) return 'junior';
+    if (inferredScore >= 18) return 'base';
+    return 'empty';
+  }
+
+  experienceStackLevelGuide(): string {
+    return 'Régua inferida por tempo em empresa: sem lastro 0m, base 1-5m, junior 6-17m, pleno 18-35m, senior 36-47m, especialista 48m+.';
+  }
+
+  experienceMonthsLabel(experience: ExperienceEntry): string {
+    const months = this.experienceMonths(experience);
+
+    if (months <= 0) {
+      return 'sem empresa';
+    }
+
+    if (months >= 12) {
+      const years = Math.round((months / 12) * 10) / 10;
+      return `${years}a em empresa`;
+    }
+
+    return `${months}m em empresa`;
   }
 
   get canGoToPreviousExperience(): boolean {
@@ -777,6 +821,7 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
     }
 
     return appliedStacks.map((item) => ({
+      repoId: item.repoId?.trim() || undefined,
       name: item.name?.trim() || 'Stack',
       knowledge: Math.max(0, Math.min(100, Math.round(item.knowledge ?? 70))),
       description: item.description?.trim() || '',
@@ -834,5 +879,18 @@ export class CandidateProfileModalComponent implements OnChanges, OnDestroy {
       { name: 'Documentação', knowledge: 62, description: '' },
       { name: 'Qualidade', knowledge: 57, description: '' },
     ];
+  }
+
+  private experienceMonths(experience: ExperienceEntry): number {
+    const start = this.composeSortValue(experience.startYear, experience.startMonth);
+    const end = experience.currentlyWorkingHere
+      ? this.composeSortValue('2026', 'Mar')
+      : this.composeSortValue(experience.endYear, experience.endMonth);
+
+    if (!start || !end) {
+      return 0;
+    }
+
+    return Math.max(1, end - start + 1);
   }
 }

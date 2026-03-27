@@ -10,6 +10,7 @@ function seedJob(
   return {
     ...job,
     hiringDocuments: [...(job.hiringDocuments ?? [])],
+    experienceStacks: (job.experienceStacks ?? []).map((item) => ({ ...item })),
     talentSubmittedDocuments: [...(job.talentSubmittedDocuments ?? [])],
     talentDocumentsConsentAccepted: job.talentDocumentsConsentAccepted ?? false,
     createdAt: job.createdAt ?? now,

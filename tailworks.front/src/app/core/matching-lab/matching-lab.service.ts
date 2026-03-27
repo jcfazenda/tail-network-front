@@ -156,8 +156,8 @@ export class MatchingLabService {
     talentProfile: RankableTalentCandidate['talentProfile'],
   ): MatchLabStackContribution {
     const repoId = `repo:${jobStack.stackId}`;
-    const candidatePercent = this.matchDomainService.clampScore(talentProfile.stackScores[repoId] ?? 0);
-    const candidateExperienceMonths = this.countExperienceMonths(candidate, jobStack.stackId);
+    const candidatePercent = this.matchDomainService.resolveEffectiveStackScore(repoId, talentProfile);
+    const candidateExperienceMonths = this.matchDomainService.getExperienceMonthsForRepo(repoId, talentProfile.experiences ?? []);
 
     return {
       stackId: jobStack.stackId,
@@ -167,19 +167,14 @@ export class MatchingLabService {
       candidateExperienceMonths,
       band: jobStack.band,
       stackScore: candidatePercent,
-      experienceScore: this.matchDomainService.clampScore(candidateExperienceMonths * 6),
-      weightedContribution: this.matchDomainService.clampScore(Math.round((candidatePercent * 0.82) + (Math.min(100, candidateExperienceMonths * 6) * 0.18))),
+      experienceScore: this.matchDomainService.inferStackLevelFromExperienceMonths(candidateExperienceMonths),
+      weightedContribution: this.matchDomainService.clampScore(
+        Math.round(
+          (Math.min(100, candidatePercent / Math.max(jobStack.percent, 1) * 100) * 0.74)
+          + (this.matchDomainService.inferStackLevelFromExperienceMonths(candidateExperienceMonths) * 0.26),
+        ),
+      ),
     };
-  }
-
-  private countExperienceMonths(candidate: RankableTalentCandidate['candidate'], stackId: string): number {
-    return candidate.experiences.reduce((total, experience) => {
-      if (!experience.stackIds.includes(stackId)) {
-        return total;
-      }
-
-      return total + this.monthDiff(experience.start, experience.end);
-    }, 0);
   }
 
   private monthDiff(start: string, end?: string): number {

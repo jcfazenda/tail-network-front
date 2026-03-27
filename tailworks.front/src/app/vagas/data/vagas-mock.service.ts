@@ -991,6 +991,7 @@ export class VagasMockService {
       benefits: command.draft.benefits.map((item) => ({ ...item })),
       hiringDocuments: [...command.draft.hiringDocuments],
       techStack: command.draft.techStack.map((item) => ({ ...item })),
+      experienceStacks: (command.draft.experienceStacks ?? []).map((item) => ({ ...item })),
       differentials: [...command.draft.differentials],
       responsibilitySections: command.draft.responsibilitySections.map((section) => ({
         ...section,
@@ -1012,6 +1013,7 @@ export class VagasMockService {
         .filter((item) => this.normalizeHiringDocuments(record.hiringDocuments).includes(item)),
       talentDocumentsConsentAccepted: record.talentDocumentsConsentAccepted ?? false,
       techStack: record.techStack.map((item) => ({ ...item })),
+      experienceStacks: (record.experienceStacks ?? []).map((item) => ({ ...item })),
       differentials: [...record.differentials],
       responsibilitySections: this.normalizeResponsibilitySections(record.responsibilitySections, record.differentials),
       candidates: record.candidates.map((candidate, index) =>

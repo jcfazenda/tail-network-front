@@ -816,7 +816,7 @@
 
                   <div class="summary-card__stack" *ngIf="!isTechStackModalOpen; else techStackInlineEditor">
                     <div class="stack-card__list">
-                      <button class="stack-item" type="button" *ngFor="let item of selectedTechStackItems; let i = index" (click)="editTechStack(i)">
+                      <button class="stack-item" type="button" *ngFor="let item of cardTechStackItems; let i = index" (click)="editCardTechStack(i)">
                         <div class="stack-item__meta">
                           <span class="stack-item__drag material-symbols-rounded" aria-hidden="true">drag_indicator</span>
                           <span class="stack-item__name">{{ item.name }}</span>
@@ -1088,6 +1088,70 @@
           (click)="saveEditedJobStatus()"
         >
           Salvar status
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div
+  class="candidate-experience__modal-backdrop"
+  *ngIf="isExperienceStackModalOpen"
+  (click)="closeExperienceStackModal()"
+>
+  <section class="candidate-experience__modal candidate-experience__modal--stack" (click)="$event.stopPropagation()">
+    <div class="candidate-experience__modal-header">
+      <h3 class="candidate-experience__modal-title">{{ experienceStackModalTitle }}</h3>
+      <button class="candidate-experience__modal-close" type="button" (click)="closeExperienceStackModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="candidate-experience__modal-body">
+      <label class="candidate-experience__modal-field" *ngIf="editingExperienceStackIndex === null; else experienceStackReadonly">
+        <span class="candidate-experience__modal-label">Stack</span>
+        <select [(ngModel)]="experienceStackDraftRepoId">
+          <option value="">Selecione uma stack</option>
+          <option *ngFor="let option of availableExperienceStackOptions" [value]="option.id">
+            {{ option.name }}
+          </option>
+        </select>
+      </label>
+
+      <ng-template #experienceStackReadonly>
+        <div class="candidate-experience__modal-field">
+          <span class="candidate-experience__modal-label">Stack</span>
+          <div class="candidate-experience__modal-static">{{ experienceStackDraftName }}</div>
+        </div>
+      </ng-template>
+
+      <label class="candidate-experience__modal-field">
+        <span class="candidate-experience__modal-label">Descrição</span>
+        <textarea
+          class="summary-modal__textarea"
+          rows="5"
+          [(ngModel)]="experienceStackDraftDescription"
+          placeholder="Adicione um contexto breve sobre essa stack nesta vaga."
+          (input)="onExperienceStackDescriptionInput($event)"
+        ></textarea>
+      </label>
+
+      <small class="candidate-experience__error" *ngIf="experienceStackModalError">{{ experienceStackModalError }}</small>
+      <small class="candidate-experience__error" *ngIf="!experienceStackModalError && isExperienceStackDescriptionOverLimit">
+        Limite de {{ experienceStackDescriptionCharacters }}/920 caracteres.
+      </small>
+
+      <div class="candidate-experience__modal-actions">
+        <button class="candidate-experience__modal-button candidate-experience__modal-button--ghost" type="button" (click)="closeExperienceStackModal()">
+          Cancelar
+        </button>
+        <button
+          class="candidate-experience__modal-button candidate-experience__modal-button--primary"
+          type="button"
+          [disabled]="!canSaveExperienceStack"
+          (click)="saveExperienceStack()"
+        >
+          {{ experienceStackModalSubmitLabel }}
         </button>
       </div>
     </div>
