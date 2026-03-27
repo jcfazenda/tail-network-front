@@ -1032,14 +1032,6 @@
 }
 
 @media (max-width: 720px) {
-  .ecosystem-desktop {
-    display: none;
-  }
-
-  .ecosystem-mobile {
-    display: block;
-  }
-
   app-topbar {
     position: fixed;
     top: 0;
