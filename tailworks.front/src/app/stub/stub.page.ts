@@ -124,9 +124,6 @@ export class StubPage implements OnDestroy {
   selectedRadarCategoryIds = ['backend', 'frontend', 'cloud', 'devops'];
 
   selectedJobPanel: ChatJob | null = null;
-  selectedChatJob: ChatJob | null = null;
-  selectedCandidateKey: string | null = null;
-  chatStartIndex = 0;
   candidateProfileContext: CandidateProfileContext | null = null;
 
   // Drag-to-scroll removed from recruiter cards grid to keep interactions reliable on Safari/macOS.
@@ -164,12 +161,6 @@ export class StubPage implements OnDestroy {
 
     if (this.candidateProfileContext) {
       this.closeCandidateProfile();
-      this.cdr.markForCheck();
-      return;
-    }
-
-    if (this.selectedChatJob) {
-      this.closeChat();
       this.cdr.markForCheck();
       return;
     }
@@ -493,9 +484,6 @@ export class StubPage implements OnDestroy {
 
     this.flippedJobId = null;
     this.selectedJobPanel = this.asChatJob(job);
-    this.selectedChatJob = null;
-    this.selectedCandidateKey = null;
-    this.chatStartIndex = 0;
   }
 
   toggleJobRadar(jobId: string, event: Event): void {
@@ -541,17 +529,6 @@ export class StubPage implements OnDestroy {
 
   // Card click is intentionally disabled (only action buttons trigger actions).
 
-  openCandidate(job: MockJobRecord, index: number) {
-    const sortedCandidates = this.sortedCandidatesFor(job);
-    const selectedCandidate = sortedCandidates[index];
-    const asChatJob = this.asChatJob(job);
-
-    this.selectedCandidateKey = selectedCandidate?.id ?? selectedCandidate?.name ?? null;
-    this.selectedJobPanel = asChatJob;
-    this.selectedChatJob = asChatJob;
-    this.chatStartIndex = index;
-  }
-
   getStageLabel(index: number): string {
     if (index >= 0 && index < this.stageLabels.length) {
       return this.stageLabels[index];
@@ -587,24 +564,8 @@ export class StubPage implements OnDestroy {
     }
   }
 
-  closeChat() {
-    this.selectedChatJob = null;
-    this.selectedCandidateKey = null;
-  }
-
-  handleSidePanelAction(): void {
-    if (this.selectedChatJob) {
-      this.closeChat();
-      return;
-    }
-
-    this.closePanel();
-  }
-
   closePanel() {
-    this.selectedChatJob = null;
     this.selectedJobPanel = null;
-    this.selectedCandidateKey = null;
   }
 
   openCandidateProfile(context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' }): void {
@@ -948,24 +909,6 @@ export class StubPage implements OnDestroy {
     }
 
     this.selectedJobPanel = this.asChatJob(latestJob);
-
-    if (!this.selectedChatJob) {
-      return;
-    }
-
-    this.selectedChatJob = this.asChatJob(latestJob);
-
-    if (!this.selectedCandidateKey) {
-      return;
-    }
-
-    const nextIndex = this.selectedChatJob.candidates.findIndex(
-      (candidate) => (candidate.id ?? candidate.name) === this.selectedCandidateKey,
-    );
-
-    if (nextIndex >= 0) {
-      this.chatStartIndex = nextIndex;
-    }
 
     if (!this.candidateProfileContext) {
       return;

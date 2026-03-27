@@ -16,16 +16,16 @@
             <span
               class="ecosystem-desktop__hired-tape"
               aria-hidden="true"
-              [style.--tape-tilt]="mobileTapeTilt(activeHiredIndex, cardIndex, card.name + card.company + card.roleTitle)"
+              [style.--tape-tilt]="hiredTapeTilt(activeHiredIndex, cardIndex, card.name + card.company + card.roleTitle)"
             ></span>
 
             <article
               class="ecosystem-desktop__hired-card"
-              [style.--polaroid-tilt]="mobilePolaroidTilt(activeHiredIndex, cardIndex, card.name + card.company + card.roleTitle)"
+              [style.--polaroid-tilt]="hiredPolaroidTilt(cardIndex, card.name + card.company + card.roleTitle)"
             >
               <div class="ecosystem-desktop__hired-photo">
                 <img [src]="card.avatarUrl" [alt]="card.name" loading="eager" decoding="async" />
-                <span class="ecosystem-desktop__hired-match">{{ mobileHireMatch(card.name + card.company + card.roleTitle) }}%</span>
+                <span class="ecosystem-desktop__hired-match">{{ hiredMatch(card.name + card.company + card.roleTitle) }}%</span>
               </div>
 
               <div class="ecosystem-desktop__hired-copy">
@@ -346,14 +346,10 @@
   </section>
 </main>
 
-<app-ecossistema-mobile class="ecosystem-mobile" [vm]="mobileVm"></app-ecossistema-mobile>
-
-<aside class="job-side-panel" *ngIf="selectedJobPanel && !isTalentEcosystemMode && !isCompactViewport">
+<aside class="job-side-panel" *ngIf="selectedJobPanel && !isTalentEcosystemMode">
   <div class="job-side-panel__topcard">
-    <button class="job-side-panel__close" type="button" (click)="handleRecruiterPanelAction()">
-      <span class="material-symbols-rounded" aria-hidden="true">
-        {{ selectedChatJob ? 'arrow_back' : 'close' }}
-      </span>
+    <button class="job-side-panel__close" type="button" (click)="closeRecruiterPanel()">
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
     </button>
 
     <div class="job-side-panel__profile">
@@ -398,4 +394,4 @@
   </div>
 </aside>
 
-<div class="panel-backdrop" *ngIf="selectedJobPanel && !isTalentEcosystemMode && !isCompactViewport" (click)="closeRecruiterPanel()"></div>
+<div class="panel-backdrop" *ngIf="selectedJobPanel && !isTalentEcosystemMode" (click)="closeRecruiterPanel()"></div>

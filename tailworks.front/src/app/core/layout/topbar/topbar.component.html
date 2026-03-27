@@ -1,21 +1,4 @@
 <header class="topbar" *ngIf="!isSelectionMode">
-  <ng-container *ngIf="isChatPage; else defaultTopbar">
-    <div class="topbar__chat-profile">
-      <img class="topbar__chat-avatar" [src]="chatCandidateAvatarUrl" [alt]="chatCandidateName" />
-
-      <div class="topbar__chat-copy">
-        <span class="topbar__chat-name">{{ chatCandidateName }}</span>
-        <span class="topbar__chat-meta">{{ chatCandidateLocation }}</span>
-      </div>
-    </div>
-
-    <div class="topbar__chat-actions">
-      <button class="topbar__chat-chip" type="button" (click)="openChatModal('curriculum')">Curriculum</button>
-      <button class="topbar__chat-chip" type="button" (click)="openChatModal('journey')">Status</button>
-    </div>
-  </ng-container>
-
-  <ng-template #defaultTopbar>
   <div *ngIf="showSidebarProfileInPrimary" class="topbar__profile">
     <button
       class="topbar__avatar-trigger"
@@ -101,7 +84,6 @@
       </span>
     </button>
   </div>
-  </ng-template>
 </header>
 
 <div
@@ -209,21 +191,6 @@
       <button class="topbar-filter-modal__close" type="button" (click)="closeEcosystemFilters()">
         <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
-    </div>
-
-    <div class="topbar-filter-modal__field topbar-filter-modal__field--chips" *ngIf="showMobileEcosystemViewFilter">
-      <div class="topbar-filter-modal__chips" role="group" aria-label="Selecionar visão do ecossistema">
-        <button
-          *ngFor="let option of mobileEcosystemViewOptions"
-          class="topbar-filter-modal__chip"
-          type="button"
-          [class.topbar-filter-modal__chip--active]="filterView === option.id"
-          (click)="filterView = option.id"
-        >
-          <span class="topbar-filter-modal__chip-label">{{ option.label }}</span>
-          <span class="topbar-filter-modal__chip-count">{{ option.count }}</span>
-        </button>
-      </div>
     </div>
 
     <label class="topbar-filter-modal__field">

@@ -15,7 +15,6 @@ import { EcosystemSearchService } from '../ecosystem-search.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
 import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemViewFilterService } from '../ecosystem-view-filter.service';
-import { ChatSessionService } from '../../../chat/application/chat-session.service';
 
 type FormationCopyDraft = {
   endMonth?: string;
@@ -48,12 +47,6 @@ type NotificationConfettiPiece = {
   color: string;
   dx: string;
   dy: string;
-};
-
-type EcosystemViewOption = {
-  id: string;
-  label: string;
-  count: number;
 };
 
 @Component({
@@ -90,12 +83,10 @@ export class TopbarComponent {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly chatSessionService = inject(ChatSessionService);
   filterCompany = '';
   filterState = '';
   filterStack = '';
   filterCode = '';
-  filterView = 'radar';
   isFilterPopupOpen = false;
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -145,58 +136,9 @@ export class TopbarComponent {
     return this.primaryPath === '/home/ecossistema' || this.primaryPath === '/usuario/ecossistema';
   }
 
-  get isChatPage(): boolean {
-    return this.primaryPath.startsWith('/chat/');
-  }
-
-  get chatCandidate() {
-    return this.chatSessionService.getJob()?.candidates?.[this.chatSessionService.getStartIndex()]
-      ?? this.chatSessionService.getJob()?.candidates?.[0]
-      ?? null;
-  }
-
-  get chatCandidateAvatarUrl(): string {
-    return this.chatCandidate?.avatar || '/assets/avatars/avatar-default.svg';
-  }
-
-  get chatCandidateName(): string {
-    return this.chatCandidate?.name || 'Candidato';
-  }
-
-  get chatCandidateLocation(): string {
-    return this.chatCandidate?.location || 'Localidade nao informada';
-  }
-
   get hasSavedEcosystemFilters(): boolean {
     const filters = this.ecosystemJobFiltersService.filters();
     return !!(filters.code || filters.company || filters.state || filters.stack);
-  }
-
-  get showMobileEcosystemViewFilter(): boolean {
-    return this.isAnyEcosystem && this.sidebarVisibilityService.isCompactViewport();
-  }
-
-  get mobileEcosystemViewOptions(): EcosystemViewOption[] {
-    const jobs = this.readFilteredEcosystemJobsPreview();
-
-    if (!this.showMobileEcosystemViewFilter) {
-      return [];
-    }
-
-    if (this.primaryPath === '/usuario/ecossistema') {
-      return [
-        { id: 'radar', label: 'Vagas no Radar', count: jobs.filter((job) => this.isTalentRadarJob(job)).length },
-        { id: 'applications', label: 'Minhas Candidaturas', count: jobs.filter((job) => this.isTalentApplicationsJob(job)).length },
-        { id: 'processo', label: 'Em Progresso', count: jobs.filter((job) => this.isTalentInProgressJob(job)).length },
-      ];
-    }
-
-    return [
-      { id: 'radar', label: 'No Radar', count: jobs.filter((job) => this.isRecruiterRadarJob(job)).length },
-      { id: 'candidaturas', label: 'Candidaturas', count: jobs.filter((job) => this.jobHasRecruiterStage(job, 'candidatura')).length },
-      { id: 'processo', label: 'Em Progresso', count: jobs.filter((job) => this.jobHasRecruiterInProgressStage(job)).length },
-      { id: 'contratados', label: 'Contratados', count: jobs.filter((job) => this.jobHasRecruiterStage(job, 'contratado')).length },
-    ];
   }
 
   get ecosystemCompanies(): string[] {
@@ -566,15 +508,6 @@ export class TopbarComponent {
     void this.router.navigate(['/vagas/cadastro']);
   }
 
-  closeChatPage(): void {
-    this.chatSessionService.clear();
-    void this.router.navigateByUrl('/home/ecossistema');
-  }
-
-  openChatModal(tab: 'curriculum' | 'journey'): void {
-    this.chatSessionService.openModal(tab);
-  }
-
   openCandidateProfileSetup(): void {
     void this.router.navigate(['/usuario/dados-cadastrais']);
   }
@@ -589,7 +522,6 @@ export class TopbarComponent {
     this.filterCompany = filters.company;
     this.filterState = filters.state;
     this.filterStack = filters.stack;
-    this.filterView = this.ecosystemViewFilterService.selected();
     this.isFilterPopupOpen = true;
   }
 
@@ -602,9 +534,6 @@ export class TopbarComponent {
     this.filterCompany = '';
     this.filterState = '';
     this.filterStack = '';
-    if (this.showMobileEcosystemViewFilter) {
-      this.filterView = 'radar';
-    }
   }
 
   confirmEcosystemFilters(): void {
@@ -614,13 +543,6 @@ export class TopbarComponent {
       state: this.filterState,
       stack: this.filterStack,
     });
-
-    if (
-      this.showMobileEcosystemViewFilter &&
-      this.mobileEcosystemViewOptions.some((option) => option.id === this.filterView)
-    ) {
-      this.ecosystemViewFilterService.setSelected(this.filterView);
-    }
 
     this.closeEcosystemFilters();
   }
@@ -694,10 +616,6 @@ export class TopbarComponent {
     return jobs;
   }
 
-  private readFilteredEcosystemJobsPreview(): MockJobRecord[] {
-    return this.readEcosystemJobs().filter((job) => this.matchesDraftFilters(job));
-  }
-
   private matchesDraftFilters(job: MockJobRecord): boolean {
     const code = this.filterCode.trim().toUpperCase();
     const company = this.filterCompany.trim();
@@ -725,59 +643,6 @@ export class TopbarComponent {
 
     return true;
   }
-
-  private getTalentStage(job: MockJobRecord): CandidateStage | undefined {
-    return this.jobsFacade.getEffectiveCandidateStage(this.jobsFacade.findTalentCandidate(job));
-  }
-
-  private isTalentApplicationsJob(job: MockJobRecord): boolean {
-    const stage = this.getTalentStage(job);
-    return job.talentDecision === 'applied' && stage === 'candidatura' && !this.isTalentDeclinedJob(job);
-  }
-
-  private isTalentInProgressJob(job: MockJobRecord): boolean {
-    const stage = this.getTalentStage(job);
-    return stage === 'processo' || stage === 'tecnica' || stage === 'aceito' || stage === 'documentacao';
-  }
-
-  private isTalentRadarJob(job: MockJobRecord): boolean {
-    return !this.isTalentApplicationsJob(job) && !this.isTalentDeclinedJob(job);
-  }
-
-  private isTalentDeclinedJob(job: MockJobRecord): boolean {
-    const stage = this.getTalentStage(job);
-    return stage === 'proxima' || stage === 'cancelado';
-  }
-
-  private getRecruiterStages(job: MockJobRecord): CandidateStage[] {
-    return job.candidates
-      .map((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate))
-      .filter((stage): stage is CandidateStage => !!stage);
-  }
-
-  private jobHasRecruiterStage(job: MockJobRecord, stage: CandidateStage): boolean {
-    return this.getRecruiterStages(job).some((item) => item === stage);
-  }
-
-  private jobHasRecruiterInProgressStage(job: MockJobRecord): boolean {
-    return this.getRecruiterStages(job).some((stage) =>
-      stage === 'processo'
-      || stage === 'tecnica'
-      || stage === 'aceito'
-      || stage === 'documentacao',
-    );
-  }
-
-  private isRecruiterRadarJob(job: MockJobRecord): boolean {
-    const stages = this.getRecruiterStages(job);
-    const hasAnyInteraction = stages.some((stage) => stage !== 'radar');
-    if (hasAnyInteraction) {
-      return false;
-    }
-
-    return job.radarCount > 0 || stages.some((stage) => stage === 'radar');
-  }
-
   @HostListener(`window:${TopbarComponent.photoUpdatedEventName}`)
   handlePhotoUpdated(): void {
     this.cdr.markForCheck();

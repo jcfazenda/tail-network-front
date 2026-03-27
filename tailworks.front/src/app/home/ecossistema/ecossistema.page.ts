@@ -12,7 +12,6 @@ import { EcosystemSearchService } from '../../core/layout/ecosystem-search.servi
 import { BrowserStorageService } from '../../core/storage/browser-storage.service';
 import { MatchExperienceSignal, MatchScoreBreakdown, MatchTalentProfile } from '../../core/matching/match-domain.models';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
-import { EcossistemaMobileComponent } from './ecossistema-mobile/ecossistema-mobile.component';
 import { TalentDirectoryService } from '../../talent/talent-directory.service';
 import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
 import { EcosystemJobFiltersService } from '../../core/layout/ecosystem-job-filters.service';
@@ -21,7 +20,6 @@ import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
 import { ChatCandidate, ChatJob } from '../../chat/domain/chat.models';
-import { ChatSessionService } from '../../chat/application/chat-session.service';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -107,7 +105,7 @@ type JobCardTalentRow = {
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, TopbarComponent, EcossistemaMobileComponent, PanelCandidatosListComponent],
+  imports: [CommonModule, TopbarComponent, PanelCandidatosListComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -128,7 +126,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly ecosystemViewFilterService = inject(EcosystemViewFilterService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly chatSessionService = inject(ChatSessionService);
   private readonly subscriptions = new Subscription();
   private copyRotationTimer: number | null = null;
   private hiredRotationTimer: number | null = null;
@@ -147,13 +144,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private jobsSnapshot: MockJobRecord[] = [];
   private copyIndex = 0;
   copyIsFading = false;
-  readonly mobileVm = this;
   selectedJobPanel: ChatJob | null = null;
-  selectedChatJob: ChatJob | null = null;
   openingRecruiterPanelJobId: string | null = null;
   recruiterPanelProgressCurrent = 0;
   recruiterPanelProgressTotal = 0;
-  chatStartIndex = 0;
   private recruiterPanelWatchdogTimer: number | null = null;
   private recruiterPanelCountdownTimer: number | null = null;
 
@@ -187,7 +181,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   hiredPageCount = 1;
   hiredPages: number[] = [0];
   ecoFilter: EcoFilter = 'radar';
-  private mobileSpotlightDeck: HiredSpotlightCard[] = [];
+  private hiredSpotlightDeck: HiredSpotlightCard[] = [];
 
   readonly hiredSpotlights: HiredSpotlightCard[] = [
     {
@@ -276,31 +270,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     },
   ];
 
-  get mobileHiredSpotlights(): HiredSpotlightCard[] {
-    return this.mobileSpotlightDeck;
-  }
-
-  get mobileHiredPages(): HiredSpotlightCard[][] {
-    const cards = this.mobileHiredSpotlights;
-    const pageCount = Math.max(1, Math.ceil(cards.length / 2));
-    return Array.from({ length: pageCount }, (_, index) => {
-      const start = index * 2;
-      const page = cards.slice(start, start + 2);
-      if (page.length === 2 || cards.length === 1) {
-        return page;
-      }
-
-      return [...page, cards[0]];
-    });
-  }
-
-  get mobileVisibleHiredCards(): HiredSpotlightCard[] {
-    const pages = this.mobileHiredPages;
-    return pages[this.activeHiredIndex] ?? pages[0] ?? [];
-  }
-
   get desktopVisibleHiredCards(): HiredSpotlightCard[] {
-    const cards = this.mobileHiredSpotlights;
+    const cards = this.hiredSpotlightDeck;
     if (!cards.length) {
       return [];
     }
@@ -315,20 +286,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get activeHiringCopy() {
     return this.hiringCopy[this.copyIndex];
-  }
-
-  get mobileTopStacks(): Array<{ label: string; count: number }> {
-    const counts = new Map<string, number>();
-    for (const card of this.mobileHiredSpotlights) {
-      for (const stack of card.stacks) {
-        counts.set(stack.label, (counts.get(stack.label) ?? 0) + 1);
-      }
-    }
-
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'pt-BR'))
-      .slice(0, 6)
-      .map(([label, count]) => ({ label, count }));
   }
 
   readonly radarTotal = 87;
@@ -390,8 +347,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   readonly sidebarOpen = this.sidebarVisibilityService.isOpen;
 
   constructor() {
-    this.preloadMobileSpotlightAssets();
-    this.refreshMobileHiredDeck();
+    this.preloadHiredSpotlightAssets();
+    this.refreshHiredDeck();
     this.restoreRadarCategorySelection();
     this.refreshJobs();
     void this.ensureSyncedJobs();
@@ -436,10 +393,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get isTalentEcosystemMode(): boolean {
     return this.ecosystemEntryService.getMode() === 'talent';
-  }
-
-  get isCompactViewport(): boolean {
-    return this.sidebarVisibilityService.isCompactViewport();
   }
 
   get ecoFilters(): Array<{ id: EcoFilter; label: string }> {
@@ -942,7 +895,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return `${tilt}deg`;
   }
 
-  mobilePolaroidTilt(_pageIndex: number, cardIndex: number, seed: string): string {
+  hiredPolaroidTilt(cardIndex: number, seed: string): string {
     const base = this.polaroidTilt(seed);
     const numeric = Number.parseFloat(base.replace('deg', ''));
     if (!Number.isFinite(numeric) || numeric === 0) {
@@ -953,7 +906,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return cardIndex % 2 === 0 ? `-${magnitude}deg` : `${magnitude}deg`;
   }
 
-  mobileTapeTilt(pageIndex: number, cardIndex: number, seed: string): string {
+  hiredTapeTilt(pageIndex: number, cardIndex: number, seed: string): string {
     let hash = 0;
     const compositeSeed = `${pageIndex}:${cardIndex}:${seed}:tape`;
     for (let i = 0; i < compositeSeed.length; i += 1) {
@@ -965,7 +918,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return `${tilt}deg`;
   }
 
-  mobileHireMatch(seed: string): number {
+  hiredMatch(seed: string): number {
     let hash = 0;
     const compositeSeed = `${seed}:match`;
     for (let i = 0; i < compositeSeed.length; i += 1) {
@@ -1016,7 +969,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private syncHiredPagination(force = false): void {
-    const nextPageCount = Math.max(1, this.mobileHiredPages.length);
+    const nextPageCount = Math.max(1, Math.ceil(this.hiredSpotlightDeck.length / 2));
     if (!force && nextPageCount === this.hiredPageCount) {
       return;
     }
@@ -1029,16 +982,16 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private refreshMobileHiredDeck(): void {
+  private refreshHiredDeck(): void {
     const pool = [...this.hiredSpotlights];
     for (let i = pool.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    this.mobileSpotlightDeck = pool;
+    this.hiredSpotlightDeck = pool;
   }
 
-  private preloadMobileSpotlightAssets(): void {
+  private preloadHiredSpotlightAssets(): void {
     if (typeof Image === 'undefined') {
       return;
     }
@@ -1242,8 +1195,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         if (this.openingRecruiterPanelJobId === job.id && !this.selectedJobPanel) {
           const freshestJob = this.jobsFacade.getJobById(job.id) ?? job;
           this.selectedJobPanel = this.asChatJob(freshestJob);
-          this.selectedChatJob = null;
-          this.chatStartIndex = 0;
           this.clearRecruiterPanelTimers();
           this.openingRecruiterPanelJobId = null;
           this.recruiterPanelProgressCurrent = 0;
@@ -1259,22 +1210,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   closeRecruiterPanel(): void {
     this.clearRecruiterPanelTimers();
-    this.selectedChatJob = null;
     this.selectedJobPanel = null;
     this.openingRecruiterPanelJobId = null;
     this.recruiterPanelProgressCurrent = 0;
     this.recruiterPanelProgressTotal = 0;
-    this.chatStartIndex = 0;
-    this.cdr.markForCheck();
-  }
-
-  closeRecruiterChat(): void {
-    this.clearRecruiterPanelTimers();
-    this.selectedChatJob = null;
-    this.openingRecruiterPanelJobId = null;
-    this.recruiterPanelProgressCurrent = 0;
-    this.recruiterPanelProgressTotal = 0;
-    this.chatStartIndex = 0;
     this.cdr.markForCheck();
   }
 
@@ -1304,17 +1243,11 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.isCompactViewport) {
-      this.chatSessionService.set(this.selectedJobPanel, index);
-      void this.router.navigate(['/chat', this.selectedJobPanel.id], {
-        queryParams: { candidate: index },
-      });
-      return;
-    }
-
-    this.selectedChatJob = this.selectedJobPanel;
-    this.chatStartIndex = index;
-    this.cdr.markForCheck();
+    this.handleRecruiterCandidateProfile({
+      job: this.selectedJobPanel,
+      candidate,
+      initialTab: 'curriculum',
+    });
   }
 
   recruiterPanelStageLabel(stage?: MockJobCandidate['stage']): string {
@@ -1354,15 +1287,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       const stageRight = this.jobsFacade.getEffectiveCandidateStage(right) ?? 'radar';
       return order.indexOf(stageLeft) - order.indexOf(stageRight) || right.match - left.match;
     });
-  }
-
-  handleRecruiterPanelAction(): void {
-    if (this.selectedChatJob) {
-      this.closeRecruiterChat();
-      return;
-    }
-
-    this.closeRecruiterPanel();
   }
 
   handleRecruiterCandidateProfile(_context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' }): void {

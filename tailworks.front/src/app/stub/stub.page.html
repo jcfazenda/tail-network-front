@@ -513,10 +513,8 @@
 
     <aside class="job-side-panel" *ngIf="selectedJobPanel">
       <div class="job-side-panel__topcard">
-        <button class="job-side-panel__close" type="button" (click)="handleSidePanelAction()">
-          <span class="material-symbols-rounded" aria-hidden="true">
-            {{ selectedChatJob ? 'arrow_back' : 'close' }}
-          </span>
+        <button class="job-side-panel__close" type="button" (click)="closePanel()">
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
         </button>
 
         <div class="job-side-panel__profile">
@@ -554,7 +552,7 @@
           [sortedCandidatesFor]="sortedCandidatesFor"
           [stageLabel]="stageLabel"
           (closePanelEvent)="closePanel()"
-          (openChat)="openCandidate(findJobById(selectedJobPanel!.id), $event)"
+          (openChat)="openCandidateProfileFromList($event)"
           (openCandidateProfile)="openCandidateProfileFromList($event)"
           (openCandidateStatus)="openCandidateStatusFromList($event)"
         ></app-panel-candidatos-list>

@@ -57,7 +57,6 @@ export class PanelCandidatosListComponent {
 
   @Input() selectedJobPanel: any = null;
   @Input() sortedCandidatesFor!: (job: any) => any[];
-  @Input() openCandidate!: (job: any, index: number) => void;
   @Input() stageLabel!: (stage?: CandidateStage) => string;
   @Input() embedded = false;
   @Output() closePanelEvent = new EventEmitter<void>();
