@@ -806,14 +806,16 @@
 .curriculum-page__journey-stepper-label{
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 12px;
+  min-height: 28px;
 }
 
 .curriculum-page__journey-stepper-meta{
   display: grid;
   gap: 2px;
+  align-self: center;
 }
 
 .curriculum-page__journey-stepper-meta strong{
@@ -831,13 +833,16 @@
 
 .curriculum-page__journey-stepper-time{
   display: grid;
-  justify-items: end;
+  justify-items: start;
   gap: 2px;
+  flex: 0 0 auto;
+  align-self: center;
+  margin-top: 4px;
 }
 
 .curriculum-page__journey-stepper-time span{
   color: rgba(245, 247, 251, 0.74);
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -846,7 +851,7 @@
 
 .curriculum-page__journey-stepper-time small{
   color: rgba(224, 229, 236, 0.42);
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1.2;
 }
 
@@ -864,6 +869,7 @@
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-header{
   padding: 8px 0;
   height: auto;
+  align-items: center;
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-vertical-content-container{
@@ -879,12 +885,12 @@
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-icon{
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.76);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: rgba(92, 98, 108, 0.64);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -907,7 +913,14 @@
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-icon .mat-step-icon-content{
-  top: 0;
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  transform: none;
 }
 
 .curriculum-page__journey-step{
