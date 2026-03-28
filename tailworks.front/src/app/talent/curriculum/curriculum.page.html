@@ -262,6 +262,13 @@
 
             <div class="curriculum-page__journey-stepper-body">
               <p>{{ item.description }}</p>
+
+              <div class="curriculum-page__journey-documents" *ngIf="item.requiredDocuments?.length">
+                <strong>Documentos necessários</strong>
+                <ul>
+                  <li *ngFor="let document of item.requiredDocuments">{{ document }}</li>
+                </ul>
+              </div>
             </div>
           </mat-step>
         </mat-vertical-stepper>

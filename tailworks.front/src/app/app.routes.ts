@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'usuario', redirectTo: 'usuario/ecossistema', pathMatch: 'full' },
   {
     path: 'usuario/ecossistema',
-    loadComponent: () => import('./home/ecossistema/ecossistema.page').then((m) => m.EcossistemaPage),
+    loadComponent: () => import('./usuario/ecossistema/usuario-ecossistema.page').then((m) => m.UsuarioEcossistemaPage),
     data: { title: 'Ecossistema' },
     canActivate: [talentAuthGuard],
   },

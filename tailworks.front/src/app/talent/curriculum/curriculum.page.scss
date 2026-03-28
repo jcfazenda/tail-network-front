@@ -846,7 +846,6 @@
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .curriculum-page__journey-stepper-time small{
@@ -864,6 +863,34 @@
   color: rgba(224, 229, 236, 0.62);
   font-size: 11px;
   line-height: 1.55;
+}
+
+.curriculum-page__journey-documents{
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding-left: 14px;
+}
+
+.curriculum-page__journey-documents strong{
+  color: rgba(245, 247, 251, 0.78);
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+  margin-left: -14px;
+}
+
+.curriculum-page__journey-documents ul{
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.curriculum-page__journey-documents li{
+  color: rgba(224, 229, 236, 0.62);
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-header{
@@ -1256,6 +1283,14 @@
 }
 
 :host-context(body[data-theme='light']) .curriculum-page__journey-stepper-body p{
+  color: rgba(16, 18, 22, 0.6);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-documents strong{
+  color: rgba(16, 18, 22, 0.74);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-documents li{
   color: rgba(16, 18, 22, 0.6);
 }
 
