@@ -64,8 +64,6 @@
               </p>
             </div>
 
-            <div class="job-create__insight-divider" aria-hidden="true"></div>
-
             <section class="candidate-experience__experience-stacks">
               <div class="candidate-experience__experience-stacks-head">
                 <strong>Stacks aplicadas nesta experiência</strong>
@@ -244,52 +242,6 @@
           </section>
         </section>
 
-  <div class="job-create-tabs" role="tablist" aria-label="Seções do cadastro da vaga">
-    <button
-      type="button"
-      class="job-create-tabs__tab"
-      [class.job-create-tabs__tab--active]="activeJobTab === 'benefits'"
-      (click)="selectJobTab('benefits')"
-    >
-      Benefícios
-    </button>
-
-    <button
-      type="button"
-      class="job-create-tabs__tab"
-      [class.job-create-tabs__tab--active]="activeJobTab === 'documents'"
-      (click)="selectJobTab('documents')"
-    >
-      Documentos
-    </button>
-
-    <button
-      type="button"
-      class="job-create-tabs__tab"
-      [class.job-create-tabs__tab--active]="activeJobTab === 'experience'"
-      (click)="selectJobTab('experience')"
-    >
-      Experiências e Requisitos
-    </button>
-
-  </div>
-
-  <div class="job-create-tabs__panel">
-    <ng-container [ngSwitch]="activeJobTab">
-
-      <!-- TAB: INFORMAÇÕES -->
-      <div class="job-create-tabs__content" *ngSwitchCase="'info'"></div>
-
-      <!-- TAB: BENEFÍCIOS -->
-      <div class="job-create-tabs__content" *ngSwitchCase="'benefits'"></div>
-
-      <!-- TAB: DOCUMENTOS -->
-      <div class="job-create-tabs__content" *ngSwitchCase="'documents'"></div>
-
-      <div class="job-create-tabs__content" *ngSwitchCase="'experience'"></div>
-
-    </ng-container>
-  </div>
 </div>
 
 <aside class="job-create__side-rail">
@@ -473,8 +425,8 @@
   <div class="job-create__side-panel job-create__side-panel--secondary job-create__side-panel--benefits">
     <div class="job-create__side-section-head">
       <strong>Benefícios</strong>
-      <button class="benefits-card__add benefits-card__add--icon" type="button" (click)="openBenefitModal()" aria-label="Adicionar benefício">
-        <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+      <button class="job-create__side-add" type="button" (click)="openBenefitModal()" aria-label="Adicionar benefício">
+        <span class="job-create__side-add-icon material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     </div>
 
@@ -508,8 +460,8 @@
   <div class="job-create__side-panel job-create__side-panel--secondary job-create__side-panel--documents">
     <div class="job-create__side-section-head">
       <strong>Documentos</strong>
-      <button class="benefits-card__add benefits-card__add--icon" type="button" (click)="openDocumentModal()" aria-label="Adicionar documento">
-        <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+      <button class="job-create__side-add" type="button" (click)="openDocumentModal()" aria-label="Adicionar documento">
+        <span class="job-create__side-add-icon material-symbols-rounded" aria-hidden="true">add</span>
       </button>
     </div>
 
