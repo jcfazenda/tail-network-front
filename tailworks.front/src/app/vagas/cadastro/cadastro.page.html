@@ -1,59 +1,250 @@
 <div class="job-create-shell">
   <div class="job-create">
-    <section class="job-create__hero">
-      <div class="job-create__hero-copy">
-        <h1 class="job-create__title">{{ isEditingJob ? 'Editar Card' : 'Nova Vaga' }}</h1>
-        <p class="job-create__description">
-          Veja o card sendo montado conforme o preenchimento
-        </p>
-      </div>
+    <section class="job-create__layout">
+      <div class="job-create__main">
+        <section class="job-create__page-head">
+          <div class="job-create__page-copy">
+            <h1 class="job-create__title">Cadastro da vaga</h1>
+            <p class="job-create__description">
+              Estruture a vaga com clareza, organize requisitos, beneficios e documentos e acompanhe a publicação tomando forma em um fluxo unico.
+            </p>
+          </div>
 
-      <div class="job-create__hero-actions">
-        <div class="job-create__hero-buttons">
-          <button
-            *ngIf="isEditingJob"
-            class="job-create__hero-button job-create__hero-button--ghost"
-            type="button"
-            (click)="openJobActionsModal()"
-          >
-            {{ editingJobStatusLabel }}
-          </button>
+        </section>
 
-          <button
-            class="job-create__hero-button job-create__hero-button--ghost"
-            type="button"
-            (click)="openSummaryPanel()"
-          >
-            Detalhes
-          </button>
+        <section class="job-create__insights">
+          <section class="job-create__insight-panel job-create__insight-panel--secondary">
+            <div class="job-create__insight-head job-create__insight-head--secondary">
+              <div class="job-create__signal-target">
+                <span class="job-create__signal-target-label">Meta de aderencia</span>
+                <div class="job-create__signal-target-actions">
+                  <span class="job-create__signal-target-value">85%</span>
+                  <button class="job-create__signal-target-submit" type="button">Aplicar</button>
+                </div>
+              </div>
 
-          <button
-            class="job-create__hero-button job-create__hero-button--primary"
-            type="button"
-            (click)="publishJob()"
-          >
-            {{ isEditingJob ? 'Salvar' : 'Publicar' }}
-          </button>
-        </div>
-      </div>
-    </section>
+              <div class="job-create__signal-tabs">
+                <button class="job-create__signal-tab job-create__signal-tab--active" type="button">Semana</button>
+                <button class="job-create__signal-tab" type="button">Mes</button>
+                <button class="job-create__signal-tab" type="button">Ano</button>
+              </div>
+            </div>
 
-    <section class="job-create__content">
-      <section class="job-create__layout">
+            <app-profit-loss-card />
+          </section>
 
-<div class="job-create__main">
+          <section class="job-create__insight-panel">
+            <div class="job-create__insight-head">
+              <div class="job-create__insight-tools">
+                <button class="job-create__insight-tool" type="button" aria-label="Visão geral">
+                  <span class="material-symbols-rounded" aria-hidden="true">dashboard</span>
+                </button>
+                <button class="job-create__insight-tool" type="button" aria-label="Tema">
+                  <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
+                </button>
+              </div>
+
+              <div class="job-create__insight-pills">
+                <button class="job-create__insight-pill job-create__insight-pill--wide job-create__insight-pill--active" type="button">
+                  Semana
+                </button>
+                <button class="job-create__insight-pill job-create__insight-pill--short" type="button">Mes</button>
+                <button class="job-create__insight-pill job-create__insight-pill--short" type="button">Ano</button>
+              </div>
+            </div>
+
+            <div class="job-create__insight-copy-block">
+              <div class="job-create__insight-kicker">
+                <span class="material-symbols-rounded" aria-hidden="true">dashboard</span>
+                <span>Overview</span>
+              </div>
+
+              <p class="job-create__insight-copy">
+                Acompanhe o peso tecnico da vaga em construção com uma visão rápida das stacks mais exigidas e da distribuição esperada de aderencia no pipeline.
+              </p>
+            </div>
+
+            <div class="job-create__insight-divider" aria-hidden="true"></div>
+
+            <section class="candidate-experience__experience-stacks">
+              <div class="candidate-experience__experience-stacks-head">
+                <strong>Stacks aplicadas nesta experiência</strong>
+                <button
+                  class="candidate-experience__experience-stack-add"
+                  type="button"
+                  (click)="openCreateExperienceStackModal()"
+                  aria-label="Adicionar stack aplicada nesta experiência"
+                  title="Adicionar stack aplicada nesta experiência"
+                >
+                  <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                </button>
+              </div>
+
+              <div class="candidate-experience__stack-list" *ngIf="currentExperienceStacks.length; else emptyExperienceStacks">
+                <div
+                  class="candidate-experience__stack-item"
+                  *ngFor="let stack of currentExperienceStacks; let index = index; trackBy: trackByExperienceStackName"
+                >
+                  <div class="candidate-experience__stack-item-meta">
+                    <button
+                      class="candidate-experience__stack-item-edit"
+                      type="button"
+                      (click)="openEditExperienceStackModal(index)"
+                      [attr.aria-label]="'Editar descrição de ' + stack.name"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                    </button>
+                    <span class="candidate-experience__stack-item-name">{{ stack.name }}</span>
+                    <button
+                      *ngIf="stack.description"
+                      class="candidate-experience__stack-item-info"
+                      type="button"
+                      (click)="toggleExperienceStackDescription(index)"
+                      [class.candidate-experience__stack-item-info--active]="expandedExperienceStackDescriptionIndex === index"
+                      [attr.aria-label]="(expandedExperienceStackDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                    </button>
+                    <button
+                      class="candidate-experience__stack-item-info"
+                      type="button"
+                      (click)="toggleExperienceStackGuide(index)"
+                      [class.candidate-experience__stack-item-info--active]="expandedExperienceGuideIndex === index"
+                      [attr.aria-label]="(expandedExperienceGuideIndex === index ? 'Ocultar' : 'Mostrar') + ' guia de ' + stack.name"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">help</span>
+                    </button>
+                  </div>
+
+                  <div class="candidate-experience__stack-item-progress">
+                    <div
+                      class="candidate-experience__stack-item-slider"
+                      [style.--stack-progress]="stack.knowledge + '%'"
+                    >
+                      <input
+                        class="candidate-experience__stack-item-range"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        [value]="stack.knowledge"
+                        (input)="updateExperienceStackKnowledge(index, $any($event.target).value)"
+                        [attr.aria-label]="'Ajustar percentual de ' + stack.name"
+                      />
+                    </div>
+                    <span class="candidate-experience__stack-item-value">{{ stack.knowledge }}%</span>
+                    <button
+                      class="candidate-experience__stack-item-remove"
+                      type="button"
+                      (click)="removeExperienceStack(index)"
+                      [attr.aria-label]="'Remover ' + stack.name"
+                    >
+                      <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                    </button>
+                  </div>
+
+                  <div
+                    class="candidate-experience__stack-item-description"
+                    *ngIf="expandedExperienceStackDescriptionIndex === index && stack.description"
+                    [innerHTML]="stack.description"
+                  ></div>
+
+                  <div class="candidate-experience__stack-guide" *ngIf="expandedExperienceGuideIndex === index">
+                    <div class="candidate-experience__stack-guide-top">
+                      <span class="candidate-experience__stack-guide-name">{{ stack.name }}</span>
+                      <div class="candidate-experience__stack-guide-meter">
+                        <span>{{ stack.knowledge }}%</span>
+                        <span aria-hidden="true">→</span>
+                        <span>{{ percentLevelLabel(stack.knowledge) }}</span>
+                      </div>
+                    </div>
+
+                    <div class="candidate-experience__stack-guide-tagline" *ngIf="getExperienceGuideTagline(stack)">
+                      {{ getExperienceGuideTagline(stack) }}
+                    </div>
+
+                    <ng-container *ngIf="getExperienceStructuredGuide(stack) as guide">
+                      <div class="candidate-experience__stack-guide-section">
+                        <strong>O que significa dominar {{ stack.name }}</strong>
+                        <ul>
+                          <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
+                        </ul>
+                      </div>
+                    </ng-container>
+
+                    <div class="candidate-experience__stack-guide-section">
+                      <strong>Esperamos de você</strong>
+                      <ul>
+                        <li *ngFor="let row of getExperienceGuideExpectations(stack)">{{ row }}</li>
+                      </ul>
+                    </div>
+
+                    <ng-container *ngIf="getExperienceGuideSignals(stack) as signals">
+                      <div class="candidate-experience__stack-guide-section" *ngIf="signals.inTier.length">
+                        <strong>Sinais de que você está nesse nível</strong>
+                        <ul>
+                          <li *ngFor="let row of signals.inTier">{{ row }}</li>
+                        </ul>
+                      </div>
+
+                      <div class="candidate-experience__stack-guide-section" *ngIf="signals.notYet.length">
+                        <strong>Sinais de que ainda não está</strong>
+                        <ul>
+                          <li *ngFor="let row of signals.notYet">{{ row }}</li>
+                        </ul>
+                      </div>
+                    </ng-container>
+
+                    <div class="candidate-experience__stack-guide-cert">
+                      <div class="candidate-experience__stack-guide-cert-copy">
+                        <strong>Dica: você tem certificado?</strong>
+                        <span *ngIf="getExperienceCertificate(stack) as cert; else certEmpty">
+                          {{ cert.name }}
+                        </span>
+                        <ng-template #certEmpty>
+                          <span>Anexe um certificado dessa stack para reforçar sua posição no Radar.</span>
+                        </ng-template>
+                      </div>
+
+                      <div class="candidate-experience__stack-guide-cert-actions">
+                        <input
+                          #experienceCertInput
+                          type="file"
+                          hidden
+                          accept=".pdf,image/jpeg,image/png,image/webp"
+                          (change)="onExperienceStackCertificateSelected(index, $event)"
+                        />
+                        <button
+                          class="candidate-experience__stack-guide-cert-button"
+                          type="button"
+                          (click)="experienceCertInput.click()"
+                        >
+                          Anexar certificado
+                        </button>
+                        <button
+                          *ngIf="getExperienceCertificate(stack)"
+                          class="candidate-experience__stack-guide-cert-button candidate-experience__stack-guide-cert-button--ghost"
+                          type="button"
+                          (click)="clearExperienceStackCertificate(index)"
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #emptyExperienceStacks>
+                <span class="candidate-experience__experience-stacks-empty">
+                  Adicione as stacks que você aplicou nesta empresa.
+                </span>
+              </ng-template>
+            </section>
+          </section>
+        </section>
 
   <div class="job-create-tabs" role="tablist" aria-label="Seções do cadastro da vaga">
-
-    <button
-      type="button"
-      class="job-create-tabs__tab"
-      [class.job-create-tabs__tab--active]="activeJobTab === 'info'"
-      (click)="selectJobTab('info')"
-    >
-      Informações da Vaga
-    </button>
-
     <button
       type="button"
       class="job-create-tabs__tab"
@@ -87,520 +278,270 @@
     <ng-container [ngSwitch]="activeJobTab">
 
       <!-- TAB: INFORMAÇÕES -->
-      <div class="job-create-tabs__content" *ngSwitchCase="'info'">
-        <section class="job-home-announcement">
-          <input
-            #companyLogoInput
-            class="summary-card__company-logo-input"
-            type="file"
-            accept=".jpg,.jpeg,.png,.gif,.webp"
-            (change)="onCompanyLogoSelected($event)"
-          />
-
-          <input
-            #homeAnnouncementImageInput
-            class="summary-card__company-logo-input"
-            type="file"
-            accept=".jpg,.jpeg,.png,.gif,.webp"
-            (change)="onHomeAnnouncementImageSelected($event)"
-          />
-
-          <div class="job-home-announcement__split">
-            <div class="job-home-announcement__card">
-              <div class="summary-card__company summary-card__company--announcement">
-                <article class="summary-card__image-guide summary-card__image-guide--inline">
-                  <div class="summary-card__image-guide-head">
-                    <strong>Logo da empresa</strong>
-                    <span>{{ companyLogoGuide }}</span>
-                  </div>
-                  <p>Use uma arte quadrada para manter o logo nítido no card, no painel e nas listas.</p>
-                </article>
-
-                <div class="summary-card__company-top">
-                  <div class="summary-card__company-brand">
-                    <button
-                      class="summary-card__company-logo summary-card__company-logo-button"
-                      type="button"
-                      [class.summary-card__company-logo--image]="!!currentCompanyProfile.logoUrl"
-                      [style.backgroundImage]="currentCompanyProfile.logoUrl ? 'url(' + currentCompanyProfile.logoUrl + ')' : null"
-                      (click)="openCompanyLogoPicker(companyLogoInput)"
-                      (keydown)="onCompanyLogoKeydown($event, companyLogoInput)"
-                      aria-label="Trocar logo da empresa"
-                      title="Trocar logo da empresa"
-                    >
-                      {{ currentCompanyProfile.logoUrl ? '' : currentCompanyProfile.logoLabel }}
-                    </button>
-
-                    <div class="summary-card__company-meta">
-                      <div class="summary-card__company-name-row">
-                        <div class="summary-card__company-name">{{ currentCompanyProfile.name }}</div>
-                        <div class="summary-card__company-followers summary-card__company-followers--inline">
-                          {{ currentCompanyProfile.followers }}
-                        </div>
-                        <span class="summary-card__company-verified material-symbols-rounded" aria-hidden="true">
-                          check_circle
-                        </span>
-                      </div>
-                      <div class="summary-card__company-size">+ de 10.001 funcionários</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="summary-card__company-location-row">
-                  <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
-                  <span>{{ jobDraft.location }}</span>
-                </div>
-
-                <small class="summary-card__company-logo-error" *ngIf="companyLogoError">
-                  {{ companyLogoError }}
-                </small>
-              </div>
-            </div>
-
-            <div class="job-home-announcement__card job-home-announcement__card--ad">
-              <article class="summary-card__image-guide summary-card__image-guide--inline">
-                <div class="summary-card__image-guide-head">
-                  <strong>Anúncio home</strong>
-                  <span>{{ homeAnnouncementImageGuide }}</span>
-                </div>
-                <p>Essa imagem será o gabarito do card promocional na home e nos destaques visuais.</p>
-              </article>
-
-              <button
-                class="announcement-upload-area"
-                type="button"
-                (click)="openHomeAnnouncementImagePicker(homeAnnouncementImageInput)"
-                aria-label="Escolher imagem do anúncio"
-                title="Escolher imagem do anúncio"
-              >
-                <img
-                  class="announcement-upload-area__image"
-                  *ngIf="currentAnnouncementCardImageUrl"
-                  [src]="currentAnnouncementCardImageUrl"
-                  alt=""
-                  aria-hidden="true"
-                />
-
-                <span class="announcement-upload-area__placeholder" *ngIf="!currentAnnouncementCardImageUrl">
-                  Clique para escolher a imagem
-                </span>
-              </button>
-
-              <small class="summary-card__company-logo-error" *ngIf="homeAnnouncementImageError">
-                {{ homeAnnouncementImageError }}
-              </small>
-            </div>
-          </div>
-        </section>
-
-        <section class="job-info-block">
-          <h2 class="job-info-block__title">Informações do Card</h2>
-
-          <div class="job-info-card">
-            <div class="job-info-card__grid">
-              <label class="field field--title">
-                <span class="field__label field__label--soft">Título da vaga</span>
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Ex: Backend .NET Sênior"
-                  [(ngModel)]="jobDraft.title"
-                />
-              </label>
-
-              <label class="field">
-                <span class="field__label field__label--soft">Tipo de trabalho</span>
-                <div class="work-model-list">
-                  <label
-                    class="option-card option-card--work-model"
-                    *ngFor="let item of workModels"
-                    [class.option-card--active]="item === jobDraft.workModel"
-                    (click)="selectWorkModel(item)"
-                  >
-                    <input
-                      class="option-card__input"
-                      type="radio"
-                      name="workModel"
-                      [value]="item"
-                      [(ngModel)]="jobDraft.workModel"
-                      (ngModelChange)="selectWorkModel($event)"
-                    />
-                    <span class="option-card__vee" aria-hidden="true"></span>
-                    <span class="option-card__label">{{ item }}</span>
-                  </label>
-                </div>
-              </label>
-
-              <label class="field field--select-elevated">
-                <span class="field__label field__label--soft">Empresa</span>
-                <span class="select-shell">
-                  <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">apartment</span>
-                  <select name="company" [(ngModel)]="jobDraft.company" (ngModelChange)="onCompanyChange($event)">
-                    <option *ngFor="let item of companyOptions" [value]="item">{{ item }}</option>
-                  </select>
-                  <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
-                </span>
-              </label>
-
-              <label class="field field--select-elevated">
-                <span class="field__label field__label--soft">Localidade</span>
-                <span class="select-shell">
-                  <span class="select-shell__icon material-symbols-rounded" aria-hidden="true">location_on</span>
-                  <select name="location" [(ngModel)]="jobDraft.location">
-                    <option *ngFor="let item of locationOptions" [value]="item">{{ item }}</option>
-                  </select>
-                  <span class="select-shell__chevron material-symbols-rounded" aria-hidden="true">expand_more</span>
-                </span>
-              </label>
-
-              <div class="field field--full">
-                <div class="contract-settings">
-                  <div class="contract-settings__group contract-settings__group--compensation">
-                    <div class="contract-settings__head">
-                      <span class="field__label field__label--soft">Tipo de contratação</span>
-                    </div>
-
-                    <div class="contract-type-list">
-                      <label
-                        class="option-card option-card--contract-type"
-                        *ngFor="let item of contractTypes"
-                        [class.option-card--active]="item === contractType"
-                      >
-                        <input
-                          class="option-card__input"
-                          type="radio"
-                          name="contractType"
-                          [value]="item"
-                          [(ngModel)]="contractType"
-                        />
-                        <span class="option-card__vee" aria-hidden="true"></span>
-                        <span class="option-card__label">{{ item }}</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div class="contract-settings__group contract-settings__group--candidate-suggestion">
-                    <div class="salary-shell salary-shell--toggle salary-shell--toggle-card">
-                      <div class="salary-shell__toggle-head">
-                        <span class="salary-shell__prefix salary-shell__prefix--toggle material-symbols-rounded" aria-hidden="true">
-                          payments
-                        </span>
-
-                        <span class="salary-shell__copy">
-                          <span class="salary-shell__title">Candidato pode colocar um valor</span>
-                          <span class="salary-shell__hint">
-                            Aparece para o candidato sugerir quando visualizar a vaga
-                          </span>
-                        </span>
-
-                        <span class="visibility-toggle visibility-toggle--inside">
-                          <input
-                            type="checkbox"
-                            name="allowCandidateSalarySuggestion"
-                            [(ngModel)]="allowCandidateSalarySuggestion"
-                          />
-                          <span class="visibility-toggle__track" aria-hidden="true">
-                            <span class="visibility-toggle__thumb"></span>
-                          </span>
-                        </span>
-                      </div>
-
-                      <div class="salary-shell__embedded">
-                        <span class="field__label field__label--soft salary-shell__embedded-label">Valor da vaga</span>
-
-                        <label class="salary-shell salary-shell--embedded">
-                          <span class="salary-shell__prefix">R$</span>
-                          <input
-                            type="text"
-                            name="salaryRange"
-                            inputmode="numeric"
-                            pattern="[0-9]*"
-                            placeholder="0.00,00"
-                            [ngModel]="salaryRange"
-                            (beforeinput)="onSalaryRangeBeforeInput($event)"
-                            (ngModelChange)="onSalaryRangeChange($event)"
-                          />
-                        </label>
-
-                        <label class="visibility-toggle visibility-toggle--compensation visibility-toggle--embedded">
-                          <input
-                            type="checkbox"
-                            name="showSalaryRangeInCard"
-                            [(ngModel)]="showSalaryRangeInCard"
-                          />
-                          <span class="visibility-toggle__track" aria-hidden="true">
-                            <span class="visibility-toggle__thumb"></span>
-                          </span>
-                          <span class="visibility-toggle__text">Mostrar no card</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
+      <div class="job-create-tabs__content" *ngSwitchCase="'info'"></div>
 
       <!-- TAB: BENEFÍCIOS -->
-      <div class="job-create-tabs__content" *ngSwitchCase="'benefits'">
-        <section class="benefits-block">
-          <div class="benefits-card" style="border: 0;">
-            <div class="resource-card__header">
-              <h2 class="resource-card__title">Benefícios</h2>
-              <button class="benefits-card__add" type="button" (click)="openBenefitModal()">
-                <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                <span>Adicionar</span>
-              </button>
-            </div>
-
-            <div class="benefits-card__list">
-              <button
-                class="benefit-entry"
-                type="button"
-                *ngFor="let item of selectedBenefits; let i = index"
-                (click)="editBenefit(i)"
-              >
-                <div class="benefit-entry__head">
-                  <div class="benefit-entry__content">
-                    <div class="benefit-entry__title-wrap">
-                      <span class="benefit-entry__icon material-symbols-rounded" aria-hidden="true">check_circle</span>
-                      <span class="benefit-entry__title">{{ item.title }}</span>
-                    </div>
-                    <p class="benefit-entry__description" *ngIf="item.description">{{ item.description }}</p>
-                  </div>
-
-                  <div class="benefit-entry__meta">
-                    <span class="benefit-entry__side" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
+      <div class="job-create-tabs__content" *ngSwitchCase="'benefits'"></div>
 
       <!-- TAB: DOCUMENTOS -->
-      <div class="job-create-tabs__content" *ngSwitchCase="'documents'">
-        <section class="documents-block">
-          <div class="documents-card"  style="border: 0;">
-            <div class="resource-card__header">
-              <h2 class="resource-card__title">Documentos para validação de contratação.</h2>
-              <button class="benefits-card__add" type="button" (click)="openDocumentModal()">
-                <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
-                <span>Adicionar</span>
-              </button>
-            </div>
+      <div class="job-create-tabs__content" *ngSwitchCase="'documents'"></div>
 
-            <div class="documents-card__list">
-              <button
-                class="documents-card__item"
-                type="button"
-                *ngFor="let item of selectedDocuments; let i = index"
-                (click)="editDocument(i)"
-              >
-                <span class="documents-card__item-marker material-symbols-rounded" aria-hidden="true">description</span>
-                <span class="documents-card__item-label">{{ item }}</span>
-              </button>
-            </div>
-
-            <p class="documents-card__notice">
-              <span class="documents-card__notice-icon material-symbols-rounded" aria-hidden="true">warning</span>
-              <span>Esses documentos so serão vistos pelo recrutador caso o candidato clique em Aceitar.</span>
-            </p>
-          </div>
-        </section>
-      </div>
-
-      <div class="job-create-tabs__content" *ngSwitchCase="'experience'">
-        <section class="experience-block">
- 
-                 <section class="candidate-experience__experience-stacks">
-                  <div class="candidate-experience__experience-stacks-head">
-                    <strong>Stacks aplicadas nesta experiência</strong>
-                    <button
-                      class="candidate-experience__experience-stack-add"
-                      type="button"
-                      (click)="openCreateExperienceStackModal()"
-                      aria-label="Adicionar stack aplicada nesta experiência"
-                      title="Adicionar stack aplicada nesta experiência"
-                    >
-                      <span class="material-symbols-rounded" aria-hidden="true">add</span>
-                    </button>
-                  </div>
-
-                  <div class="candidate-experience__stack-list" *ngIf="currentExperienceStacks.length; else emptyExperienceStacks">
-                    <div
-                      class="candidate-experience__stack-item"
-                      *ngFor="let stack of currentExperienceStacks; let index = index; trackBy: trackByExperienceStackName"
-                    >
-                      <div class="candidate-experience__stack-item-meta">
-                        <button
-                          class="candidate-experience__stack-item-edit"
-                          type="button"
-                          (click)="openEditExperienceStackModal(index)"
-                          [attr.aria-label]="'Editar descrição de ' + stack.name"
-                        >
-                          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-                        </button>
-                        <span class="candidate-experience__stack-item-name">{{ stack.name }}</span>
-                        <button
-                          *ngIf="stack.description"
-                          class="candidate-experience__stack-item-info"
-                          type="button"
-                          (click)="toggleExperienceStackDescription(index)"
-                          [class.candidate-experience__stack-item-info--active]="expandedExperienceStackDescriptionIndex === index"
-                          [attr.aria-label]="(expandedExperienceStackDescriptionIndex === index ? 'Ocultar' : 'Mostrar') + ' descrição de ' + stack.name"
-                        >
-                          <span class="material-symbols-rounded" aria-hidden="true">search</span>
-                        </button>
-                        <button
-                          class="candidate-experience__stack-item-info"
-                          type="button"
-                          (click)="toggleExperienceStackGuide(index)"
-                          [class.candidate-experience__stack-item-info--active]="expandedExperienceGuideIndex === index"
-                          [attr.aria-label]="(expandedExperienceGuideIndex === index ? 'Ocultar' : 'Mostrar') + ' guia de ' + stack.name"
-                        >
-                          <span class="material-symbols-rounded" aria-hidden="true">help</span>
-                        </button>
-                      </div>
-
-                      <div class="candidate-experience__stack-item-progress">
-                        <div
-                          class="candidate-experience__stack-item-slider"
-                          [style.--stack-progress]="stack.knowledge + '%'"
-                        >
-                          <input
-                            class="candidate-experience__stack-item-range"
-                            type="range"
-                            min="0"
-                            max="100"
-                            step="1"
-                            [value]="stack.knowledge"
-                            (input)="updateExperienceStackKnowledge(index, $any($event.target).value)"
-                            [attr.aria-label]="'Ajustar percentual de ' + stack.name"
-                          />
-                        </div>
-                        <span class="candidate-experience__stack-item-value">{{ stack.knowledge }}%</span>
-                        <button
-                          class="candidate-experience__stack-item-remove"
-                          type="button"
-                          (click)="removeExperienceStack(index)"
-                          [attr.aria-label]="'Remover ' + stack.name"
-                        >
-                          <span class="material-symbols-rounded" aria-hidden="true">close</span>
-                        </button>
-                      </div>
-
-                      <div
-                        class="candidate-experience__stack-item-description"
-                        *ngIf="expandedExperienceStackDescriptionIndex === index && stack.description"
-                        [innerHTML]="stack.description"
-                      ></div>
-
-                      <div class="candidate-experience__stack-guide" *ngIf="expandedExperienceGuideIndex === index">
-                        <div class="candidate-experience__stack-guide-top">
-                          <span class="candidate-experience__stack-guide-name">{{ stack.name }}</span>
-                          <div class="candidate-experience__stack-guide-meter">
-                            <span>{{ stack.knowledge }}%</span>
-                            <span aria-hidden="true">→</span>
-                            <span>{{ percentLevelLabel(stack.knowledge) }}</span>
-                          </div>
-                        </div>
-
-                        <div class="candidate-experience__stack-guide-tagline" *ngIf="getExperienceGuideTagline(stack)">
-                          {{ getExperienceGuideTagline(stack) }}
-                        </div>
-
-                        <ng-container *ngIf="getExperienceStructuredGuide(stack) as guide">
-                          <div class="candidate-experience__stack-guide-section">
-                            <strong>O que significa dominar {{ stack.name }}</strong>
-                            <ul>
-                              <li *ngFor="let row of guide.meaningChecklist">{{ row }}</li>
-                            </ul>
-                          </div>
-                        </ng-container>
-
-                        <div class="candidate-experience__stack-guide-section">
-                          <strong>Esperamos de você</strong>
-                          <ul>
-                            <li *ngFor="let row of getExperienceGuideExpectations(stack)">{{ row }}</li>
-                          </ul>
-                        </div>
-
-                        <ng-container *ngIf="getExperienceGuideSignals(stack) as signals">
-                          <div class="candidate-experience__stack-guide-section" *ngIf="signals.inTier.length">
-                            <strong>Sinais de que você está nesse nível</strong>
-                            <ul>
-                              <li *ngFor="let row of signals.inTier">{{ row }}</li>
-                            </ul>
-                          </div>
-
-                          <div class="candidate-experience__stack-guide-section" *ngIf="signals.notYet.length">
-                            <strong>Sinais de que ainda não está</strong>
-                            <ul>
-                              <li *ngFor="let row of signals.notYet">{{ row }}</li>
-                            </ul>
-                          </div>
-                        </ng-container>
-
-                        <div class="candidate-experience__stack-guide-cert">
-                          <div class="candidate-experience__stack-guide-cert-copy">
-                            <strong>Dica: você tem certificado?</strong>
-                            <span *ngIf="getExperienceCertificate(stack) as cert; else certEmpty">
-                              {{ cert.name }}
-                            </span>
-                            <ng-template #certEmpty>
-                              <span>Anexe um certificado dessa stack para reforçar sua posição no Radar.</span>
-                            </ng-template>
-                          </div>
-
-                          <div class="candidate-experience__stack-guide-cert-actions">
-                            <input
-                              #experienceCertInput
-                              type="file"
-                              hidden
-                              accept=".pdf,image/jpeg,image/png,image/webp"
-                              (change)="onExperienceStackCertificateSelected(index, $event)"
-                            />
-                            <button
-                              class="candidate-experience__stack-guide-cert-button"
-                              type="button"
-                              (click)="experienceCertInput.click()"
-                            >
-                              Anexar certificado
-                            </button>
-                            <button
-                              *ngIf="getExperienceCertificate(stack)"
-                              class="candidate-experience__stack-guide-cert-button candidate-experience__stack-guide-cert-button--ghost"
-                              type="button"
-                              (click)="clearExperienceStackCertificate(index)"
-                            >
-                              Remover
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <ng-template #emptyExperienceStacks>
-                    <span class="candidate-experience__experience-stacks-empty">
-                      Adicione as stacks que você aplicou nesta empresa.
-                    </span>
-                  </ng-template>
-                </section>
-                
-        </section>
-      </div>
+      <div class="job-create-tabs__content" *ngSwitchCase="'experience'"></div>
 
     </ng-container>
   </div>
 </div>
 
+<aside class="job-create__side-rail">
+  <div class="job-create__side-panel-topbar">
+    <div class="job-create__recruiter-chip job-create__recruiter-chip--side">
+      <div
+        class="job-create__recruiter-avatar"
+        [class.job-create__recruiter-avatar--image]="!!recruiterPreview.avatar"
+        [style.backgroundImage]="recruiterPreview.avatar ? 'url(' + recruiterPreview.avatar + ')' : null"
+      >
+        <span *ngIf="!recruiterPreview.avatar">{{ recruiterPreview.name.slice(0, 1) }}</span>
+      </div>
 
+      <div class="job-create__recruiter-copy">
+        <strong>{{ recruiterPreview.name }}</strong>
+        <span>{{ recruiterPreview.role }}</span>
+      </div>
+
+      <button
+        class="job-create__hero-button job-create__hero-button--primary job-create__recruiter-publish"
+        type="button"
+        (click)="publishJob()"
+      >
+        {{ isEditingJob ? 'Salvar' : 'Publicar' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="job-create__side-panel">
+    <div class="job-create__side-panel-head">
+      <input
+        #sideCompanyLogoInput
+        class="summary-card__company-logo-input"
+        type="file"
+        accept=".jpg,.jpeg,.png,.gif,.webp"
+        (change)="onCompanyLogoSelected($event)"
+      />
+
+      <div class="job-create__side-company">
+        <button
+          class="job-create__side-company-logo"
+          type="button"
+          [class.job-create__side-company-logo--fallback]="!currentCompanyProfile.logoUrl || sideCompanyLogoFailed"
+          (click)="openCompanyLogoPicker(sideCompanyLogoInput)"
+          (keydown)="onCompanyLogoKeydown($event, sideCompanyLogoInput)"
+          aria-label="Trocar logo da empresa"
+          title="Trocar logo da empresa"
+        >
+          <img
+            *ngIf="currentCompanyProfile.logoUrl && !sideCompanyLogoFailed"
+            [src]="currentCompanyProfile.logoUrl"
+            [alt]="currentCompanyProfile.name"
+            (error)="onSideCompanyLogoError()"
+          />
+          <span *ngIf="!currentCompanyProfile.logoUrl || sideCompanyLogoFailed">{{ currentCompanyProfile.logoLabel }}</span>
+        </button>
+
+        <div class="job-create__side-company-copy">
+          <strong>{{ currentCompanyProfile.name }}</strong>
+          <div class="job-create__side-company-meta">
+            <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+            <span>{{ jobDraft.location || 'Defina a localidade' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="job-create__side-company-details">
+      <div class="job-create__side-company-meta">
+        <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
+        <span>+ de 10.001 funcionários</span>
+      </div>
+      <span class="job-create__side-company-followers">{{ currentCompanyProfile.followers }}</span>
+    </div>
+
+    <div class="job-create__side-panel-copy">
+      <strong>Informações da vaga</strong>
+      <p>Edite aqui os dados principais que definem o card e a base visual da publicação.</p>
+    </div>
+
+    <div class="job-create__side-editor">
+      <label class="job-create__side-field">
+        <span class="job-create__side-label">Titulo</span>
+        <div class="job-create__side-control">
+          <span class="material-symbols-rounded" aria-hidden="true">tag</span>
+          <input
+            type="text"
+            name="sideTitle"
+            placeholder="VG-0001"
+            [(ngModel)]="jobDraft.title"
+          />
+        </div>
+      </label>
+
+      <label class="job-create__side-field">
+        <span class="job-create__side-label">Empresa</span>
+        <div class="job-create__side-control job-create__side-control--select">
+          <span class="material-symbols-rounded" aria-hidden="true">business</span>
+          <select name="sideCompany" [(ngModel)]="jobDraft.company" (ngModelChange)="onCompanyChange($event)">
+            <option *ngFor="let item of companyOptions" [value]="item">{{ item }}</option>
+          </select>
+          <span class="material-symbols-rounded job-create__side-control-chevron" aria-hidden="true">expand_more</span>
+        </div>
+      </label>
+
+      <label class="job-create__side-field">
+        <span class="job-create__side-label">Estado</span>
+        <div class="job-create__side-control job-create__side-control--select">
+          <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+          <select name="sideLocation" [(ngModel)]="jobDraft.location">
+            <option *ngFor="let item of locationOptions" [value]="item">{{ item }}</option>
+          </select>
+          <span class="material-symbols-rounded job-create__side-control-chevron" aria-hidden="true">expand_more</span>
+        </div>
+      </label>
+
+      <div class="job-create__side-toggle-group">
+        <div class="job-create__side-toggle-list">
+          <button
+            *ngFor="let item of workModels"
+            type="button"
+            class="job-create__side-toggle"
+            [class.job-create__side-toggle--active]="item === jobDraft.workModel"
+            (click)="selectWorkModel(item)"
+          >
+            {{ item }}
+          </button>
+        </div>
+      </div>
+
+      <div class="job-create__side-toggle-group">
+        <div class="job-create__side-toggle-list">
+          <button
+            *ngFor="let item of contractTypes"
+            type="button"
+            class="job-create__side-toggle"
+            [class.job-create__side-toggle--active]="item === contractType"
+            (click)="contractType = item"
+          >
+            {{ item }}
+          </button>
+        </div>
+      </div>
+
+      <div class="job-create__side-divider" aria-hidden="true"></div>
+
+      <label class="job-create__side-field">
+        <span class="job-create__side-label job-create__side-label--split">
+          <span>Faixa salarial</span>
+          <button class="job-create__side-inline-toggle" type="button" aria-label="Mostrar no card">
+            <span class="job-create__side-inline-toggle-thumb" aria-hidden="true"></span>
+          </button>
+        </span>
+        <div class="job-create__side-control">
+          <span class="material-symbols-rounded" aria-hidden="true">payments</span>
+          <input
+            type="text"
+            name="sideSalaryRange"
+            placeholder="0,00"
+            [ngModel]="salaryRange"
+            (ngModelChange)="onSalaryRangeChange($event)"
+          />
+        </div>
+      </label>
+
+      <section class="job-create__side-note">
+        <div class="job-create__side-note-head">
+          <span class="material-symbols-rounded" aria-hidden="true">payments</span>
+          <div class="job-create__side-note-copy">
+            <strong>Candidato pode colocar um valor.</strong>
+            <p>Aparece para o candidato sugerir quando visualizar a vaga.</p>
+          </div>
+          <button class="job-create__side-inline-toggle" type="button" aria-label="Permitir valor do candidato">
+            <span class="job-create__side-inline-toggle-thumb" aria-hidden="true"></span>
+          </button>
+        </div>
       </section>
+    </div>
+  </div>
+
+  <div class="job-create__side-panel job-create__side-panel--secondary job-create__side-panel--benefits">
+    <div class="job-create__side-section-head">
+      <strong>Benefícios</strong>
+      <button class="benefits-card__add benefits-card__add--icon" type="button" (click)="openBenefitModal()" aria-label="Adicionar benefício">
+        <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+      </button>
+    </div>
+
+    <div class="job-create__side-divider job-create__side-divider--spacious" aria-hidden="true"></div>
+
+    <div class="job-create__side-benefits-list" *ngIf="selectedBenefits.length; else emptySideBenefits">
+      <button
+        class="job-create__side-benefit-row"
+        type="button"
+        *ngFor="let item of selectedBenefits; let i = index"
+        (click)="editBenefit(i)"
+      >
+        <div class="job-create__side-benefit-row-head">
+          <div class="job-create__side-benefit-row-title">
+            <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
+            <span>{{ item.title }}</span>
+          </div>
+          <span class="job-create__side-benefit-chip" *ngIf="item.sideLabel">{{ item.sideLabel }}</span>
+        </div>
+        <p class="job-create__side-benefit-row-description" *ngIf="item.description">{{ item.description }}</p>
+      </button>
+    </div>
+
+    <ng-template #emptySideBenefits>
+      <p class="job-create__side-empty">
+        Adicione os benefícios da vaga para organizar essa etapa na lateral.
+      </p>
+    </ng-template>
+  </div>
+
+  <div class="job-create__side-panel job-create__side-panel--secondary job-create__side-panel--documents">
+    <div class="job-create__side-section-head">
+      <strong>Documentos</strong>
+      <button class="benefits-card__add benefits-card__add--icon" type="button" (click)="openDocumentModal()" aria-label="Adicionar documento">
+        <span class="benefits-card__add-icon material-symbols-rounded" aria-hidden="true">add</span>
+      </button>
+    </div>
+
+    <div class="job-create__side-divider job-create__side-divider--spacious" aria-hidden="true"></div>
+
+    <div class="job-create__side-benefits-list" *ngIf="selectedDocuments.length; else emptySideDocuments">
+      <button
+        class="job-create__side-benefit-row"
+        type="button"
+        *ngFor="let item of selectedDocuments; let i = index"
+        (click)="editDocument(i)"
+      >
+        <div class="job-create__side-benefit-row-head">
+          <div class="job-create__side-benefit-row-title">
+            <span class="material-symbols-rounded" aria-hidden="true">description</span>
+            <span>{{ item }}</span>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <p class="job-create__side-empty job-create__side-empty--note" *ngIf="selectedDocuments.length">
+      Esses documentos so serão vistos pelo recrutador caso o candidato clique em Aceitar.
+    </p>
+
+    <ng-template #emptySideDocuments>
+      <p class="job-create__side-empty">
+        Adicione os documentos da vaga para organizar essa etapa na lateral.
+      </p>
+    </ng-template>
+  </div>
+</aside>
     </section>
   </div>
 

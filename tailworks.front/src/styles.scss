@@ -158,6 +158,13 @@
   --page-orb-1: rgba(242, 179, 26, 0.12);
   --page-orb-2: rgba(47, 125, 232, 0.12);
   --page-orb-3: rgba(223, 229, 236, 0.58);
+  --ui-shell-bg: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.24));
+  --ui-shell-bg-strong: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.3));
+  --ui-shell-radius-lg: 22px;
+  --ui-shell-radius-md: 18px;
+  --ui-pill-bg: rgba(255,255,255,0.52);
+  --ui-pill-bg-active: linear-gradient(135deg, rgba(241, 178, 32, 0.18), rgba(167, 100, 50, 0.12));
+  --ui-shell-shadow-soft: none;
   --sidebar-shell-bg: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(246,247,250,0.82));
   --sidebar-shell-border: rgba(255,255,255,0.72);
   --sidebar-shell-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
@@ -256,6 +263,13 @@ body[data-theme='dark']{
   --page-orb-1: rgba(119, 166, 255, 0.16);
   --page-orb-2: rgba(242, 179, 26, 0.12);
   --page-orb-3: rgba(255,255,255,0.04);
+  --ui-shell-bg: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  --ui-shell-bg-strong: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  --ui-shell-radius-lg: 22px;
+  --ui-shell-radius-md: 18px;
+  --ui-pill-bg: rgba(255,255,255,0.08);
+  --ui-pill-bg-active: linear-gradient(135deg, rgba(241, 178, 32, 0.2), rgba(167, 100, 50, 0.18));
+  --ui-shell-shadow-soft: none;
   --sidebar-shell-bg: linear-gradient(180deg, rgba(92,92,92,0.52), rgba(57,57,57,0.88));
   --sidebar-shell-border: rgba(255,255,255,0.08);
   --sidebar-shell-shadow: 0 28px 60px rgba(0, 0, 0, 0.36);

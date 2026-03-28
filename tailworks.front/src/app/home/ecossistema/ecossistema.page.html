@@ -258,9 +258,9 @@
           </div>
 
           <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--radar">
-            <div class="ecosystem-desktop__jobs-radar-pack" *ngIf="jobInteractionAvatars(job).length; else noRadarAvatars">
+            <div class="ecosystem-desktop__jobs-radar-pack" *ngIf="jobInteractionAvatarBadges(job).length; else noRadarAvatars">
               <div class="ecosystem-desktop__jobs-avatars">
-                <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job)">
+                <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job); trackBy: trackByAvatarBadge">
                   <img class="ecosystem-desktop__jobs-avatar" [src]="badge.src" [alt]="badge.label" />
                 </ng-container>
                 <span class="ecosystem-desktop__jobs-avatar-extra" *ngIf="jobBoardRadarExtraCount(job) > 0">
@@ -421,7 +421,7 @@
           <div class="ecosystem-desktop__candidate-stack-row">
             <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
             <div class="ecosystem-desktop__candidate-avatars" *ngIf="jobInteractionAvatarBadges(job).length; else noRecentJobAvatars">
-              <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job)">
+              <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job); trackBy: trackByAvatarBadge">
                 <img class="ecosystem-desktop__candidate-avatar-stack" [src]="badge.src" [alt]="badge.label" />
               </ng-container>
               <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="jobBoardRadarExtraCount(job) > 0">

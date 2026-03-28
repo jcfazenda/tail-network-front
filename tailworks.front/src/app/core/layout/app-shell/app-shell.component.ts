@@ -55,6 +55,10 @@ export class AppShellComponent {
     return this.primaryPath === '/home/ecossistema';
   }
 
+  get isJobCreatePage(): boolean {
+    return this.primaryPath === '/vagas/cadastro';
+  }
+
   get isCoreAlgorithmPage(): boolean {
     return this.primaryPath === '/recruiter/core-algoritimo';
   }

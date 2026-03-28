@@ -126,6 +126,7 @@ type SideRailCandidateCard = {
 })
 export class EcossistemaPage implements AfterViewInit, OnDestroy {
   readonly fallbackAvatarUrl = '/assets/avatars/john-doe.jpeg';
+  private readonly avatarBadgeCache = new Map<string, Array<{ src: string; label: string }>>();
   private readonly authFacade = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly jobsFacade = inject(JobsFacade);
@@ -1457,6 +1458,12 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   jobInteractionAvatarBadges(job: MockJobRecord): Array<{ src: string; label: string }> {
+    const cacheKey = `${job.id}:${this.ecoFilter}:${this.isTalentEcosystemMode ? 'talent' : 'recruiter'}`;
+    const cached = this.avatarBadgeCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const candidates = (!this.isTalentEcosystemMode && this.ecoFilter === 'radar')
       ? this.buildRadarPanelCandidates(job)
       : this.sortedCandidatesForPanel(job);
@@ -1469,13 +1476,17 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       }));
 
     if (candidateBadges.length) {
+      this.avatarBadgeCache.set(cacheKey, candidateBadges);
       return candidateBadges;
     }
 
-    return (job.avatars ?? [])
+    const fallbackBadges = (job.avatars ?? [])
       .map((avatar) => this.resolveAvatar(avatar))
       .slice(0, 4)
       .map((avatar) => ({ src: avatar, label: 'TW' }));
+
+    this.avatarBadgeCache.set(cacheKey, fallbackBadges);
+    return fallbackBadges;
   }
 
   jobInteractionExtraCount(job: MockJobRecord): number {
@@ -2350,6 +2361,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   trackByTalentCompatibleJob(_index: number, item: TalentCompatibleJobView): string {
     return item.job.id;
+  }
+
+  trackByAvatarBadge(index: number, item: { src: string; label: string }): string {
+    return `${index}:${item.src}:${item.label}`;
   }
 
   private hasRealAvatar(avatar: string | undefined): boolean {

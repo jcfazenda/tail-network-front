@@ -6,6 +6,7 @@ import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
+import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
 import { ContractType, ExperienceStackCertificate, ExperienceStackItem, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { Subscription } from 'rxjs'; 
 
@@ -61,7 +62,7 @@ type ConfettiPiece = {
 @Component({
   standalone: true,
   selector: 'app-cadastro-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProfitLossCardComponent],
   templateUrl: './cadastro.page.html',
   styleUrls: ['./cadastro.page.scss', 
               './../../usuario/experiencia/experiencia.page.identity.scss', 
@@ -182,15 +183,15 @@ export class CadastroPage implements OnDestroy {
   editingJobStatusReason = '';
 
   readonly previewAvatars = [
-    '/assets/avatars/avatar-default.svg',
-    '/assets/avatars/avatar-default.svg',
-    '/assets/avatars/avatar-default.svg',
+    '/assets/avatars/john-doe.jpeg',
+    '/assets/avatars/john-doe.jpeg',
+    '/assets/avatars/john-doe.jpeg',
   ];
   readonly previewAvatarExtraCount = 18;
   readonly recruiterPreview = {
     name: 'Julio Fazenda',
     role: 'Talent Acquisition',
-    avatar: '/assets/avatars/avatar-default.svg',
+    avatar: '/assets/avatars/john-doe.jpeg',
   };
   readonly initialDocumentOptions = [
     'Copia do Certificado de conclusão',
@@ -218,6 +219,7 @@ export class CadastroPage implements OnDestroy {
   readonly homeAnnouncementImageGuide = '1200 x 675 px';
   readonly acceptedCompanyLogoMimeTypes = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp'];
   readonly maxCompanyLogoSizeBytes = 5 * 1024 * 1024;
+  sideCompanyLogoFailed = false;
   readonly workModels: WorkModel[] = ['Remoto', 'Hibrido', 'Presencial'];
   readonly contractTypes: ContractType[] = ['CLT', 'PJ', 'Freelancer'];
   readonly editableJobStatuses: Array<{ value: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas'; label: string }> = [
@@ -2188,7 +2190,12 @@ private getRichContentPlainText(value: string): string {
 
   onCompanyChange(companyName: string): void {
     this.jobDraft.company = companyName;
+    this.sideCompanyLogoFailed = false;
     this.ensureLocationMatchesSelectedCompany();
+  }
+
+  onSideCompanyLogoError(): void {
+    this.sideCompanyLogoFailed = true;
   }
 
   private hydrateStatusFromJob(job: MockJobRecord): void {
@@ -2346,6 +2353,7 @@ private getRichContentPlainText(value: string): string {
     reader.onload = () => {
       this.jobDraft.companyLogoUrl = typeof reader.result === 'string' ? reader.result : '';
       this.companyLogoError = '';
+      this.sideCompanyLogoFailed = false;
       this.cdr.markForCheck();
     };
 
