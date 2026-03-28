@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MockJobRecord } from '../../vagas/data/vagas.models';
-import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
 import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
 import { EcossistemaPage } from '../../home/ecossistema/ecossistema.page';
 
 @Component({
   standalone: true,
   selector: 'app-usuario-ecossistema-page',
-  imports: [CommonModule, PanelCandidatosListComponent, ProfitLossCardComponent],
+  imports: [CommonModule, ProfitLossCardComponent],
   templateUrl: './usuario-ecossistema.page.html',
   styleUrl: './usuario-ecossistema.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
