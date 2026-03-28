@@ -44,7 +44,7 @@
   max-width: 100%;
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1.24fr) minmax(400px, 1.08fr);
   gap: 24px;
   align-items: stretch;
   min-width: 0;
@@ -534,21 +534,106 @@
 
 .ecosystem-desktop__panel {
   min-height: min(78vh, 760px);
-  background: linear-gradient(135deg, #393939 0%, #474747 46%, #5c5c5c 100%);
+  background: linear-gradient(180deg, rgba(92, 92, 92, 0.16) 0%, rgba(69, 69, 69, 0.08) 100%);
   border-radius: 20px;
   border: 0;
   overflow: visible;
   box-shadow: none;
   padding: 20px;
   box-sizing: border-box;
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 
 .ecosystem-desktop__panel--secondary{
   min-height: min(78vh, 760px);
-  background: linear-gradient(180deg, #454545 0%, #5c5c5c 100%);
+  background: linear-gradient(180deg, rgba(92, 92, 92, 0.16) 0%, rgba(69, 69, 69, 0.08) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ecosystem-desktop__panel--secondary app-profit-loss-card{
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: auto;
+}
+
+.ecosystem-desktop__signal-tabs{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ecosystem-desktop__signal-target{
+  display: grid;
+  gap: 6px;
+  align-items: start;
+  padding-left: 10px;
+}
+
+.ecosystem-desktop__signal-target-label{
+  color: rgba(245, 247, 251, 0.6);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.ecosystem-desktop__signal-target-actions{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ecosystem-desktop__signal-target-value{
+  min-width: 64px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f7f8fb;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.ecosystem-desktop__signal-target-submit{
+  height: 34px;
+  min-width: 78px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(245, 247, 251, 0.72);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ecosystem-desktop__signal-tab{
+  border: 0;
+  min-width: 42px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(245, 247, 251, 0.52);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ecosystem-desktop__signal-tab--active{
+  background: rgba(255, 255, 255, 0.12);
+  color: #f7f8fb;
 }
 
 .ecosystem-desktop__panel-head{
@@ -559,7 +644,7 @@
 }
 
 .ecosystem-desktop__panel-head--secondary{
-  justify-content: flex-end;
+  align-items: flex-start;
 }
 
 .ecosystem-desktop__panel-tools,
@@ -601,10 +686,69 @@
   gap: 28px;
 }
 
+.ecosystem-desktop__overview-copy{
+  max-width: none;
+  width: 100%;
+  margin: -12px 0 0;
+  color: rgba(245, 247, 251, 0.62);
+  font-size: 13px;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+}
+
 .ecosystem-desktop__overview-grid{
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 168px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+}
+
+.ecosystem-desktop__stack-board{
+  display: grid;
+  gap: 10px;
+  padding: 0 6px 0 0;
+  margin-top: auto;
+}
+
+.ecosystem-desktop__stack-divider{
+  margin-top: auto;
+  height: 0;
+  border-top: 1px dashed rgba(245, 247, 251, 0.18);
+}
+
+.ecosystem-desktop__stack-row{
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.ecosystem-desktop__stack-name{
+  color: #f7f8fb;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.ecosystem-desktop__stack-track{
+  position: relative;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(245, 247, 251, 0.12);
+}
+
+.ecosystem-desktop__stack-fill{
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(156, 90, 23, 0.92) 0%, rgba(200, 116, 25, 0.88) 52%, rgba(241, 178, 32, 0.84) 100%);
+}
+
+.ecosystem-desktop__stack-value{
+  color: #f7f8fb;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .ecosystem-desktop__overview-card,
@@ -750,8 +894,8 @@
 
 .ecosystem-desktop__jobs-grid-table{
   display: grid;
-  gap: 12px;
-  padding: 10px 0 0;
+  gap: 6px;
+  padding: 8px 0 0;
 }
 
 .ecosystem-desktop__jobs-grid-header,
@@ -759,7 +903,7 @@
   display: grid;
   grid-template-columns: 62px minmax(220px, 1.02fr) minmax(190px, 0.88fr) minmax(332px, 1.44fr);
   column-gap: 10px;
-  row-gap: 14px;
+  row-gap: 12px;
   align-items: center;
 }
 
@@ -773,9 +917,9 @@
 }
 
 .ecosystem-desktop__jobs-grid-row{
-  min-height: 72px;
-  padding: 0 20px;
-  border-radius: 14px;
+  min-height: 78px;
+  padding: 8px 20px;
+  border-radius: 10px;
   background: color-mix(in srgb, #ffffff 6%, transparent);
 }
 

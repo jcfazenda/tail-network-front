@@ -19,6 +19,7 @@ import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
 import { ChatCandidate, ChatJob } from '../../chat/domain/chat.models';
+import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
 
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
@@ -116,7 +117,7 @@ type SideRailCandidateCard = {
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, PanelCandidatosListComponent],
+  imports: [CommonModule, PanelCandidatosListComponent, ProfitLossCardComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

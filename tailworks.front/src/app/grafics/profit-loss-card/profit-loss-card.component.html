@@ -1,0 +1,113 @@
+<div class="profit-card">
+  <div class="profit-card__head">
+    <div>
+      <strong class="profit-card__title">Pipeline de vagas</strong>
+      <span class="profit-card__subtitle">ultimos 30 dias</span>
+    </div>
+
+    <div class="profit-card__filters">
+      <button class="profit-card__filter profit-card__filter--active" type="button">Radar</button>
+      <button class="profit-card__filter" type="button">Funil</button>
+    </div>
+  </div>
+
+  <div class="profit-card__stats">
+    <div class="profit-card__stat">
+      <span>Vagas abertas</span>
+      <div class="profit-card__metric-row">
+        <strong>124</strong>
+        <small>+ 8.4%</small>
+      </div>
+    </div>
+    <div class="profit-card__stat">
+      <span>Talentos no radar</span>
+      <div class="profit-card__metric-row">
+        <strong>1.248</strong>
+        <small>+ 12.1%</small>
+      </div>
+    </div>
+    <div class="profit-card__stat">
+      <span>Aderencia media</span>
+      <div class="profit-card__metric-row">
+        <strong>54.29%</strong>
+        <small>Estavel</small>
+      </div>
+    </div>
+    <div class="profit-card__stats-divider" aria-hidden="true"></div>
+    <div class="profit-card__stat">
+      <span>Contatados</span>
+      <div class="profit-card__metric-row">
+        <strong>38</strong>
+        <small>19 esta semana</small>
+      </div>
+    </div>
+    <div class="profit-card__stat">
+      <span>Entrevistas ativas</span>
+      <div class="profit-card__metric-row">
+        <strong>27</strong>
+        <small>3 hoje</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="profit-card__chart" aria-hidden="true">
+    <div class="profit-card__y-grid">
+      <span>160</span>
+      <span>120</span>
+      <span>80</span>
+      <span>40</span>
+      <span>0</span>
+    </div>
+
+    <svg class="profit-card__svg" viewBox="0 0 560 240" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="profitCardWarmLine" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#b66a22"></stop>
+          <stop offset="100%" stop-color="#f0b44a"></stop>
+        </linearGradient>
+        <linearGradient id="profitCardWarmArea" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(240, 180, 74, 0.28)"></stop>
+          <stop offset="100%" stop-color="rgba(182, 106, 34, 0.04)"></stop>
+        </linearGradient>
+      </defs>
+      <path class="profit-card__area" d="M0 210 L24 218 L48 206 L72 198 L96 186 L120 172 L144 154 L168 120 L192 104 L216 104 L240 104 L264 104 L288 86 L312 92 L336 104 L360 100 L384 98 L408 84 L432 74 L456 80 L480 56 L504 58 L528 64 L552 52 L560 58 L560 240 L0 240 Z"></path>
+      <path class="profit-card__line" d="M0 210 L24 218 L48 206 L72 198 L96 186 L120 172 L144 154 L168 120 L192 104 L216 104 L240 104 L264 104 L288 86 L312 92 L336 104 L360 100 L384 98 L408 84 L432 74 L456 80 L480 56 L504 58 L528 64 L552 52 L560 58"></path>
+      <g class="profit-card__points">
+        <circle cx="0" cy="210" r="3"></circle>
+        <circle cx="24" cy="218" r="3"></circle>
+        <circle cx="48" cy="206" r="3"></circle>
+        <circle cx="72" cy="198" r="3"></circle>
+        <circle cx="96" cy="186" r="3"></circle>
+        <circle cx="120" cy="172" r="3"></circle>
+        <circle cx="144" cy="154" r="3"></circle>
+        <circle cx="168" cy="120" r="3"></circle>
+        <circle cx="192" cy="104" r="3"></circle>
+        <circle cx="264" cy="104" r="3"></circle>
+        <circle cx="288" cy="86" r="3"></circle>
+        <circle cx="336" cy="104" r="3"></circle>
+        <circle cx="384" cy="98" r="3"></circle>
+        <circle cx="432" cy="74" r="3"></circle>
+        <circle cx="480" cy="56" r="3"></circle>
+        <circle cx="528" cy="64" r="3"></circle>
+        <circle cx="552" cy="52" r="3"></circle>
+      </g>
+    </svg>
+  </div>
+
+  <div class="profit-card__x-axis">
+    <span>01</span>
+    <span>03</span>
+    <span>05</span>
+    <span>07</span>
+    <span>09</span>
+    <span>11</span>
+    <span>13</span>
+    <span>15</span>
+    <span>17</span>
+    <span>19</span>
+    <span>21</span>
+    <span>23</span>
+    <span>25</span>
+    <span>27</span>
+  </div>
+</div>

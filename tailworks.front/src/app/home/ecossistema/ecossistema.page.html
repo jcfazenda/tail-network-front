@@ -40,43 +40,103 @@
           <span>Overview</span>
         </div>
 
-        <div class="ecosystem-desktop__overview-grid">
-          <div class="ecosystem-desktop__overview-card">
-            <strong>Task Overview</strong>
-            <span>137 customers</span>
-            <small>+ 12% more than usual</small>
-          </div>
-          <div class="ecosystem-desktop__overview-card ecosystem-desktop__overview-card--ghost"></div>
+        <p class="ecosystem-desktop__overview-copy">
+          As stacks abaixo representam a concentracao tecnica mais demandada pelo pipeline atual de contratacoes, considerando
+          os movimentos mais recentes do radar, as conversoes em andamento e a aderencia media esperada para as vagas abertas.
+          Esse bloco ajuda a antecipar onde o recrutamento precisa ganhar velocidade, profundidade tecnica e recorrencia de busca.
+        </p>
+      </div>
+
+      <div class="ecosystem-desktop__stack-divider" aria-hidden="true"></div>
+
+      <div class="ecosystem-desktop__stack-board">
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">.NET</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 91%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">91%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">Angular</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 88%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">88%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">React</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 84%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">84%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">Node.js</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 80%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">80%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">Java</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 76%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">76%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">Python</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 73%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">73%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">AWS</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 68%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">68%</strong>
+        </div>
+
+        <div class="ecosystem-desktop__stack-row">
+          <span class="ecosystem-desktop__stack-name">TypeScript</span>
+          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
+            <span class="ecosystem-desktop__stack-fill" style="width: 64%"></span>
+          </span>
+          <strong class="ecosystem-desktop__stack-value">64%</strong>
         </div>
       </div>
     </section>
 
     <section class="ecosystem-desktop__panel ecosystem-desktop__panel--secondary">
       <div class="ecosystem-desktop__panel-head ecosystem-desktop__panel-head--secondary">
-        <div class="ecosystem-desktop__panel-pills">
-          <div class="ecosystem-desktop__panel-pill"></div>
+        <div class="ecosystem-desktop__signal-target">
+          <span class="ecosystem-desktop__signal-target-label">Meta de aderencia</span>
+          <div class="ecosystem-desktop__signal-target-actions">
+            <span class="ecosystem-desktop__signal-target-value">85%</span>
+            <button class="ecosystem-desktop__signal-target-submit" type="button">Aplicar</button>
+          </div>
+        </div>
+
+        <div class="ecosystem-desktop__signal-tabs">
+          <button class="ecosystem-desktop__signal-tab ecosystem-desktop__signal-tab--active" type="button">Dia</button>
+          <button class="ecosystem-desktop__signal-tab" type="button">Semana</button>
+          <button class="ecosystem-desktop__signal-tab" type="button">Mes</button>
         </div>
       </div>
-
-      <div class="ecosystem-desktop__metric-card">
-        <span>Total Revenue</span>
-        <strong>$301,210</strong>
-        <small>+ 5.8%</small>
-      </div>
+      <app-profit-loss-card />
     </section>
 
     <section class="ecosystem-desktop__jobs-board">
       <div class="ecosystem-desktop__jobs-board-head">
-        <label class="ecosystem-desktop__jobs-search" aria-label="Buscar vagas">
-          <span class="material-symbols-rounded" aria-hidden="true">search</span>
-          <input
-            type="search"
-            placeholder="Pesquisar vagas, empresas ou localidade"
-            [value]="ecoSearchValue"
-            (input)="updateEcoSearch(($any($event.target).value ?? '').toString())"
-          />
-        </label>
-
         <div class="ecosystem-desktop__jobs-tabs" role="tablist" aria-label="Filtros do dashboard">
           <button
             class="ecosystem-desktop__jobs-tab"
@@ -106,6 +166,16 @@
             <b>{{ processoJobsCount }}</b>
           </button>
         </div>
+
+        <label class="ecosystem-desktop__jobs-search" aria-label="Buscar vagas">
+          <span class="material-symbols-rounded" aria-hidden="true">search</span>
+          <input
+            type="search"
+            placeholder="Pesquisar vagas, empresas ou localidade"
+            [value]="ecoSearchValue"
+            (input)="updateEcoSearch(($any($event.target).value ?? '').toString())"
+          />
+        </label>
       </div>
 
       <div class="ecosystem-desktop__jobs-grid-table" *ngIf="ecoFilteredJobs.length; else emptyBoard">

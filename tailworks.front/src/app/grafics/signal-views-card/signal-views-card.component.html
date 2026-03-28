@@ -1,0 +1,35 @@
+<div class="signal-card">
+  <span class="signal-card__label">{{ label }}</span>
+
+  <div class="signal-card__value-row">
+    <strong>{{ value }}</strong>
+    <small>{{ delta }}</small>
+  </div>
+
+  <span class="signal-card__meta">{{ meta }}</span>
+
+  <div class="signal-card__chart" aria-hidden="true">
+    <div class="signal-card__grid">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <svg class="signal-card__svg" viewBox="0 0 320 110" preserveAspectRatio="none">
+      <path class="signal-card__area" d="M0 69 C12 58, 26 82, 40 74 C54 66, 66 54, 80 62 C94 70, 104 50, 118 60 C132 70, 146 82, 162 68 C178 54, 192 58, 206 76 C220 94, 236 86, 252 74 C268 62, 284 68, 300 72 C310 74, 316 78, 320 82 L320 110 L0 110 Z"></path>
+      <path class="signal-card__line" d="M0 69 C12 58, 26 82, 40 74 C54 66, 66 54, 80 62 C94 70, 104 50, 118 60 C132 70, 146 82, 162 68 C178 54, 192 58, 206 76 C220 94, 236 86, 252 74 C268 62, 284 68, 300 72 C310 74, 316 78, 320 82"></path>
+      <line class="signal-card__average-line" x1="0" y1="78" x2="320" y2="78"></line>
+    </svg>
+
+    <span class="signal-card__average-tag">AVG</span>
+  </div>
+
+  <div class="signal-card__axis">
+    <span>12 AM</span>
+    <span>4 AM</span>
+    <span>8 AM</span>
+    <span>12 PM</span>
+    <span>4 PM</span>
+    <span>8 PM</span>
+  </div>
+</div>
