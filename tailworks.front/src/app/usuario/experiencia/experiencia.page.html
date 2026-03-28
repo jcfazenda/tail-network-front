@@ -527,13 +527,31 @@
 
     <div class="candidate-experience__modal-body">
       <label class="candidate-experience__modal-field" *ngIf="editingExperienceStackIndex === null; else experienceStackReadonly">
-        <span class="candidate-experience__modal-label">Stack</span>
-        <select [(ngModel)]="experienceStackDraftRepoId">
-          <option value="">Selecione uma stack</option>
-          <option *ngFor="let option of availableExperienceStackOptions" [value]="option.id">
-            {{ option.name }}
-          </option>
-        </select>
+        <span class="candidate-experience__modal-label">Pesquisar stack</span>
+        <input
+          type="text"
+          [ngModel]="experienceStackSearchTerm"
+          (ngModelChange)="onExperienceStackSearchChange($event)"
+          [attr.list]="'candidate-experience-stack-suggestions'"
+          placeholder="Digite para buscar por nome"
+        />
+        <datalist id="candidate-experience-stack-suggestions">
+          <option *ngFor="let option of availableExperienceStackOptions" [value]="option.name"></option>
+        </datalist>
+      </label>
+
+      <label class="candidate-experience__modal-field candidate-experience__modal-field--spacious" *ngIf="editingExperienceStackIndex === null">
+        <span class="candidate-experience__modal-label">Stacks por categoria</span>
+        <div class="candidate-experience__select-shell">
+          <select [ngModel]="experienceStackDraftRepoId" (ngModelChange)="onExperienceStackOptionSelected($event)">
+            <option value="">Selecione uma stack</option>
+            <optgroup *ngFor="let group of groupedAvailableExperienceStackOptions" [label]="group.label">
+              <option *ngFor="let option of group.options" [value]="option.id">
+                {{ option.name }}
+              </option>
+            </optgroup>
+          </select>
+        </div>
       </label>
 
       <label class="candidate-experience__modal-field">

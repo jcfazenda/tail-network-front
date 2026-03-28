@@ -8821,12 +8821,30 @@
           "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
+          "id": "repo:microservices",
+          "name": "Microservices",
+          "short": "Microservices",
+          "tone": "neutral",
+          "category": "other",
+          "knowledge": 86,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
           "id": "repo:docker",
           "name": "Docker",
           "short": "Docker",
           "tone": "neutral",
           "category": "devops",
           "knowledge": 80,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:sql-server",
+          "name": "SQL",
+          "short": "SQL",
+          "tone": "gold",
+          "category": "database",
+          "knowledge": 74,
           "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
@@ -8837,7 +8855,9 @@
           "category": "mobile",
           "knowledge": 64,
           "description": "Média calculada automaticamente a partir das experiências do candidato."
-        },
+        }
+      ],
+      "extra": [
         {
           "id": "repo:arquitetura",
           "name": "Arquitetura",
@@ -8855,9 +8875,7 @@
           "category": "frontend",
           "knowledge": 62,
           "description": "Média calculada automaticamente a partir das experiências do candidato."
-        }
-      ],
-      "extra": [
+        },
         {
           "id": "repo:react",
           "name": "React",
@@ -8883,15 +8901,6 @@
           "tone": "neutral",
           "category": "other",
           "knowledge": 60,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
-        },
-        {
-          "id": "repo:sql-server",
-          "name": "SQL",
-          "short": "SQL",
-          "tone": "gold",
-          "category": "database",
-          "knowledge": 51,
           "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
@@ -8956,6 +8965,12 @@
             "name": "Node.js",
             "knowledge": 87,
             "description": ""
+          },
+          {
+            "repoId": "repo:sql-server",
+            "name": "SQL Server",
+            "knowledge": 86,
+            "description": ""
           }
         ]
       },
@@ -8993,6 +9008,12 @@
             "name": "Docker",
             "knowledge": 74,
             "description": "Uso prático de Docker em contexto real."
+          },
+          {
+            "repoId": "repo:sql-server",
+            "name": "SQL Server",
+            "knowledge": 88,
+            "description": ""
           }
         ],
         "companyId": "itau-unibanco"
@@ -9025,6 +9046,12 @@
             "name": "SQL / Dados",
             "knowledge": 51,
             "description": "Uso prático de SQL / Dados em contexto real."
+          },
+          {
+            "repoId": "repo:microservices",
+            "name": "Microservices",
+            "knowledge": 86,
+            "description": ""
           }
         ],
         "companyId": "accenture"

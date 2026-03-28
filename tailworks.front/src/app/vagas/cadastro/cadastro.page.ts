@@ -14,13 +14,15 @@ import { Subscription } from 'rxjs';
 
 /* ************************************** EXPERIENCE ************************************** */
 import { STACK_KNOWLEDGE_GUIDES, StackGuideTier, StackKnowledgeGuide } from '../../usuario/stacks/stack-knowledge-guides';
+import {
+  EXPERIENCE_STACK_CATALOG,
+  EXPERIENCE_STACK_CATEGORY_LABELS,
+  EXPERIENCE_STACK_CATEGORY_ORDER,
+  ExperienceStackCategory,
+  ExperienceStackRepoItem,
+} from '../../shared/stacks/experience-stack-catalog';
 
 type ExperienceStackChip = ExperienceStackItem;
-
-type ExperienceStackRepoItem = {
-  id: string;
-  name: string;
-};
 
 type SeniorityLevel = 'jr' | 'pleno' | 'senior' | 'especialista';
 /* ************************************** EXPERIENCE ************************************** */
@@ -295,54 +297,8 @@ export class CadastroPage implements OnDestroy {
   
 readonly trackByExperienceStackName = (_index: number, stack: ExperienceStackChip): string => stack.name;
 
-readonly experienceStackCatalog: ExperienceStackRepoItem[] = [
-  { id: 'repo:dotnet', name: '.NET / C#' },
-  { id: 'repo:csharp', name: 'C#' },
-  { id: 'repo:aspnet-core', name: 'ASP.NET Core' },
-  { id: 'repo:entity-framework', name: 'Entity Framework' },
-  { id: 'repo:rest-api', name: 'REST API' },
-  { id: 'repo:microservices', name: 'Microservices' },
-  { id: 'repo:rabbitmq', name: 'RabbitMQ' },
-  { id: 'repo:kafka', name: 'Kafka' },
-  { id: 'repo:java', name: 'Java / Spring' },
-  { id: 'repo:nodejs', name: 'Node.js' },
-  { id: 'repo:angular', name: 'Angular' },
-  { id: 'repo:react', name: 'React' },
-  { id: 'repo:typescript', name: 'TypeScript' },
-  { id: 'repo:javascript', name: 'JavaScript' },
-  { id: 'repo:html', name: 'HTML' },
-  { id: 'repo:css', name: 'CSS' },
-  { id: 'repo:sql-server', name: 'SQL Server' },
-  { id: 'repo:postgresql', name: 'PostgreSQL' },
-  { id: 'repo:mysql', name: 'MySQL' },
-  { id: 'repo:mongodb', name: 'MongoDB' },
-  { id: 'repo:redis', name: 'Redis' },
-  { id: 'repo:elasticsearch', name: 'Elasticsearch' },
-  { id: 'repo:aws', name: 'AWS' },
-  { id: 'repo:azure', name: 'Azure' },
-  { id: 'repo:gcp', name: 'Google Cloud' },
-  { id: 'repo:cloudwatch', name: 'Cloud Monitoring' },
-  { id: 'repo:serverless', name: 'Serverless' },
-  { id: 'repo:docker', name: 'Docker' },
-  { id: 'repo:kubernetes', name: 'Kubernetes' },
-  { id: 'repo:terraform', name: 'Terraform' },
-  { id: 'repo:github-actions', name: 'GitHub Actions' },
-  { id: 'repo:gitlab-ci', name: 'GitLab CI' },
-  { id: 'repo:linux', name: 'Linux' },
-  { id: 'repo:nginx', name: 'Nginx' },
-  { id: 'repo:flutter', name: 'Flutter' },
-  { id: 'repo:react-native', name: 'React Native' },
-  { id: 'repo:kotlin', name: 'Kotlin' },
-  { id: 'repo:swift', name: 'Swift' },
-  { id: 'repo:android', name: 'Android' },
-  { id: 'repo:ios', name: 'iOS' },
-  { id: 'repo:python', name: 'Python' },
-  { id: 'repo:python-ml', name: 'IA / ML' },
-  { id: 'repo:qa-automation', name: 'QA Automação' },
-  { id: 'repo:security', name: 'Segurança' },
-  { id: 'repo:ux', name: 'UX / UI' },
-  { id: 'repo:figma', name: 'Figma' },
-];
+readonly experienceStackCatalog: ExperienceStackRepoItem[] = EXPERIENCE_STACK_CATALOG;
+readonly experienceStackCategoryLabels = EXPERIENCE_STACK_CATEGORY_LABELS;
 
 private readonly acceptedCertificateMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
 private readonly maxCertificateSizeBytes = 8 * 1024 * 1024;
@@ -384,6 +340,7 @@ expandedExperienceStackDescriptionIndex: number | null = null;
 expandedExperienceGuideIndex: number | null = null;
 experienceStackDraftName = '';
 experienceStackDraftRepoId = '';
+experienceStackSearchTerm = '';
 experienceStackDraftDescription = '';
 experienceStackModalError = '';
 
@@ -435,7 +392,23 @@ get availableExperienceStackOptions(): ExperienceStackRepoItem[] {
       .filter((value): value is string => !!value),
   );
 
-  return this.experienceStackCatalog.filter((item) => !used.has(item.id));
+  return this.experienceStackCatalog
+    .filter((item) => !used.has(item.id))
+    .filter((item) => this.matchesExperienceStackSearch(item, this.experienceStackSearchTerm));
+}
+
+get groupedAvailableExperienceStackOptions(): Array<{
+  category: ExperienceStackCategory;
+  label: string;
+  options: ExperienceStackRepoItem[];
+}> {
+  return EXPERIENCE_STACK_CATEGORY_ORDER
+    .map((category) => ({
+      category,
+      label: this.experienceStackCategoryLabels[category],
+      options: this.availableExperienceStackOptions.filter((item) => item.category === category),
+    }))
+    .filter((group) => group.options.length > 0);
 }
 
 get cardTechStackItems(): TechStackItem[] {
@@ -462,6 +435,7 @@ openCreateExperienceStackModal(): void {
   this.editingExperienceStackIndex = null;
   this.experienceStackDraftName = '';
   this.experienceStackDraftRepoId = '';
+  this.experienceStackSearchTerm = '';
   this.experienceStackDraftDescription = '';
   this.experienceStackModalError = '';
   this.isExperienceStackModalOpen = true;
@@ -476,6 +450,7 @@ openEditExperienceStackModal(index: number): void {
   this.editingExperienceStackIndex = index;
   this.experienceStackDraftName = current.name;
   this.experienceStackDraftRepoId = current.repoId ?? this.findExperienceStackOptionByName(current.name)?.id ?? '';
+  this.experienceStackSearchTerm = current.name;
   this.experienceStackDraftDescription = current.description ?? '';
   this.experienceStackModalError = '';
   this.isExperienceStackModalOpen = true;
@@ -486,8 +461,26 @@ closeExperienceStackModal(): void {
   this.editingExperienceStackIndex = null;
   this.experienceStackDraftName = '';
   this.experienceStackDraftRepoId = '';
+  this.experienceStackSearchTerm = '';
   this.experienceStackDraftDescription = '';
   this.experienceStackModalError = '';
+}
+
+onExperienceStackSearchChange(value: string): void {
+  this.experienceStackSearchTerm = value;
+  const normalized = value.trim().toLocaleLowerCase('pt-BR');
+  const exactMatch = this.availableExperienceStackOptions.find(
+    (item) => item.name.toLocaleLowerCase('pt-BR') === normalized,
+  );
+  this.experienceStackDraftRepoId = exactMatch?.id ?? '';
+}
+
+onExperienceStackOptionSelected(repoId: string): void {
+  this.experienceStackDraftRepoId = repoId;
+  const selectedOption =
+    this.availableExperienceStackOptions.find((item) => item.id === repoId) ??
+    this.experienceStackCatalog.find((item) => item.id === repoId);
+  this.experienceStackSearchTerm = selectedOption?.name ?? '';
 }
 
 toggleExperienceStackDescription(index: number): void {
@@ -736,6 +729,16 @@ private createExperienceStackChip(
 private findExperienceStackOptionByName(name: string): ExperienceStackRepoItem | undefined {
   const normalized = name.trim().toLocaleLowerCase('pt-BR');
   return this.experienceStackCatalog.find((item) => item.name.toLocaleLowerCase('pt-BR') === normalized);
+}
+
+private matchesExperienceStackSearch(item: ExperienceStackRepoItem, query: string): boolean {
+  const normalized = query.trim().toLocaleLowerCase('pt-BR');
+
+  if (!normalized) {
+    return true;
+  }
+
+  return item.name.toLocaleLowerCase('pt-BR').includes(normalized);
 }
 
 private getExpectationTierFromPercent(percent: number): StackGuideTier {
