@@ -47,6 +47,14 @@
   background: #f7f9fc;
 }
 
+.shell__main--candidate-basic{
+  background: transparent;
+}
+
+.shell__main--candidate-workspace{
+  background: transparent;
+}
+
 .shell__main--ecosystem{
   grid-template-rows: minmax(0, 1fr);
   min-height: 100vh;
@@ -79,7 +87,11 @@
 }
 
 .shell__content--candidate-basic{
-  padding-top: 28px;
+  padding-top: 18px;
+}
+
+.shell__content--candidate-workspace{
+  padding-top: 18px;
 }
 
 .shell__content--ecosystem{
@@ -184,7 +196,11 @@
   }
 
   .shell__content--candidate-basic{
-    padding-top: 20px;
+    padding-top: 14px;
+  }
+
+  .shell__content--candidate-workspace{
+    padding-top: 14px;
   }
 
   .shell__content--template{

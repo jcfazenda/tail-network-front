@@ -456,7 +456,7 @@
   padding-left: 4px;
   font-size: 12px;
   font-weight: 700;
-  color: rgba(15, 23, 42, 0.62);
+  color: var(--candidate-doc-muted);
 }
 
 .candidate-documents__modal-field input,
@@ -465,8 +465,8 @@
   padding: 0 14px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--card-strong);
-  color: #1f2937;
+  background: var(--candidate-doc-surface);
+  color: var(--candidate-doc-text);
   font: inherit;
   font-size: 13px;
   outline: none;
@@ -494,9 +494,9 @@
   width: fit-content;
   padding: 0 16px;
   border-radius: 999px;
-  border: 1px solid rgba(219, 145, 24, 0.16);
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  background: var(--candidate-doc-surface-soft);
+  box-shadow: 0 10px 18px color-mix(in srgb, var(--text) 6%, transparent);
   cursor: pointer;
 }
 
@@ -517,7 +517,7 @@
 }
 
 .candidate-documents__modal-toggle-text{
-  color: rgba(15, 23, 42, 0.66);
+  color: var(--candidate-doc-muted);
   font-size: 12px;
   font-weight: 600;
   line-height: 1.35;
@@ -535,7 +535,7 @@
 }
 
 .candidate-documents__modal-toggle--active .candidate-documents__modal-toggle-text{
-  color: rgba(15, 23, 42, 0.9);
+  color: var(--candidate-doc-text);
 }
 
 .candidate-documents__modal-upload{
@@ -544,10 +544,10 @@
   gap: 10px;
   min-height: 46px;
   padding: 0 14px;
-  border: 1px dashed rgba(215, 222, 231, 0.92);
+  border: 1px dashed var(--candidate-doc-divider);
   border-radius: 12px;
-  background: rgba(248, 250, 252, 0.82);
-  color: rgba(15, 23, 42, 0.72);
+  background: var(--candidate-doc-surface-soft);
+  color: var(--candidate-doc-muted);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -556,12 +556,12 @@
 }
 
 .candidate-documents__modal-upload .material-symbols-rounded{
-  color: rgba(15, 23, 42, 0.42);
+  color: var(--candidate-doc-icon);
 }
 
 .candidate-documents__modal-upload-meta{
   padding-left: 4px;
-  color: rgba(15, 23, 42, 0.48);
+  color: var(--candidate-doc-muted-soft);
   font-size: 12px;
 }
 

@@ -51,6 +51,15 @@ export class AppShellComponent {
     return this.primaryPath === '/usuario/dados-cadastrais';
   }
 
+  get isCandidateProfileWorkspacePage(): boolean {
+    return (
+      this.primaryPath === '/usuario/dados-cadastrais'
+      || this.primaryPath === '/usuario/documentos'
+      || this.primaryPath === '/usuario/stacks'
+      || this.primaryPath === '/usuario/experiencia'
+    );
+  }
+
   get isTemplateEcosystem(): boolean {
     return this.primaryPath === '/home/ecossistema';
   }

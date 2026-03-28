@@ -161,6 +161,7 @@ export class ExperienciaPage implements OnInit {
   expandedResponsibilityIndex: number | null = null;
   editingResponsibilityIndex: number | null = null;
   responsibilityDraft = '';
+  savedResponsibilityIndex: number | null = null;
   isExperienceStackModalOpen = false;
   editingExperienceStackIndex: number | null = null;
   expandedExperienceStackDescriptionIndex: number | null = null;
@@ -802,7 +803,14 @@ export class ExperienciaPage implements OnInit {
     this.expandedResponsibilityIndex = index;
     this.editingResponsibilityIndex = index;
     this.responsibilityDraft = hasResponsibilities ? nextResponsibilities : '';
+    this.savedResponsibilityIndex = index;
     this.scheduleResponsibilityEditorSync();
+
+    setTimeout(() => {
+      if (this.savedResponsibilityIndex === index) {
+        this.savedResponsibilityIndex = null;
+      }
+    }, 2200);
   }
 
   cancelResponsibilitiesInline(index: number): void {
@@ -810,6 +818,7 @@ export class ExperienciaPage implements OnInit {
     this.responsibilityDraft = current?.responsibilities ?? '';
     this.editingResponsibilityIndex = index;
     this.expandedResponsibilityIndex = index;
+    this.savedResponsibilityIndex = null;
     this.scheduleResponsibilityEditorSync();
   }
 
@@ -1028,6 +1037,7 @@ export class ExperienciaPage implements OnInit {
       this.expandedResponsibilityIndex = null;
       this.editingResponsibilityIndex = null;
       this.responsibilityDraft = '';
+      this.savedResponsibilityIndex = null;
       return;
     }
 

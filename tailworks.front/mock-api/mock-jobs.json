@@ -1,202 +1,5 @@
 [
   {
-    "id": "lab-job-06",
-    "code": "VG-0006",
-    "createdByRecruiterId": "julio-fazenda-recruiter",
-    "createdByRecruiterName": "Julio Fazenda",
-    "createdByRecruiterRole": "Talent Acquisition Lead",
-    "recruiterWatcherIds": [
-      "julio-fazenda-recruiter"
-    ],
-    "priority": "BRASÍLIA - DF",
-    "match": 63,
-    "talents": 6,
-    "radarCount": 6,
-    "ageLabel": "Agora",
-    "postedLabel": "",
-    "avatars": [
-      "/assets/avatars/avatar-default.svg",
-      "/assets/avatars/avatar-default.svg",
-      "/assets/avatars/avatar-default.svg"
-    ],
-    "extraCount": 3,
-    "status": "ativas",
-    "talentSubmittedDocuments": [],
-    "talentDocumentsConsentAccepted": false,
-    "candidates": [
-      {
-        "id": "realtime-lab-job-06-42",
-        "name": "Livia Teixeira",
-        "role": "Frontend Angular • CI&T",
-        "location": "São Paulo - SP",
-        "match": 70,
-        "minutesAgo": 46,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-06-2",
-        "name": "Thais Talento",
-        "role": "Frontend Angular • CI&T",
-        "location": "São Paulo - SP",
-        "match": 70,
-        "minutesAgo": 6,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-06-22",
-        "name": "Amanda Silveira",
-        "role": "UI Engineer • Globo",
-        "location": "Recife - PE",
-        "match": 69,
-        "minutesAgo": 26,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-06-83",
-        "name": "Breno Vieira",
-        "role": "UI Engineer • Globo",
-        "location": "Florianópolis - SC",
-        "match": 69,
-        "minutesAgo": 87,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-06-73",
-        "name": "Pietro Pacheco",
-        "role": "Frontend Angular • CI&T",
-        "location": "Recife - PE",
-        "match": 69,
-        "minutesAgo": 77,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-06-53",
-        "name": "Yuri Castro",
-        "role": "Frontend Angular • CI&T",
-        "location": "Recife - PE",
-        "match": 69,
-        "minutesAgo": 57,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      }
-    ],
-    "createdAt": "2026-03-28T16:12:11.993Z",
-    "updatedAt": "2026-03-28T21:57:28.583Z",
-    "title": "Fullstack Java + Angular",
-    "company": "Stefanini",
-    "companyLogoUrl": "",
-    "homeAnnouncementImageUrl": "",
-    "location": "Brasília - DF",
-    "workModel": "Presencial",
-    "seniority": "Senior",
-    "summary": "Profissional para evoluir serviços e interfaces, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time interno.",
-    "contractType": "CLT",
-    "salaryRange": "R$ 11.800",
-    "radarAdherenceThreshold": 69,
-    "showSalaryRangeInCard": true,
-    "allowCandidateSalarySuggestion": false,
-    "benefits": [],
-    "hiringDocuments": [
-      "Certidão de Nascimento",
-      "Comprovante de Escolaridade"
-    ],
-    "techStack": [
-      {
-        "name": "Java / Spring",
-        "match": 67
-      },
-      {
-        "name": "Angular",
-        "match": 67
-      },
-      {
-        "name": "TypeScript",
-        "match": 58
-      },
-      {
-        "name": "AWS",
-        "match": 34
-      },
-      {
-        "name": "QA Automação",
-        "match": 74
-      }
-    ],
-    "experienceStacks": [
-      {
-        "repoId": "repo:java",
-        "name": "Java / Spring",
-        "knowledge": 67,
-        "description": ""
-      },
-      {
-        "repoId": "repo:angular",
-        "name": "Angular",
-        "knowledge": 67,
-        "description": ""
-      },
-      {
-        "repoId": "repo:typescript",
-        "name": "TypeScript",
-        "knowledge": 58,
-        "description": ""
-      },
-      {
-        "repoId": "repo:aws",
-        "name": "AWS",
-        "knowledge": 34,
-        "description": ""
-      },
-      {
-        "repoId": "repo:qa-automation",
-        "name": "QA Automação",
-        "knowledge": 74,
-        "description": ""
-      }
-    ],
-    "differentials": [],
-    "responsibilitySections": [
-      {
-        "id": "summary-section-1",
-        "pageId": "front",
-        "title": "Requisitos e habilidades que buscamos:",
-        "items": [
-          "Trabalho em Equipe",
-          "Teste Unitário e Integrado"
-        ]
-      }
-    ]
-  },
-  {
     "id": "lab-job-04",
     "code": "VG-0004",
     "createdByRecruiterId": "julio-fazenda-recruiter",
@@ -206,9 +9,9 @@
       "julio-fazenda-recruiter"
     ],
     "priority": "CURITIBA - PR",
-    "match": 50,
-    "talents": 32,
-    "radarCount": 32,
+    "match": 54,
+    "talents": 29,
+    "radarCount": 29,
     "ageLabel": "Agora",
     "postedLabel": "",
     "avatars": [
@@ -216,7 +19,7 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 29,
+    "extraCount": 26,
     "status": "ativas",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
@@ -432,20 +235,6 @@
         "availabilityLabel": "Disponibilidade imediata"
       },
       {
-        "id": "realtime-lab-job-04-53",
-        "name": "Yuri Castro",
-        "role": "Frontend Angular • CI&T",
-        "location": "Recife - PE",
-        "match": 87,
-        "minutesAgo": 57,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
         "id": "realtime-lab-job-04-95",
         "name": "Marcos Veiga",
         "role": "Fullstack Engineer • BRQ Digital Solutions",
@@ -474,11 +263,25 @@
         "availabilityLabel": "Disponibilidade imediata"
       },
       {
+        "id": "realtime-lab-job-04-53",
+        "name": "Yuri Castro",
+        "role": "Frontend Angular • CI&T",
+        "location": "Recife - PE",
+        "match": 86,
+        "minutesAgo": 57,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
         "id": "realtime-lab-job-04-93",
         "name": "Diego Rangel",
         "role": "Frontend React • Nubank",
         "location": "Recife - PE",
-        "match": 84,
+        "match": 85,
         "minutesAgo": 97,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
@@ -520,7 +323,7 @@
         "name": "Enzo Tavares",
         "role": "Software Engineer • Capgemini",
         "location": "Salvador - BA",
-        "match": 80,
+        "match": 81,
         "minutesAgo": 49,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
@@ -534,7 +337,7 @@
         "name": "Joao Vilar",
         "role": "Fullstack Engineer • BRQ Digital Solutions",
         "location": "Belo Horizonte - MG",
-        "match": 80,
+        "match": 81,
         "minutesAgo": 17,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
@@ -548,7 +351,7 @@
         "name": "Vanessa Nunes",
         "role": "Software Engineer • Capgemini",
         "location": "Brasília - DF",
-        "match": 80,
+        "match": 81,
         "minutesAgo": 28,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
@@ -562,22 +365,8 @@
         "name": "Vitor Aguiar",
         "role": "Mobile Platform • OLX Brasil",
         "location": "Florianópolis - SC",
-        "match": 79,
+        "match": 80,
         "minutesAgo": 41,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-04-23",
-        "name": "Eduardo Braga",
-        "role": "Frontend Angular • CI&T",
-        "location": "Belo Horizonte - MG",
-        "match": 78,
-        "minutesAgo": 27,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
         "stage": "radar",
@@ -600,12 +389,12 @@
         "availabilityLabel": "Disponibilidade imediata"
       },
       {
-        "id": "realtime-lab-job-04-42",
-        "name": "Livia Teixeira",
+        "id": "realtime-lab-job-04-23",
+        "name": "Eduardo Braga",
         "role": "Frontend Angular • CI&T",
-        "location": "São Paulo - SP",
-        "match": 68,
-        "minutesAgo": 46,
+        "location": "Belo Horizonte - MG",
+        "match": 70,
+        "minutesAgo": 27,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
         "stage": "radar",
@@ -618,22 +407,8 @@
         "name": "Danilo Amaral",
         "role": "Fullstack Engineer • BRQ Digital Solutions",
         "location": "Recife - PE",
-        "match": 65,
+        "match": 67,
         "minutesAgo": 69,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-04-2",
-        "name": "Thais Talento",
-        "role": "Frontend Angular • CI&T",
-        "location": "São Paulo - SP",
-        "match": 65,
-        "minutesAgo": 6,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
         "stage": "radar",
@@ -646,22 +421,8 @@
         "name": "Vinicius Marins",
         "role": "Mobile Platform • OLX Brasil",
         "location": "Florianópolis - SC",
-        "match": 64,
+        "match": 66,
         "minutesAgo": 51,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
-        "id": "realtime-lab-job-04-11",
-        "name": "Rafael Nogueira",
-        "role": "Frontend Angular • CI&T",
-        "location": "São Paulo - SP",
-        "match": 63,
-        "minutesAgo": 15,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
         "stage": "radar",
@@ -671,7 +432,7 @@
       }
     ],
     "createdAt": "2026-03-28T16:14:11.993Z",
-    "updatedAt": "2026-03-28T16:41:34.745Z",
+    "updatedAt": "2026-03-28T22:20:22.210Z",
     "title": "Frontend React Pleno",
     "company": "Nubank",
     "companyLogoUrl": "/assets/images/logo-nubank-roxinho.webp",
@@ -682,7 +443,7 @@
     "summary": "Profissional para evoluir jornadas web, sustentar arquitetura de frontend e acelerar entregas críticas junto ao time de produto.",
     "contractType": "CLT",
     "salaryRange": "R$ 9.500",
-    "radarAdherenceThreshold": 58,
+    "radarAdherenceThreshold": 63,
     "showSalaryRangeInCard": true,
     "allowCandidateSalarySuggestion": false,
     "benefits": [],
@@ -690,7 +451,7 @@
     "techStack": [
       {
         "name": "React",
-        "match": 51
+        "match": 68
       },
       {
         "name": "TypeScript",
@@ -713,7 +474,7 @@
       {
         "repoId": "repo:react",
         "name": "React",
-        "knowledge": 51,
+        "knowledge": 68,
         "description": ""
       },
       {
@@ -738,6 +499,203 @@
         "repoId": "repo:figma",
         "name": "Figma",
         "knowledge": 28,
+        "description": ""
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lab-job-06",
+    "code": "VG-0006",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "BRASÍLIA - DF",
+    "match": 63,
+    "talents": 6,
+    "radarCount": 6,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 3,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [
+      {
+        "id": "realtime-lab-job-06-42",
+        "name": "Livia Teixeira",
+        "role": "Frontend Angular • CI&T",
+        "location": "São Paulo - SP",
+        "match": 70,
+        "minutesAgo": 46,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-lab-job-06-2",
+        "name": "Thais Talento",
+        "role": "Frontend Angular • CI&T",
+        "location": "São Paulo - SP",
+        "match": 70,
+        "minutesAgo": 6,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-lab-job-06-22",
+        "name": "Amanda Silveira",
+        "role": "UI Engineer • Globo",
+        "location": "Recife - PE",
+        "match": 69,
+        "minutesAgo": 26,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-lab-job-06-83",
+        "name": "Breno Vieira",
+        "role": "UI Engineer • Globo",
+        "location": "Florianópolis - SC",
+        "match": 69,
+        "minutesAgo": 87,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-lab-job-06-73",
+        "name": "Pietro Pacheco",
+        "role": "Frontend Angular • CI&T",
+        "location": "Recife - PE",
+        "match": 69,
+        "minutesAgo": 77,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-lab-job-06-53",
+        "name": "Yuri Castro",
+        "role": "Frontend Angular • CI&T",
+        "location": "Recife - PE",
+        "match": 69,
+        "minutesAgo": 57,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      }
+    ],
+    "createdAt": "2026-03-28T16:12:11.993Z",
+    "updatedAt": "2026-03-28T21:57:28.583Z",
+    "title": "Fullstack Java + Angular",
+    "company": "Stefanini",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Brasília - DF",
+    "workModel": "Presencial",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir serviços e interfaces, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "salaryRange": "R$ 11.800",
+    "radarAdherenceThreshold": 69,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "benefits": [],
+    "hiringDocuments": [
+      "Certidão de Nascimento",
+      "Comprovante de Escolaridade"
+    ],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 67
+      },
+      {
+        "name": "Angular",
+        "match": 67
+      },
+      {
+        "name": "TypeScript",
+        "match": 58
+      },
+      {
+        "name": "AWS",
+        "match": 34
+      },
+      {
+        "name": "QA Automação",
+        "match": 74
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:java",
+        "name": "Java / Spring",
+        "knowledge": 67,
+        "description": ""
+      },
+      {
+        "repoId": "repo:angular",
+        "name": "Angular",
+        "knowledge": 67,
+        "description": ""
+      },
+      {
+        "repoId": "repo:typescript",
+        "name": "TypeScript",
+        "knowledge": 58,
+        "description": ""
+      },
+      {
+        "repoId": "repo:aws",
+        "name": "AWS",
+        "knowledge": 34,
+        "description": ""
+      },
+      {
+        "repoId": "repo:qa-automation",
+        "name": "QA Automação",
+        "knowledge": 74,
         "description": ""
       }
     ],
@@ -1215,20 +1173,6 @@
     "talentDocumentsConsentAccepted": false,
     "candidates": [
       {
-        "id": "realtime-lab-job-01-39",
-        "name": "Cesar Campos",
-        "role": "Backend .NET Senior • Itaú Unibanco",
-        "location": "São Paulo - SP",
-        "match": 98,
-        "minutesAgo": 43,
-        "status": "online",
-        "avatar": "/assets/avatars/avatar-default.svg",
-        "stage": "radar",
-        "radarOnly": true,
-        "source": "seed",
-        "availabilityLabel": "Disponibilidade imediata"
-      },
-      {
         "id": "realtime-lab-job-01-50",
         "name": "Nicole Antunes",
         "role": "Backend .NET Senior • Itaú Unibanco",
@@ -1333,6 +1277,20 @@
         "location": "São Paulo - SP",
         "match": 92,
         "minutesAgo": 14,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-lab-job-01-39",
+        "name": "Cesar Campos",
+        "role": "Tech Lead • Stefanini",
+        "location": "São Paulo - SP",
+        "match": 92,
+        "minutesAgo": 43,
         "status": "online",
         "avatar": "/assets/avatars/avatar-default.svg",
         "stage": "radar",

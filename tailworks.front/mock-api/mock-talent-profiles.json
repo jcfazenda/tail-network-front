@@ -8830,34 +8830,14 @@
           "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
-          "id": "repo:devops",
-          "name": "DevOps",
-          "short": "DevOps",
+          "id": "repo:react-native",
+          "name": "React Native",
+          "short": "React Native",
           "tone": "neutral",
-          "category": "other",
-          "knowledge": 67,
+          "category": "mobile",
+          "knowledge": 64,
           "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
-        {
-          "id": "repo:code-review",
-          "name": "Code Review",
-          "short": "Code Review",
-          "tone": "neutral",
-          "category": "other",
-          "knowledge": 65,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
-        },
-        {
-          "id": "repo:observabilidade",
-          "name": "Observabilidade",
-          "short": "Observabilidad",
-          "tone": "neutral",
-          "category": "other",
-          "knowledge": 65,
-          "description": "Média calculada automaticamente a partir das experiências do candidato."
-        }
-      ],
-      "extra": [
         {
           "id": "repo:arquitetura",
           "name": "Arquitetura",
@@ -8865,6 +8845,35 @@
           "tone": "neutral",
           "category": "other",
           "knowledge": 63,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:typescript",
+          "name": "TypeScript",
+          "short": "TypeScript",
+          "tone": "orange",
+          "category": "frontend",
+          "knowledge": 62,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        }
+      ],
+      "extra": [
+        {
+          "id": "repo:react",
+          "name": "React",
+          "short": "React",
+          "tone": "orange",
+          "category": "frontend",
+          "knowledge": 61,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:nodejs",
+          "name": "Node.js",
+          "short": "Node.js",
+          "tone": "gold",
+          "category": "backend",
+          "knowledge": 61,
           "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
@@ -8925,18 +8934,27 @@
             "description": ""
           },
           {
-            "name": "Code Review",
-            "knowledge": 93,
+            "repoId": "repo:react-native",
+            "name": "React Native",
+            "knowledge": 92,
             "description": ""
           },
           {
-            "name": "DevOps",
-            "knowledge": 96,
+            "repoId": "repo:react",
+            "name": "React",
+            "knowledge": 87,
             "description": ""
           },
           {
-            "name": "Observabilidade",
-            "knowledge": 93,
+            "repoId": "repo:typescript",
+            "name": "TypeScript",
+            "knowledge": 89,
+            "description": ""
+          },
+          {
+            "repoId": "repo:nodejs",
+            "name": "Node.js",
+            "knowledge": 87,
             "description": ""
           }
         ]

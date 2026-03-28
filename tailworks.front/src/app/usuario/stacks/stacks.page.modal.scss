@@ -80,6 +80,10 @@
   outline: none;
 }
 
+.candidate-stacks__modal-field input::placeholder{
+  color: var(--candidate-stacks-muted-soft);
+}
+
 .candidate-stacks__modal-field select{
   cursor: pointer;
 }

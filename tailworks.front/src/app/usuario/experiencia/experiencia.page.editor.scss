@@ -609,6 +609,15 @@
   flex-wrap: wrap;
 }
 
+.candidate-experience__experience-item-saved{
+  margin-right: auto;
+  align-self: center;
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .candidate-experience__helper{
   margin: 0;
   padding-left: 12px;

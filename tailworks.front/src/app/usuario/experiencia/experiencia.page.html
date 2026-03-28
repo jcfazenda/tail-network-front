@@ -323,6 +323,12 @@
                   </div>
 
                   <div class="candidate-experience__experience-item-description-actions">
+                    <span
+                      class="candidate-experience__experience-item-saved"
+                      *ngIf="savedResponsibilityIndex === (currentExperienceIndex ?? 0)"
+                    >
+                      Salvo
+                    </span>
                     <button
                       class="candidate-experience__modal-button candidate-experience__modal-button--ghost"
                       type="button"
