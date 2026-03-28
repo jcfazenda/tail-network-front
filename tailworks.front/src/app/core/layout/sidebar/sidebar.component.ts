@@ -12,6 +12,7 @@ import { TalentNotificationsFacade } from '../../facades/talent-notifications.fa
 import { SidebarVisibilityService } from './sidebar-visibility.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
 import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
+import { EcosystemFilterModalService } from '../ecosystem-filter-modal.service';
 
 type NavItem = { label: string; route: string; icon: string };
 type CandidateTreeItem = {
@@ -72,6 +73,7 @@ export class SidebarComponent {
   private readonly talentNotificationsFacade = inject(TalentNotificationsFacade);
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
+  private readonly ecosystemFilterModalService = inject(EcosystemFilterModalService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -86,7 +88,7 @@ export class SidebarComponent {
   filterState = '';
   filterStack = '';
   filterCode = '';
-  isFilterPopupOpen = false;
+  readonly isFilterPopupOpen = this.ecosystemFilterModalService.isOpen;
   private notificationModal: TalentNotification | null = null;
   private notificationsOpen = false;
   private confettiPieces: NotificationConfettiPiece[] = [];
@@ -569,11 +571,11 @@ export class SidebarComponent {
     this.filterCompany = filters.company;
     this.filterState = filters.state;
     this.filterStack = filters.stack;
-    this.isFilterPopupOpen = true;
+    this.ecosystemFilterModalService.open();
   }
 
   closeEcosystemFilters(): void {
-    this.isFilterPopupOpen = false;
+    this.ecosystemFilterModalService.close();
   }
 
   clearEcosystemFilters(): void {
@@ -609,7 +611,7 @@ export class SidebarComponent {
     this.notificationModal = null;
     this.notificationsOpen = false;
     this.confettiPieces = [];
-    this.isFilterPopupOpen = false;
+    this.ecosystemFilterModalService.close();
   }
 
   openNotificationPreview(notification: TalentNotification): void {
@@ -670,7 +672,7 @@ export class SidebarComponent {
 
   @HostListener('document:keydown.escape')
   handleEscape(): void {
-    if (this.isFilterPopupOpen) {
+    if (this.isFilterPopupOpen()) {
       this.closeEcosystemFilters();
       return;
     }

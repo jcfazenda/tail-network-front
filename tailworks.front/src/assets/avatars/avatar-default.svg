@@ -1,28 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Avatar">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e9eef5"/>
-      <stop offset="1" stop-color="#d9e2ee"/>
+      <stop offset="0" stop-color="#f4b25a"/>
+      <stop offset="0.52" stop-color="#d98936"/>
+      <stop offset="1" stop-color="#8a5426"/>
     </linearGradient>
-    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#c6d3e3"/>
-      <stop offset="1" stop-color="#b7c7dc"/>
+    <linearGradient id="orb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4da" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="portrait" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff7ef"/>
+      <stop offset="1" stop-color="#f5dcc9"/>
     </linearGradient>
   </defs>
 
-  <!-- Background -->
-  <circle cx="128" cy="128" r="124" fill="url(#bg)"/>
-  <circle cx="128" cy="128" r="124" fill="none" stroke="url(#ring)" stroke-width="4"/>
+  <rect width="256" height="256" rx="88" fill="url(#bg)"/>
+  <circle cx="84" cy="72" r="34" fill="url(#orb)"/>
+  <circle cx="186" cy="198" r="42" fill="#6c3f1d" opacity="0.28"/>
 
-  <!-- Silhouette -->
-  <circle cx="128" cy="104" r="44" fill="#8fa2bb" opacity="0.9"/>
-  <path
-    d="M48 222c12-44 44-72 80-72s68 28 80 72"
-    fill="#8fa2bb"
-    opacity="0.9"
-  />
+  <circle cx="128" cy="102" r="40" fill="url(#portrait)"/>
+  <path d="M58 214c11-39 38-64 70-64s59 25 70 64" fill="url(#portrait)"/>
 
-  <!-- Soft highlight -->
-  <circle cx="94" cy="86" r="18" fill="#ffffff" opacity="0.22"/>
+  <path d="M92 94c7-18 23-28 36-28s28 10 36 28c-8-6-21-9-36-9s-28 3-36 9Z" fill="#6d4322" opacity="0.82"/>
+  <rect x="76" y="174" width="104" height="18" rx="9" fill="#fff3de" opacity="0.18"/>
 </svg>
-

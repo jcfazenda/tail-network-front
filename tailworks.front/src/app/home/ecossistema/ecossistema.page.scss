@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #393939;
+  background: var(--bg);
   --eco-panel-bg: color-mix(in srgb, var(--card-strong) 84%, transparent);
   --eco-panel-border: var(--border);
   --eco-panel-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
@@ -25,6 +25,211 @@
 :host-context(body[data-theme='dark']) {
   --eco-panel-shadow: 0 28px 56px rgba(0, 0, 0, 0.24);
   --eco-side-panel-shadow: -8px 0 32px rgba(0, 0, 0, 0.28);
+}
+
+:host-context(body[data-theme='light']) {
+  --eco-panel-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
+  --eco-side-panel-shadow: -8px 0 28px rgba(15, 23, 42, 0.05);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-rail-inner{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.74), rgba(250,251,253,0.58)),
+    linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.12));
+  box-shadow: inset 0 0 0 1px rgba(16, 18, 22, 0.06);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-create{
+  color: #ffffff;
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-toolbar-action{
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(16, 18, 22, 0.74);
+  box-shadow: inset 0 0 0 1px rgba(16, 18, 22, 0.06);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-summary span,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-kicker-copy,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card-copy span,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card-metric span{
+  color: rgba(16, 18, 22, 0.54);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-summary strong,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-kicker span,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card-copy strong,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card-metric strong{
+  color: rgba(16, 18, 22, 0.92);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card{
+  background: rgba(255,255,255,0.58);
+  box-shadow: inset 0 0 0 1px rgba(16, 18, 22, 0.05);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card-avatar{
+  background: linear-gradient(180deg, rgba(233,238,245,0.98), rgba(204,212,223,0.94));
+  color: rgba(16, 18, 22, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(16,18,22,0.08);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-card-avatar--soft{
+  background: linear-gradient(180deg, rgba(214,149,99,0.34), rgba(255,255,255,0.86));
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__panel,
+:host-context(body[data-theme='light']) .ecosystem-desktop__panel--secondary{
+  background: linear-gradient(180deg, rgba(255,255,255,0.56) 0%, rgba(248,249,251,0.34) 100%);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__tool,
+:host-context(body[data-theme='light']) .ecosystem-desktop__panel-pill,
+:host-context(body[data-theme='light']) .ecosystem-desktop__signal-tabs,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-search,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-grid-row,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-page-control,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-page-track{
+  background: rgba(255,255,255,0.64);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__section-kicker span,
+:host-context(body[data-theme='light']) .ecosystem-desktop__stack-name,
+:host-context(body[data-theme='light']) .ecosystem-desktop__stack-value,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-tab--active,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-tab--active b,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-company-copy strong,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-title-copy strong,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-match strong{
+  color: rgba(16, 18, 22, 0.92);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__overview-copy,
+:host-context(body[data-theme='light']) .ecosystem-desktop__signal-target-label,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-board-head span,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-board-empty,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-search .material-symbols-rounded,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-company-copy small,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-title-copy small,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-model-prefix,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-avatar-extra,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-radar-empty,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-page-control,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-page-dot{
+  color: rgba(16, 18, 22, 0.58);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-search input{
+  color: rgba(16, 18, 22, 0.92);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-search input::placeholder{
+  color: rgba(16, 18, 22, 0.36);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-board-divider{
+  border-top-color: rgba(16, 18, 22, 0.14);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__signal-target-value{
+  color: rgba(16, 18, 22, 0.88);
+  background: rgba(255,255,255,0.8);
+  box-shadow: inset 0 0 0 1px rgba(16,18,22,0.08);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__signal-target-submit,
+:host-context(body[data-theme='light']) .ecosystem-desktop__signal-tab--active{
+  background: rgba(16,18,22,0.08);
+  color: rgba(16,18,22,0.84);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__signal-tab{
+  color: rgba(16,18,22,0.5);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-tab{
+  color: rgba(16,18,22,0.44);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-grid-header{
+  color: rgba(16,18,22,0.38);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-grid-cell{
+  color: rgba(16,18,22,0.84);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-company-logo{
+  background:
+    radial-gradient(120% 120% at 50% 18%, rgba(255,255,255,0.86), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(236,239,244,0.88));
+  box-shadow: inset 0 0 0 1px rgba(16,18,22,0.08);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-company-logo-fallback{
+  color: rgba(16,18,22,0.72);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__recruiter-avatar{
+  background:
+    radial-gradient(120% 120% at 50% 18%, rgba(255,255,255,0.94), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(223,228,235,0.98), rgba(198,206,216,0.94));
+  color: rgba(16, 18, 22, 0.8);
+  box-shadow:
+    0 0 0 2px rgba(67, 67, 67, 0.92),
+    inset 0 0 0 1px rgba(16,18,22,0.08);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__recruiter-copy strong{
+  color: rgba(16, 18, 22, 0.92);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__recruiter-copy span{
+  color: rgba(16, 18, 22, 0.58);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__recruiter-action{
+  background: rgba(255,255,255,0.72);
+  color: rgba(16, 18, 22, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(16,18,22,0.06);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-avatar,
+:host-context(body[data-theme='light']) .ecosystem-desktop__job-candidate-avatar{
+  background: linear-gradient(180deg, rgba(223,228,235,0.98), rgba(198,206,216,0.94));
+  color: rgba(16, 18, 22, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(16,18,22,0.08);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-avatar{
+  border-color: rgba(67, 67, 67, 0.92);
+  background: rgba(242,244,247,0.96);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-radar-separator,
+:host-context(body[data-theme='light']) .ecosystem-desktop__stack-divider{
+  background: rgba(16,18,22,0.08);
+  border-color: rgba(16,18,22,0.1);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__stack-track{
+  background: rgba(16, 18, 22, 0.12);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-match-bar{
+  background: rgba(16,18,22,0.12);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-action{
+  color: rgba(16,18,22,0.78);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__page-title{
+  color: rgba(16, 18, 22, 0.92);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__page-copy{
+  color: rgba(16, 18, 22, 0.58);
 }
 
 .ecosystem-desktop {
@@ -300,6 +505,12 @@
   align-content: start;
 }
 
+.ecosystem-desktop__candidate-card--job{
+  background:
+    linear-gradient(180deg, rgba(214, 149, 99, 0.12) 0%, rgba(167, 100, 50, 0.06) 100%),
+    linear-gradient(180deg, rgba(9, 71, 93, 0.88) 0%, rgba(99, 124, 132, 0.94) 100%);
+}
+
 .ecosystem-desktop__candidate-card-head{
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -311,12 +522,10 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
+  display: block;
   background: linear-gradient(180deg, rgba(255,255,255,0.26), rgba(255,255,255,0.08));
-  color: #f8fafc;
-  font-size: 14px;
-  font-weight: 800;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.96);
 }
 
 .ecosystem-desktop__candidate-copy{
@@ -329,6 +538,12 @@
   color: #f7f8fb;
   font-size: 14px;
   font-weight: 700;
+}
+
+.ecosystem-desktop__candidate-job-model{
+  color: rgba(245, 247, 251, 0.72);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .ecosystem-desktop__candidate-copy span,
@@ -365,11 +580,54 @@
   font-weight: 600;
 }
 
+.ecosystem-desktop__candidate-status-block small{
+  color: rgba(245, 247, 251, 0.72);
+  font-size: 12px;
+}
+
 .ecosystem-desktop__candidate-row,
 .ecosystem-desktop__candidate-stack-row{
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.ecosystem-desktop__candidate-avatars{
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.ecosystem-desktop__candidate-avatar-stack{
+  width: 38px;
+  height: 38px;
+  margin-left: -10px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.96);
+  background: linear-gradient(180deg, rgba(225, 229, 235, 0.9), rgba(188, 197, 208, 0.88));
+  filter: grayscale(1) saturate(0.08) contrast(0.92);
+}
+
+.ecosystem-desktop__candidate-avatar-stack--fallback{
+  display: inline-grid;
+  place-items: center;
+  color: rgba(16, 18, 22, 0.68);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.ecosystem-desktop__candidate-avatar-stack:first-child{
+  margin-left: 0;
+}
+
+.ecosystem-desktop__candidate-avatar-extra{
+  margin-left: 10px;
+  color: rgba(245, 247, 251, 0.72);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .ecosystem-desktop__candidate-summary{
@@ -431,9 +689,34 @@
 .ecosystem-desktop__chip-row{
   grid-column: 1 / -1;
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 16px;
   width: 100%;
+}
+
+.ecosystem-desktop__page-title-block{
+  display: grid;
+  gap: 8px;
+  max-width: 860px;
+  margin-top: 10px;
+  padding-left: 10px;
+}
+
+.ecosystem-desktop__page-title{
+  color: #f7f8fb;
+  font-size: clamp(36px, 4vw, 52px);
+  line-height: 0.98;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.ecosystem-desktop__page-copy{
+  margin: 0;
+  color: rgba(245, 247, 251, 0.62);
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
 }
 
 .ecosystem-desktop__recruiter-chip{
@@ -453,20 +736,21 @@
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  display: grid;
-  place-items: center;
+  overflow: hidden;
   background:
     radial-gradient(120% 120% at 50% 18%, rgba(255,255,255,0.24), rgba(255,255,255,0)),
     linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
   color: #f5f7fb;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.96),
+    inset 0 0 0 1px rgba(255,255,255,0.12);
 }
 
-.ecosystem-desktop__recruiter-avatar span{
-  font-size: 18px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: 0.03em;
+.ecosystem-desktop__recruiter-avatar img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .ecosystem-desktop__recruiter-copy{
@@ -795,11 +1079,18 @@
   padding: 8px 0 0;
 }
 
+.ecosystem-desktop__jobs-board-divider{
+  height: 0;
+  margin: 12px 0 10px;
+  border-top: 1px dashed rgba(245, 247, 251, 0.16);
+}
+
 .ecosystem-desktop__jobs-board-head{
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding: 10px 0 16px;
 }
 
 .ecosystem-desktop__jobs-board-head span,
@@ -948,6 +1239,12 @@
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
 }
 
+.ecosystem-desktop__jobs-company-logo--side{
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+}
+
 .ecosystem-desktop__jobs-company-logo-image{
   width: 100%;
   height: 100%;
@@ -1089,17 +1386,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  padding-left: 8px;
+  min-width: 156px;
+  padding-left: 12px;
+  isolation: isolate;
 }
 
 .ecosystem-desktop__jobs-avatar{
-  width: 38px;
-  height: 38px;
-  margin-left: -12px;
+  width: 40px;
+  height: 40px;
+  margin-left: -14px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(57, 57, 57, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.96);
   background: rgba(255, 255, 255, 0.08);
+  flex: 0 0 auto;
+}
+
+.ecosystem-desktop__jobs-avatar--fallback{
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(225, 229, 235, 0.9), rgba(188, 197, 208, 0.88));
+  color: rgba(16, 18, 22, 0.68);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  filter: none;
 }
 
 .ecosystem-desktop__jobs-avatar:first-child{
@@ -1167,10 +1478,10 @@
 
 .ecosystem-desktop__jobs-match-bar{
   width: 116px;
-  height: 8px;
+  height: 5px;
   overflow: hidden;
   border-radius: 999px;
-  background: #5a5a5a;
+  background: rgba(245, 247, 251, 0.12);
   display: block;
   flex: 0 0 auto;
 }
@@ -1178,7 +1489,7 @@
 .ecosystem-desktop__jobs-match-bar-fill{
   height: 100%;
   border-radius: inherit;
-  background: #a76432;
+  background: linear-gradient(90deg, rgba(156, 90, 23, 0.92) 0%, rgba(200, 116, 25, 0.88) 52%, rgba(241, 178, 32, 0.84) 100%);
   display: block;
 }
 
@@ -2110,7 +2421,7 @@
   height: 68px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid color-mix(in srgb, var(--eco-surface-bg) 100%, transparent);
+  border: 2px solid rgba(255, 255, 255, 0.96);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 

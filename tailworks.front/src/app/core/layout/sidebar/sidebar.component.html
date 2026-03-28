@@ -320,46 +320,63 @@
 </div>
 
 <div
-  *ngIf="isFilterPopupOpen"
+  *ngIf="isFilterPopupOpen()"
   class="sidebarOverlay"
   (click)="closeEcosystemFilters()"
 >
   <section class="sidebarFilterModal" (click)="$event.stopPropagation()">
     <div class="sidebarFilterModal__head">
-      <strong>Filtrar</strong>
+      <div class="sidebarFilterModal__headCopy">
+        <span class="sidebarFilterModal__eyebrow">Refinar busca</span>
+        <p>Encontre vagas por código, empresa, estado ou stack sem sair do fluxo atual.</p>
+      </div>
       <button class="sidebarFilterModal__close" type="button" (click)="closeEcosystemFilters()">
         <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
     </div>
 
-    <label class="sidebarFilterModal__field">
-      <span>Código da vaga</span>
-      <input [(ngModel)]="filterCode" type="text" placeholder="VG-0001" />
-    </label>
+    <div class="sidebarFilterModal__body">
+      <label class="sidebarFilterModal__field sidebarFilterModal__field--full">
+        <span>Código da vaga</span>
+        <div class="sidebarFilterModal__control">
+          <span class="material-symbols-rounded" aria-hidden="true">tag</span>
+          <input [(ngModel)]="filterCode" type="text" placeholder="VG-0001" />
+        </div>
+      </label>
 
-    <label class="sidebarFilterModal__field">
-      <span>Empresa</span>
-      <select [(ngModel)]="filterCompany">
-        <option value="">Todas</option>
-        <option *ngFor="let company of ecosystemCompanies" [value]="company">{{ company }}</option>
-      </select>
-    </label>
+      <label class="sidebarFilterModal__field">
+        <span>Empresa</span>
+        <div class="sidebarFilterModal__control">
+          <span class="material-symbols-rounded" aria-hidden="true">business</span>
+          <select [(ngModel)]="filterCompany">
+            <option value="">Todas</option>
+            <option *ngFor="let company of ecosystemCompanies" [value]="company">{{ company }}</option>
+          </select>
+        </div>
+      </label>
 
-    <label class="sidebarFilterModal__field">
-      <span>Estado</span>
-      <select [(ngModel)]="filterState">
-        <option value="">Todos</option>
-        <option *ngFor="let state of ecosystemStates" [value]="state">{{ state }}</option>
-      </select>
-    </label>
+      <label class="sidebarFilterModal__field">
+        <span>Estado</span>
+        <div class="sidebarFilterModal__control">
+          <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+          <select [(ngModel)]="filterState">
+            <option value="">Todos</option>
+            <option *ngFor="let state of ecosystemStates" [value]="state">{{ state }}</option>
+          </select>
+        </div>
+      </label>
 
-    <label class="sidebarFilterModal__field">
-      <span>Stack</span>
-      <select [(ngModel)]="filterStack">
-        <option value="">Todas</option>
-        <option *ngFor="let stack of ecosystemStacks" [value]="stack">{{ stack }}</option>
-      </select>
-    </label>
+      <label class="sidebarFilterModal__field sidebarFilterModal__field--full">
+        <span>Stack</span>
+        <div class="sidebarFilterModal__control">
+          <span class="material-symbols-rounded" aria-hidden="true">deployed_code</span>
+          <select [(ngModel)]="filterStack">
+            <option value="">Todas</option>
+            <option *ngFor="let stack of ecosystemStacks" [value]="stack">{{ stack }}</option>
+          </select>
+        </div>
+      </label>
+    </div>
 
     <div class="sidebarFilterModal__divider" aria-hidden="true"></div>
 

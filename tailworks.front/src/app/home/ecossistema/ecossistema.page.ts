@@ -14,6 +14,7 @@ import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { TalentDirectoryService } from '../../talent/talent-directory.service';
 import { MatchingLabService } from '../../core/matching-lab/matching-lab.service';
 import { EcosystemJobFiltersService } from '../../core/layout/ecosystem-job-filters.service';
+import { EcosystemFilterModalService } from '../../core/layout/ecosystem-filter-modal.service';
 import { EcosystemViewFilterService } from '../../core/layout/ecosystem-view-filter.service';
 import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab/matching-lab.models';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
@@ -111,7 +112,7 @@ type SideRailCandidateCard = {
   adherenceTone: 'high' | 'medium' | 'low';
   summary: string;
   stacks: string[];
-  initials: string;
+  avatarUrl: string;
 };
 
 @Component({
@@ -123,6 +124,7 @@ type SideRailCandidateCard = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EcossistemaPage implements AfterViewInit, OnDestroy {
+  readonly fallbackAvatarUrl = '/assets/avatars/john-doe.jpeg';
   private readonly authFacade = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly jobsFacade = inject(JobsFacade);
@@ -135,6 +137,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly matchingLabService = inject(MatchingLabService);
   private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
+  private readonly ecosystemFilterModalService = inject(EcosystemFilterModalService);
   private readonly ecosystemViewFilterService = inject(EcosystemViewFilterService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -593,6 +596,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  openEcosystemFilters(): void {
+    this.ecosystemFilterModalService.open();
+  }
+
   get ecoFilteredJobs(): MockJobRecord[] {
     const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
     const filters = this.ecosystemJobFiltersService.filters();
@@ -989,7 +996,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         adherence: 91,
         summary: 'Bom repertorio em discovery, fluxo mobile e handoff com squads de produto.',
         stacks: ['.NET', 'Angular'],
-        initials: 'AT',
+        avatarUrl: this.fallbackAvatarUrl,
       },
       {
         name: 'Elon Morrening',
@@ -999,7 +1006,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         adherence: 87,
         summary: 'Perfil consistente para produto digital, boa leitura de negocio e interface.',
         stacks: ['Figma', 'Angular'],
-        initials: 'EM',
+        avatarUrl: this.fallbackAvatarUrl,
       },
       {
         name: 'Julia Ferraz',
@@ -1009,7 +1016,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         adherence: 78,
         summary: 'Boa maturidade de produto, domina rituais com squad e jornada ponta a ponta.',
         stacks: ['Figma', 'Design System'],
-        initials: 'JF',
+        avatarUrl: this.fallbackAvatarUrl,
       },
       {
         name: 'Rafael Nunes',
@@ -1019,7 +1026,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         adherence: 72,
         summary: 'Boa base de componentizacao e leitura de codigo, ainda evoluindo em arquitetura.',
         stacks: ['Angular', 'TypeScript'],
-        initials: 'RN',
+        avatarUrl: this.fallbackAvatarUrl,
       },
       {
         name: 'Marina Costa',
@@ -1029,7 +1036,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         adherence: 63,
         summary: 'Perfil util para sustentacao e APIs, aderencia parcial ao stack principal da vaga.',
         stacks: ['.NET', 'SQL'],
-        initials: 'MC',
+        avatarUrl: this.fallbackAvatarUrl,
       },
       {
         name: 'Pedro Alves',
@@ -1039,7 +1046,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         adherence: 54,
         summary: 'Tem boa disciplina de processo, mas ainda com pouca profundidade nas stacks-chave.',
         stacks: ['Cypress', 'Postman'],
-        initials: 'PA',
+        avatarUrl: this.fallbackAvatarUrl,
       },
     ];
 
@@ -1323,14 +1330,23 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   jobCompanyLogoLabel(job: MockJobRecord): string {
-    const initials = job.company
+    const initial = job.company
       .split(/\s+/)
       .filter(Boolean)
-      .slice(0, 2)
       .map((part) => part.charAt(0))
-      .join('');
+      .find(Boolean);
 
-    return (initials || job.company.slice(0, 2)).toUpperCase();
+    return (initial || job.company.slice(0, 1)).toUpperCase();
+  }
+
+  personInitials(name: string): string {
+    const initial = name
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0))
+      .find(Boolean);
+
+    return (initial || name.slice(0, 1)).toUpperCase();
   }
 
   jobCardWorkModel(job: MockJobRecord): string {
@@ -1427,6 +1443,28 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       .map((candidate) => candidate.avatar?.trim())
       .filter((avatar): avatar is string => !!avatar)
       .slice(0, 4);
+  }
+
+  jobInteractionAvatarBadges(job: MockJobRecord): Array<{ src: string; label: string }> {
+    const candidates = (!this.isTalentEcosystemMode && this.ecoFilter === 'radar')
+      ? this.buildRadarPanelCandidates(job)
+      : this.sortedCandidatesForPanel(job);
+
+    const candidateBadges = candidates
+      .slice(0, 4)
+      .map((candidate) => ({
+        src: this.resolveAvatar(candidate.avatar),
+        label: this.personInitials(candidate.name),
+      }));
+
+    if (candidateBadges.length) {
+      return candidateBadges;
+    }
+
+    return (job.avatars ?? [])
+      .map((avatar) => this.resolveAvatar(avatar))
+      .slice(0, 4)
+      .map((avatar) => ({ src: avatar, label: 'TW' }));
   }
 
   jobInteractionExtraCount(job: MockJobRecord): number {
@@ -2301,6 +2339,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   trackByTalentCompatibleJob(_index: number, item: TalentCompatibleJobView): string {
     return item.job.id;
+  }
+
+  private hasRealAvatar(avatar: string | undefined): boolean {
+    const value = avatar?.trim() ?? '';
+    return !!value && !value.endsWith('/assets/avatars/avatar-default.svg');
+  }
+
+  private resolveAvatar(avatar: string | undefined): string {
+    return this.hasRealAvatar(avatar) ? avatar!.trim() : this.fallbackAvatarUrl;
   }
 
   private radarTone(value: number): { dark: { r: number; g: number; b: number }; mid: { r: number; g: number; b: number }; light: { r: number; g: number; b: number } } {

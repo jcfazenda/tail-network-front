@@ -1,9 +1,17 @@
 <main class="ecosystem-desktop">
   <section class="ecosystem-desktop__shell">
     <div class="ecosystem-desktop__chip-row">
+      <div class="ecosystem-desktop__page-title-block">
+        <div class="ecosystem-desktop__page-title">Ecossistema</div>
+        <p class="ecosystem-desktop__page-copy">
+          Visualize o pulso do mercado em um unico lugar: vagas abertas, stacks mais exigidas, aderencia media esperada e o ritmo real
+          das contratacoes que estao movimentando o ecossistema agora.
+        </p>
+      </div>
+
       <div class="ecosystem-desktop__recruiter-chip">
         <div class="ecosystem-desktop__recruiter-avatar">
-          <span>{{ recruiterPanelDisplayName.slice(0, 1) }}</span>
+          <img [src]="fallbackAvatarUrl" [alt]="recruiterPanelDisplayName" />
         </div>
         <div class="ecosystem-desktop__recruiter-copy">
           <strong>{{ recruiterPanelDisplayName }}</strong>
@@ -13,9 +21,6 @@
           <span class="material-symbols-rounded" aria-hidden="true">tune</span>
         </button>
       </div>
-
-      <div class="ecosystem-desktop__ghost-chip" aria-hidden="true"></div>
-      <div class="ecosystem-desktop__ghost-chip ecosystem-desktop__ghost-chip--right" aria-hidden="true"></div>
     </div>
     <section class="ecosystem-desktop__panel">
       <div class="ecosystem-desktop__panel-head">
@@ -136,6 +141,8 @@
     </section>
 
     <section class="ecosystem-desktop__jobs-board">
+      <div class="ecosystem-desktop__jobs-board-divider" aria-hidden="true"></div>
+
       <div class="ecosystem-desktop__jobs-board-head">
         <div class="ecosystem-desktop__jobs-tabs" role="tablist" aria-label="Filtros do dashboard">
           <button
@@ -231,12 +238,9 @@
           <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--radar">
             <div class="ecosystem-desktop__jobs-radar-pack" *ngIf="jobInteractionAvatars(job).length; else noRadarAvatars">
               <div class="ecosystem-desktop__jobs-avatars">
-                <img
-                  *ngFor="let avatar of jobInteractionAvatars(job)"
-                  class="ecosystem-desktop__jobs-avatar"
-                  [src]="avatar"
-                  alt=""
-                />
+                <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job)">
+                  <img class="ecosystem-desktop__jobs-avatar" [src]="badge.src" [alt]="badge.label" />
+                </ng-container>
                 <span class="ecosystem-desktop__jobs-avatar-extra" *ngIf="jobBoardRadarExtraCount(job) > 0">
                   +{{ jobBoardRadarExtraCount(job) }}
                 </span>
@@ -338,7 +342,7 @@
         </button>
 
         <div class="ecosystem-desktop__side-toolbar-actions">
-          <button class="ecosystem-desktop__side-toolbar-action" type="button" aria-label="Filtrar vagas">
+          <button class="ecosystem-desktop__side-toolbar-action" type="button" aria-label="Filtrar vagas" (click)="openEcosystemFilters()">
             <span class="material-symbols-rounded" aria-hidden="true">filter_alt</span>
           </button>
           <button class="ecosystem-desktop__side-toolbar-action" type="button" aria-label="Buscar vagas">
@@ -359,19 +363,52 @@
       </p>
 
       <div class="ecosystem-desktop__side-spotlights">
-        <article class="ecosystem-desktop__side-card" *ngFor="let job of sideRailRecentJobs; trackBy: trackByJob">
-          <div class="ecosystem-desktop__side-card-head">
-            <div class="ecosystem-desktop__side-card-avatar">
-              {{ job.company.slice(0, 1).toUpperCase() }}
+        <article class="ecosystem-desktop__candidate-card ecosystem-desktop__candidate-card--job" *ngIf="sideRailRecentJobs[0] as job">
+          <div class="ecosystem-desktop__candidate-card-head">
+            <div class="ecosystem-desktop__jobs-company-logo ecosystem-desktop__jobs-company-logo--side">
+              <img
+                *ngIf="jobCompanyLogoUrl(job); else sideCompanyInitials"
+                class="ecosystem-desktop__jobs-company-logo-image"
+                [src]="jobCompanyLogoUrl(job)"
+                [alt]="job.company"
+                (error)="markCompanyLogoAsBroken(job.id)"
+              />
+              <ng-template #sideCompanyInitials>
+                <span class="ecosystem-desktop__jobs-company-logo-fallback">{{ jobCompanyLogoLabel(job) }}</span>
+              </ng-template>
             </div>
-            <div class="ecosystem-desktop__side-card-copy">
-              <strong>{{ job.title }}</strong>
-              <span>{{ job.company }}</span>
+            <div class="ecosystem-desktop__candidate-copy">
+              <strong>
+                {{ job.title }}
+                <span class="ecosystem-desktop__candidate-job-model">- {{ jobCardWorkModel(job) }}</span>
+              </strong>
+              <span>{{ jobCardLocation(job) }}</span>
             </div>
+            <button class="ecosystem-desktop__candidate-card-action" type="button" aria-label="Abrir vaga">
+              <span class="material-symbols-rounded" aria-hidden="true">work</span>
+            </button>
           </div>
-          <div class="ecosystem-desktop__side-card-metric">
-            <span>{{ jobCardWorkModel(job) }} · aderencia aproximada da meta</span>
-            <strong>{{ job.match }}%</strong>
+
+          <div class="ecosystem-desktop__candidate-status-block">
+            <strong>{{ job.company }}</strong>
+            <small>{{ jobCardSalary(job) || 'R$ a combinar' }}</small>
+          </div>
+
+          <span class="ecosystem-desktop__candidate-dotted-line" aria-hidden="true"></span>
+
+          <div class="ecosystem-desktop__candidate-stack-row">
+            <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
+            <div class="ecosystem-desktop__candidate-avatars" *ngIf="jobInteractionAvatarBadges(job).length; else noRecentJobAvatars">
+              <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job)">
+                <img class="ecosystem-desktop__candidate-avatar-stack" [src]="badge.src" [alt]="badge.label" />
+              </ng-container>
+              <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="jobBoardRadarExtraCount(job) > 0">
+                +{{ jobBoardRadarExtraCount(job) }}
+              </span>
+            </div>
+            <ng-template #noRecentJobAvatars>
+              <span class="ecosystem-desktop__candidate-chip ecosystem-desktop__candidate-chip--low">Sem radar</span>
+            </ng-template>
           </div>
         </article>
       </div>
@@ -394,7 +431,7 @@
       >
         <article class="ecosystem-desktop__candidate-card" *ngFor="let candidate of sideRailCandidateCards">
           <div class="ecosystem-desktop__candidate-card-head">
-            <div class="ecosystem-desktop__candidate-avatar">{{ candidate.initials }}</div>
+            <img class="ecosystem-desktop__candidate-avatar" [src]="candidate.avatarUrl" [alt]="candidate.name" />
             <div class="ecosystem-desktop__candidate-copy">
               <strong>{{ candidate.name }}</strong>
               <span>{{ candidate.role }}</span>
@@ -442,7 +479,7 @@
     <div class="job-side-panel__profile">
       <div class="job-side-panel__avatar-wrap">
         <img
-          src="/assets/avatars/avatar-default.svg"
+          [src]="fallbackAvatarUrl"
           [alt]="recruiterPanelDisplayName"
           class="job-side-panel__avatar"
         />
