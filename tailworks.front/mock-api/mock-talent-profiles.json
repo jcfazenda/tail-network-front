@@ -8808,8 +8808,8 @@
           "short": ".NET / C#",
           "tone": "gold",
           "category": "backend",
-          "knowledge": 96,
-          "description": "Dominio declarado em .NET / C# com foco em compatibilidade de radar."
+          "knowledge": 97,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
           "id": "repo:azure",
@@ -8817,8 +8817,8 @@
           "short": "Azure",
           "tone": "azure",
           "category": "cloud",
-          "knowledge": 85,
-          "description": "Dominio declarado em Azure com foco em compatibilidade de radar."
+          "knowledge": 89,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
           "id": "repo:docker",
@@ -8826,28 +8826,64 @@
           "short": "Docker",
           "tone": "neutral",
           "category": "devops",
-          "knowledge": 74,
-          "description": "Dominio declarado em Docker com foco em compatibilidade de radar."
+          "knowledge": 80,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:devops",
+          "name": "DevOps",
+          "short": "DevOps",
+          "tone": "neutral",
+          "category": "other",
+          "knowledge": 67,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:code-review",
+          "name": "Code Review",
+          "short": "Code Review",
+          "tone": "neutral",
+          "category": "other",
+          "knowledge": 65,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:observabilidade",
+          "name": "Observabilidade",
+          "short": "Observabilidad",
+          "tone": "neutral",
+          "category": "other",
+          "knowledge": 65,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         }
       ],
       "extra": [
         {
-          "id": "repo:sql-server",
-          "name": "SQL / Dados",
-          "short": "SQL / Dados",
+          "id": "repo:arquitetura",
+          "name": "Arquitetura",
+          "short": "Arquitetura",
           "tone": "neutral",
-          "category": "database",
-          "knowledge": 51,
-          "description": "Dominio declarado em SQL / Dados com foco em compatibilidade de radar."
+          "category": "other",
+          "knowledge": 63,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
-          "id": "repo:kubernetes",
-          "name": "Kubernetes",
-          "short": "Kubernetes",
+          "id": "repo:liderança-técnica",
+          "name": "Liderança técnica",
+          "short": "Liderança técn",
           "tone": "neutral",
-          "category": "devops",
-          "knowledge": 48,
-          "description": "Dominio declarado em Kubernetes com foco em compatibilidade de radar."
+          "category": "other",
+          "knowledge": 60,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:sql-server",
+          "name": "SQL",
+          "short": "SQL",
+          "tone": "gold",
+          "category": "database",
+          "knowledge": 51,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
           "id": "repo:java",
@@ -8856,14 +8892,57 @@
           "tone": "gold",
           "category": "backend",
           "knowledge": 21,
-          "description": "Dominio declarado em Java / Spring com foco em compatibilidade de radar."
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         }
       ]
     },
     "experiencesDraft": [
       {
+        "id": "exp-1774734763928-nojpb3",
+        "company": "Stefanini",
+        "role": "Tech Lead",
+        "workModel": "Híbrido",
+        "startMonth": "Jan",
+        "startYear": "2026",
+        "endMonth": "Jan",
+        "endYear": "2026",
+        "currentlyWorkingHere": false,
+        "responsibilities": "",
+        "positionLevel": "Júnior",
+        "companySize": "Startup",
+        "companySegment": "Banco",
+        "sector": "Tecnologia",
+        "actuation": 70,
+        "appliedStacks": [
+          {
+            "name": "Arquitetura",
+            "knowledge": 90,
+            "description": ""
+          },
+          {
+            "name": "Liderança técnica",
+            "knowledge": 86,
+            "description": ""
+          },
+          {
+            "name": "Code Review",
+            "knowledge": 93,
+            "description": ""
+          },
+          {
+            "name": "DevOps",
+            "knowledge": 96,
+            "description": ""
+          },
+          {
+            "name": "Observabilidade",
+            "knowledge": 93,
+            "description": ""
+          }
+        ]
+      },
+      {
         "id": "backend-dotnet-exp-38-0",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Remoto",
@@ -8897,11 +8976,11 @@
             "knowledge": 74,
             "description": "Uso prático de Docker em contexto real."
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       },
       {
         "id": "backend-dotnet-exp-38-1",
-        "companyId": "accenture",
         "company": "Accenture",
         "role": "Software Engineer",
         "workModel": "Presencial",
@@ -8929,11 +9008,11 @@
             "knowledge": 51,
             "description": "Uso prático de SQL / Dados em contexto real."
           }
-        ]
+        ],
+        "companyId": "accenture"
       },
       {
         "id": "backend-dotnet-exp-38-2",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Híbrido",
@@ -8952,26 +9031,26 @@
           {
             "repoId": "repo:dotnet",
             "name": ".NET / C#",
-            "knowledge": 96,
+            "knowledge": 99,
             "description": "Uso prático de .NET / C# em contexto real."
           },
           {
             "repoId": "repo:azure",
             "name": "Azure",
-            "knowledge": 85,
+            "knowledge": 99,
             "description": "Uso prático de Azure em contexto real."
           },
           {
             "repoId": "repo:docker",
             "name": "Docker",
-            "knowledge": 74,
+            "knowledge": 97,
             "description": "Uso prático de Docker em contexto real."
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       },
       {
         "id": "backend-dotnet-exp-38-3",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Remoto",
@@ -9011,7 +9090,8 @@
             "knowledge": 21,
             "description": "Uso prático de Java / Spring em contexto real."
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       }
     ]
   },

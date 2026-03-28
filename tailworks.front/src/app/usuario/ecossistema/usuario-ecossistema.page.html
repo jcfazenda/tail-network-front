@@ -207,7 +207,7 @@
         </label>
       </div>
 
-      <div class="ecosystem-desktop__jobs-grid-table" *ngIf="ecoFilteredJobs.length; else emptyBoard">
+      <div class="ecosystem-desktop__jobs-grid-table" *ngIf="ecoGridJobs.length; else emptyBoard">
         <div class="ecosystem-desktop__jobs-grid-header">
           <span></span>
           <span></span>
@@ -355,7 +355,7 @@
 
       <ng-template #emptyBoard>
         <div class="ecosystem-desktop__jobs-board-empty">
-          Nenhuma vaga ativa neste recorte.
+          {{ ecoEmptyTitle }}
         </div>
       </ng-template>
     </section>

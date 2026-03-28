@@ -51,6 +51,7 @@ export interface CoreMatchSpotlightViewModel {
   avatar: string;
   candidateName: string;
   candidateMeta: string;
+  candidateEmail: string;
   candidateRole: string;
   score: number;
   scoreBarPercent: number;
@@ -76,4 +77,13 @@ export interface CoreMatchSpotlightViewModel {
 export class CoreMatchSpotlightComponent {
   @Input({ required: true }) viewModel!: CoreMatchSpotlightViewModel;
   @Output() loginAs = new EventEmitter<void>();
+
+  copyCandidateEmail(): void {
+    const email = this.viewModel.candidateEmail?.trim();
+    if (!email || typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      return;
+    }
+
+    void navigator.clipboard.writeText(email);
+  }
 }

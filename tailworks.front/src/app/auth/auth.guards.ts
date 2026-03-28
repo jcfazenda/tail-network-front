@@ -31,15 +31,19 @@ export const talentAuthGuard: CanActivateFn = (_route, state) => {
     });
   }
 
-  if (authService.canUseTalent()) {
+  const session = authService.getSession();
+  const isTalentOnlySession = !!session && authService.canUseTalent() && !authService.canUseRecruiter();
+
+  if (isTalentOnlySession) {
     return true;
   }
 
-  if (authService.canUseRecruiter() && authService.activateRecruiterWorkspace()) {
-    return router.createUrlTree(['/radar']);
-  }
-
-  return router.createUrlTree(['/home']);
+  authService.logout();
+  return router.createUrlTree(['/login'], {
+    queryParams: {
+      returnUrl: state.url,
+    },
+  });
 };
 
 export const recruiterManageDirectoryGuard: CanActivateFn = () => {

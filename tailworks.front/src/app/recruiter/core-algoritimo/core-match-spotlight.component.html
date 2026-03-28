@@ -6,6 +6,12 @@
       <div class="core-match-spotlight__candidate-copy">
         <strong>{{ viewModel.candidateName }}</strong>
         <span>{{ viewModel.candidateMeta }}</span>
+        <div class="core-match-spotlight__candidate-email-row">
+          <small class="core-match-spotlight__candidate-email">{{ viewModel.candidateEmail }}</small>
+          <button class="core-match-spotlight__copy-email" type="button" (click)="copyCandidateEmail()" aria-label="Copiar email do candidato">
+            <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
+          </button>
+        </div>
       </div>
     </div>
 

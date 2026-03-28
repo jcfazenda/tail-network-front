@@ -569,6 +569,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
       avatar: this.initials(entry.candidate.name),
       candidateName: entry.candidate.name,
       candidateMeta: `${entry.candidate.location} , ${entry.candidate.seniority}`,
+      candidateEmail: this.candidateEmail(entry),
       candidateRole: entry.candidate.summary,
       score: entry.score,
       scoreBarPercent: entry.score,

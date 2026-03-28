@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   z-index: 30;
-  background: rgba(15, 23, 42, 0.28);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
   backdrop-filter: blur(6px);
   display: grid;
   place-items: center;
@@ -11,10 +11,10 @@
 
 .candidate-stacks__modal{
   width: min(100%, 820px);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--candidate-stacks-surface);
   border: 1px solid var(--border);
   border-radius: 20px;
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 28px 60px color-mix(in srgb, var(--text) 18%, transparent);
   display: grid;
 }
 
@@ -24,13 +24,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid var(--candidate-stacks-divider);
 }
 
 .candidate-stacks__modal-title{
   margin: 0;
   padding-left: 4px;
-  color: #1f2937;
+  color: var(--candidate-stacks-text);
   font-size: 18px;
   line-height: 1.1;
 }
@@ -63,7 +63,7 @@
   padding-left: 4px;
   font-size: 12px;
   font-weight: 700;
-  color: rgba(15, 23, 42, 0.62);
+  color: var(--candidate-stacks-muted);
 }
 
 .candidate-stacks__modal-field input,
@@ -73,8 +73,8 @@
   padding: 0 14px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--card-strong);
-  color: #1f2937;
+  background: var(--candidate-stacks-surface);
+  color: var(--candidate-stacks-text);
   font: inherit;
   font-size: 13px;
   outline: none;
@@ -87,7 +87,7 @@
 .candidate-stacks__modal-static{
   display: flex;
   align-items: center;
-  color: rgba(15, 23, 42, 0.68);
+  color: var(--candidate-stacks-muted);
 }
 
 .candidate-stacks__modal-field input:focus{
@@ -103,7 +103,7 @@
 .candidate-stacks__editor{
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--candidate-stacks-surface-soft);
   overflow: hidden;
 }
 
@@ -113,8 +113,8 @@
   gap: 6px;
   flex-wrap: wrap;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(248, 243, 236, 0.72);
+  border-bottom: 1px solid var(--candidate-stacks-divider);
+  background: color-mix(in srgb, var(--accent-soft) 72%, var(--candidate-stacks-surface-soft));
 }
 
 .candidate-stacks__editor-tool{
@@ -138,7 +138,7 @@
 .candidate-stacks__editor-surface{
   min-height: 260px;
   padding: 16px 18px;
-  color: #1f2937;
+  color: var(--candidate-stacks-text);
   font-size: 14px;
   line-height: 1.7;
   outline: none;
@@ -147,7 +147,7 @@
 
 .candidate-stacks__editor-surface:empty::before{
   content: attr(data-placeholder);
-  color: rgba(15, 23, 42, 0.34);
+  color: var(--candidate-stacks-muted-soft);
 }
 
 .candidate-stacks__editor-surface :where(p, ul, ol){
@@ -165,7 +165,7 @@
 }
 
 .candidate-stacks__editor-count{
-  color: rgba(15, 23, 42, 0.48);
+  color: var(--candidate-stacks-muted-soft);
   font-size: 12px;
   line-height: 1.3;
 }

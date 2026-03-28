@@ -103,27 +103,19 @@ export class SidebarComponent {
 
   private readonly candidateTreeGroupsValue: CandidateTreeGroup[] = [
     {
-      label: 'Home',
+      label: 'Radar',
       items: [
-        { label: 'Página Principal', icon: 'home', route: '/usuario/ecossistema' },
-        { label: 'Notícias', icon: 'newspaper' },
-        { label: 'Timeline', icon: 'timeline' },
+        { label: 'Vagas do Ecossistema', icon: 'radar', route: '/usuario/ecossistema' },
+        { label: 'Minhas Candidaturas', icon: 'task_alt', route: '/usuario/minhas-candidaturas' },
       ],
     },
     {
-      label: 'Meus Dados',
+      label: 'Meu Perfil',
       items: [
         { label: 'Dados Básicos', icon: 'badge', route: '/usuario/dados-cadastrais' },
         { label: 'Documentos', icon: 'description', route: '/usuario/documentos' },
         { label: 'Minhas Stacks', icon: 'deployed_code', route: '/usuario/stacks' },
         { label: 'Experiências', icon: 'business_center', route: '/usuario/experiencia' },
-      ],
-    },
-    {
-      label: 'Minha Rede',
-      items: [
-        { label: 'Candidaturas', icon: 'task_alt', route: '/usuario/minhas-candidaturas' },
-        { label: 'Radar do Ecossistema', icon: 'radar', route: '/usuario/ecossistema' },
       ],
     },
     {
@@ -269,11 +261,13 @@ export class SidebarComponent {
 
   get candidateDisplayName(): string {
     const draft = this.readCandidateDraft();
-    return draft?.profile?.name?.trim() || 'Julio Fazenda';
+    const sessionName = this.authService.getSession()?.name?.trim();
+    return draft?.profile?.name?.trim() || sessionName || 'Talento';
   }
 
   get candidateDisplayLocation(): string {
     const draft = this.readCandidateDraft();
+    const sessionLocation = this.authService.getSession()?.location?.trim();
     const city = draft?.profile?.city?.trim();
     const state = draft?.profile?.state?.trim();
     const location = draft?.profile?.location?.trim();
@@ -286,7 +280,11 @@ export class SidebarComponent {
       return `${location} - Brasil`;
     }
 
-    return 'Rio de Janeiro RJ - Brasil';
+    if (sessionLocation) {
+      return `${sessionLocation} - Brasil`;
+    }
+
+    return 'Brasil';
   }
 
   get candidateDisplayInitials(): string {

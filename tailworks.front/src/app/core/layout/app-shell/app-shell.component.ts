@@ -64,10 +64,6 @@ export class AppShellComponent {
   }
 
   get hasSidebar(): boolean {
-    if (this.isCandidateEcosystem) {
-      return this.isCompactSidebarMode;
-    }
-
     return !this.isHomeEntry;
   }
 
@@ -88,10 +84,6 @@ export class AppShellComponent {
   }
 
   get shouldMainSpanFull(): boolean {
-    if (this.isCandidateEcosystem) {
-      return true;
-    }
-
     if (!this.hasSidebar) {
       return true;
     }

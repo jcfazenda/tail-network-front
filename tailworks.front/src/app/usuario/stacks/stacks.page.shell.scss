@@ -2,6 +2,13 @@
   display: block;
   min-height: 100%;
   background: transparent;
+  --candidate-stacks-surface: color-mix(in srgb, var(--card-strong) 92%, transparent);
+  --candidate-stacks-surface-soft: color-mix(in srgb, var(--card-soft) 78%, transparent);
+  --candidate-stacks-text: var(--text-strong);
+  --candidate-stacks-muted: var(--muted);
+  --candidate-stacks-muted-soft: var(--muted-soft);
+  --candidate-stacks-divider: color-mix(in srgb, var(--text) 14%, transparent);
+  --candidate-stacks-icon: var(--avatar-icon);
 }
 
 .candidate-stacks{
@@ -20,7 +27,7 @@
 
 .candidate-stacks__intro h1{
   margin: 0;
-  color: rgba(15, 23, 42, 0.92);
+  color: var(--candidate-stacks-text);
   font-size: 30px;
   line-height: 1.08;
   font-weight: 700;
@@ -29,7 +36,7 @@
 
 .candidate-stacks__intro p{
   margin: 0;
-  color: rgba(15, 23, 42, 0.54);
+  color: var(--candidate-stacks-muted);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -39,7 +46,7 @@
 }
 
 .candidate-stacks__hint{
-  color: rgba(15, 23, 42, 0.46);
+  color: var(--candidate-stacks-muted-soft);
   font-size: 13px;
   line-height: 1.5;
   max-width: 860px;
@@ -78,7 +85,7 @@
 
 .candidate-stacks__avatar .material-symbols-rounded{
   font-size: 40px;
-  color: rgba(15, 23, 42, 0.62);
+  color: var(--candidate-stacks-icon);
 }
 
 .candidate-stacks__avatar-image{
@@ -106,7 +113,7 @@
 }
 
 .candidate-stacks__identity-copy strong{
-  color: rgba(15, 23, 42, 0.88);
+  color: var(--candidate-stacks-text);
   font-size: 18px;
   line-height: 1.15;
   word-break: break-word;
@@ -127,7 +134,7 @@
 }
 
 .candidate-stacks__identity-copy span{
-  color: rgba(15, 23, 42, 0.5);
+  color: var(--candidate-stacks-muted-soft);
   font-size: 13px;
   line-height: 1.35;
   word-break: break-word;
@@ -138,9 +145,9 @@
   gap: 22px;
   padding: 30px 28px 28px;
   border-radius: 30px;
-  border: 1px solid var(--border);
-  background: var(--surface-gradient);
-  box-shadow: 0 24px 42px rgba(15, 23, 42, 0.05);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .candidate-stacks__section-head{
@@ -164,7 +171,7 @@
 
 .candidate-stacks__section-copy h2{
   margin: 0 0 6px;
-  color: rgba(15, 23, 42, 0.92);
+  color: var(--candidate-stacks-text);
   font-size: 26px;
   line-height: 1.08;
   font-weight: 700;
@@ -178,7 +185,7 @@
 
 .candidate-stacks__section-copy p{
   margin: 0;
-  color: rgba(15, 23, 42, 0.54);
+  color: var(--candidate-stacks-muted);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -198,7 +205,11 @@
 
 .candidate-stacks__toolbar{
   padding-bottom: 16px;
-  border-bottom: 1px dashed rgba(214, 220, 228, 0.96);
+  border-bottom: 1px dashed var(--candidate-stacks-divider);
+}
+
+:host-context(body[data-theme='dark']){
+  --candidate-stacks-divider: color-mix(in srgb, var(--text) 18%, transparent);
 }
 
 .candidate-stacks__radar-preview{

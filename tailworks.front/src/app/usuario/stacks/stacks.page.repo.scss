@@ -1,10 +1,8 @@
 
 .candidate-stacks__category-box--solid{
   border-style: solid;
-  background: rgba(255, 255, 255, 0.68);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 18px 34px rgba(15, 23, 42, 0.06);
+  background: transparent;
+  box-shadow: none;
 }
 
 .candidate-stacks__category-head{
@@ -16,7 +14,7 @@
 }
 
 .candidate-stacks__category-head strong{
-  color: rgba(15, 23, 42, 0.74);
+  color: var(--candidate-stacks-muted);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -44,12 +42,12 @@
   position: static;
   top: auto;
   border-radius: 18px;
-  border: 1px solid rgba(228, 232, 238, 0.96);
-  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--border);
+  background: var(--candidate-stacks-surface-soft);
   padding: 20px 20px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 18px 34px rgba(15, 23, 42, 0.06);
+    inset 0 1px 0 color-mix(in srgb, var(--card-strong) 84%, transparent),
+    0 18px 34px color-mix(in srgb, var(--text) 6%, transparent);
 }
 
 .candidate-stacks__repo-entry{
@@ -59,12 +57,12 @@
 
 .candidate-stacks__repo-expand{
   border-radius: 18px;
-  border: 1px solid rgba(228, 232, 238, 0.96);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+  background: var(--candidate-stacks-surface-soft);
   padding: 18px 18px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 18px 34px rgba(15, 23, 42, 0.06);
+    inset 0 1px 0 color-mix(in srgb, var(--card-strong) 84%, transparent),
+    0 18px 34px color-mix(in srgb, var(--text) 6%, transparent);
 }
 
 .candidate-stacks__repo-guide-body{
@@ -92,7 +90,7 @@
 .candidate-stacks__repo-guide-stack{
   font-size: 14px;
   font-weight: 900;
-  color: rgba(15, 23, 42, 0.88);
+  color: var(--candidate-stacks-text);
 }
 
 .candidate-stacks__repo-guide-subtitle{
@@ -100,7 +98,7 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.46);
+  color: var(--candidate-stacks-muted-soft);
   white-space: nowrap;
 }
 
@@ -114,18 +112,18 @@
   display: inline-flex;
   align-items: baseline;
   gap: 8px;
-  color: rgba(15, 23, 42, 0.62);
+  color: var(--candidate-stacks-muted);
   font-size: 13px;
   line-height: 1.4;
 }
 
 .candidate-stacks__repo-guide-meter-value{
-  color: rgba(15, 23, 42, 0.76);
+  color: var(--candidate-stacks-text);
   font-weight: 900;
 }
 
 .candidate-stacks__repo-guide-meter-label{
-  color: rgba(15, 23, 42, 0.76);
+  color: var(--candidate-stacks-text);
   font-weight: 900;
 }
 
@@ -140,7 +138,7 @@
   width: 100%;
   margin: 10px 0 4px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.14), rgba(15, 23, 42, 0.02));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--text) 14%, transparent), transparent);
 }
 
 .candidate-stacks__repo-guide-section{
@@ -157,7 +155,7 @@
 }
 
 .candidate-stacks__repo-guide-split-rule{
-  border-top: 1px dashed rgba(214, 220, 228, 0.96);
+  border-top: 1px dashed var(--candidate-stacks-divider);
   margin: 10px 0 12px;
 }
 
@@ -178,7 +176,7 @@
   width: 1px;
   height: 100%;
   align-self: stretch;
-  background: rgba(228, 232, 238, 0.96);
+  background: var(--candidate-stacks-divider);
   border-radius: 999px;
 }
 
@@ -203,7 +201,7 @@
 }
 
 .candidate-stacks__repo-guide-section-title{
-  color: rgba(15, 23, 42, 0.72);
+  color: var(--candidate-stacks-muted);
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.04em;
@@ -211,7 +209,7 @@
 }
 
 .candidate-stacks__repo-guide-expect-intro{
-  color: rgba(15, 23, 42, 0.52);
+  color: var(--candidate-stacks-muted);
   font-size: 12px;
   line-height: 1.45;
   margin-top: -4px;
@@ -225,7 +223,7 @@
   list-style: none;
   display: grid;
   gap: 6px;
-  color: rgba(15, 23, 42, 0.58);
+  color: var(--candidate-stacks-muted);
   font-size: 13px;
   line-height: 1.45;
 }

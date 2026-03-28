@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { TalentNotification } from '../../../usuario/talent-notification.service';
+import { AuthFacade } from '../../facades/auth.facade';
 import { JobsFacade } from '../../facades/jobs.facade';
 import { TalentNotificationsFacade } from '../../facades/talent-notifications.facade';
 import { CandidateStage, MockJobRecord } from '../../../vagas/data/vagas.models';
@@ -73,6 +74,7 @@ export class TopbarComponent {
   readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
   readonly topbarNewVacanciesCount = 43;
   readonly topbarNewHiresCount = 17;
+  private readonly authFacade = inject(AuthFacade);
   private readonly jobsFacade = inject(JobsFacade);
   private readonly talentNotificationsFacade = inject(TalentNotificationsFacade);
   private readonly ecosystemEntryService = inject(EcosystemEntryService);
@@ -222,7 +224,7 @@ export class TopbarComponent {
       return '';
     }
 
-    const name = this.readCandidateDraft()?.profile?.name?.trim() || 'Julio Fazenda';
+    const name = this.readCandidateDraft()?.profile?.name?.trim() || this.readCandidateSessionName();
     const parts = name
       .split(' ')
       .map((part) => part.trim())
@@ -251,7 +253,7 @@ export class TopbarComponent {
   }
 
   get topbarCandidateDisplayName(): string {
-    return this.readCandidateDraft()?.profile?.name?.trim() || 'Julio Fazenda';
+    return this.readCandidateDraft()?.profile?.name?.trim() || this.readCandidateSessionName();
   }
 
   get recruiterTopbarDisplayName(): string {
@@ -260,6 +262,7 @@ export class TopbarComponent {
 
   get topbarCandidateDisplayLocation(): string {
     const draft = this.readCandidateDraft();
+    const sessionLocation = this.readCandidateSessionLocation();
     const city = draft?.profile?.city?.trim();
     const state = draft?.profile?.state?.trim();
     const location = draft?.profile?.location?.trim();
@@ -272,7 +275,11 @@ export class TopbarComponent {
       return `${location} - Brasil`;
     }
 
-    return 'Rio de Janeiro RJ - Brasil';
+    if (sessionLocation) {
+      return `${sessionLocation} - Brasil`;
+    }
+
+    return 'Brasil';
   }
 
   get recruiterTopbarDisplayMeta(): string {
@@ -302,6 +309,14 @@ export class TopbarComponent {
     }
 
     return fullName.split(' ')[0] || fullName;
+  }
+
+  private readCandidateSessionName(): string {
+    return this.authFacade.getSession()?.name?.trim() || 'Talento';
+  }
+
+  private readCandidateSessionLocation(): string {
+    return this.authFacade.getSession()?.location?.trim() || '';
   }
 
   get topbarFormationLogoUrl(): string {
