@@ -1,0 +1,268 @@
+<main class="curriculum-page">
+  <section class="curriculum-page__shell">
+    <div class="curriculum-page__hero">
+      <h1>Currículo do candidato</h1>
+      <p>
+        Esta área será dedicada à leitura estratégica do histórico profissional, experiências, formação, stacks e sinais
+        de aderência do candidato selecionado.
+      </p>
+    </div>
+
+    <section class="curriculum-page__canvas" aria-label="Área do currículo">
+      <article class="curriculum-page__resume">
+        <aside class="curriculum-page__resume-sidebar">
+          <div class="curriculum-page__sidebar-card">
+            <div class="curriculum-page__profile-card">
+              <div class="curriculum-page__profile-avatar">
+                <img src="/assets/avatars/john-doe.jpeg" [alt]="(candidateName$ | async) ?? 'Candidato'" />
+              </div>
+              <div class="curriculum-page__profile-copy">
+                <h2>{{ candidateName$ | async }}</h2>
+                <span>{{ roleTitle }}</span>
+              </div>
+            </div>
+
+            <section class="curriculum-page__side-section">
+              <div class="curriculum-page__section-title curriculum-page__section-title--side">
+                <span class="material-symbols-rounded" aria-hidden="true">badge</span>
+                <strong>Perfil</strong>
+              </div>
+              <p>{{ profileCopy }}</p>
+            </section>
+
+            <section class="curriculum-page__side-section">
+              <div class="curriculum-page__section-title curriculum-page__section-title--side">
+                <span class="material-symbols-rounded" aria-hidden="true">neurology</span>
+                <strong>Skills pessoais</strong>
+              </div>
+              <div class="curriculum-page__meter-list">
+                <div class="curriculum-page__meter-row" *ngFor="let item of personalSkills">
+                  <span>{{ item.label }}</span>
+                  <span class="curriculum-page__meter-dots" aria-hidden="true">
+                    <span
+                      class="material-symbols-outlined curriculum-page__meter-icon"
+                      *ngFor="let filled of personalSkillDots(item.score)"
+                      [class.curriculum-page__meter-icon--filled]="filled"
+                    >radio_button_checked</span>
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="curriculum-page__sidebar-card curriculum-page__sidebar-card--compact curriculum-page__sidebar-card--footer">
+            <section class="curriculum-page__side-section curriculum-page__side-section--footer-top">
+              <div class="curriculum-page__section-title curriculum-page__section-title--side">
+                <span class="material-symbols-rounded" aria-hidden="true">alternate_email</span>
+                <strong>Contato</strong>
+              </div>
+              <div class="curriculum-page__side-list">
+                <div class="curriculum-page__side-item" *ngFor="let item of contactItems">
+                  <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
+                  <span>{{ item.label }}</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="curriculum-page__side-section curriculum-page__side-section--footer">
+              <div class="curriculum-page__section-title curriculum-page__section-title--side">
+                <span class="material-symbols-rounded" aria-hidden="true">hub</span>
+                <strong>Conexões</strong>
+              </div>
+              <div class="curriculum-page__side-list">
+                <div class="curriculum-page__side-item" *ngFor="let item of socialLinks">
+                  <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
+                  <span>{{ item.label }}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </aside>
+
+        <div class="curriculum-page__resume-main">
+          <section class="curriculum-page__resume-section">
+            <div class="curriculum-page__section-title">
+              <span class="material-symbols-rounded" aria-hidden="true">school</span>
+              <strong>Formação</strong>
+            </div>
+
+            <article class="curriculum-page__education-item" *ngFor="let item of education">
+              <header>
+                <h3>{{ item.title }}</h3>
+                <span>{{ item.meta }}</span>
+              </header>
+              <p>{{ item.description }}</p>
+            </article>
+
+            <div class="curriculum-page__resume-divider" aria-hidden="true"></div>
+          </section>
+
+          <section class="curriculum-page__resume-section">
+            <div class="curriculum-page__section-title">
+              <span class="material-symbols-rounded" aria-hidden="true">deployed_code</span>
+              <strong>Skills profissionais</strong>
+            </div>
+
+            <div class="curriculum-page__bar-grid curriculum-page__bar-grid--single">
+              <div
+                class="curriculum-page__bar-row"
+                *ngFor="let item of sortedProfessionalSkills"
+                [class.curriculum-page__bar-row--high]="skillVisualTone(item.score) === 'high'"
+                [class.curriculum-page__bar-row--medium]="skillVisualTone(item.score) === 'medium'"
+                [class.curriculum-page__bar-row--soft]="skillVisualTone(item.score) === 'soft'"
+                [class.curriculum-page__bar-row--muted]="skillVisualTone(item.score) === 'muted'"
+              >
+                <span>{{ item.label }}</span>
+                <span class="curriculum-page__bar-track" aria-hidden="true">
+                  <span class="curriculum-page__bar-fill" [style.width.%]="item.score"></span>
+                </span>
+                <strong>{{ item.score }}%</strong>
+              </div>
+            </div>
+
+            <div class="curriculum-page__resume-divider" aria-hidden="true"></div>
+          </section>
+
+          <section class="curriculum-page__resume-section">
+            <div class="curriculum-page__section-title">
+              <span class="material-symbols-rounded" aria-hidden="true">work_history</span>
+              <strong>Experiência profissional</strong>
+            </div>
+
+            <article class="curriculum-page__timeline-item" *ngFor="let item of visibleExperiences">
+              <div class="curriculum-page__timeline-date-column">
+                <strong class="curriculum-page__timeline-date">{{ experienceDateLine(item.meta) }}</strong>
+              </div>
+
+              <div class="curriculum-page__timeline-axis" aria-hidden="true">
+                <span class="material-symbols-rounded curriculum-page__timeline-marker">work_history</span>
+              </div>
+
+              <div class="curriculum-page__timeline-content">
+                <header class="curriculum-page__timeline-head">
+                  <div class="curriculum-page__timeline-heading">
+                    <h3>{{ item.title }}</h3>
+                    <span>{{ experienceCompanyLine(item.meta) }}</span>
+                  </div>
+                </header>
+                <p>{{ item.description }}</p>
+                <ul>
+                  <li *ngFor="let highlight of item.highlights">{{ highlight }}</li>
+                </ul>
+              </div>
+            </article>
+          </section>
+
+          <section class="curriculum-page__resume-section">
+            <div class="curriculum-page__section-title">
+              <span class="material-symbols-rounded" aria-hidden="true">tune</span>
+              <strong>Proficiência</strong>
+            </div>
+
+            <div class="curriculum-page__bar-grid curriculum-page__bar-grid--compact curriculum-page__bar-grid--single">
+              <div
+                class="curriculum-page__bar-row"
+                *ngFor="let item of sortedProficiencies"
+                [class.curriculum-page__bar-row--high]="skillVisualTone(item.score) === 'high'"
+                [class.curriculum-page__bar-row--medium]="skillVisualTone(item.score) === 'medium'"
+                [class.curriculum-page__bar-row--soft]="skillVisualTone(item.score) === 'soft'"
+                [class.curriculum-page__bar-row--muted]="skillVisualTone(item.score) === 'muted'"
+              >
+                <span>{{ item.label }}</span>
+                <span class="curriculum-page__bar-track" aria-hidden="true">
+                  <span class="curriculum-page__bar-fill" [style.width.%]="item.score"></span>
+                </span>
+                <strong>{{ item.score }}%</strong>
+              </div>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+    <aside class="curriculum-page__side-rail" aria-label="Painéis laterais do currículo">
+      <div class="curriculum-page__side-rail-inner curriculum-page__side-rail-inner--focus" *ngIf="focusedJob$ | async as focusedJob">
+        <div class="curriculum-page__focus-copy">
+          <h3>Vaga em Foco</h3>
+          <p>selecione uma vaga no grid para destacar aqui os dados principais da publicacao e do radar atual</p>
+        </div>
+
+        <article class="curriculum-page__focus-job-card">
+          <div class="curriculum-page__focus-job-head">
+            <div class="curriculum-page__focus-logo">
+              <img *ngIf="focusedJob.logo; else focusedJobFallback" [src]="focusedJob.logo" [alt]="focusedJob.company || focusedJob.title" />
+              <ng-template #focusedJobFallback>
+                <span>{{ focusedJobLogoLabel(focusedJob.title || focusedJob.company) }}</span>
+              </ng-template>
+            </div>
+
+            <div class="curriculum-page__focus-job-title-block">
+              <div class="curriculum-page__focus-card-head">
+                <strong>{{ focusedJob.title }}</strong>
+                <span
+                  class="curriculum-page__focus-work-model"
+                  *ngIf="focusedJob.workModel"
+                  [class.curriculum-page__focus-work-model--remote]="focusedJob.workModel === 'Home' || focusedJob.workModel === 'Remoto'"
+                  [class.curriculum-page__focus-work-model--hybrid]="focusedJob.workModel === 'Hibrido'"
+                  [class.curriculum-page__focus-work-model--onsite]="focusedJob.workModel === 'Presencial'"
+                >
+                  {{ focusedJob.workModel }}
+                </span>
+              </div>
+
+              <span class="curriculum-page__focus-location" *ngIf="focusedJob.location">{{ focusedJob.location }}</span>
+            </div>
+          </div>
+
+          <div class="curriculum-page__focus-company-block">
+            <strong>{{ focusedJob.company }}</strong>
+            <small>{{ focusedJob.salary || 'R$ a combinar' }}</small>
+          </div>
+
+          <span class="curriculum-page__focus-divider" aria-hidden="true"></span>
+
+          <div class="curriculum-page__focus-meta-row">
+            <span class="curriculum-page__focus-chip" *ngIf="focusedJob.contractType">{{ focusedJob.contractType }}</span>
+            <span class="curriculum-page__focus-chip curriculum-page__focus-chip--ghost" *ngIf="!focusedJob.contractType && focusedJob.workModel">
+              {{ focusedJob.workModel }}
+            </span>
+          </div>
+        </article>
+      </div>
+      <div class="curriculum-page__side-rail-inner curriculum-page__side-rail-inner--secondary" *ngIf="candidateJourney$ | async as journey">
+        <div class="curriculum-page__journey-copy">
+          <h3>Status do Candidato</h3>
+          <p>acompanhe aqui a leitura sequencial da jornada do talento nessa vaga, com origem da ação e avanço atual</p>
+        </div>
+
+        <div class="curriculum-page__journey-stage-chip">{{ journey.currentStageLabel }}</div>
+
+        <div class="curriculum-page__journey-list">
+          <article class="curriculum-page__journey-step" *ngFor="let item of journey.steps">
+            <strong class="curriculum-page__journey-date">{{ item.dateLabel }}</strong>
+
+            <div class="curriculum-page__journey-axis">
+              <span
+                class="curriculum-page__journey-dot"
+                [class.curriculum-page__journey-dot--active]="item.active"
+                [class.curriculum-page__journey-dot--done]="item.completed"
+                [class.curriculum-page__journey-dot--pending]="!item.completed"
+              >
+                {{ item.stepNumber }}
+              </span>
+            </div>
+
+            <div class="curriculum-page__journey-head">
+              <strong>{{ item.label }}</strong>
+              <small>{{ item.ownerText }}</small>
+            </div>
+
+            <span class="curriculum-page__journey-hour">{{ item.hourLabel }}</span>
+
+            <p class="curriculum-page__journey-description">{{ item.description }}</p>
+          </article>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>

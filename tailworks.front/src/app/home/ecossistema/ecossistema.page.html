@@ -442,8 +442,14 @@
       </div>
 
       <div class="ecosystem-desktop__side-summary ecosystem-desktop__side-summary--secondary">
-        <div class="ecosystem-desktop__side-summary-feature">
-          <span>Aderentes</span>
+        <div class="ecosystem-desktop__side-summary-feature ecosystem-desktop__side-summary-feature--column">
+          <div class="ecosystem-desktop__side-summary-headline">
+            <span>Aderentes</span>
+            <strong>{{ sideRailCandidatesCount }} avatares</strong>
+          </div>
+          <p class="ecosystem-desktop__side-summary-copy">
+            talentos que cruzam a meta atual da vaga em foco e merecem prioridade no radar de abordagem
+          </p>
         </div>
       </div>
 
@@ -464,8 +470,13 @@
               <strong>{{ candidate.name }}</strong>
               <span>{{ candidate.role }}</span>
             </div>
-            <button class="ecosystem-desktop__candidate-card-action" type="button" aria-label="Abrir candidato">
-              <span class="material-symbols-rounded" aria-hidden="true">chat</span>
+            <button
+              class="ecosystem-desktop__candidate-card-action"
+              type="button"
+              aria-label="Abrir currículo do candidato"
+              (click)="openCandidateCurriculum(candidate)"
+            >
+              <span class="material-symbols-rounded" aria-hidden="true">contact_page</span>
             </button>
           </div>
 
@@ -480,17 +491,14 @@
 
           <div class="ecosystem-desktop__candidate-dotted-line"></div>
 
-          <div class="ecosystem-desktop__candidate-stack-row">
-            <span class="ecosystem-desktop__candidate-chip" *ngFor="let stack of candidate.stacks">
-              {{ stack }}
-            </span>
-            <span
-              class="ecosystem-desktop__candidate-chip ecosystem-desktop__candidate-chip--accent"
-              [class.ecosystem-desktop__candidate-chip--medium]="candidate.adherenceTone === 'medium'"
-              [class.ecosystem-desktop__candidate-chip--low]="candidate.adherenceTone === 'low'"
-            >
-              Aderente {{ candidate.adherence }}%
-            </span>
+          <div class="ecosystem-desktop__candidate-signal-list" *ngIf="candidate.standoutStacks.length">
+            <div class="ecosystem-desktop__candidate-signal-row" *ngFor="let stack of candidate.standoutStacks">
+              <span class="ecosystem-desktop__candidate-signal-label">{{ stack.label }}</span>
+              <span class="ecosystem-desktop__candidate-signal-track" aria-hidden="true">
+                <span class="ecosystem-desktop__candidate-signal-fill" [style.width.%]="stack.score"></span>
+              </span>
+              <strong class="ecosystem-desktop__candidate-signal-value">{{ stack.score }}%</strong>
+            </div>
           </div>
         </article>
       </div>

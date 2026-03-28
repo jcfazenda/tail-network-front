@@ -121,10 +121,19 @@
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-meta-copy small,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-model-prefix,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-avatar-extra,
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-signal-value,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-radar-empty,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-page-control,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-page-dot{
   color: rgba(16, 18, 22, 0.58);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-signal-label{
+  color: rgba(16, 18, 22, 0.82);
+}
+
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-signal-track{
+  background: rgba(16, 18, 22, 0.1);
 }
 
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-search input{
@@ -465,6 +474,23 @@
   gap: 10px;
 }
 
+.ecosystem-desktop__side-summary-feature--column{
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.ecosystem-desktop__side-summary-headline{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.ecosystem-desktop__side-summary-headline strong{
+  padding-right: 8px;
+}
+
 .ecosystem-desktop__side-summary-feature strong{
   justify-self: start;
   font-size: 18px;
@@ -478,6 +504,13 @@
   line-height: 1;
   font-weight: 500;
   letter-spacing: -0.03em;
+}
+
+.ecosystem-desktop__side-summary-copy{
+  margin: 0;
+  color: rgba(245, 247, 251, 0.56);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .ecosystem-desktop__side-candidates{
@@ -598,6 +631,51 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.ecosystem-desktop__candidate-signal-list{
+  display: grid;
+  gap: 10px;
+}
+
+.ecosystem-desktop__candidate-signal-row{
+  display: grid;
+  grid-template-columns: minmax(76px, auto) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.ecosystem-desktop__candidate-signal-label{
+  color: rgba(245, 247, 251, 0.84);
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ecosystem-desktop__candidate-signal-track{
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(245, 247, 251, 0.16);
+}
+
+.ecosystem-desktop__candidate-signal-fill{
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #b66a22 0%, #f1b220 100%);
+}
+
+.ecosystem-desktop__candidate-signal-value{
+  color: rgba(245, 247, 251, 0.82);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .ecosystem-desktop__candidate-avatars{

@@ -1068,3 +1068,179 @@
     padding: 8px;
   }
 }
+
+:host{
+  --candidate-modal-backdrop: rgba(8, 12, 20, 0.56);
+  --candidate-modal-shell: linear-gradient(180deg, rgba(31, 37, 46, 0.96), rgba(23, 28, 36, 0.94));
+  --candidate-modal-border: rgba(255, 255, 255, 0.08);
+  --candidate-modal-text: rgba(245, 247, 251, 0.9);
+  --candidate-modal-text-strong: rgba(245, 247, 251, 0.96);
+  --candidate-modal-muted: rgba(214, 220, 228, 0.64);
+  --candidate-modal-muted-soft: rgba(214, 220, 228, 0.46);
+  --candidate-modal-line: rgba(255, 255, 255, 0.12);
+  --candidate-modal-surface: rgba(255, 255, 255, 0.06);
+  --candidate-modal-surface-strong: rgba(255, 255, 255, 0.1);
+  --candidate-modal-surface-soft: rgba(255, 255, 255, 0.08);
+  --candidate-modal-success: #65bf86;
+  --candidate-modal-warning: #e18d2d;
+}
+
+:host-context(body[data-theme='light']){
+  --candidate-modal-backdrop: rgba(15, 23, 42, 0.22);
+  --candidate-modal-shell: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 249, 252, 0.94));
+  --candidate-modal-border: rgba(15, 23, 42, 0.08);
+  --candidate-modal-text: rgba(15, 23, 42, 0.84);
+  --candidate-modal-text-strong: rgba(15, 23, 42, 0.92);
+  --candidate-modal-muted: rgba(15, 23, 42, 0.58);
+  --candidate-modal-muted-soft: rgba(15, 23, 42, 0.46);
+  --candidate-modal-line: rgba(15, 23, 42, 0.12);
+  --candidate-modal-surface: rgba(255, 255, 255, 0.74);
+  --candidate-modal-surface-strong: rgba(255, 255, 255, 0.9);
+  --candidate-modal-surface-soft: rgba(255, 255, 255, 0.82);
+}
+
+.candidate-modal-backdrop{
+  background: var(--candidate-modal-backdrop);
+}
+
+.candidate-modal{
+  background: var(--candidate-modal-shell);
+  border-color: var(--candidate-modal-border);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+}
+
+.candidate-modal__header{
+  border-bottom-color: var(--candidate-modal-line);
+}
+
+.candidate-modal__identity-name strong,
+.candidate-modal__identity-role,
+.candidate-modal__section-title,
+.candidate-modal__status-name,
+.candidate-modal__experience-head p,
+.candidate-modal__experience-item-company,
+.candidate-modal__experience-item-role,
+.stack-item__name,
+.stack-item__value,
+.candidate-modal__experience-item-fit-meta strong,
+.candidate-modal__empty strong{
+  color: var(--candidate-modal-text);
+}
+
+.candidate-modal__identity-copy > span,
+.candidate-modal__status-label,
+.candidate-modal__documents-text,
+.candidate-modal__status-document-consent-text,
+.candidate-modal__status-note,
+.candidate-modal__experience-item-description,
+.candidate-modal__formation-meta span,
+.candidate-modal__empty p{
+  color: var(--candidate-modal-muted);
+}
+
+.candidate-modal__stack-meta,
+.candidate-modal__status-time,
+.candidate-modal__status-description,
+.candidate-modal__status-owner,
+.candidate-modal__status-documents-item-description,
+.candidate-modal__formation-copy em,
+.candidate-modal__formation-meta small,
+.candidate-modal__experience-page,
+.candidate-modal__experience-item-context,
+.candidate-modal__experience-item-timeline,
+.candidate-modal__experience-item-fit-meta span,
+.candidate-modal__empty .material-symbols-rounded,
+.stack-item__drag{
+  color: var(--candidate-modal-muted-soft);
+}
+
+.candidate-modal__tab{
+  background: var(--candidate-modal-surface-soft);
+  color: var(--candidate-modal-muted);
+}
+
+.candidate-modal__status-step:not(:last-child)::after,
+.candidate-modal__status-document-consent,
+.candidate-modal__status-documents,
+.candidate-modal__experience-item-fit{
+  border-color: var(--candidate-modal-line);
+}
+
+.candidate-modal__status-step:not(:last-child)::after{
+  background: var(--candidate-modal-line);
+}
+
+.candidate-modal__status-indicator--done{
+  color: var(--candidate-modal-warning);
+}
+
+.candidate-modal__status-indicator--active{
+  color: #f0b438;
+}
+
+.candidate-modal__status-indicator--pending,
+.candidate-modal__status-document-consent-check{
+  color: rgba(148, 156, 168, 0.34);
+}
+
+.candidate-modal__status-document-consent-check--checked,
+.candidate-modal__status-documents-item--checked .candidate-modal__status-documents-item-dot{
+  color: var(--candidate-modal-success);
+  background: var(--candidate-modal-success);
+}
+
+.candidate-modal__status-owner,
+.candidate-modal__experience-item-level{
+  background: var(--candidate-modal-surface);
+  color: var(--candidate-modal-muted);
+  border-color: var(--candidate-modal-border);
+}
+
+.candidate-modal__status-action--ghost,
+.candidate-modal__experience-nav-button,
+.candidate-modal__empty,
+.candidate-modal__formation,
+.candidate-modal__experience-box{
+  background: var(--candidate-modal-surface);
+  border-color: var(--candidate-modal-border);
+  box-shadow: none;
+}
+
+.candidate-modal__status-action--ghost{
+  color: var(--candidate-modal-text);
+}
+
+.candidate-modal__status-action--ghost:hover,
+.candidate-modal__experience-nav-button:hover{
+  background: var(--candidate-modal-surface-strong);
+}
+
+.candidate-modal__formation-mark{
+  background: var(--candidate-modal-surface-soft);
+  border-color: var(--candidate-modal-line);
+}
+
+.candidate-modal__formation-mark .material-symbols-rounded{
+  color: var(--candidate-modal-muted);
+}
+
+.candidate-modal__status-documents-item-dot{
+  background: rgba(148, 156, 168, 0.28);
+}
+
+.candidate-modal__status-documents-item:not(:last-child) .candidate-modal__status-documents-item-dot::after{
+  background: var(--candidate-modal-line);
+}
+
+.candidate-modal__status-documents-item-label{
+  color: var(--candidate-modal-text);
+}
+
+.stack-item{
+  background: var(--candidate-modal-surface-soft);
+  box-shadow: none;
+}
+
+.candidate-modal__close{
+  box-shadow: none;
+}

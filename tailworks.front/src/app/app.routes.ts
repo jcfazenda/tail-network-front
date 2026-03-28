@@ -60,6 +60,12 @@ export const routes: Routes = [
     canActivate: [talentAuthGuard],
   },
   {
+    path: 'talent/curriculum',
+    loadComponent: () => import('./talent/curriculum/curriculum.page').then((m) => m.CurriculumPage),
+    data: { title: 'Currículo do Candidato' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
     path: 'vagas/cadastro',
     loadComponent: () => import('./vagas/cadastro/cadastro.page').then((m) => m.CadastroPage),
     data: { title: 'Abrir Vaga' },

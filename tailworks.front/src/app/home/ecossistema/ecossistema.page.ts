@@ -113,6 +113,10 @@ type SideRailCandidateCard = {
   adherenceTone: 'high' | 'medium' | 'low';
   summary: string;
   stacks: string[];
+  standoutStacks: Array<{
+    label: string;
+    score: number;
+  }>;
   avatarUrl: string;
 };
 
@@ -612,6 +616,24 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.ecosystemFilterModalService.open();
   }
 
+  openCandidateCurriculum(candidate: SideRailCandidateCard): void {
+    const focusedJob = this.sideRailRecentJobs[0];
+    void this.router.navigate(['/talent/curriculum'], {
+      queryParams: {
+        candidate: candidate.id,
+        name: candidate.name,
+        jobId: focusedJob?.id ?? '',
+        jobTitle: focusedJob?.title ?? '',
+        jobCompany: focusedJob?.company ?? '',
+        jobLocation: focusedJob ? this.jobCardLocation(focusedJob) : '',
+        jobWorkModel: focusedJob ? this.jobCardWorkModel(focusedJob) : '',
+        jobSalary: focusedJob ? (this.jobCardSalary(focusedJob) ?? '') : '',
+        jobContractType: focusedJob?.contractType ?? '',
+        jobLogo: focusedJob ? this.jobCompanyLogoUrl(focusedJob) : '',
+      },
+    });
+  }
+
   get ecoFilteredJobs(): MockJobRecord[] {
     const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
     const filters = this.ecosystemJobFiltersService.filters();
@@ -751,6 +773,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get sideRailJobAvatarExtraCount(): number {
     return Math.max(0, this.sideRailCandidateCards.length - this.sideRailJobAvatarBadges.length);
+  }
+
+  get sideRailCandidatesCount(): number {
+    return this.sideRailCandidateCards.length;
   }
 
   get sideRailInProgressCandidatesCount(): number {
@@ -1075,19 +1101,91 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private mapSideRailCandidateCard(job: MockJobRecord, candidate: MockJobCandidate, index: number): SideRailCandidateCard {
     const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? candidate.stage ?? 'radar';
     const stacks = this.sideRailCandidateStacks(job, candidate);
+    const standoutStacks = this.sideRailCandidateStandoutStacks(job, candidate, stacks);
     const summary = this.sideRailCandidateSummary(job, candidate, stacks);
 
     return {
       id: candidate.id?.trim() || `${job.id}:${candidate.name}:${index}`,
       name: candidate.name,
-      role: candidate.role?.trim() || job.title,
+      role: this.sideRailCandidateRole(job, candidate),
       status: this.recruiterPanelStageLabel(stage),
       adherence: this.matchDomainService.clampScore(candidate.match),
       adherenceTone: this.getCandidateAdherenceTone(candidate.match),
       summary,
       stacks,
+      standoutStacks,
       avatarUrl: this.resolveAvatar(candidate.avatar),
     };
+  }
+
+  private sideRailCandidateRole(job: MockJobRecord, candidate: MockJobCandidate): string {
+    const rawRole = candidate.role?.trim();
+    if (!rawRole) {
+      return job.title;
+    }
+
+    const escapedCompany = job.company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const withoutCompany = rawRole
+      .replace(new RegExp(`\\s*(?:[-|/@]|na|no|em|at)?\\s*${escapedCompany}`, 'ig'), '')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\s*[-|/@]\s*$/g, '')
+      .trim();
+
+    return withoutCompany || job.title;
+  }
+
+  private sideRailCandidateStandoutStacks(
+    job: MockJobRecord,
+    candidate: MockJobCandidate,
+    fallbackStacks: string[],
+  ): Array<{ label: string; score: number }> {
+    const candidateName = candidate.name.trim().toLocaleLowerCase('pt-BR');
+    const candidateProfile = this.talentProfileStore.listRankableCandidates().find((entry) =>
+      entry.candidate.name.trim().toLocaleLowerCase('pt-BR') === candidateName,
+    )?.talentProfile;
+
+    if (!candidateProfile) {
+      return fallbackStacks.slice(0, 2).map((label) => ({
+        label,
+        score: this.matchDomainService.clampScore(candidate.match),
+      }));
+    }
+
+    const jobRepoIds = this.matchDomainService.mapTechLabelsToRepoIds(job.techStack.map((stack) => stack.name));
+    const stackSignals = job.techStack
+      .map((stack, index) => {
+        const repoId = jobRepoIds[index];
+        const candidateKnowledge = repoId ? (candidateProfile.stackScores[repoId] ?? 0) : 0;
+        const requiredKnowledge = Math.max(1, stack.match || 0);
+        const score = candidateKnowledge > 0
+          ? this.matchDomainService.clampScore(Math.round((Math.min(candidateKnowledge, requiredKnowledge) / requiredKnowledge) * 100))
+          : 0;
+
+        return {
+          label: stack.name.trim(),
+          score,
+          weight: stack.match || 0,
+          candidateKnowledge,
+        };
+      })
+      .filter((stack) => stack.label && stack.score > 0)
+      .sort((left, right) =>
+        right.weight - left.weight
+        || right.score - left.score
+        || right.candidateKnowledge - left.candidateKnowledge
+        || left.label.localeCompare(right.label, 'pt-BR'),
+      )
+      .slice(0, 2)
+      .map(({ label, score }) => ({ label, score }));
+
+    if (stackSignals.length) {
+      return stackSignals;
+    }
+
+    return fallbackStacks.slice(0, 2).map((label) => ({
+      label,
+      score: this.matchDomainService.clampScore(candidate.match),
+    }));
   }
 
   private sideRailCandidateStacks(job: MockJobRecord, candidate: MockJobCandidate): string[] {
@@ -1106,7 +1204,9 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private sideRailCandidateSummary(job: MockJobRecord, candidate: MockJobCandidate, stacks: string[]): string {
     const location = candidate.location?.trim();
     const availability = candidate.availabilityLabel?.trim();
-    const stackCopy = stacks.length ? `aderencia em ${stacks.join(' e ')}` : `aderencia alinhada a ${job.title}`;
+    //const stackCopy = stacks.length ? `aderencia em ${stacks.join(' e ')}` : `aderencia alinhada a ${job.title}`;
+
+    const stackCopy = stacks.length ? `` : `aderencia alinhada a ${job.title}`;
 
     if (location && availability) {
       return `${location}. ${availability}. ${stackCopy}.`;
