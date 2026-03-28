@@ -88,6 +88,15 @@ export type RankableTalentCandidate = {
   talentProfile: MatchTalentProfile;
 };
 
+export type AggregatedSeededStack = {
+  repoId: string;
+  name: string;
+  knowledge: number;
+  months: number;
+  weightedScore: number;
+  experienceCount: number;
+};
+
 @Injectable({ providedIn: 'root' })
 export class TalentProfileStoreService {
   private static readonly storageKey = 'tailworks:seeded-talent-profiles:v1';
@@ -240,6 +249,53 @@ export class TalentProfileStoreService {
   getMatchTalentProfileByEmail(email: string): MatchTalentProfile | null {
     const profile = this.findProfileByEmail(email);
     return profile ? this.toMatchTalentProfile(profile) : null;
+  }
+
+  aggregateStacksFromExperiences(experiencesDraft: SeededExperienceDraft[]): AggregatedSeededStack[] {
+    const grouped = new Map<string, {
+      repoId: string;
+      name: string;
+      totalWeight: number;
+      weightedScore: number;
+      weightedMonths: number;
+      experienceCount: number;
+    }>();
+
+    for (const experience of experiencesDraft) {
+      const months = this.getExperienceMonths(experience);
+      const actuation = Math.max(10, Math.min(100, Number(experience.actuation ?? 70)));
+      const experienceWeight = months * (actuation / 100);
+
+      for (const stack of experience.appliedStacks ?? []) {
+        const repoId = stack.repoId?.trim() || this.toRepoId(stack.name);
+        const current = grouped.get(repoId) ?? {
+          repoId,
+          name: this.normalizeSeededStackName(repoId, stack.name),
+          totalWeight: 0,
+          weightedScore: 0,
+          weightedMonths: 0,
+          experienceCount: 0,
+        };
+
+        const knowledge = Math.max(0, Math.min(100, Math.round(Number(stack.knowledge ?? 0))));
+        current.totalWeight += experienceWeight;
+        current.weightedScore += knowledge * experienceWeight;
+        current.weightedMonths += months * (knowledge / 100);
+        current.experienceCount += 1;
+        grouped.set(repoId, current);
+      }
+    }
+
+    return Array.from(grouped.values())
+      .map((item) => ({
+        repoId: item.repoId,
+        name: item.name,
+        knowledge: Math.round(item.weightedScore / Math.max(item.totalWeight, 1)),
+        months: Math.max(1, Math.round(item.weightedMonths)),
+        weightedScore: Math.round(item.weightedScore / Math.max(item.experienceCount, 1)),
+        experienceCount: item.experienceCount,
+      }))
+      .sort((left, right) => right.knowledge - left.knowledge || right.months - left.months || left.name.localeCompare(right.name, 'pt-BR'));
   }
 
   private buildCandidateSummary(profile: SeededTalentProfile): string {

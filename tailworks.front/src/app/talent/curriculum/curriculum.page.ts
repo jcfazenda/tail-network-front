@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatStepperModule } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { CandidateStage, MockJobCandidate } from '../../vagas/data/vagas.models';
+import { SeededExperienceDraft, SeededTalentProfile, TalentProfileStoreService } from '../talent-profile-store.service';
 
 interface CurriculumJourneyStep {
   stepNumber: number;
@@ -18,14 +20,49 @@ interface CurriculumJourneyStep {
 }
 
 interface CurriculumJourneyViewModel {
+  activeIndex: number;
   currentStageLabel: string;
   steps: CurriculumJourneyStep[];
+  statusAlertIcon: string;
+  statusAlertMessage: string;
 }
+
+type CurriculumSkillItem = {
+  label: string;
+  score: number;
+};
+
+type CurriculumEducationItem = {
+  title: string;
+  meta: string;
+  description: string;
+};
+
+type CurriculumExperienceItem = {
+  title: string;
+  meta: string;
+  description: string;
+  highlights: string[];
+};
+
+type CurriculumProfileViewModel = {
+  avatarUrl: string;
+  name: string;
+  roleTitle: string;
+  profileCopy: string;
+  contactItems: Array<{ icon: string; label: string }>;
+  socialLinks: Array<{ icon: string; label: string }>;
+  personalSkills: Array<{ label: string; score: number }>;
+  education: CurriculumEducationItem[];
+  professionalSkills: CurriculumSkillItem[];
+  proficiencies: CurriculumSkillItem[];
+  experiences: CurriculumExperienceItem[];
+};
 
 @Component({
   standalone: true,
   selector: 'app-curriculum-page',
-  imports: [CommonModule],
+  imports: [CommonModule, MatStepperModule],
   templateUrl: './curriculum.page.html',
   styleUrl: './curriculum.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,9 +70,20 @@ interface CurriculumJourneyViewModel {
 export class CurriculumPage {
   private readonly route = inject(ActivatedRoute);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private journeySelectionKey = '';
+  journeySelectedIndex: number | null = null;
 
   readonly candidateName$ = this.route.queryParamMap.pipe(
     map((params) => params.get('name')?.trim() || 'Candidato em análise'),
+  );
+
+  readonly curriculumProfile$ = this.route.queryParamMap.pipe(
+    map((params) => {
+      const candidateName = params.get('name')?.trim() || '';
+      const profile = candidateName ? this.talentProfileStore.findProfileByName(candidateName) : null;
+      return this.buildCurriculumProfileView(profile, candidateName);
+    }),
   );
 
   readonly candidateJourney$ = this.route.queryParamMap.pipe(
@@ -43,7 +91,15 @@ export class CurriculumPage {
       const jobId = params.get('jobId')?.trim() || '';
       const candidateId = params.get('candidate')?.trim() || '';
       const candidateName = params.get('name')?.trim() || '';
-      return this.buildCandidateJourneyView(jobId, candidateId, candidateName);
+      const journey = this.buildCandidateJourneyView(jobId, candidateId, candidateName);
+      if (journey) {
+        const nextKey = `${journey.currentStageLabel}|${journey.steps.map((item) => `${item.label}:${item.completed}:${item.active}`).join('|')}`;
+        if (this.journeySelectionKey !== nextKey) {
+          this.journeySelectionKey = nextKey;
+          this.journeySelectedIndex = journey.activeIndex;
+        }
+      }
+      return journey;
     }),
   );
 
@@ -69,127 +125,6 @@ export class CurriculumPage {
       };
     }),
   );
-
-  readonly roleTitle = 'Senior Full Stack Engineer';
-  readonly profileCopy =
-    'Profissional com trajetória sólida em produtos digitais, arquitetura de aplicações e evolução contínua de times de tecnologia orientados a performance.';
-
-  readonly contactItems = [
-    { icon: 'call', label: '+55 21 99999-4321' },
-    { icon: 'mail', label: 'cesar.campos@talent.dev' },
-    { icon: 'language', label: 'portfolio.cesarcampos.dev' },
-    { icon: 'location_on', label: 'Rio de Janeiro, Brasil' },
-  ];
-
-  readonly personalSkills = [
-    { label: 'Comunicação', score: 92 },
-    { label: 'Ownership', score: 88 },
-    { label: 'Mentoria', score: 84 },
-    { label: 'Negociação', score: 79 },
-  ];
-
-  readonly socialLinks = [
-    { icon: 'work', label: 'linkedin.com/in/cesarcampos' },
-    { icon: 'public', label: 'github.com/cesarcampos' },
-    { icon: 'draw', label: 'behance.net/cesarcampos' },
-    { icon: 'alternate_email', label: 'x.com/cesarcampos' },
-  ];
-
-  readonly experiences = [
-    {
-      title: 'Lead .NET Engineer',
-      meta: 'Tail Labs | São Paulo | 2023 - atual',
-      description:
-        'Conduziu a evolução de serviços críticos em .NET, alinhando arquitetura, escalabilidade e integração com plataformas de matching e workflow.',
-      highlights: [
-        'Arquitetura orientada a domínio para módulos de vagas e radar.',
-        'Governança técnica de APIs, filas e integrações internas.',
-      ],
-    },
-    {
-      title: 'Senior Angular Engineer',
-      meta: 'Studio Orbit | Remoto | 2020 - 2023',
-      description:
-        'Atuou na construção de experiências complexas de front-end, com foco em performance, componentização e design systems orientados a produto.',
-      highlights: [
-        'Estruturou componentes reutilizáveis e padrões de UI.',
-        'Reduziu retrabalho visual com design tokens e guidelines claros.',
-      ],
-    },
-    {
-      title: 'Software Engineer',
-      meta: 'Core Systems | Rio de Janeiro | 2017 - 2020',
-      description:
-        'Participou da modernização de produtos legados e da criação de jornadas digitais com foco em estabilidade operacional e clareza de negócio.',
-      highlights: [
-        'Refatoração de módulos legados para arquitetura modular.',
-        'Entrega contínua com suporte a times de produto e operação.',
-      ],
-    },
-    {
-      title: 'Systems Analyst',
-      meta: 'Nova Grid | Híbrido | 2015 - 2017',
-      description:
-        'Atuou na ponte entre tecnologia e operação, detalhando requisitos, organizando entregas e sustentando melhorias em produtos internos.',
-      highlights: [
-        'Mapeamento de fluxos críticos de negócio e integração.',
-        'Acompanhamento funcional de entregas e homologações.',
-      ],
-    },
-    {
-      title: 'Junior Developer',
-      meta: 'Axis Digital | Rio de Janeiro | 2013 - 2015',
-      description:
-        'Início da trajetória em desenvolvimento web com foco em manutenção evolutiva, correções orientadas por negócio e apoio a times multidisciplinares.',
-      highlights: [
-        'Sustentação de aplicações internas e portais institucionais.',
-        'Apoio na evolução de interfaces e integrações básicas.',
-      ],
-    },
-  ];
-
-  readonly professionalSkills = [
-    { label: '.NET / C#', score: 91 },
-    { label: 'Angular', score: 88 },
-    { label: 'Node.js', score: 76 },
-    { label: 'Arquitetura', score: 84 },
-    { label: 'TypeScript', score: 87 },
-    { label: 'Design System', score: 73 },
-  ];
-
-  readonly education = [
-    {
-      title: 'MBA em Arquitetura de Software',
-      meta: 'FIAP | 2021 - 2022',
-      description: 'Especialização voltada à modelagem de sistemas escaláveis, governança técnica e práticas avançadas de engenharia.',
-    },
-    {
-      title: 'Bacharelado em Sistemas de Informação',
-      meta: 'Universidade Estácio | 2012 - 2016',
-      description: 'Base em desenvolvimento, banco de dados, análise de sistemas e desenho de soluções de negócio.',
-    },
-  ];
-
-  readonly proficiencies = [
-    { label: 'HTML', score: 90 },
-    { label: 'CSS', score: 88 },
-    { label: 'JavaScript', score: 86 },
-    { label: 'SQL', score: 74 },
-    { label: 'Azure', score: 82 },
-    { label: 'AWS', score: 71 },
-  ];
-
-  get sortedProfessionalSkills(): Array<{ label: string; score: number }> {
-    return this.sortSkillsByScore(this.professionalSkills);
-  }
-
-  get sortedProficiencies(): Array<{ label: string; score: number }> {
-    return this.sortSkillsByScore(this.proficiencies);
-  }
-
-  get visibleExperiences() {
-    return this.experiences.slice(0, 5);
-  }
 
   experienceCompanyLine(meta: string): string {
     const parts = meta.split('|').map((part) => part.trim()).filter(Boolean);
@@ -234,6 +169,221 @@ export class CurriculumPage {
       .find(Boolean);
 
     return (initial || title.slice(0, 1) || 'V').toUpperCase();
+  }
+
+  resolveJourneySelectedIndex(journey: CurriculumJourneyViewModel | null): number {
+    if (!journey) {
+      return 0;
+    }
+
+    if (this.journeySelectedIndex === null || this.journeySelectedIndex >= journey.steps.length) {
+      this.journeySelectedIndex = journey.activeIndex;
+    }
+
+    return this.journeySelectedIndex;
+  }
+
+  onJourneySelectionChange(index: number): void {
+    this.journeySelectedIndex = index;
+  }
+
+  curriculumAvatarLabel(name: string): string {
+    const initial = name
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0))
+      .find(Boolean);
+
+    return (initial || name.slice(0, 1) || 'C').toUpperCase();
+  }
+
+  private buildCurriculumProfileView(profile: SeededTalentProfile | null, candidateName: string): CurriculumProfileViewModel {
+    if (!profile) {
+      return this.buildFallbackCurriculumProfile(candidateName);
+    }
+
+    const basic = profile.basicDraft.profile ?? {};
+    const latestExperience = profile.experiencesDraft[0];
+    const aggregatedStacks = this.talentProfileStore.aggregateStacksFromExperiences(profile.experiencesDraft);
+    const professionalSkills = aggregatedStacks.slice(0, 8).map((item) => ({
+      label: item.name,
+      score: item.knowledge,
+    }));
+    const proficiencies = [...(profile.stacksDraft.primary ?? []), ...(profile.stacksDraft.extra ?? [])]
+      .map((item) => ({
+        label: item.name,
+        score: Math.max(0, Math.min(100, Math.round(Number(item.knowledge ?? 0)))),
+      }))
+      .sort((left, right) => right.score - left.score || left.label.localeCompare(right.label, 'pt-BR'))
+      .slice(0, 8);
+
+    return {
+      avatarUrl: profile.basicDraft.photoPreviewUrl?.trim() || '/assets/avatars/john-doe.jpeg',
+      name: basic.name?.trim() || candidateName || 'Candidato em análise',
+      roleTitle: latestExperience?.role?.trim() || 'Profissional em análise',
+      profileCopy: latestExperience?.responsibilities?.trim()
+        || `Perfil construído a partir das experiências e stacks cadastradas por ${basic.name?.trim() || 'este candidato'}.`,
+      contactItems: this.buildContactItems(profile),
+      socialLinks: this.buildSocialLinks(profile),
+      personalSkills: this.buildPersonalSkills(profile),
+      education: this.buildEducation(profile),
+      professionalSkills: professionalSkills.length ? professionalSkills : proficiencies,
+      proficiencies,
+      experiences: profile.experiencesDraft
+        .slice()
+        .sort((left, right) => this.experienceSortValue(right) - this.experienceSortValue(left))
+        .slice(0, 5)
+        .map((experience) => this.toCurriculumExperienceItem(experience)),
+    };
+  }
+
+  private buildFallbackCurriculumProfile(candidateName: string): CurriculumProfileViewModel {
+    return {
+      avatarUrl: '/assets/avatars/john-doe.jpeg',
+      name: candidateName || 'Candidato em análise',
+      roleTitle: 'Profissional em análise',
+      profileCopy: 'Os dados reais deste currículo ainda não foram encontrados no cadastro do candidato.',
+      contactItems: [],
+      socialLinks: [],
+      personalSkills: [],
+      education: [],
+      professionalSkills: [],
+      proficiencies: [],
+      experiences: [],
+    };
+  }
+
+  private buildContactItems(profile: SeededTalentProfile): Array<{ icon: string; label: string }> {
+    const basic = profile.basicDraft.profile ?? {};
+    return [
+      { icon: 'call', label: basic.phone?.trim() || '' },
+      { icon: 'mail', label: basic.email?.trim() || profile.email || '' },
+      { icon: 'location_on', label: basic.location?.trim() || [basic.city?.trim(), basic.state?.trim()].filter(Boolean).join(' - ') },
+      { icon: 'language', label: basic.portfolio?.trim() || '' },
+    ].filter((item) => !!item.label);
+  }
+
+  private buildSocialLinks(profile: SeededTalentProfile): Array<{ icon: string; label: string }> {
+    const basic = profile.basicDraft.profile ?? {};
+    return [
+      { icon: 'work', label: basic.linkedin?.trim() || '' },
+      { icon: 'language', label: basic.portfolio?.trim() || '' },
+    ].filter((item) => !!item.label);
+  }
+
+  private buildPersonalSkills(profile: SeededTalentProfile): Array<{ label: string; score: number }> {
+    const experiences = profile.experiencesDraft;
+    const averageActuation = experiences.length
+      ? Math.round(experiences.reduce((sum, item) => sum + Math.max(10, Math.min(100, Number(item.actuation ?? 70))), 0) / experiences.length)
+      : 0;
+    const totalMonths = experiences.reduce((sum, item) => sum + this.getExperienceMonths(item), 0);
+    const normalizedMonths = Math.max(45, Math.min(98, Math.round(Math.min(totalMonths, 144) / 144 * 100)));
+    const seniorityBoost = experiences.some((item) => item.positionLevel === 'Tech Lead')
+      ? 92
+      : experiences.some((item) => item.positionLevel === 'Sênior')
+        ? 84
+        : experiences.some((item) => item.positionLevel === 'Pleno')
+          ? 74
+          : 62;
+
+    return [
+      { label: 'Atuação', score: averageActuation || 70 },
+      { label: 'Consistência', score: normalizedMonths },
+      { label: 'Senioridade', score: seniorityBoost },
+    ];
+  }
+
+  private buildEducation(profile: SeededTalentProfile): CurriculumEducationItem[] {
+    const formation = profile.formationCopy;
+    if (!formation) {
+      return [];
+    }
+
+    const items: CurriculumEducationItem[] = [];
+
+    if (formation.graduation?.trim()) {
+      items.push({
+        title: formation.graduation.trim(),
+        meta: this.buildFormationMeta(formation.startMonth, formation.startYear, formation.endMonth, formation.endYear, formation.graduated),
+        description: formation.educationStatus?.trim() || 'Formação registrada no cadastro do candidato.',
+      });
+    }
+
+    if (formation.specialization?.trim()) {
+      items.push({
+        title: formation.specialization.trim(),
+        meta: formation.graduated === false ? 'Em andamento' : 'Especialização',
+        description: 'Especialização informada pelo candidato durante o cadastro.',
+      });
+    }
+
+    return items;
+  }
+
+  private buildFormationMeta(
+    startMonth?: string,
+    startYear?: string,
+    endMonth?: string,
+    endYear?: string,
+    graduated?: boolean,
+  ): string {
+    const start = [startMonth?.trim(), startYear?.trim()].filter(Boolean).join(' ');
+    const end = graduated === false ? 'Em andamento' : [endMonth?.trim(), endYear?.trim()].filter(Boolean).join(' ');
+    return [start, end].filter(Boolean).join(' - ') || 'Formação';
+  }
+
+  private toCurriculumExperienceItem(experience: SeededExperienceDraft): CurriculumExperienceItem {
+    const companyLine = [experience.company?.trim(), experience.workModel?.trim()].filter(Boolean).join(' / ');
+    const dateLine = `${experience.startMonth} ${experience.startYear} - ${experience.currentlyWorkingHere ? 'Atual' : `${experience.endMonth} ${experience.endYear}`}`;
+    const appliedStacks = (experience.appliedStacks ?? [])
+      .slice()
+      .sort((left, right) => Number(right.knowledge ?? 0) - Number(left.knowledge ?? 0))
+      .slice(0, 3)
+      .map((item) => `${item.name} ${Math.round(Number(item.knowledge ?? 0))}%`);
+
+    return {
+      title: experience.role?.trim() || 'Experiência registrada',
+      meta: [companyLine, dateLine].filter(Boolean).join(' | '),
+      description: experience.responsibilities?.trim() || 'Sem descrição detalhada.',
+      highlights: appliedStacks.length ? appliedStacks : ['Sem stacks detalhadas nesta experiência.'],
+    };
+  }
+
+  private experienceSortValue(experience: SeededExperienceDraft): number {
+    const currentFlag = experience.currentlyWorkingHere ? 10_000_000 : 0;
+    const endYear = Number(experience.currentlyWorkingHere ? '2026' : experience.endYear || '0');
+    const endMonth = this.monthOrder(experience.currentlyWorkingHere ? 'Mar' : experience.endMonth);
+    return currentFlag + (endYear * 100) + endMonth;
+  }
+
+  private getExperienceMonths(experience: SeededExperienceDraft): number {
+    const start = this.toComparableMonth(experience.startYear, experience.startMonth);
+    const end = experience.currentlyWorkingHere
+      ? this.toComparableMonth('2026', 'Mar')
+      : this.toComparableMonth(experience.endYear, experience.endMonth);
+
+    if (!start || !end) {
+      return 1;
+    }
+
+    return Math.max(1, end - start + 1);
+  }
+
+  private toComparableMonth(year?: string, month?: string): number {
+    const parsedYear = Number(year ?? '');
+    const parsedMonth = this.monthOrder(month);
+    if (!Number.isFinite(parsedYear) || !parsedMonth) {
+      return 0;
+    }
+    return (parsedYear * 12) + parsedMonth;
+  }
+
+  private monthOrder(month?: string): number {
+    const map: Record<string, number> = {
+      Jan: 1, Fev: 2, Mar: 3, Abr: 4, Mai: 5, Jun: 6,
+      Jul: 7, Ago: 8, Set: 9, Out: 10, Nov: 11, Dez: 12, Atual: 3,
+    };
+    return map[month ?? ''] ?? 0;
   }
 
   private buildCandidateJourneyView(
@@ -336,8 +486,11 @@ export class CurriculumPage {
     }));
 
     return {
+      activeIndex,
       currentStageLabel: this.journeyStageDisplayLabel(stage),
       steps,
+      statusAlertIcon: this.journeyAlertIcon(stage),
+      statusAlertMessage: this.journeyAlertMessage(stage),
     };
   }
 
@@ -430,6 +583,56 @@ export class CurriculumPage {
         return 'Ficou pra próxima';
       default:
         return 'No radar';
+    }
+  }
+
+  private journeyAlertIcon(stage: CandidateStage): string {
+    switch (stage) {
+      case 'radar':
+        return 'person_search';
+      case 'candidatura':
+        return 'touch_app';
+      case 'processo':
+      case 'tecnica':
+        return 'manage_search';
+      case 'aguardando':
+        return 'hourglass_top';
+      case 'aceito':
+        return 'verified';
+      case 'documentacao':
+        return 'description';
+      case 'contratado':
+        return 'celebration';
+      case 'proxima':
+      case 'cancelado':
+        return 'autorenew';
+      default:
+        return 'info';
+    }
+  }
+
+  private journeyAlertMessage(stage: CandidateStage): string {
+    switch (stage) {
+      case 'radar':
+        return 'Este candidato parece promissor, mas ainda precisa clicar em Candidatar-se para entrar no funil da vaga.';
+      case 'candidatura':
+        return 'O candidato ja demonstrou interesse. O proximo passo e o recruiter avancar o perfil para processo.';
+      case 'processo':
+      case 'tecnica':
+        return 'O candidato esta em avaliacao. Vale aprofundar entrevistas, teste tecnico e sinais de aderencia.';
+      case 'aguardando':
+        return 'A contratacao foi solicitada e agora o fluxo depende da resposta final do candidato.';
+      case 'aceito':
+        return 'O candidato aceitou a proposta. O proximo passo e seguir com documentos e validacoes.';
+      case 'documentacao':
+        return 'Os documentos estao em validacao. Se estiver tudo certo, o fluxo pode seguir para contratacao.';
+      case 'contratado':
+        return 'Fluxo concluido com sucesso. Este candidato ja foi contratado para a vaga.';
+      case 'proxima':
+      case 'cancelado':
+        return 'Este ciclo foi encerrado para esta vaga, mas o perfil ainda pode voltar ao radar em novas oportunidades.';
+      default:
+        return 'Acompanhe aqui a etapa atual do candidato e o proximo movimento esperado no fluxo.';
     }
   }
 }
