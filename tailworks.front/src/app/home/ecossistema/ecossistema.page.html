@@ -217,7 +217,7 @@
 
         <article class="ecosystem-desktop__jobs-grid-row" *ngFor="let job of paginatedEcoJobs; trackBy: trackByJob">
           <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--logo">
-            <div class="ecosystem-desktop__jobs-company-logo">
+            <button class="ecosystem-desktop__jobs-company-logo ecosystem-desktop__jobs-company-logo-button" type="button" [attr.aria-label]="'Destacar ' + job.title + ' na lateral'" (click)="selectSideRailRecentJob(job.id)">
               <img
                 *ngIf="jobCompanyLogoUrl(job); else companyInitials"
                 class="ecosystem-desktop__jobs-company-logo-image"
@@ -228,11 +228,11 @@
               <ng-template #companyInitials>
                 <span class="ecosystem-desktop__jobs-company-logo-fallback">{{ jobCompanyLogoLabel(job) }}</span>
               </ng-template>
-            </div>
+            </button>
           </div>
 
           <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--title">
-            <div class="ecosystem-desktop__jobs-title-copy">
+            <button class="ecosystem-desktop__jobs-title-copy ecosystem-desktop__jobs-title-button" type="button" [attr.aria-label]="'Destacar ' + job.title + ' na lateral'" (click)="selectSideRailRecentJob(job.id)">
               <strong>
                 <span class="ecosystem-desktop__jobs-title-text">
                   {{ job.code ? job.code + ' - ' : '' }}{{ job.title }}
@@ -247,7 +247,7 @@
                 </span>
               </strong>
               <small>{{ jobCardLocation(job) }}</small>
-            </div>
+            </button>
           </div>
 
           <div class="ecosystem-desktop__jobs-grid-cell">
@@ -274,7 +274,7 @@
                 <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Abrir chat">
                   <span class="material-symbols-rounded" aria-hidden="true">chat</span>
                 </button>
-                <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga">
+                <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga" (click)="openEditJob(job.id)">
                   <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                 </button>
               </div>
@@ -296,7 +296,7 @@
                   <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Abrir chat">
                     <span class="material-symbols-rounded" aria-hidden="true">chat</span>
                   </button>
-                  <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga">
+                  <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga" (click)="openEditJob(job.id)">
                     <span class="material-symbols-rounded" aria-hidden="true">edit</span>
                   </button>
                 </div>
@@ -377,11 +377,11 @@
       </div>
 
       <div class="ecosystem-desktop__side-kicker">
-        <span>Vagas Recentes</span>
+        <span>Vaga em Foco</span>
       </div>
 
       <p class="ecosystem-desktop__side-kicker-copy">
-        abaixo as ultimas vagas criadas com aderencia aproximada da meta
+        selecione uma vaga no grid para destacar aqui os dados principais da publicacao e do radar atual
       </p>
 
       <div class="ecosystem-desktop__side-spotlights">
@@ -420,12 +420,12 @@
 
           <div class="ecosystem-desktop__candidate-stack-row">
             <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
-            <div class="ecosystem-desktop__candidate-avatars" *ngIf="jobInteractionAvatarBadges(job).length; else noRecentJobAvatars">
-              <ng-container *ngFor="let badge of jobInteractionAvatarBadges(job); trackBy: trackByAvatarBadge">
+            <div class="ecosystem-desktop__candidate-avatars" *ngIf="sideRailJobAvatarBadges.length; else noRecentJobAvatars">
+              <ng-container *ngFor="let badge of sideRailJobAvatarBadges; trackBy: trackByAvatarBadge">
                 <img class="ecosystem-desktop__candidate-avatar-stack" [src]="badge.src" [alt]="badge.label" />
               </ng-container>
-              <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="jobBoardRadarExtraCount(job) > 0">
-                +{{ jobBoardRadarExtraCount(job) }}
+              <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="sideRailJobAvatarExtraCount > 0">
+                +{{ sideRailJobAvatarExtraCount }}
               </span>
             </div>
             <ng-template #noRecentJobAvatars>
@@ -437,7 +437,7 @@
 
       <div class="ecosystem-desktop__side-summary ecosystem-desktop__side-summary--secondary">
         <div class="ecosystem-desktop__side-summary-feature">
-          <span>Contatados</span>
+          <span>Aderentes</span>
         </div>
       </div>
 
@@ -451,7 +451,7 @@
         (pointercancel)="stopSideCandidatesDrag($event)"
         (pointerleave)="stopSideCandidatesDrag($event)"
       >
-        <article class="ecosystem-desktop__candidate-card" *ngFor="let candidate of sideRailCandidateCards">
+        <article class="ecosystem-desktop__candidate-card" *ngFor="let candidate of sideRailCandidateCards; trackBy: trackBySideRailCandidate">
           <div class="ecosystem-desktop__candidate-card-head">
             <img class="ecosystem-desktop__candidate-avatar" [src]="candidate.avatarUrl" [alt]="candidate.name" />
             <div class="ecosystem-desktop__candidate-copy">

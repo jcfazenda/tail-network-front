@@ -78,6 +78,10 @@
   font-weight: 600;
 }
 
+.profit-card__filter--wide{
+  min-width: 68px;
+}
+
 .profit-card__filter--active{
   background: rgba(232, 239, 247, 0.12);
   color: #f7f8fb;

@@ -72,6 +72,7 @@ export interface MockJobDraft extends VagaPanelDraft {
   contractType: ContractType;
   statusReason?: string;
   salaryRange?: string;
+  radarAdherenceThreshold?: number;
   showSalaryRangeInCard?: boolean;
   allowCandidateSalarySuggestion?: boolean;
   hybridOnsiteDaysDescription?: string;

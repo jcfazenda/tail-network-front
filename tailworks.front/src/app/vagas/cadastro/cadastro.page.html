@@ -15,14 +15,6 @@
         <section class="job-create__insights">
           <section class="job-create__insight-panel job-create__insight-panel--secondary">
             <div class="job-create__insight-head job-create__insight-head--secondary">
-              <div class="job-create__signal-target">
-                <span class="job-create__signal-target-label">Meta de aderencia</span>
-                <div class="job-create__signal-target-actions">
-                  <span class="job-create__signal-target-value">85%</span>
-                  <button class="job-create__signal-target-submit" type="button">Aplicar</button>
-                </div>
-              </div>
-
               <div class="job-create__signal-tabs">
                 <button class="job-create__signal-tab job-create__signal-tab--active" type="button">Semana</button>
                 <button class="job-create__signal-tab" type="button">Mes</button>
@@ -43,14 +35,6 @@
                   <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
                 </button>
               </div>
-
-              <div class="job-create__insight-pills">
-                <button class="job-create__insight-pill job-create__insight-pill--wide job-create__insight-pill--active" type="button">
-                  Semana
-                </button>
-                <button class="job-create__insight-pill job-create__insight-pill--short" type="button">Mes</button>
-                <button class="job-create__insight-pill job-create__insight-pill--short" type="button">Ano</button>
-              </div>
             </div>
 
             <div class="job-create__insight-copy-block">
@@ -62,6 +46,32 @@
               <p class="job-create__insight-copy">
                 Acompanhe o peso tecnico da vaga em construção com uma visão rápida das stacks mais exigidas e da distribuição esperada de aderencia no pipeline.
               </p>
+            </div>
+
+            <div class="job-create__insight-signal-row" *ngIf="hasAppliedExperienceStacks">
+              <div class="job-create__signal-target">
+                <span class="job-create__signal-target-label">Meta de aderencia</span>
+                <div class="job-create__signal-target-actions">
+                  <span class="job-create__signal-target-value">{{ radarAdherenceThreshold }}%</span>
+                </div>
+              </div>
+
+              <div class="job-create__signal-target-radar" *ngIf="appliedRadarPreviewBadges.length">
+                <div class="job-create__signal-target-avatars">
+                  <ng-container *ngFor="let badge of appliedRadarPreviewBadges">
+                    <img class="job-create__signal-target-avatar" [src]="badge.src" [alt]="badge.label" />
+                  </ng-container>
+                  <span class="job-create__signal-target-avatar-extra" *ngIf="appliedRadarPreviewExtraCount > 0">
+                    +{{ appliedRadarPreviewExtraCount }}
+                  </span>
+                </div>
+                <div class="job-create__signal-target-fit" aria-label="Aderencia total do card da vaga">
+                  <span class="job-create__signal-target-fit-bar" aria-hidden="true">
+                    <span class="job-create__signal-target-fit-fill" [style.width.%]="previewAderencia"></span>
+                  </span>
+                  <strong>{{ previewAderencia }}%</strong>
+                </div>
+              </div>
             </div>
 
             <section class="candidate-experience__experience-stacks">
@@ -391,7 +401,14 @@
       <label class="job-create__side-field">
         <span class="job-create__side-label job-create__side-label--split">
           <span>Faixa salarial</span>
-          <button class="job-create__side-inline-toggle" type="button" aria-label="Mostrar no card">
+          <button
+            class="job-create__side-inline-toggle"
+            [class.job-create__side-inline-toggle--active]="showSalaryRangeInCard"
+            type="button"
+            aria-label="Mostrar no card"
+            [attr.aria-pressed]="showSalaryRangeInCard"
+            (click)="toggleShowSalaryRangeInCard()"
+          >
             <span class="job-create__side-inline-toggle-thumb" aria-hidden="true"></span>
           </button>
         </span>
@@ -414,7 +431,14 @@
             <strong>Candidato pode colocar um valor.</strong>
             <p>Aparece para o candidato sugerir quando visualizar a vaga.</p>
           </div>
-          <button class="job-create__side-inline-toggle" type="button" aria-label="Permitir valor do candidato">
+          <button
+            class="job-create__side-inline-toggle"
+            [class.job-create__side-inline-toggle--active]="allowCandidateSalarySuggestion"
+            type="button"
+            aria-label="Permitir valor do candidato"
+            [attr.aria-pressed]="allowCandidateSalarySuggestion"
+            (click)="toggleAllowCandidateSalarySuggestion()"
+          >
             <span class="job-create__side-inline-toggle-thumb" aria-hidden="true"></span>
           </button>
         </div>

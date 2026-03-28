@@ -105,10 +105,10 @@ type JobCardTalentRow = {
 };
 
 type SideRailCandidateCard = {
+  id: string;
   name: string;
   role: string;
   status: string;
-  feedback: string;
   adherence: number;
   adherenceTone: 'high' | 'medium' | 'low';
   summary: string;
@@ -202,7 +202,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   ecoFilter: EcoFilter = 'radar';
   ecoJobsPage = 0;
   readonly ecoJobsPageSize = 6;
-  readonly sideRailCandidateCards: SideRailCandidateCard[] = this.buildSideRailCandidateCards();
+  selectedSideRailRecentJobId: string | null = null;
   overviewRange: OverviewRange = 'week';
   private hiredSpotlightDeck: HiredSpotlightCard[] = [];
   sideCandidatesDragging = false;
@@ -710,15 +710,47 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   get sideRailRecentJobs(): MockJobRecord[] {
-    return this.jobsSnapshot
+    const jobs = this.jobsSnapshot
       .filter((job) => job.status === 'ativas')
       .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
       .sort((left, right) => {
         const rightTime = Date.parse(right.createdAt || right.updatedAt || '') || 0;
         const leftTime = Date.parse(left.createdAt || left.updatedAt || '') || 0;
         return rightTime - leftTime || (right.match ?? 0) - (left.match ?? 0);
-      })
-      .slice(0, 3);
+      });
+
+    if (!this.selectedSideRailRecentJobId) {
+      return jobs.slice(0, 3);
+    }
+
+    const selectedJob = jobs.find((job) => job.id === this.selectedSideRailRecentJobId);
+    if (!selectedJob) {
+      return jobs.slice(0, 3);
+    }
+
+    return [selectedJob, ...jobs.filter((job) => job.id !== selectedJob.id)].slice(0, 3);
+  }
+
+  get sideRailCandidateCards(): SideRailCandidateCard[] {
+    const job = this.sideRailRecentJobs[0];
+    if (!job) {
+      return [];
+    }
+
+    return this.buildSideRailCandidateCards(job);
+  }
+
+  get sideRailJobAvatarBadges(): Array<{ src: string; label: string }> {
+    return this.sideRailCandidateCards
+      .slice(0, 4)
+      .map((candidate) => ({
+        src: candidate.avatarUrl,
+        label: this.personInitials(candidate.name),
+      }));
+  }
+
+  get sideRailJobAvatarExtraCount(): number {
+    return Math.max(0, this.sideRailCandidateCards.length - this.sideRailJobAvatarBadges.length);
   }
 
   get sideRailInProgressCandidatesCount(): number {
@@ -998,81 +1030,97 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return `${value}`;
   }
 
-  private buildSideRailCandidateCards(): SideRailCandidateCard[] {
-    const baseCards: Omit<SideRailCandidateCard, 'adherenceTone'>[] = [
-      {
-        name: 'Alvaro Taylor',
-        role: 'UX Designer',
-        status: 'Proposta Aceita',
-        feedback: 'Feedback Tecnico bom.',
-        adherence: 91,
-        summary: 'Bom repertorio em discovery, fluxo mobile e handoff com squads de produto.',
-        stacks: ['.NET', 'Angular'],
-        avatarUrl: this.fallbackAvatarUrl,
-      },
-      {
-        name: 'Elon Morrening',
-        role: 'UX Designer',
-        status: 'Em entrevista final',
-        feedback: 'Feedback Tecnico forte.',
-        adherence: 87,
-        summary: 'Perfil consistente para produto digital, boa leitura de negocio e interface.',
-        stacks: ['Figma', 'Angular'],
-        avatarUrl: this.fallbackAvatarUrl,
-      },
-      {
-        name: 'Julia Ferraz',
-        role: 'Product Designer',
-        status: 'Case tecnico enviado',
-        feedback: 'Feedback Tecnico consistente.',
-        adherence: 78,
-        summary: 'Boa maturidade de produto, domina rituais com squad e jornada ponta a ponta.',
-        stacks: ['Figma', 'Design System'],
-        avatarUrl: this.fallbackAvatarUrl,
-      },
-      {
-        name: 'Rafael Nunes',
-        role: 'Frontend Engineer',
-        status: 'Entrevista com lideranca',
-        feedback: 'Feedback Tecnico promissor.',
-        adherence: 72,
-        summary: 'Boa base de componentizacao e leitura de codigo, ainda evoluindo em arquitetura.',
-        stacks: ['Angular', 'TypeScript'],
-        avatarUrl: this.fallbackAvatarUrl,
-      },
-      {
-        name: 'Marina Costa',
-        role: 'Backend Engineer',
-        status: 'Triagem inicial',
-        feedback: 'Feedback Tecnico moderado.',
-        adherence: 63,
-        summary: 'Perfil util para sustentacao e APIs, aderencia parcial ao stack principal da vaga.',
-        stacks: ['.NET', 'SQL'],
-        avatarUrl: this.fallbackAvatarUrl,
-      },
-      {
-        name: 'Pedro Alves',
-        role: 'QA Analyst',
-        status: 'Aguardando retorno',
-        feedback: 'Feedback Tecnico inicial.',
-        adherence: 54,
-        summary: 'Tem boa disciplina de processo, mas ainda com pouca profundidade nas stacks-chave.',
-        stacks: ['Cypress', 'Postman'],
-        avatarUrl: this.fallbackAvatarUrl,
-      },
+  private buildSideRailCandidateCards(job: MockJobRecord): SideRailCandidateCard[] {
+    return this.sideRailCompatibleCandidates(job)
+      .slice(0, 6)
+      .map((candidate, index) => this.mapSideRailCandidateCard(job, candidate, index));
+  }
+
+  private sideRailCompatibleCandidates(job: MockJobRecord): MockJobCandidate[] {
+    const threshold = this.jobRadarAdherenceThreshold(job);
+    const seen = new Set<string>();
+    const allCandidates = [
+      ...this.jobCompatibleManagedCandidates(job, threshold),
+      ...this.buildRadarPanelCandidates(job),
     ];
 
-    return Array.from({ length: 36 }, (_, index) => {
-      const seed = baseCards[index % baseCards.length];
-      const adherence = Math.max(41, seed.adherence - Math.floor(index / baseCards.length) * 4);
+    return allCandidates.filter((candidate) => {
+      const normalizedName = candidate.name.trim().toLocaleLowerCase('pt-BR');
+      if (!normalizedName || seen.has(normalizedName) || candidate.match < threshold) {
+        return false;
+      }
 
-      return {
-        ...seed,
-        name: index < baseCards.length ? seed.name : `${seed.name} ${Math.floor(index / baseCards.length) + 1}`,
-        adherence,
-        adherenceTone: this.getCandidateAdherenceTone(adherence),
-      };
+      seen.add(normalizedName);
+      return true;
     });
+  }
+
+  private jobCompatibleManagedCandidates(job: MockJobRecord, threshold: number): MockJobCandidate[] {
+    return [...(job.candidates ?? [])]
+      .filter((candidate) => {
+        const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar';
+        return stage !== 'cancelado' && stage !== 'proxima' && candidate.match >= threshold;
+      })
+      .sort((left, right) => {
+        const stageLeft = this.jobsFacade.getEffectiveCandidateStage(left) ?? 'radar';
+        const stageRight = this.jobsFacade.getEffectiveCandidateStage(right) ?? 'radar';
+        const leftIsManaged = stageLeft !== 'radar';
+        const rightIsManaged = stageRight !== 'radar';
+        return Number(rightIsManaged) - Number(leftIsManaged)
+          || right.match - left.match
+          || left.name.localeCompare(right.name, 'pt-BR');
+      });
+  }
+
+  private mapSideRailCandidateCard(job: MockJobRecord, candidate: MockJobCandidate, index: number): SideRailCandidateCard {
+    const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? candidate.stage ?? 'radar';
+    const stacks = this.sideRailCandidateStacks(job, candidate);
+    const summary = this.sideRailCandidateSummary(job, candidate, stacks);
+
+    return {
+      id: candidate.id?.trim() || `${job.id}:${candidate.name}:${index}`,
+      name: candidate.name,
+      role: candidate.role?.trim() || job.title,
+      status: this.recruiterPanelStageLabel(stage),
+      adherence: this.matchDomainService.clampScore(candidate.match),
+      adherenceTone: this.getCandidateAdherenceTone(candidate.match),
+      summary,
+      stacks,
+      avatarUrl: this.resolveAvatar(candidate.avatar),
+    };
+  }
+
+  private sideRailCandidateStacks(job: MockJobRecord, candidate: MockJobCandidate): string[] {
+    const normalizedRole = candidate.role?.trim();
+    const roleStacks = normalizedRole
+      ? normalizedRole.split('/').map((item) => item.trim()).filter(Boolean)
+      : [];
+
+    if (roleStacks.length) {
+      return roleStacks.slice(0, 2);
+    }
+
+    return this.topJobTechStacks(job).slice(0, 2).map((stack) => stack.name);
+  }
+
+  private sideRailCandidateSummary(job: MockJobRecord, candidate: MockJobCandidate, stacks: string[]): string {
+    const location = candidate.location?.trim();
+    const availability = candidate.availabilityLabel?.trim();
+    const stackCopy = stacks.length ? `aderencia em ${stacks.join(' e ')}` : `aderencia alinhada a ${job.title}`;
+
+    if (location && availability) {
+      return `${location}. ${availability}. ${stackCopy}.`;
+    }
+
+    if (location) {
+      return `${location}. Perfil com ${stackCopy}.`;
+    }
+
+    if (availability) {
+      return `${availability}. Perfil com ${stackCopy}.`;
+    }
+
+    return `Perfil com ${stackCopy}.`;
   }
 
   private getCandidateAdherenceTone(adherence: number): SideRailCandidateCard['adherenceTone'] {
@@ -1595,6 +1643,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     });
   }
 
+  selectSideRailRecentJob(jobId: string): void {
+    this.selectedSideRailRecentJobId = jobId.trim() || null;
+  }
+
   openRecruiterPanelCandidate(index: number): void {
     if (!this.selectedJobPanel) {
       return;
@@ -1825,6 +1877,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private jobRadarAdherenceThreshold(job: MockJobRecord): number {
+    if (Number.isFinite(job.radarAdherenceThreshold)) {
+      return Math.max(35, Math.min(95, Math.round(job.radarAdherenceThreshold ?? 85)));
+    }
+
     const primaryStacks = [...(job.techStack ?? [])]
       .filter((stack) => Number.isFinite(stack.match) && stack.match > 0)
       .sort((left, right) => right.match - left.match)
@@ -2365,6 +2421,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   trackByAvatarBadge(index: number, item: { src: string; label: string }): string {
     return `${index}:${item.src}:${item.label}`;
+  }
+
+  trackBySideRailCandidate(_index: number, item: SideRailCandidateCard): string {
+    return item.id;
   }
 
   private hasRealAvatar(avatar: string | undefined): boolean {

@@ -7,6 +7,8 @@ import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
+import { TalentDirectoryService } from '../../talent/talent-directory.service';
+import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { ContractType, ExperienceStackCertificate, ExperienceStackItem, JobBenefitItem, JobResponsibilitySection, MockJobCandidate, MockJobDraft, MockJobRecord, SaveMockJobCommand, TechStackItem, VagaPanelDraft, WorkModel } from '../data/vagas.models';
 import { Subscription } from 'rxjs'; 
 
@@ -165,6 +167,8 @@ export class CadastroPage implements OnDestroy {
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly companiesFacade = inject(CompaniesFacade);
   private readonly matchDomainService = inject(MatchDomainService);
+  private readonly talentDirectoryService = inject(TalentDirectoryService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly subscriptions = new Subscription();
   private summaryPanelDragState: {
     pointerId: number;
@@ -244,6 +248,7 @@ export class CadastroPage implements OnDestroy {
 
   constructor() {
     this.ensureCurrentRecruiterCompanyInDraft();
+    void this.talentProfileStore.syncFromRemote().then(() => this.cdr.markForCheck()).catch(() => null);
     this.loadEditingJobIfPresent();
     this.subscriptions.add(
       this.jobsFacade.jobsChanged$.subscribe(() => {
@@ -392,6 +397,10 @@ experienceStacks: ExperienceStackChip[] = [
 
 get currentExperienceStacks(): ExperienceStackChip[] {
   return this.experienceStacks;
+}
+
+get hasAppliedExperienceStacks(): boolean {
+  return this.currentExperienceStacks.length > 0;
 }
 
 get experienceStackModalTitle(): string {
@@ -1426,6 +1435,85 @@ private getRichContentPlainText(value: string): string {
     );
   }
 
+  get radarAdherenceThreshold(): number {
+    const primaryStacks = [...this.cardTechStackItems]
+      .filter((item) => Number.isFinite(item.match) && item.match > 0)
+      .sort((left, right) => right.match - left.match)
+      .slice(0, 3);
+
+    if (!primaryStacks.length) {
+      return 50;
+    }
+
+    const average = primaryStacks.reduce((sum, item) => sum + item.match, 0) / primaryStacks.length;
+    return this.normalizeRadarAdherenceThreshold(average);
+  }
+
+  get appliedRadarPreviewBadges(): Array<{ src: string; label: string }> {
+    return this.currentRadarPreviewMatches
+      .slice(0, 4)
+      .map((talent) => ({
+        src: this.resolvePreviewAvatar(talent.avatarUrl),
+        label: this.personInitial(talent.name),
+      }));
+  }
+
+  get appliedRadarPreviewExtraCount(): number {
+    return Math.max(0, this.currentRadarPreviewMatches.length - this.appliedRadarPreviewBadges.length);
+  }
+
+  private get currentRadarPreviewMatches() {
+    const threshold = this.radarAdherenceThreshold;
+    const jobProfile = this.matchDomainService.buildJobProfile({
+      techStack: this.cardTechStackItems,
+      seniority: this.jobDraft.seniority,
+      responsibilitySections: this.responsibilitySections,
+    });
+
+    const directoryByName = new Map(
+      this.talentDirectoryService.listTalents()
+        .map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent] as const),
+    );
+
+    if (jobProfile.requiredRepoIds.length) {
+      const rankedTalents = this.talentProfileStore.listRankableCandidates()
+        .map(({ candidate, talentProfile }, index) => {
+          const directoryTalent = directoryByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
+          const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
+
+          return {
+            id: directoryTalent?.id ?? `ranked-${index + 1}`,
+            name: candidate.name,
+            avatarUrl: directoryTalent?.avatarUrl ?? '',
+            visibleInEcosystem: directoryTalent?.visibleInEcosystem ?? true,
+            availableForHiring: directoryTalent?.availableForHiring ?? true,
+            score: score.overallScore,
+          };
+        })
+        .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring && talent.score >= threshold)
+        .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name, 'pt-BR'));
+
+      if (rankedTalents.length) {
+        return rankedTalents;
+      }
+    }
+
+    const fallbackCandidates = (this.editingJobId ? this.jobsFacade.getJobById(this.editingJobId)?.candidates : [])
+      ?? [];
+
+    return [...fallbackCandidates]
+      .filter((candidate) => (this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar') === 'radar' && candidate.match >= threshold)
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .map((candidate, index) => ({
+        id: candidate.id ?? `fallback-${index + 1}`,
+        name: candidate.name,
+        avatarUrl: candidate.avatar,
+        visibleInEcosystem: true,
+        availableForHiring: true,
+        score: candidate.match,
+      }));
+  }
+
   get previewContractType(): ContractType {
     return this.contractType;
   }
@@ -1624,6 +1712,14 @@ private getRichContentPlainText(value: string): string {
 
   onSalaryRangeChange(value: string): void {
     this.salaryRange = this.formatSalaryRange(value);
+  }
+
+  toggleShowSalaryRangeInCard(): void {
+    this.showSalaryRangeInCard = !this.showSalaryRangeInCard;
+  }
+
+  toggleAllowCandidateSalarySuggestion(): void {
+    this.allowCandidateSalarySuggestion = !this.allowCandidateSalarySuggestion;
   }
 
   openCompanyLogoPicker(input: HTMLInputElement): void {
@@ -2160,13 +2256,16 @@ private getRichContentPlainText(value: string): string {
     this.selectedBenefits = job.benefits.map((item) => ({ ...item }));
     this.selectedDocuments = [...job.hiringDocuments];
     this.selectedTechStackItems = job.techStack.map((item) => ({ ...item }));
-    this.experienceStacks = (job.experienceStacks ?? []).map((item) => this.createExperienceStackChip(
+    const savedExperienceStacks = (job.experienceStacks ?? []).map((item) => this.createExperienceStackChip(
       item.name,
       item.knowledge,
       item.description,
       item.repoId,
       item.certificate,
     ));
+    this.experienceStacks = savedExperienceStacks.length
+      ? savedExperienceStacks
+      : job.techStack.map((item) => this.createExperienceStackChip(item.name, item.match, '', this.findExperienceStackOptionByName(item.name)?.id));
     this.selectedRefinementOptions = [...job.differentials];
     this.responsibilitySections = job.responsibilitySections.map((section) => ({
       ...section,
@@ -2315,6 +2414,7 @@ private getRichContentPlainText(value: string): string {
       contractType: this.contractType,
       statusReason: this.editingJobStatusReason.trim() || undefined,
       salaryRange: this.salaryRange.trim(),
+      radarAdherenceThreshold: this.radarAdherenceThreshold,
       showSalaryRangeInCard: this.showSalaryRangeInCard,
       allowCandidateSalarySuggestion: this.allowCandidateSalarySuggestion,
       benefits: this.selectedBenefits.map((item) => ({ ...item })),
@@ -2358,6 +2458,28 @@ private getRichContentPlainText(value: string): string {
     };
 
     reader.readAsDataURL(file);
+  }
+
+  private normalizeRadarAdherenceThreshold(value: number | string | null | undefined): number {
+    const parsed = typeof value === 'number'
+      ? value
+      : Number.parseInt(`${value ?? ''}`.replace(/[^\d]/g, ''), 10);
+
+    if (!Number.isFinite(parsed)) {
+      return 85;
+    }
+
+    return Math.max(35, Math.min(95, Math.round(parsed)));
+  }
+
+  private resolvePreviewAvatar(value: string | undefined): string {
+    const normalized = value?.trim();
+    return normalized || '/assets/avatars/john-doe.jpeg';
+  }
+
+  private personInitial(name: string | undefined): string {
+    const normalized = name?.trim();
+    return normalized ? normalized.charAt(0).toUpperCase() : 'T';
   }
 
   private handleHomeAnnouncementImageFile(file: File | null): void {
