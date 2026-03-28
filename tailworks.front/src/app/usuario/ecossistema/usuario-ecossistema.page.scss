@@ -220,6 +220,217 @@
   box-shadow: inset 0 0 0 1px rgba(16,18,22,0.08);
 }
 
+.talent-journey-card{
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 18px 16px 16px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--card-muted) 94%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.talent-journey-card__head{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.talent-journey-card__copy{
+  display: grid;
+  gap: 4px;
+}
+
+.talent-journey-card__copy span{
+  color: var(--eco-muted);
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.talent-journey-card__copy strong{
+  color: var(--eco-heading);
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.talent-journey-card__advance{
+  min-height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.28), rgba(167, 100, 50, 0.18));
+  color: var(--eco-heading);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.talent-journey-card__stepper{
+  background: transparent;
+}
+
+.talent-journey-card__label{
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.talent-journey-card__time{
+  display: grid;
+  gap: 2px;
+}
+
+.talent-journey-card__time span{
+  color: color-mix(in srgb, var(--text-strong) 72%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.talent-journey-card__time small{
+  color: color-mix(in srgb, var(--text) 52%, transparent);
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.talent-journey-card__meta{
+  display: grid;
+  gap: 2px;
+}
+
+.talent-journey-card__meta strong{
+  color: var(--eco-heading);
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.talent-journey-card__meta small{
+  color: var(--eco-muted);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.talent-journey-card__body{
+  padding: 2px 0 12px;
+}
+
+.talent-journey-card__body p{
+  margin: 0;
+  color: var(--eco-muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.talent-journey-card__documents{
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-left: 14px;
+}
+
+.talent-journey-card__documents strong{
+  margin-left: -14px;
+  color: var(--eco-heading);
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.talent-journey-card__documents ul{
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.talent-journey-card__documents li{
+  color: var(--eco-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.talent-journey-card__divider{
+  display: block;
+  border-top: 1px dashed color-mix(in srgb, var(--text) 18%, transparent);
+}
+
+.talent-journey-card__alert{
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.talent-journey-card__alert .material-symbols-rounded{
+  font-size: 22px;
+  color: color-mix(in srgb, var(--warning) 72%, var(--text));
+}
+
+.talent-journey-card__alert p{
+  margin: 0;
+  color: var(--eco-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-step-header{
+  padding: 8px 0;
+  height: auto;
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-step-text-label{
+  width: 100%;
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-vertical-content-container{
+  margin-left: 14px;
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-vertical-content{
+  padding: 0 0 0 24px;
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-step-icon{
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(92, 98, 108, 0.64);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-step-icon-selected{
+  background: rgba(255, 249, 237, 0.98);
+  border-color: rgba(210, 149, 54, 0.32);
+  color: rgba(167, 103, 18, 0.94);
+  box-shadow: 0 0 0 4px rgba(240, 180, 56, 0.1);
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-step-icon-state-done{
+  background: rgba(255, 247, 232, 0.94);
+  border-color: rgba(186, 123, 36, 0.26);
+  color: rgba(148, 91, 18, 0.9);
+}
+
+:host ::ng-deep .talent-journey-card__stepper .mat-stepper-vertical-line::before{
+  border-left-style: dotted;
+  border-left-color: color-mix(in srgb, var(--text) 16%, transparent);
+}
+
+:host-context(body[data-theme='light']) .talent-journey-card{
+  background: rgba(255,255,255,0.58);
+  box-shadow: inset 0 0 0 1px rgba(16, 18, 22, 0.05);
+}
+
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-avatar{
   border-color: rgba(67, 67, 67, 0.92);
   background: rgba(242,244,247,0.96);

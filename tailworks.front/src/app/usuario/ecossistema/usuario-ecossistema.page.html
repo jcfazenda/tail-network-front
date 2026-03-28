@@ -388,6 +388,63 @@
           </div>
         </article>
       </div>
+
+      <div class="talent-journey-card" *ngIf="focusedTalentJourney as journey">
+        <div class="talent-journey-card__head">
+          <div class="talent-journey-card__copy">
+            <span>Status da vaga</span>
+            <strong>{{ journey.currentStageLabel }}</strong>
+          </div>
+          <button
+            class="talent-journey-card__advance"
+            type="button"
+            *ngIf="canAdvanceFocusedTalentJourney"
+            (click)="advanceFocusedTalentJourney()"
+          >
+            Avançar
+          </button>
+        </div>
+
+        <mat-vertical-stepper
+          class="talent-journey-card__stepper"
+          [linear]="false"
+          [selectedIndex]="resolveTalentJourneySelectedIndex(journey)"
+          (selectionChange)="onTalentJourneySelectionChange($event.selectedIndex)"
+        >
+          <mat-step *ngFor="let item of journey.steps" [completed]="item.completed">
+            <ng-template matStepLabel>
+              <div class="talent-journey-card__label">
+                <div class="talent-journey-card__time">
+                  <span>{{ item.dateLabel }}</span>
+                  <small>{{ item.hourLabel }}</small>
+                </div>
+                <div class="talent-journey-card__meta">
+                  <strong>{{ item.label }}</strong>
+                  <small>{{ item.ownerText }}</small>
+                </div>
+              </div>
+            </ng-template>
+
+            <div class="talent-journey-card__body">
+              <p>{{ item.description }}</p>
+
+              <div class="talent-journey-card__documents" *ngIf="item.requiredDocuments?.length">
+                <strong>Documentos necessários</strong>
+                <ul>
+                  <li *ngFor="let document of item.requiredDocuments">{{ document }}</li>
+                </ul>
+              </div>
+            </div>
+          </mat-step>
+        </mat-vertical-stepper>
+
+        <span class="talent-journey-card__divider" aria-hidden="true"></span>
+
+        <div class="talent-journey-card__alert">
+          <span class="material-symbols-rounded">{{ journey.statusAlertIcon }}</span>
+          <p>{{ journey.statusAlertMessage }}</p>
+        </div>
+      </div>
     </div>
   </aside>
 </main>
