@@ -34,7 +34,8 @@
 .sidebar--collapsed{
   width: 92px;
   padding: 14px 10px 14px;
-  overflow: hidden;
+  overflow: visible;
+  border-radius: 16px;
   background: linear-gradient(
     180deg,
     color-mix(in srgb, var(--card-strong) 36%, transparent),
@@ -175,12 +176,13 @@
 
 .sidebar--collapsed .sidebar__collapse{
   position: absolute;
-  top: 22px;
+  top: 12px;
   right: -17px;
   width: 28px;
   height: 28px;
-  box-shadow: 0 10px 18px rgba(47, 125, 232, 0.24);
-  background: linear-gradient(135deg, #3d8bff, #1d68ea);
+  z-index: 5;
+  box-shadow: 0 10px 18px rgba(167, 100, 50, 0.26);
+  background: linear-gradient(135deg, #f0b23a, #b86a21);
 }
 
 .sidebar__compactMark{

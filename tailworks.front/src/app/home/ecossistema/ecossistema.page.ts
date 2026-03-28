@@ -25,6 +25,7 @@ import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-l
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
 type EcoFilter = TalentEcoFilter | RecruiterEcoFilter;
+type OverviewRange = 'week' | 'month' | 'year';
 type EcoKpiItem = {
   icon: string;
   value: string;
@@ -201,6 +202,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   ecoJobsPage = 0;
   readonly ecoJobsPageSize = 6;
   readonly sideRailCandidateCards: SideRailCandidateCard[] = this.buildSideRailCandidateCards();
+  overviewRange: OverviewRange = 'week';
   private hiredSpotlightDeck: HiredSpotlightCard[] = [];
   sideCandidatesDragging = false;
   private sideCandidatesPointerId: number | null = null;
@@ -593,6 +595,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.ecoFilter = filter;
     this.ecoJobsPage = 0;
     this.ecosystemViewFilterService.setSelected(filter);
+    this.cdr.markForCheck();
+  }
+
+  setOverviewRange(range: OverviewRange): void {
+    if (this.overviewRange === range) {
+      return;
+    }
+
+    this.overviewRange = range;
     this.cdr.markForCheck();
   }
 

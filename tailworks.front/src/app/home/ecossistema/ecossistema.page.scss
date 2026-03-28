@@ -93,6 +93,12 @@
   background: rgba(255,255,255,0.64);
 }
 
+:host-context(body[data-theme='light']) .ecosystem-desktop__panel-pill--active{
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.22), rgba(167, 100, 50, 0.14));
+  color: rgba(16, 18, 22, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(167, 100, 50, 0.12);
+}
+
 :host-context(body[data-theme='light']) .ecosystem-desktop__section-kicker span,
 :host-context(body[data-theme='light']) .ecosystem-desktop__stack-name,
 :host-context(body[data-theme='light']) .ecosystem-desktop__stack-value,
@@ -139,12 +145,14 @@
 
 :host-context(body[data-theme='light']) .ecosystem-desktop__signal-target-submit,
 :host-context(body[data-theme='light']) .ecosystem-desktop__signal-tab--active{
-  background: rgba(16,18,22,0.08);
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.22), rgba(167, 100, 50, 0.14));
   color: rgba(16,18,22,0.84);
+  box-shadow: inset 0 0 0 1px rgba(167, 100, 50, 0.12);
 }
 
 :host-context(body[data-theme='light']) .ecosystem-desktop__signal-tab{
   color: rgba(16,18,22,0.5);
+  background: rgba(255,255,255,0.64);
 }
 
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-tab{
@@ -848,10 +856,7 @@
 .ecosystem-desktop__signal-tabs{
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  gap: 10px;
 }
 
 .ecosystem-desktop__signal-target{
@@ -904,20 +909,30 @@
 }
 
 .ecosystem-desktop__signal-tab{
+  width: 88px;
+  height: 38px;
   border: 0;
-  min-width: 42px;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 8px;
-  background: transparent;
-  color: rgba(245, 247, 251, 0.52);
-  font-size: 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #ffffff 10%, transparent);
+  color: rgba(245, 247, 251, 0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.ecosystem-desktop__signal-tab:hover{
+  transform: translateY(-1px);
 }
 
 .ecosystem-desktop__signal-tab--active{
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.22), rgba(167, 100, 50, 0.26));
   color: #f7f8fb;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
 }
 
 .ecosystem-desktop__panel-head{
@@ -957,8 +972,32 @@
 .ecosystem-desktop__panel-pill{
   width: 88px;
   height: 38px;
+  border: 0;
   border-radius: 999px;
   background: color-mix(in srgb, #ffffff 10%, transparent);
+  color: rgba(245, 247, 251, 0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.ecosystem-desktop__panel-pill:hover{
+  transform: translateY(-1px);
+}
+
+.ecosystem-desktop__panel-pill--active{
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.22), rgba(167, 100, 50, 0.26));
+  color: #f7f8fb;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.ecosystem-desktop__panel-pill--wide{
+  width: 102px;
 }
 
 .ecosystem-desktop__panel-pill--short{
@@ -1192,7 +1231,7 @@
 .ecosystem-desktop__jobs-grid-header,
 .ecosystem-desktop__jobs-grid-row{
   display: grid;
-  grid-template-columns: 62px minmax(220px, 1.02fr) minmax(190px, 0.88fr) minmax(332px, 1.44fr);
+  grid-template-columns: 62px minmax(220px, 0.98fr) minmax(190px, 0.82fr) minmax(392px, 1.68fr);
   column-gap: 10px;
   row-gap: 12px;
   align-items: center;
@@ -1456,7 +1495,7 @@
 }
 
 .ecosystem-desktop__jobs-action .material-symbols-rounded{
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1;
   font-variation-settings:
     'FILL' 1,
@@ -1470,14 +1509,14 @@
 }
 
 .ecosystem-desktop__jobs-match{
-  min-width: 170px;
+  min-width: 214px;
   display: inline-flex;
   align-items: center;
   gap: 14px;
 }
 
 .ecosystem-desktop__jobs-match-bar{
-  width: 116px;
+  width: 154px;
   height: 5px;
   overflow: hidden;
   border-radius: 999px;
@@ -2613,7 +2652,7 @@
 
   .ecosystem-desktop__jobs-grid-header,
   .ecosystem-desktop__jobs-grid-row{
-    grid-template-columns: minmax(180px, 1.4fr) minmax(110px, 1fr) minmax(100px, .8fr) minmax(90px, .8fr) minmax(82px, .65fr);
+    grid-template-columns: minmax(180px, 1.24fr) minmax(110px, .9fr) minmax(100px, .78fr) minmax(90px, .78fr) minmax(126px, .96fr);
     gap: 12px;
   }
 

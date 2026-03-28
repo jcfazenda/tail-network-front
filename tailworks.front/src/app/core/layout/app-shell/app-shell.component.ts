@@ -83,6 +83,18 @@ export class AppShellComponent {
     return this.hasSidebar && this.isSidebarOpen && this.isCompactSidebarMode;
   }
 
+  get shouldMainSpanFull(): boolean {
+    if (this.isCandidateEcosystem) {
+      return true;
+    }
+
+    if (!this.hasSidebar) {
+      return true;
+    }
+
+    return this.isCompactSidebarMode;
+  }
+
   hideSidebar(): void {
     this.sidebarVisibilityService.hide();
   }

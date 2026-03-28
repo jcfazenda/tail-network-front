@@ -34,8 +34,30 @@
         </div>
 
         <div class="ecosystem-desktop__panel-pills">
-          <div class="ecosystem-desktop__panel-pill"></div>
-          <div class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--short"></div>
+          <button
+            class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--wide"
+            type="button"
+            [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'week'"
+            (click)="setOverviewRange('week')"
+          >
+            Semana
+          </button>
+          <button
+            class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--short"
+            type="button"
+            [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'month'"
+            (click)="setOverviewRange('month')"
+          >
+            Mes
+          </button>
+          <button
+            class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--short"
+            type="button"
+            [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'year'"
+            (click)="setOverviewRange('year')"
+          >
+            Ano
+          </button>
         </div>
       </div>
 
@@ -132,9 +154,9 @@
         </div>
 
         <div class="ecosystem-desktop__signal-tabs">
-          <button class="ecosystem-desktop__signal-tab ecosystem-desktop__signal-tab--active" type="button">Dia</button>
-          <button class="ecosystem-desktop__signal-tab" type="button">Semana</button>
+          <button class="ecosystem-desktop__signal-tab ecosystem-desktop__signal-tab--active" type="button">Semana</button>
           <button class="ecosystem-desktop__signal-tab" type="button">Mes</button>
+          <button class="ecosystem-desktop__signal-tab" type="button">Ano</button>
         </div>
       </div>
       <app-profit-loss-card />
@@ -250,7 +272,7 @@
 
               <div class="ecosystem-desktop__jobs-actions" aria-label="Ações da vaga">
                 <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Abrir chat">
-                  <span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">chat</span>
                 </button>
                 <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga">
                   <span class="material-symbols-rounded" aria-hidden="true">edit</span>
@@ -272,7 +294,7 @@
                 <span class="ecosystem-desktop__jobs-radar-separator" aria-hidden="true"></span>
                 <div class="ecosystem-desktop__jobs-actions" aria-label="Ações da vaga">
                   <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Abrir chat">
-                    <span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">chat</span>
                   </button>
                   <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga">
                     <span class="material-symbols-rounded" aria-hidden="true">edit</span>
