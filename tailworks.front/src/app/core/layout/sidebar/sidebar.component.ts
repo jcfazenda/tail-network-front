@@ -1,12 +1,17 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Params, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
+import { TalentNotification } from '../../../usuario/talent-notification.service';
+import { CandidateStage, MockJobRecord } from '../../../vagas/data/vagas.models';
 import { AuthFacade } from '../../facades/auth.facade';
 import { JobsFacade } from '../../facades/jobs.facade';
+import { TalentNotificationsFacade } from '../../facades/talent-notifications.facade';
 import { SidebarVisibilityService } from './sidebar-visibility.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
+import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 
 type NavItem = { label: string; route: string; icon: string };
 type CandidateTreeItem = {
@@ -30,27 +35,43 @@ type CandidateBasicDraft = {
   photoPreviewUrl?: string;
   photoFileName?: string;
 };
+type ThemeMode = 'light' | 'dark';
+type NotificationConfettiPiece = {
+  left: string;
+  top: string;
+  delay: string;
+  duration: string;
+  size: string;
+  rotate: string;
+  color: string;
+  dx: string;
+  dy: string;
+};
 
 @Component({
   standalone: true,
   selector: 'app-sidebar',
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
   readonly overlayMode = input(false);
+  readonly collapsedMode = input(false);
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
-  private static readonly recruiterAvatarAsset = '/assets/avatars/avatar-default.svg';
+  private static readonly themeStorageKey = 'tailworks:theme-mode:v1';
   readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
+  private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly talentNotificationsFacade = inject(TalentNotificationsFacade);
   private readonly browserStorage = inject(BrowserStorageService);
+  private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -60,6 +81,15 @@ export class SidebarComponent {
     ),
     { initialValue: this.router.url },
   );
+  activeThemeMode: ThemeMode = 'light';
+  filterCompany = '';
+  filterState = '';
+  filterStack = '';
+  filterCode = '';
+  isFilterPopupOpen = false;
+  private notificationModal: TalentNotification | null = null;
+  private notificationsOpen = false;
+  private confettiPieces: NotificationConfettiPiece[] = [];
 
   private readonly recruiterItems: NavItem[] = [
     { label: 'Radar', route: '/radar', icon: 'radar' },
@@ -105,6 +135,10 @@ export class SidebarComponent {
   private readonly selectionItems: NavItem[] = [
     { label: 'Home', route: '/home', icon: 'home' },
   ];
+
+  constructor() {
+    this.restoreTheme();
+  }
 
   get items(): NavItem[] {
     if (this.isSelectionMode) {
@@ -191,6 +225,14 @@ export class SidebarComponent {
       : 'Você tem 5 novas mensagens';
   }
 
+  get isDarkTheme(): boolean {
+    return this.activeThemeMode === 'dark';
+  }
+
+  get isCollapsed(): boolean {
+    return this.collapsedMode() && !this.overlayMode();
+  }
+
   get isRecruiterMode(): boolean {
     return !this.isSelectionMode && !this.isCandidateMode;
   }
@@ -260,7 +302,7 @@ export class SidebarComponent {
   }
 
   get recruiterAvatarUrl(): string {
-    return SidebarComponent.recruiterAvatarAsset;
+    return '';
   }
 
   get recruiterDisplayName(): string {
@@ -299,6 +341,134 @@ export class SidebarComponent {
 
   get sidebarDisplayInitials(): string {
     return this.isCandidateMode ? this.candidateDisplayInitials : this.recruiterDisplayInitials;
+  }
+
+  get isTemplateLanding(): boolean {
+    return this.primaryPath === '/home/ecossistema';
+  }
+
+  get isCandidateEcosystem(): boolean {
+    return this.primaryPath === '/usuario/ecossistema';
+  }
+
+  get isAnyEcosystem(): boolean {
+    return this.primaryPath === '/home/ecossistema' || this.primaryPath === '/usuario/ecossistema';
+  }
+
+  get hasSavedEcosystemFilters(): boolean {
+    const filters = this.ecosystemJobFiltersService.filters();
+    return !!(filters.code || filters.company || filters.state || filters.stack);
+  }
+
+  get ecosystemCompanies(): string[] {
+    return this.readEcosystemJobs()
+      .map((job) => job.company.trim())
+      .filter(Boolean)
+      .filter((company, index, list) => list.indexOf(company) === index)
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'));
+  }
+
+  get ecosystemStates(): string[] {
+    return this.readEcosystemJobs()
+      .map((job) => job.location.split('-').pop()?.trim() ?? '')
+      .filter(Boolean)
+      .filter((state, index, list) => list.indexOf(state) === index)
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'));
+  }
+
+  get ecosystemStacks(): string[] {
+    return this.readEcosystemJobs()
+      .flatMap((job) => job.techStack.map((stack) => stack.name.trim()))
+      .filter(Boolean)
+      .filter((stack, index, list) => list.indexOf(stack) === index)
+      .sort((left, right) => left.localeCompare(right, 'pt-BR'));
+  }
+
+  get unreadTalentNotifications(): number {
+    return this.talentNotificationsFacade.unreadCount();
+  }
+
+  get talentNotifications(): TalentNotification[] {
+    return this.isCandidateMode ? this.talentNotificationsFacade.notifications() : [];
+  }
+
+  get hasTalentNotifications(): boolean {
+    return this.talentNotifications.length > 0;
+  }
+
+  get isNotificationListOpen(): boolean {
+    return this.notificationsOpen;
+  }
+
+  get activeTalentNotification(): TalentNotification | null {
+    return this.notificationModal;
+  }
+
+  get activeTalentNotificationJob(): MockJobRecord | null {
+    const notification = this.notificationModal;
+    if (!notification) {
+      return null;
+    }
+
+    return this.jobsFacade.getJobById(notification.jobId) ?? null;
+  }
+
+  get activeTalentNotificationStage(): CandidateStage | null {
+    const job = this.activeTalentNotificationJob;
+    if (!job) {
+      return null;
+    }
+
+    const candidate = this.jobsFacade.findTalentCandidate(job);
+    return this.jobsFacade.getEffectiveCandidateStage(candidate) ?? null;
+  }
+
+  get activeTalentNotificationCompanyLine(): string {
+    const notification = this.notificationModal;
+    const job = this.activeTalentNotificationJob;
+    const company = job?.company || notification?.company || '';
+    const workModel = (job?.workModel || notification?.workModel || '').trim();
+
+    if (company && workModel) {
+      return `${company} - ${workModel}`;
+    }
+
+    return company || workModel;
+  }
+
+  get activeTalentNotificationLocationLine(): string {
+    const notification = this.notificationModal;
+    const job = this.activeTalentNotificationJob;
+    return job?.location || notification?.location || '';
+  }
+
+  get activeTalentNotificationOfferLine(): string {
+    const job = this.activeTalentNotificationJob;
+    if (!job) {
+      return '';
+    }
+
+    const rawSalary = job.salaryRange?.trim() || '';
+    const salary = rawSalary && !rawSalary.startsWith('R$') ? `R$ ${rawSalary}` : rawSalary;
+    const contract = job.contractType?.trim() || '';
+    const benefitsSuffix = job.benefits.length > 0 ? ' + Beneficios' : '';
+    return [salary, contract].filter(Boolean).join(' ') + benefitsSuffix;
+  }
+
+  get notificationConfettiPieces(): NotificationConfettiPiece[] {
+    return this.confettiPieces;
+  }
+
+  compactGroupLabel(index: number): string {
+    if (index === 0) {
+      return 'Menu';
+    }
+
+    if (index === this.sidebarTreeGroups.length - 1) {
+      return 'Conta';
+    }
+
+    return 'Grupo';
   }
 
   isCandidateTreeItemActive(item: CandidateTreeItem): boolean {
@@ -345,7 +515,22 @@ export class SidebarComponent {
   }
 
   hideSidebar(): void {
+    if (this.isCollapsed) {
+      this.sidebarVisibilityService.show();
+      return;
+    }
+
     this.sidebarVisibilityService.hide();
+  }
+
+  setTheme(mode: ThemeMode): void {
+    if (this.activeThemeMode === mode) {
+      return;
+    }
+
+    this.activeThemeMode = mode;
+    this.applyTheme(mode);
+    this.cdr.markForCheck();
   }
 
   openSidebarAvatarPicker(input: HTMLInputElement): void {
@@ -370,9 +555,129 @@ export class SidebarComponent {
     }
   }
 
+  openCreateJob(): void {
+    void this.router.navigate(['/vagas/cadastro']);
+  }
+
+  openCandidateProfileSetup(): void {
+    void this.router.navigate(['/usuario/dados-cadastrais']);
+  }
+
+  openEcosystemFilters(): void {
+    const filters = this.ecosystemJobFiltersService.filters();
+    this.filterCode = filters.code;
+    this.filterCompany = filters.company;
+    this.filterState = filters.state;
+    this.filterStack = filters.stack;
+    this.isFilterPopupOpen = true;
+  }
+
+  closeEcosystemFilters(): void {
+    this.isFilterPopupOpen = false;
+  }
+
+  clearEcosystemFilters(): void {
+    this.filterCode = '';
+    this.filterCompany = '';
+    this.filterState = '';
+    this.filterStack = '';
+  }
+
+  confirmEcosystemFilters(): void {
+    this.ecosystemJobFiltersService.setFilters({
+      code: this.filterCode,
+      company: this.filterCompany,
+      state: this.filterState,
+      stack: this.filterStack,
+    });
+
+    this.closeEcosystemFilters();
+  }
+
+  openNotifications(): void {
+    if (!this.isCandidateMode) {
+      return;
+    }
+
+    this.notificationsOpen = !this.notificationsOpen;
+    if (this.notificationsOpen) {
+      this.notificationModal = null;
+    }
+  }
+
+  closeNotificationModal(): void {
+    this.notificationModal = null;
+    this.notificationsOpen = false;
+    this.confettiPieces = [];
+    this.isFilterPopupOpen = false;
+  }
+
+  openNotificationPreview(notification: TalentNotification): void {
+    this.talentNotificationsFacade.markAsRead(notification.id);
+    this.notificationModal = notification;
+    this.notificationsOpen = false;
+    this.confettiPieces = this.shouldLaunchNotificationConfetti(notification, this.activeTalentNotificationStage)
+      ? this.buildNotificationConfetti()
+      : [];
+  }
+
+  openNotificationConversation(): void {
+    const notification = this.notificationModal;
+    if (!notification) {
+      return;
+    }
+
+    this.notificationModal = null;
+    void this.router.navigate(['/usuario/minhas-candidaturas'], {
+      queryParams: {
+        job: notification.jobId,
+        panel: 'status',
+        notice: Date.now(),
+      },
+    });
+  }
+
+  notificationTitle(notification: TalentNotification): string {
+    if (notification.type === 'new-vacancy') {
+      return 'Nova vaga no radar';
+    }
+
+    const time = new Date(notification.createdAt);
+    const hh = `${time.getHours()}`.padStart(2, '0');
+    const mm = `${time.getMinutes()}`.padStart(2, '0');
+    return `Candidatura às ${hh}:${mm}`;
+  }
+
+  notificationPreview(notification: TalentNotification): string {
+    switch (notification.type) {
+      case 'new-vacancy':
+        return 'Uma nova vaga ativa entrou no ecossistema e ja pode aparecer no seu radar.';
+      case 'process-advanced':
+        return 'A empresa avaliou seu perfil e decidiu seguir com sua candidatura.';
+      default:
+        return 'Você recebeu uma atualização sobre a sua candidatura.';
+    }
+  }
+
+  notificationIsUnread(notification: TalentNotification): boolean {
+    return !notification.readAt;
+  }
+
   @HostListener(`window:${SidebarComponent.photoUpdatedEventName}`)
   handlePhotoUpdated(): void {
     this.cdr.markForCheck();
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.isFilterPopupOpen) {
+      this.closeEcosystemFilters();
+      return;
+    }
+
+    if (this.notificationsOpen || this.notificationModal) {
+      this.closeNotificationModal();
+    }
   }
 
   private readPrimaryPath(url: string): string {
@@ -382,6 +687,22 @@ export class SidebarComponent {
 
   private get primaryPath(): string {
     return this.readPrimaryPath(this.currentUrl());
+  }
+
+  private restoreTheme(): void {
+    const stored = this.browserStorage.getItem(SidebarComponent.themeStorageKey);
+    const nextMode: ThemeMode = stored === 'dark' ? 'dark' : 'light';
+    this.activeThemeMode = nextMode;
+    this.applyTheme(nextMode);
+  }
+
+  private applyTheme(mode: ThemeMode): void {
+    const body = this.document?.body;
+    if (body) {
+      body.dataset['theme'] = mode;
+    }
+
+    this.browserStorage.setItem(SidebarComponent.themeStorageKey, mode);
   }
 
   private readCandidateDraft(): CandidateBasicDraft | null {
@@ -396,6 +717,46 @@ export class SidebarComponent {
       this.browserStorage.removeItem(SidebarComponent.basicDraftStorageKey);
       return null;
     }
+  }
+
+  private readEcosystemJobs(): MockJobRecord[] {
+    const jobs = this.jobsFacade.getJobs().filter((job) => job.status === 'ativas');
+
+    if (this.primaryPath === '/home/ecossistema') {
+      return jobs.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
+    }
+
+    return jobs;
+  }
+
+  private shouldLaunchNotificationConfetti(
+    notification: TalentNotification | null,
+    stage: CandidateStage | null,
+  ): boolean {
+    return notification?.type === 'process-advanced' || stage === 'processo' || stage === 'contratado';
+  }
+
+  private buildNotificationConfetti(): NotificationConfettiPiece[] {
+    const palette = ['#f59e0b', '#f97316', '#fde68a', '#fb7185', '#38bdf8', '#34d399'];
+    return Array.from({ length: 350 }, (_, index) => {
+      const angle = (Math.PI * 2 * index) / 350;
+      const ring = index % 5;
+      const radius = 140 + ring * 55 + (index % 7) * 9;
+      const dx = Math.cos(angle) * radius;
+      const dy = Math.sin(angle) * radius;
+
+      return {
+        left: `${50 + ((index % 9) - 4) * 0.35}%`,
+        top: `${40 + ((index % 7) - 3) * 0.45}%`,
+        delay: `${(index % 10) * 0.025}s`,
+        duration: `${1.75 + (index % 6) * 0.12}s`,
+        size: `${7 + (index % 3) * 3}px`,
+        rotate: `${(index * 29) % 360}deg`,
+        color: palette[index % palette.length],
+        dx: `${dx.toFixed(1)}px`,
+        dy: `${dy.toFixed(1)}px`,
+      };
+    });
   }
 
   private handleCandidatePhotoFile(file: File | null): void {

@@ -1,110 +1,373 @@
-<aside class="sidebar" [class.sidebar--overlay]="overlayMode()">
-  <div class="brand">
-    <ng-container *ngIf="isProfileSidebarMode; else defaultBrand">
-      <div class="brandCandidate">
-        <input
-          #sidebarAvatarInput
-          class="brandAvatarInput"
-          type="file"
-          accept=".jpg,.jpeg,.png,.gif,.webp"
-          (change)="onSidebarAvatarSelected($event)"
-        />
+<aside
+  class="sidebar"
+  [class.sidebar--overlay]="overlayMode()"
+  [class.sidebar--theme-dark]="isDarkTheme"
+  [class.sidebar--collapsed]="isCollapsed"
+>
+  <div class="sidebar__chrome">
+    <div class="sidebar__traffic-lights" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
 
-        <button
-          class="brandAvatarButton"
-          type="button"
-          (click)="openSidebarAvatarPicker(sidebarAvatarInput)"
-          [attr.aria-label]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
-          [title]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
-        >
-          <div
-            class="brandAvatar"
-            [class.brandAvatar--image]="!!sidebarAvatarUrl"
-            [style.backgroundImage]="sidebarAvatarUrl ? 'url(' + sidebarAvatarUrl + ')' : null"
-            [attr.aria-label]="sidebarDisplayName"
+    <button
+      *ngIf="!isSelectionMode"
+      class="sidebar__collapse"
+      type="button"
+      (click)="hideSidebar()"
+      [attr.aria-label]="isCollapsed ? 'Expandir navegação' : 'Recolher navegação'"
+      [title]="isCollapsed ? 'Expandir navegação' : 'Recolher navegação'"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</span>
+    </button>
+  </div>
+
+  <div class="sidebar__main">
+    <div class="brand">
+      <ng-container *ngIf="isProfileSidebarMode; else defaultBrand">
+        <div class="brandCandidate">
+          <input
+            #sidebarAvatarInput
+            class="brandAvatarInput"
+            type="file"
+            accept=".jpg,.jpeg,.png,.gif,.webp"
+            (change)="onSidebarAvatarSelected($event)"
+          />
+
+          <button
+            class="brandAvatarButton"
+            type="button"
+            (click)="openSidebarAvatarPicker(sidebarAvatarInput)"
+            [attr.aria-label]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
+            [title]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
           >
-            <span *ngIf="!sidebarAvatarUrl">{{ sidebarDisplayInitials }}</span>
-          </div>
-        </button>
+            <div
+              class="brandAvatar"
+              [class.brandAvatar--image]="!!sidebarAvatarUrl"
+              [style.backgroundImage]="sidebarAvatarUrl ? 'url(' + sidebarAvatarUrl + ')' : null"
+              [attr.aria-label]="sidebarDisplayName"
+            >
+              <span *ngIf="!sidebarAvatarUrl">{{ sidebarDisplayInitials }}</span>
+            </div>
+          </button>
 
-        <div class="brandCandidate__copy">
-          <strong>{{ sidebarDisplayName }}</strong>
-          <span>{{ sidebarDisplayMeta }}</span>
+          <div class="brandCandidate__copy" *ngIf="!isCollapsed">
+            <strong>{{ sidebarDisplayName }}</strong>
+            <span>{{ sidebarDisplayMeta }}</span>
+          </div>
         </div>
-      </div>
+      </ng-container>
+
+      <ng-template #defaultBrand>
+        <img *ngIf="!isCollapsed; else collapsedDefaultBrand" src="/assets/images/logo-tail.png" alt="TailWorks" class="brandImg" />
+        <ng-template #collapsedDefaultBrand>
+          <div class="sidebar__compactMark" aria-label="TailWorks">T</div>
+        </ng-template>
+      </ng-template>
+    </div>
+
+    <ng-container *ngIf="isProfileSidebarMode; else flatMenu">
+      <nav
+        class="menu menu--tree"
+        [attr.aria-label]="isCandidateMode ? 'Navegacao do talento' : 'Navegacao do recruiter'"
+      >
+        <section class="menuTree__group" *ngFor="let group of sidebarTreeGroups; let groupIndex = index">
+          <strong class="menuTree__groupLabel">{{ isCollapsed ? compactGroupLabel(groupIndex) : group.label }}</strong>
+
+          <div class="menuTree__branch">
+            <ng-container *ngFor="let item of group.items">
+              <a
+                *ngIf="item.route; else placeholderItem"
+                class="menuTree__item"
+                [attr.aria-label]="item.label"
+                [title]="item.label"
+                [class.menuTree__item--active]="isCandidateTreeItemActive(item)"
+                [routerLink]="item.route"
+                [queryParams]="item.queryParams ?? null"
+                (click)="handleTreeItemClick(item)"
+              >
+                <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
+                <span class="menuTree__itemLabel" *ngIf="!isCollapsed">{{ item.label }}</span>
+              </a>
+
+              <ng-template #placeholderItem>
+                <div class="menuTree__item menuTree__item--placeholder" [attr.aria-label]="item.label" [title]="item.label">
+                  <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
+                  <span class="menuTree__itemLabel" *ngIf="!isCollapsed">{{ item.label }}</span>
+                </div>
+              </ng-template>
+            </ng-container>
+          </div>
+        </section>
+      </nav>
     </ng-container>
 
-    <ng-template #defaultBrand>
-      <img src="/assets/images/logo-tail.png" alt="TailWorks" class="brandImg" />
+    <ng-template #flatMenu>
+      <nav class="menu" [class.menu--candidate]="isCandidateMode">
+        <a
+          *ngFor="let item of items"
+          class="menuItem"
+          [attr.aria-label]="item.label"
+          [title]="item.label"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: isExactRoute(item) }"
+          (click)="handleFlatItemClick(item)"
+        >
+          <span class="activeBar" aria-hidden="true"></span>
+          <span class="material-symbols-rounded icon" aria-hidden="true">{{ item.icon }}</span>
+          <span class="label" *ngIf="!isCollapsed">{{ item.label }}</span>
+        </a>
+      </nav>
     </ng-template>
   </div>
 
-  <ng-container *ngIf="isProfileSidebarMode; else flatMenu">
-    <nav
-      class="menu menu--tree"
-      [attr.aria-label]="isCandidateMode ? 'Navegacao do talento' : 'Navegacao do recruiter'"
-    >
-      <section class="menuTree__group" *ngFor="let group of sidebarTreeGroups">
-        <strong class="menuTree__groupLabel">{{ group.label }}</strong>
-
-        <div class="menuTree__branch">
-          <ng-container *ngFor="let item of group.items">
-            <a
-              *ngIf="item.route; else placeholderItem"
-              class="menuTree__item"
-              [class.menuTree__item--active]="isCandidateTreeItemActive(item)"
-              [routerLink]="item.route"
-              [queryParams]="item.queryParams ?? null"
-              (click)="handleTreeItemClick(item)"
-            >
-              <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
-              <span class="menuTree__itemLabel">{{ item.label }}</span>
-            </a>
-
-            <ng-template #placeholderItem>
-              <div class="menuTree__item menuTree__item--placeholder">
-                <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
-                <span class="menuTree__itemLabel">{{ item.label }}</span>
-              </div>
-            </ng-template>
-          </ng-container>
+  <div class="sidebar__bottom" *ngIf="!isCollapsed">
+    <div class="profileFooter">
+      <div class="divider"></div>
+      <div class="profileRow flat">
+        <div class="avatar" aria-hidden="true"></div>
+        <div class="profileMeta">
+          <b>{{ profileName }}</b>
+          <span>{{ profileRole }}</span>
         </div>
-      </section>
-    </nav>
-  </ng-container>
-
-  <ng-template #flatMenu>
-    <nav class="menu" [class.menu--candidate]="isCandidateMode">
-      <a
-        *ngFor="let item of items"
-        class="menuItem"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: isExactRoute(item) }"
-        (click)="handleFlatItemClick(item)"
-      >
-        <span class="activeBar" aria-hidden="true"></span>
-        <span class="material-symbols-rounded icon" aria-hidden="true">{{ item.icon }}</span>
-        <span class="label">{{ item.label }}</span>
-      </a>
-    </nav>
-  </ng-template>
-  <div class="profileFooter">
-    <div class="divider"></div>
-    <div class="profileRow flat">
-      <div class="avatar" aria-hidden="true"></div>
-      <div class="profileMeta">
-        <b>{{ profileName }}</b>
-        <span>{{ profileRole }}</span>
+      </div>
+      <div class="footer-msg" aria-label="Notificações">
+        {{ footerMessage }}
       </div>
     </div>
-    <div class="footer-msg" aria-label="Notificações">
-      {{ footerMessage }}
+
+    <div *ngIf="isProfileSidebarMode" class="sidebarActions">
+      <button
+        *ngIf="isCandidateEcosystem"
+        class="sidebarActions__shortcut"
+        type="button"
+        (click)="openCandidateProfileSetup()"
+        aria-label="Configurar perfil"
+      >
+        configurar
+      </button>
+
+      <button
+        *ngIf="isTemplateLanding"
+        class="sidebarActions__shortcut sidebarActions__shortcut--create"
+        type="button"
+        (click)="openCreateJob()"
+        aria-label="Criar vaga"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
+        CRIAR VAGA
+      </button>
+
+      <button
+        *ngIf="isAnyEcosystem"
+        class="sidebarActions__icon"
+        type="button"
+        aria-label="Filtrar"
+        (click)="openEcosystemFilters()"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">filter_alt</span>
+        <span class="sidebarActions__dot" *ngIf="hasSavedEcosystemFilters"></span>
+      </button>
+
+      <button class="sidebarActions__icon" type="button" aria-label="Buscar">
+        <span class="material-symbols-rounded" aria-hidden="true">search</span>
+      </button>
+
+      <button
+        class="sidebarActions__icon sidebarActions__icon--notifications"
+        type="button"
+        aria-label="Notificações"
+        (click)="openNotifications()"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
+        <span class="sidebarActions__badge" *ngIf="unreadTalentNotifications > 0">
+          {{ unreadTalentNotifications }}
+        </span>
+      </button>
+    </div>
+
+    <div class="sidebarFooterBrand" aria-hidden="true">
+      <div class="sidebarFooterBrand__divider"></div>
+      <img src="/assets/images/logo-tail.png" alt="" class="sidebarFooterBrand__image" />
+      <span class="sidebarFooterBrand__copyright">All rights reserved © 2026</span>
+    </div>
+
+    <div class="sidebarTheme" *ngIf="isProfileSidebarMode">
+      <button
+        class="sidebarTheme__option"
+        type="button"
+        [class.sidebarTheme__option--active]="activeThemeMode === 'light'"
+        (click)="setTheme('light')"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">light_mode</span>
+        <span>Light</span>
+      </button>
+
+      <button
+        class="sidebarTheme__option"
+        type="button"
+        [class.sidebarTheme__option--active]="activeThemeMode === 'dark'"
+        (click)="setTheme('dark')"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
+        <span>Dark</span>
+      </button>
     </div>
   </div>
 
-  <div class="sidebarFooterBrand" aria-hidden="true">
-    <img src="/assets/images/logo-tail.png" alt="" class="sidebarFooterBrand__image" />
-    <span class="sidebarFooterBrand__copyright">All rights reserved © 2026</span>
+  <div class="sidebar__bottom sidebar__bottom--compact" *ngIf="isCollapsed">
+    <div class="sidebarCompactFooter">
+      <div class="sidebarCompactFooter__divider"></div>
+      <img src="/assets/images/logo-tail.png" alt="" class="sidebarCompactFooter__image" />
+    </div>
   </div>
 </aside>
+
+<div
+  *ngIf="isNotificationListOpen || activeTalentNotification"
+  class="sidebarOverlay"
+  (click)="closeNotificationModal()"
+>
+  <section
+    *ngIf="isNotificationListOpen"
+    class="sidebarNotificationList"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="sidebarNotificationList__head">
+      <strong>Notificações</strong>
+      <span>{{ unreadTalentNotifications }}</span>
+    </div>
+
+    <div *ngIf="hasTalentNotifications; else emptyNotifications" class="sidebarNotificationList__items">
+      <article
+        *ngFor="let notification of talentNotifications"
+        class="sidebarNotificationList__item"
+        [class.sidebarNotificationList__item--unread]="notificationIsUnread(notification)"
+      >
+        <div class="sidebarNotificationList__copy">
+          <div class="sidebarNotificationList__copyHead">
+            <strong>{{ notificationTitle(notification) }}</strong>
+            <button
+              class="sidebarNotificationList__action"
+              type="button"
+              (click)="openNotificationPreview(notification)"
+            >
+              abrir
+            </button>
+          </div>
+          <p>{{ notificationPreview(notification) }}</p>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #emptyNotifications>
+      <div class="sidebarNotificationList__empty">Nenhuma notificação no momento.</div>
+    </ng-template>
+  </section>
+
+  <section
+    *ngIf="activeTalentNotification"
+    class="sidebarNotificationModal"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="sidebarNotificationModal__confetti" *ngIf="notificationConfettiPieces.length">
+      <span
+        *ngFor="let piece of notificationConfettiPieces"
+        class="sidebarNotificationModal__confettiPiece"
+        [style.left]="piece.left"
+        [style.top]="piece.top"
+        [style.animationDelay]="piece.delay"
+        [style.animationDuration]="piece.duration"
+        [style.width]="piece.size"
+        [style.height]="piece.size"
+        [style.background]="piece.color"
+        [style.--confetti-rotate]="piece.rotate"
+        [style.--confetti-dx]="piece.dx"
+        [style.--confetti-dy]="piece.dy"
+      ></span>
+    </div>
+
+    <button class="sidebarNotificationModal__close" type="button" (click)="closeNotificationModal()">
+      <span class="material-symbols-rounded" aria-hidden="true">close</span>
+    </button>
+
+    <div class="sidebarNotificationModal__label">{{ notificationTitle(activeTalentNotification) }}</div>
+
+    <div class="sidebarNotificationModal__job">
+      <strong class="sidebarNotificationModal__jobTitle">{{ activeTalentNotification.title }}</strong>
+      <span class="sidebarNotificationModal__jobMeta">{{ activeTalentNotificationCompanyLine }}</span>
+      <span class="sidebarNotificationModal__jobMeta">{{ activeTalentNotificationLocationLine }}</span>
+      <span class="sidebarNotificationModal__jobMeta" *ngIf="activeTalentNotificationOfferLine">
+        {{ activeTalentNotificationOfferLine }}
+      </span>
+    </div>
+
+    <div class="sidebarNotificationModal__actions">
+      <button class="sidebarNotificationModal__action" type="button" (click)="closeNotificationModal()">
+        fechar
+      </button>
+      <button
+        class="sidebarNotificationModal__action sidebarNotificationModal__action--primary"
+        type="button"
+        (click)="openNotificationConversation()"
+      >
+        abrir
+      </button>
+    </div>
+  </section>
+</div>
+
+<div
+  *ngIf="isFilterPopupOpen"
+  class="sidebarOverlay"
+  (click)="closeEcosystemFilters()"
+>
+  <section class="sidebarFilterModal" (click)="$event.stopPropagation()">
+    <div class="sidebarFilterModal__head">
+      <strong>Filtrar</strong>
+      <button class="sidebarFilterModal__close" type="button" (click)="closeEcosystemFilters()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <label class="sidebarFilterModal__field">
+      <span>Código da vaga</span>
+      <input [(ngModel)]="filterCode" type="text" placeholder="VG-0001" />
+    </label>
+
+    <label class="sidebarFilterModal__field">
+      <span>Empresa</span>
+      <select [(ngModel)]="filterCompany">
+        <option value="">Todas</option>
+        <option *ngFor="let company of ecosystemCompanies" [value]="company">{{ company }}</option>
+      </select>
+    </label>
+
+    <label class="sidebarFilterModal__field">
+      <span>Estado</span>
+      <select [(ngModel)]="filterState">
+        <option value="">Todos</option>
+        <option *ngFor="let state of ecosystemStates" [value]="state">{{ state }}</option>
+      </select>
+    </label>
+
+    <label class="sidebarFilterModal__field">
+      <span>Stack</span>
+      <select [(ngModel)]="filterStack">
+        <option value="">Todas</option>
+        <option *ngFor="let stack of ecosystemStacks" [value]="stack">{{ stack }}</option>
+      </select>
+    </label>
+
+    <div class="sidebarFilterModal__divider" aria-hidden="true"></div>
+
+    <div class="sidebarFilterModal__actions">
+      <button class="sidebarFilterModal__action" type="button" (click)="clearEcosystemFilters()">Limpar</button>
+      <button class="sidebarFilterModal__action sidebarFilterModal__action--primary" type="button" (click)="confirmEcosystemFilters()">
+        Confirmar
+      </button>
+    </div>
+  </section>
+</div>

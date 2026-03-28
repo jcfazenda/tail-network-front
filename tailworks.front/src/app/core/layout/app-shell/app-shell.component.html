@@ -2,10 +2,10 @@
   class="shell"
   [class.shell--plain]="isHomeEntry"
   [class.shell--candidate]="isCandidateArea"
-  [class.shell--sidebar-hidden]="hasSidebar && !shouldReserveSidebarSpace"
+  [class.shell--sidebar-collapsed]="hasSidebar && !shouldReserveSidebarSpace && !isCompactSidebarMode"
 >
   <ng-container *ngIf="!isHomeEntry">
-    <ng-container *ngIf="hasSidebar && isSidebarOpen && sidebarComponent() as sidebarComponent">
+    <ng-container *ngIf="hasSidebar && (!isCompactSidebarMode || isSidebarOpen) && sidebarComponent() as sidebarComponent">
       <ng-container *ngComponentOutlet="sidebarComponent; inputs: sidebarComponentInputs"></ng-container>
     </ng-container>
     <button
@@ -23,11 +23,6 @@
       [class.shell__main--ecosystem]="isCandidateEcosystem"
       [class.shell__main--template]="isTemplateEcosystem"
     >
-      <ng-container *ngIf="!isTemplateEcosystem && topbarComponent() as topbarComponent">
-        <div class="shell__topbar">
-          <ng-container *ngComponentOutlet="topbarComponent"></ng-container>
-        </div>
-      </ng-container>
       <section
         class="shell__content"
         [class.shell__content--candidate]="isCandidateArea"

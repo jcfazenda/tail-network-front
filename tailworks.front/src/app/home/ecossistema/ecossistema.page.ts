@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, ViewChild, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TopbarComponent } from '../../core/layout/topbar/topbar.component';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { AuthFacade } from '../../core/facades/auth.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
@@ -102,10 +101,22 @@ type JobCardTalentRow = {
   match: number;
 };
 
+type SideRailCandidateCard = {
+  name: string;
+  role: string;
+  status: string;
+  feedback: string;
+  adherence: number;
+  adherenceTone: 'high' | 'medium' | 'low';
+  summary: string;
+  stacks: string[];
+  initials: string;
+};
+
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, TopbarComponent, PanelCandidatosListComponent],
+  imports: [CommonModule, PanelCandidatosListComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -133,6 +144,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private lastManualHiredInteractionAt = 0;
   private resizeListener?: () => void;
   private readonly flippedJobCardIds = new Set<string>();
+  private readonly brokenCompanyLogoJobIds = new Set<string>();
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
@@ -175,13 +187,21 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   ] as const;
 
   @ViewChild('hiredTrack', { static: false }) hiredTrack?: ElementRef<HTMLDivElement>;
+  @ViewChild('sideCandidatesScroller', { static: false }) sideCandidatesScroller?: ElementRef<HTMLDivElement>;
 
   activeHiredIndex = 0;
   readonly showHiringTrendFooter = false;
   hiredPageCount = 1;
   hiredPages: number[] = [0];
   ecoFilter: EcoFilter = 'radar';
+  ecoJobsPage = 0;
+  readonly ecoJobsPageSize = 6;
+  readonly sideRailCandidateCards: SideRailCandidateCard[] = this.buildSideRailCandidateCards();
   private hiredSpotlightDeck: HiredSpotlightCard[] = [];
+  sideCandidatesDragging = false;
+  private sideCandidatesPointerId: number | null = null;
+  private sideCandidatesDragStartY = 0;
+  private sideCandidatesDragStartScrollTop = 0;
 
   readonly hiredSpotlights: HiredSpotlightCard[] = [
     {
@@ -567,6 +587,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   setEcoFilter(filter: EcoFilter): void {
     this.ecoFilter = filter;
+    this.ecoJobsPage = 0;
     this.ecosystemViewFilterService.setSelected(filter);
     this.cdr.markForCheck();
   }
@@ -623,6 +644,81 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get hasEcoSearch(): boolean {
     return this.ecosystemSearchService.query().trim().length > 0;
+  }
+
+  get ecoSearchValue(): string {
+    return this.ecosystemSearchService.query();
+  }
+
+  updateEcoSearch(value: string): void {
+    this.ecosystemSearchService.setQuery(value);
+    this.ecoJobsPage = 0;
+    this.cdr.markForCheck();
+  }
+
+  get paginatedEcoJobs(): MockJobRecord[] {
+    const start = this.ecoJobsPage * this.ecoJobsPageSize;
+    return this.ecoFilteredJobs.slice(start, start + this.ecoJobsPageSize);
+  }
+
+  get ecoJobsPageCount(): number {
+    return Math.max(1, Math.ceil(this.ecoFilteredJobs.length / this.ecoJobsPageSize));
+  }
+
+  get ecoJobsPageWindow(): number[] {
+    const pageCount = this.ecoJobsPageCount;
+    const current = Math.min(this.ecoJobsPage, pageCount - 1);
+    const start = Math.max(0, Math.min(current - 1, pageCount - 3));
+    const end = Math.min(pageCount, start + 3);
+    return Array.from({ length: end - start }, (_, index) => start + index);
+  }
+
+  get radarJobsCount(): number {
+    return this.countJobsForFilter('radar');
+  }
+
+  get candidaturasJobsCount(): number {
+    return this.countJobsForFilter('candidaturas');
+  }
+
+  get processoJobsCount(): number {
+    return this.countJobsForFilter('processo');
+  }
+
+  get sideRailContractedCount(): number {
+    return this.countJobsForFilter('contratados');
+  }
+
+  get sideRailRecentJobs(): MockJobRecord[] {
+    return this.jobsSnapshot
+      .filter((job) => job.status === 'ativas')
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
+      .sort((left, right) => {
+        const rightTime = Date.parse(right.createdAt || right.updatedAt || '') || 0;
+        const leftTime = Date.parse(left.createdAt || left.updatedAt || '') || 0;
+        return rightTime - leftTime || (right.match ?? 0) - (left.match ?? 0);
+      })
+      .slice(0, 3);
+  }
+
+  get sideRailInProgressCandidatesCount(): number {
+    const activeStages: CandidateStage[] = ['aguardando', 'tecnica', 'processo', 'documentacao'];
+    return this.jobsSnapshot
+      .filter((job) => job.status === 'ativas')
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
+      .reduce((sum, job) => sum + (job.candidates ?? [])
+        .filter((candidate) => activeStages.includes(this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar'))
+        .length, 0);
+  }
+
+  setEcoJobsPage(page: number): void {
+    const nextPage = Math.max(0, Math.min(page, this.ecoJobsPageCount - 1));
+    if (nextPage === this.ecoJobsPage) {
+      return;
+    }
+
+    this.ecoJobsPage = nextPage;
+    this.cdr.markForCheck();
   }
 
   get ecoEmptyTitle(): string {
@@ -704,6 +800,48 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   private recruiterJobMatchesFilter(job: MockJobRecord, filter: RecruiterEcoFilter): boolean {
     return this.jobMatchesBoardView(job, filter);
+  }
+
+  private countJobsForFilter(filter: RecruiterEcoFilter): number {
+    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
+    const filters = this.ecosystemJobFiltersService.filters();
+    const base = this.jobsSnapshot
+      .filter((job) => job.status === 'ativas')
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
+      .filter((job) => this.recruiterJobMatchesFilter(job, filter))
+      .filter((job) => this.matchesSavedFilters(job, filters));
+
+    if (!query) {
+      return base.length;
+    }
+
+    return base.filter((job) => {
+      const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
+      return haystack.includes(query);
+    }).length;
+  }
+
+  private get sideRailSpotlightSourceFilter(): RecruiterEcoFilter {
+    return this.ecoFilter === 'candidaturas' ? 'candidaturas' : 'radar';
+  }
+
+  private recruiterJobsForFilter(filter: RecruiterEcoFilter): MockJobRecord[] {
+    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
+    const filters = this.ecosystemJobFiltersService.filters();
+    const base = this.jobsSnapshot
+      .filter((job) => job.status === 'ativas')
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
+      .filter((job) => this.recruiterJobMatchesFilter(job, filter))
+      .filter((job) => this.matchesSavedFilters(job, filters));
+
+    if (!query) {
+      return base;
+    }
+
+    return base.filter((job) => {
+      const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
+      return haystack.includes(query);
+    });
   }
 
   private jobMatchesBoardView(job: MockJobRecord, view: RecruiterEcoFilter): boolean {
@@ -840,6 +978,95 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return `${value}`;
   }
 
+  private buildSideRailCandidateCards(): SideRailCandidateCard[] {
+    const baseCards: Omit<SideRailCandidateCard, 'adherenceTone'>[] = [
+      {
+        name: 'Alvaro Taylor',
+        role: 'UX Designer',
+        status: 'Proposta Aceita',
+        feedback: 'Feedback Tecnico bom.',
+        adherence: 91,
+        summary: 'Bom repertorio em discovery, fluxo mobile e handoff com squads de produto.',
+        stacks: ['.NET', 'Angular'],
+        initials: 'AT',
+      },
+      {
+        name: 'Elon Morrening',
+        role: 'UX Designer',
+        status: 'Em entrevista final',
+        feedback: 'Feedback Tecnico forte.',
+        adherence: 87,
+        summary: 'Perfil consistente para produto digital, boa leitura de negocio e interface.',
+        stacks: ['Figma', 'Angular'],
+        initials: 'EM',
+      },
+      {
+        name: 'Julia Ferraz',
+        role: 'Product Designer',
+        status: 'Case tecnico enviado',
+        feedback: 'Feedback Tecnico consistente.',
+        adherence: 78,
+        summary: 'Boa maturidade de produto, domina rituais com squad e jornada ponta a ponta.',
+        stacks: ['Figma', 'Design System'],
+        initials: 'JF',
+      },
+      {
+        name: 'Rafael Nunes',
+        role: 'Frontend Engineer',
+        status: 'Entrevista com lideranca',
+        feedback: 'Feedback Tecnico promissor.',
+        adherence: 72,
+        summary: 'Boa base de componentizacao e leitura de codigo, ainda evoluindo em arquitetura.',
+        stacks: ['Angular', 'TypeScript'],
+        initials: 'RN',
+      },
+      {
+        name: 'Marina Costa',
+        role: 'Backend Engineer',
+        status: 'Triagem inicial',
+        feedback: 'Feedback Tecnico moderado.',
+        adherence: 63,
+        summary: 'Perfil util para sustentacao e APIs, aderencia parcial ao stack principal da vaga.',
+        stacks: ['.NET', 'SQL'],
+        initials: 'MC',
+      },
+      {
+        name: 'Pedro Alves',
+        role: 'QA Analyst',
+        status: 'Aguardando retorno',
+        feedback: 'Feedback Tecnico inicial.',
+        adherence: 54,
+        summary: 'Tem boa disciplina de processo, mas ainda com pouca profundidade nas stacks-chave.',
+        stacks: ['Cypress', 'Postman'],
+        initials: 'PA',
+      },
+    ];
+
+    return Array.from({ length: 36 }, (_, index) => {
+      const seed = baseCards[index % baseCards.length];
+      const adherence = Math.max(41, seed.adherence - Math.floor(index / baseCards.length) * 4);
+
+      return {
+        ...seed,
+        name: index < baseCards.length ? seed.name : `${seed.name} ${Math.floor(index / baseCards.length) + 1}`,
+        adherence,
+        adherenceTone: this.getCandidateAdherenceTone(adherence),
+      };
+    });
+  }
+
+  private getCandidateAdherenceTone(adherence: number): SideRailCandidateCard['adherenceTone'] {
+    if (adherence >= 85) {
+      return 'high';
+    }
+
+    if (adherence >= 65) {
+      return 'medium';
+    }
+
+    return 'low';
+  }
+
   ngAfterViewInit(): void {
     // Espera o template renderizar para medir scrollWidth/clientWidth.
     if (typeof window === 'undefined') {
@@ -863,6 +1090,50 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       window.removeEventListener('resize', this.resizeListener);
       this.resizeListener = undefined;
     }
+  }
+
+  startSideCandidatesDrag(event: PointerEvent): void {
+    const container = this.sideCandidatesScroller?.nativeElement;
+    if (!container || container.scrollHeight <= container.clientHeight) {
+      return;
+    }
+
+    this.sideCandidatesDragging = true;
+    this.sideCandidatesPointerId = event.pointerId;
+    this.sideCandidatesDragStartY = event.clientY;
+    this.sideCandidatesDragStartScrollTop = container.scrollTop;
+    container.setPointerCapture?.(event.pointerId);
+    this.cdr.markForCheck();
+  }
+
+  moveSideCandidatesDrag(event: PointerEvent): void {
+    const container = this.sideCandidatesScroller?.nativeElement;
+    if (!container || !this.sideCandidatesDragging || this.sideCandidatesPointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaY = event.clientY - this.sideCandidatesDragStartY;
+    container.scrollTop = this.sideCandidatesDragStartScrollTop - deltaY;
+    event.preventDefault();
+  }
+
+  stopSideCandidatesDrag(event?: PointerEvent): void {
+    const container = this.sideCandidatesScroller?.nativeElement;
+    if (container && this.sideCandidatesPointerId !== null) {
+      container.releasePointerCapture?.(this.sideCandidatesPointerId);
+    }
+
+    if (event && this.sideCandidatesPointerId !== null && this.sideCandidatesPointerId !== event.pointerId) {
+      return;
+    }
+
+    if (!this.sideCandidatesDragging && this.sideCandidatesPointerId === null) {
+      return;
+    }
+
+    this.sideCandidatesDragging = false;
+    this.sideCandidatesPointerId = null;
+    this.cdr.markForCheck();
   }
 
   @HostListener('document:keydown.escape')
@@ -1034,7 +1305,20 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   jobCompanyLogoUrl(job: MockJobRecord): string {
+    if (this.brokenCompanyLogoJobIds.has(job.id)) {
+      return '';
+    }
+
     return job.companyLogoUrl?.trim() ?? '';
+  }
+
+  markCompanyLogoAsBroken(jobId: string): void {
+    if (!jobId || this.brokenCompanyLogoJobIds.has(jobId)) {
+      return;
+    }
+
+    this.brokenCompanyLogoJobIds.add(jobId);
+    this.cdr.markForCheck();
   }
 
   jobCompanyLogoLabel(job: MockJobRecord): string {
@@ -1050,10 +1334,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   jobCardWorkModel(job: MockJobRecord): string {
     if (job.workModel === 'Remoto') {
-      return 'HOME';
+      return 'Home';
     }
 
-    return this.workModelLabel(job.workModel).toUpperCase();
+    return this.workModelLabel(job.workModel);
   }
 
   jobCardLocation(job: MockJobRecord): string {
@@ -1157,6 +1441,24 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     const totalTalents = Math.max(0, job.talents ?? 0);
 
     return Math.max(derivedTotal, totalCandidates, totalRadar, totalTalents);
+  }
+
+  jobBoardRadarExtraCount(job: MockJobRecord): number {
+    const visibleAvatars = this.jobInteractionAvatars(job).length;
+    const total = this.jobInteractionExtraCount(job);
+    return Math.max(0, total - visibleAvatars);
+  }
+
+  jobBoardStatusTone(job: MockJobRecord): 'active' | 'paused' | 'closed' {
+    if (job.status === 'pausadas') {
+      return 'paused';
+    }
+
+    if (job.status === 'encerradas') {
+      return 'closed';
+    }
+
+    return 'active';
   }
 
   jobTalentCount(job: MockJobRecord): number {

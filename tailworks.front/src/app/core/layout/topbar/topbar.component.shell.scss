@@ -1,14 +1,15 @@
 .topbar{
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
-  min-height: 52px;
-  padding: 10px 12px;
-  background: #e3e8ee;
+  min-height: 72px;
+  padding: 12px 16px;
+  background: var(--sidebar-shell-bg);
   border: 0;
-  border-radius: 0;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  border-radius: 28px;
+  box-shadow: var(--sidebar-shell-shadow);
+  backdrop-filter: blur(18px);
 }
 
 .topbar__profile{
@@ -17,6 +18,12 @@
   align-items: center;
   gap: 10px;
   z-index: 2;
+  padding: 8px 12px 8px 8px;
+  border-radius: 999px;
+  background: var(--topbar-profile-bg);
+  border: 1px solid var(--topbar-profile-border);
+  box-shadow: var(--topbar-profile-shadow);
+  backdrop-filter: blur(18px);
 }
 
 .topbar__avatar-input{
@@ -103,7 +110,7 @@
 }
 
 .topbar__profile-name{
-  color: rgba(15, 23, 42, 0.86);
+  color: var(--topbar-icon-text);
   font-size: 13px;
   line-height: 1.05;
   font-weight: 700;
@@ -114,7 +121,7 @@
 }
 
 .topbar__profile-meta{
-  color: rgba(15, 23, 42, 0.54);
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.05;
   font-weight: 500;
@@ -128,15 +135,41 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto;
+}
+
+.topbarDocked{
+  width: 100%;
+}
+
+.topbar__actions--sidebar-docked{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-left: 0;
+  width: 100%;
+}
+
+.topbar__actions--sidebar-docked .topbar__shortcut{
+  grid-column: 1 / -1;
+  min-height: 38px;
+  justify-content: flex-start;
+  padding: 0 14px;
+}
+
+.topbar__actions--sidebar-docked .topbar__icon{
+  width: 100%;
+  height: 40px;
+  border-radius: 14px;
 }
 
 .topbar__shortcut{
   min-height: 28px;
   padding: 0 10px;
-  border: 1px solid rgba(188, 109, 24, 0.22);
+  border: 1px solid var(--topbar-shortcut-border);
   border-radius: 999px;
-  background: rgba(188, 109, 24, 0.14);
-  color: rgba(140, 76, 18, 0.96);
+  background: var(--topbar-shortcut-bg);
+  color: var(--topbar-shortcut-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -145,14 +178,15 @@
   font-weight: 700;
   cursor: pointer;
   text-transform: lowercase;
-  box-shadow: 0 8px 18px rgba(188, 109, 24, 0.12);
+  box-shadow: var(--topbar-profile-shadow);
+  backdrop-filter: blur(14px);
 }
 
 .topbar__shortcut--candidate{
-  border-color: rgba(15, 23, 42, 0.12);
-  background: rgba(255, 255, 255, 0.94);
-  color: rgba(15, 23, 42, 0.78);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  border-color: var(--topbar-shortcut-border);
+  background: var(--topbar-shortcut-bg);
+  color: var(--topbar-shortcut-text);
+  box-shadow: var(--topbar-profile-shadow);
 }
 
 .topbar__icon{
@@ -160,14 +194,16 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(15, 23, 42, 0.12);
+  border: 1px solid var(--topbar-icon-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: rgba(15, 23, 42, 0.74);
+  background: var(--topbar-icon-bg);
+  color: var(--topbar-icon-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  box-shadow: var(--topbar-profile-shadow);
+  backdrop-filter: blur(14px);
 }
 
 .topbar__icon--notifications{
@@ -195,6 +231,13 @@
 .topbar__icon .material-symbols-rounded{
   font-size: 17px;
   line-height: 1;
+}
+
+@media (max-width: 1080px){
+  .topbar__actions--sidebar-docked{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-left: 0;
+  }
 }
 
 .topbar__avatar-trigger{
@@ -265,8 +308,8 @@
 
 @media (min-width: 561px){
   .topbar{
-    min-height: 56px;
-    padding: 12px 14px;
+    min-height: 76px;
+    padding: 14px 18px;
   }
 
   .topbar__avatar{
@@ -303,4 +346,5 @@
     min-height: 30px;
     padding-inline: 12px;
   }
+
 }

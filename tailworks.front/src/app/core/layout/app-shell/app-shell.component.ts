@@ -14,7 +14,6 @@ import { SidebarVisibilityService } from '../sidebar/sidebar-visibility.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent {
-  readonly topbarComponent = signal<Type<unknown> | null>(null);
   readonly sidebarComponent = signal<Type<unknown> | null>(null);
   private readonly router = inject(Router);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
@@ -29,11 +28,7 @@ export class AppShellComponent {
 
   constructor() {
     effect(() => {
-      if (!this.isHomeEntry && !this.topbarComponent()) {
-        void this.loadTopbarComponent();
-      }
-
-      if (this.hasSidebar && this.isSidebarOpen && !this.sidebarComponent()) {
+      if (this.hasSidebar && (!this.isCompactSidebarMode || this.isSidebarOpen) && !this.sidebarComponent()) {
         void this.loadSidebarComponent();
       }
     });
@@ -92,19 +87,16 @@ export class AppShellComponent {
     this.sidebarVisibilityService.hide();
   }
 
-  get sidebarComponentInputs(): { overlayMode: boolean } {
-    return { overlayMode: this.isCompactSidebarMode };
+  get sidebarComponentInputs(): { overlayMode: boolean; collapsedMode: boolean } {
+    return {
+      overlayMode: this.isCompactSidebarMode,
+      collapsedMode: !this.isCompactSidebarMode && !this.isSidebarOpen,
+    };
   }
 
   private get primaryPath(): string {
     return this.currentUrl().split('?')[0]?.split('#')[0] || this.currentUrl();
   }
-
-  private async loadTopbarComponent(): Promise<void> {
-    const { TopbarComponent } = await import('../topbar/topbar.component');
-    this.topbarComponent.set(TopbarComponent);
-  }
-
   private async loadSidebarComponent(): Promise<void> {
     const { SidebarComponent } = await import('../sidebar/sidebar.component');
     this.sidebarComponent.set(SidebarComponent);

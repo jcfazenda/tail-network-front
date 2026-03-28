@@ -1,42 +1,5 @@
-<header class="topbar" *ngIf="!isSelectionMode">
-  <div *ngIf="showSidebarProfileInPrimary" class="topbar__profile">
-    <button
-      class="topbar__avatar-trigger"
-      type="button"
-      (click)="openSidebar()"
-      (pointerup)="openSidebar()"
-      aria-label="Abrir sidebar"
-      title="Abrir sidebar"
-    >
-      <span
-        class="topbar__avatar-surface"
-        [class.topbar__avatar-surface--candidate]="isCandidateMode"
-        [class.topbar__avatar-surface--image]="!!topbarProfileAvatarUrl"
-        (click)="openSidebar()"
-        aria-hidden="true"
-      >
-        <img
-          *ngIf="topbarProfileAvatarUrl"
-          class="topbar__avatar-image"
-          [src]="topbarProfileAvatarUrl"
-          alt=""
-        />
-        <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
-      </span>
-    </button>
-
-    <button
-      class="topbar__profile-copy topbar__profile-copy-button"
-      type="button"
-      (click)="openSidebar()"
-      aria-label="Abrir sidebar"
-    >
-      <span class="topbar__profile-name">{{ topbarProfileDisplayName }}</span>
-      <span class="topbar__profile-meta">{{ topbarProfileDisplayMeta }}</span>
-    </button>
-  </div>
-
-  <div class="topbar__actions">
+<ng-template #topbarActionsTemplate>
+  <div class="topbar__actions" [class.topbar__actions--sidebar-docked]="dockedToSidebar()">
     <button
       *ngIf="isCandidateEcosystem"
       class="topbar__shortcut topbar__shortcut--candidate"
@@ -84,7 +47,52 @@
       </span>
     </button>
   </div>
+</ng-template>
+
+<header class="topbar" *ngIf="!isSelectionMode && !dockedToSidebar()">
+  <div *ngIf="showSidebarProfileInPrimary && !isSidebarOpen" class="topbar__profile">
+    <button
+      class="topbar__avatar-trigger"
+      type="button"
+      (click)="openSidebar()"
+      (pointerup)="openSidebar()"
+      aria-label="Abrir sidebar"
+      title="Abrir sidebar"
+    >
+      <span
+        class="topbar__avatar-surface"
+        [class.topbar__avatar-surface--candidate]="isCandidateMode"
+        [class.topbar__avatar-surface--image]="!!topbarProfileAvatarUrl"
+        (click)="openSidebar()"
+        aria-hidden="true"
+      >
+        <img
+          *ngIf="topbarProfileAvatarUrl"
+          class="topbar__avatar-image"
+          [src]="topbarProfileAvatarUrl"
+          alt=""
+        />
+        <span *ngIf="!topbarProfileAvatarUrl">{{ topbarProfileAvatarInitials }}</span>
+      </span>
+    </button>
+
+    <button
+      class="topbar__profile-copy topbar__profile-copy-button"
+      type="button"
+      (click)="openSidebar()"
+      aria-label="Abrir sidebar"
+    >
+      <span class="topbar__profile-name">{{ topbarProfileDisplayName }}</span>
+      <span class="topbar__profile-meta">{{ topbarProfileDisplayMeta }}</span>
+    </button>
+  </div>
+
+  <ng-container *ngTemplateOutlet="topbarActionsTemplate"></ng-container>
 </header>
+
+<div *ngIf="!isSelectionMode && dockedToSidebar()" class="topbarDocked">
+  <ng-container *ngTemplateOutlet="topbarActionsTemplate"></ng-container>
+</div>
 
 <div
   *ngIf="isNotificationListOpen || activeTalentNotification"
