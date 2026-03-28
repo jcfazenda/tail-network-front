@@ -106,6 +106,7 @@
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-tab--active b,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-company-copy strong,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-title-copy strong,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-meta-copy strong,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-match strong{
   color: rgba(16, 18, 22, 0.92);
 }
@@ -117,6 +118,7 @@
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-search .material-symbols-rounded,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-company-copy small,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-title-copy small,
+:host-context(body[data-theme='light']) .ecosystem-desktop__jobs-meta-copy small,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-model-prefix,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-avatar-extra,
 :host-context(body[data-theme='light']) .ecosystem-desktop__jobs-radar-empty,
@@ -1229,7 +1231,7 @@
 .ecosystem-desktop__jobs-grid-header,
 .ecosystem-desktop__jobs-grid-row{
   display: grid;
-  grid-template-columns: 62px minmax(220px, 0.98fr) minmax(190px, 0.82fr) minmax(392px, 1.68fr);
+  grid-template-columns: 62px minmax(208px, 0.92fr) minmax(176px, 0.76fr) minmax(108px, 0.48fr) minmax(356px, 1.52fr);
   column-gap: 10px;
   row-gap: 12px;
   align-items: center;
@@ -1261,6 +1263,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+}
+
+.ecosystem-desktop__jobs-grid-cell--meta{
+  display: flex;
+  align-items: center;
+}
+
+.ecosystem-desktop__jobs-logo-stack{
+  display: grid;
+  justify-items: center;
+  gap: 6px;
 }
 
 .ecosystem-desktop__jobs-company-logo{
@@ -1338,7 +1351,7 @@
 
 .ecosystem-desktop__jobs-title-copy{
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .ecosystem-desktop__jobs-title-button{
@@ -1358,6 +1371,31 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
+}
+
+.ecosystem-desktop__jobs-meta-copy{
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ecosystem-desktop__jobs-meta-copy strong{
+  color: rgba(245, 247, 251, 0.58);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ecosystem-desktop__jobs-meta-copy small{
+  color: rgba(245, 247, 251, 0.42);
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ecosystem-desktop__jobs-title-text{

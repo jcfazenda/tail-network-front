@@ -213,6 +213,7 @@
           <span></span>
           <span></span>
           <span></span>
+          <span></span>
         </div>
 
         <article class="ecosystem-desktop__jobs-grid-row" *ngFor="let job of paginatedEcoJobs; trackBy: trackByJob">
@@ -234,9 +235,7 @@
           <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--title">
             <button class="ecosystem-desktop__jobs-title-copy ecosystem-desktop__jobs-title-button" type="button" [attr.aria-label]="'Destacar ' + job.title + ' na lateral'" (click)="selectSideRailRecentJob(job.id)">
               <strong>
-                <span class="ecosystem-desktop__jobs-title-text">
-                  {{ job.code ? job.code + ' - ' : '' }}{{ job.title }}
-                </span>
+                <span class="ecosystem-desktop__jobs-title-text">{{ job.title }}</span>
                 <span
                   class="ecosystem-desktop__jobs-model-prefix"
                   [class.ecosystem-desktop__jobs-model-prefix--remote]="jobCardWorkModel(job) === 'Remoto'"
@@ -254,6 +253,13 @@
             <div class="ecosystem-desktop__jobs-company-copy">
               <strong>{{ job.company }}</strong>
               <small>{{ jobCardSalary(job) || 'A combinar' }}</small>
+            </div>
+          </div>
+
+          <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--meta">
+            <div class="ecosystem-desktop__jobs-meta-copy">
+              <strong *ngIf="job.code">{{ job.code }}</strong>
+              <small>{{ jobCreatedAtLabel(job) }}</small>
             </div>
           </div>
 

@@ -1421,6 +1421,21 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return job.location.replace(/\s*-\s*/g, ' - ').replace(/\s+/g, ' ').trim();
   }
 
+  jobCreatedAtLabel(job: MockJobRecord): string {
+    const raw = job.createdAt || job.updatedAt || '';
+    const timestamp = Date.parse(raw);
+    if (!Number.isFinite(timestamp)) {
+      return 'Sem data';
+    }
+
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(timestamp));
+  }
+
   jobCardOffer(job: MockJobRecord): { salary: string | null; rest: string } {
     const salary = job.showSalaryRangeInCard === false ? null : this.formatJobSalary(job.salaryRange);
     const benefits = job.benefits.length > 0 ? ' + Beneficios' : '';
