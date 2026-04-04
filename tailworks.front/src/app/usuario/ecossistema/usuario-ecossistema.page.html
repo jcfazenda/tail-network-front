@@ -179,8 +179,8 @@
           <button
             class="ecosystem-desktop__jobs-tab"
             type="button"
-            [class.ecosystem-desktop__jobs-tab--active]="ecoFilter === 'candidaturas'"
-            (click)="setEcoFilter('candidaturas')"
+            [class.ecosystem-desktop__jobs-tab--active]="ecoFilter === 'applications'"
+            (click)="setEcoFilter('applications')"
           >
             <span>Candidatos</span>
             <b>{{ candidaturasJobsCount }}</b>
@@ -386,6 +386,13 @@
             <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
             <span class="ecosystem-desktop__candidate-chip ecosystem-desktop__candidate-chip--low">Aderência {{ job.match }}%</span>
           </div>
+
+          <div class="ecosystem-desktop__candidate-documents" *ngIf="job.hiringDocuments?.length">
+            <strong>Documentos necessários</strong>
+            <ul>
+              <li *ngFor="let document of job.hiringDocuments">{{ document }}</li>
+            </ul>
+          </div>
         </article>
       </div>
 
@@ -395,14 +402,6 @@
             <span>Status da vaga</span>
             <strong>{{ journey.currentStageLabel }}</strong>
           </div>
-          <button
-            class="talent-journey-card__advance"
-            type="button"
-            *ngIf="canAdvanceFocusedTalentJourney"
-            (click)="advanceFocusedTalentJourney()"
-          >
-            Avançar
-          </button>
         </div>
 
         <mat-vertical-stepper
@@ -411,11 +410,28 @@
           [selectedIndex]="resolveTalentJourneySelectedIndex(journey)"
           (selectionChange)="onTalentJourneySelectionChange($event.selectedIndex)"
         >
+          <ng-template matStepperIcon="done">
+            <span class="material-symbols-rounded talent-journey-card__done-icon" aria-hidden="true">check</span>
+          </ng-template>
+
           <mat-step *ngFor="let item of journey.steps" [completed]="item.completed">
             <ng-template matStepLabel>
               <div class="talent-journey-card__label">
+                <span
+                  class="talent-journey-card__status"
+                  [class.talent-journey-card__status--done]="item.completed"
+                  [class.talent-journey-card__status--active]="item.active && !item.completed"
+                  aria-hidden="true"
+                >
+                  <span class="material-symbols-rounded" *ngIf="item.completed">check</span>
+                </span>
+
                 <div class="talent-journey-card__time">
-                  <span>{{ item.dateLabel }}</span>
+                  <span>
+                    <ng-container *ngIf="item.dateLabel !== 'Aguardando'; else waitingDateIcon">
+                      {{ item.dateLabel }}
+                    </ng-container>
+                  </span>
                   <small>{{ item.hourLabel }}</small>
                 </div>
                 <div class="talent-journey-card__meta">
@@ -423,6 +439,10 @@
                   <small>{{ item.ownerText }}</small>
                 </div>
               </div>
+            </ng-template>
+
+            <ng-template #waitingDateIcon>
+              <span class="material-symbols-rounded talent-journey-card__time-icon" aria-hidden="true">schedule</span>
             </ng-template>
 
             <div class="talent-journey-card__body">
@@ -437,6 +457,76 @@
             </div>
           </mat-step>
         </mat-vertical-stepper>
+
+        <div class="talent-journey-card__success" *ngIf="showFocusedTalentContractedSuccess">
+          <span class="material-symbols-rounded" aria-hidden="true">workspace_premium</span>
+          <div class="talent-journey-card__success-copy">
+            <strong>Sucesso, contratado</strong>
+            <span>Sua contratação foi confirmada e o fechamento final desta vaga já foi concluído no sistema.</span>
+          </div>
+        </div>
+
+        <div class="talent-journey-card__compliance" *ngIf="showFocusedTalentDocumentsForm">
+          <div class="talent-journey-card__compliance-head">
+            <strong>Documentos necessários</strong>
+            <span>Marque os documentos e confirme o compliance antes de avançar.</span>
+          </div>
+
+          <label class="talent-journey-card__compliance-item" *ngFor="let document of focusedTalentRequiredDocuments">
+            <input
+              type="checkbox"
+              [checked]="isFocusedTalentDocumentChecked(document)"
+              [disabled]="showFocusedTalentDocumentsAwaitingApproval"
+              (change)="toggleFocusedTalentDocument(document, $any($event.target).checked)"
+            />
+            <span>{{ document }}</span>
+          </label>
+
+          <label class="talent-journey-card__compliance-item talent-journey-card__compliance-item--consent">
+            <input
+              type="checkbox"
+              [checked]="isFocusedTalentComplianceAccepted"
+              [disabled]="showFocusedTalentDocumentsAwaitingApproval"
+              (change)="setFocusedTalentComplianceAccepted($any($event.target).checked)"
+            />
+            <span>Declaro que revisei os documentos e aceito a checagem de compliance.</span>
+          </label>
+
+          <div class="talent-journey-card__compliance-status" *ngIf="showFocusedTalentDocumentsAwaitingApproval">
+            <span class="material-symbols-rounded" aria-hidden="true">schedule</span>
+            <span>Aguardando aceite dos documentos</span>
+          </div>
+        </div>
+
+        <div class="talent-journey-card__actions" *ngIf="canAdvanceFocusedTalentJourney || showFocusedTalentJourneyDecisionActions">
+          <button
+            class="talent-journey-card__advance"
+            type="button"
+            *ngIf="canAdvanceFocusedTalentJourney"
+            (click)="advanceFocusedTalentJourney()"
+            [disabled]="showFocusedTalentDocumentsForm && !canSubmitFocusedTalentDocuments"
+          >
+            {{ advanceFocusedTalentJourneyLabel }}
+          </button>
+
+          <button
+            class="talent-journey-card__advance"
+            type="button"
+            *ngIf="showFocusedTalentJourneyDecisionActions"
+            (click)="acceptFocusedTalentHiring()"
+          >
+            Aceitar Contratação
+          </button>
+
+          <button
+            class="talent-journey-card__advance talent-journey-card__advance--ghost"
+            type="button"
+            *ngIf="showFocusedTalentJourneyDecisionActions"
+            (click)="keepFocusedTalentForNextOpportunity()"
+          >
+            Fica para a Proxima
+          </button>
+        </div>
 
         <span class="talent-journey-card__divider" aria-hidden="true"></span>
 

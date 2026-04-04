@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MatStepperModule } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { CandidateStage, MockJobCandidate } from '../../vagas/data/vagas.models';
 import { SeededExperienceDraft, SeededTalentProfile, TalentProfileStoreService } from '../talent-profile-store.service';
@@ -26,6 +27,21 @@ interface CurriculumJourneyViewModel {
   steps: CurriculumJourneyStep[];
   statusAlertIcon: string;
   statusAlertMessage: string;
+}
+
+interface CurriculumJourneyActionsViewModel {
+  showAdvanceToProcess: boolean;
+  showRequestHiring: boolean;
+  showValidateDocuments: boolean;
+  disableValidateDocuments: boolean;
+}
+
+type CurriculumDocumentReviewDecision = 'accepted' | 'rejected' | null;
+
+interface CurriculumDocumentStatusItem {
+  label: string;
+  sent: boolean;
+  reviewDecision: CurriculumDocumentReviewDecision;
 }
 
 type CurriculumSkillItem = {
@@ -72,8 +88,15 @@ export class CurriculumPage {
   private readonly route = inject(ActivatedRoute);
   private readonly jobsFacade = inject(JobsFacade);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private journeySelectionKey = '';
+  private documentReviewContextKey = '';
+  private readonly documentReviewDecisions = new Map<string, Exclude<CurriculumDocumentReviewDecision, null>>();
+  private readonly documentReviewRefresh$ = new Subject<void>();
+  documentsModalOpen = false;
+  hireCandidateModalOpen = false;
   journeySelectedIndex: number | null = null;
+  private readonly jobsRefresh$ = this.jobsFacade.jobsChanged$.pipe(startWith(null));
 
   readonly candidateName$ = this.route.queryParamMap.pipe(
     map((params) => params.get('name')?.trim() || 'Candidato em análise'),
@@ -87,8 +110,11 @@ export class CurriculumPage {
     }),
   );
 
-  readonly candidateJourney$ = this.route.queryParamMap.pipe(
-    map((params) => {
+  readonly candidateJourney$ = combineLatest([
+    this.route.queryParamMap,
+    this.jobsRefresh$,
+  ]).pipe(
+    map(([params]) => {
       const jobId = params.get('jobId')?.trim() || '';
       const candidateId = params.get('candidate')?.trim() || '';
       const candidateName = params.get('name')?.trim() || '';
@@ -101,6 +127,62 @@ export class CurriculumPage {
         }
       }
       return journey;
+    }),
+  );
+
+  readonly candidateJourneyActions$ = combineLatest([
+    this.route.queryParamMap,
+    this.jobsRefresh$,
+    this.documentReviewRefresh$.pipe(startWith(null)),
+  ]).pipe(
+    map(([params]) => {
+      const context = this.resolveJourneyContext(
+        params.get('jobId')?.trim() || '',
+        params.get('candidate')?.trim() || '',
+        params.get('name')?.trim() || '',
+      );
+
+      if (!context) {
+        return {
+          showAdvanceToProcess: false,
+          showRequestHiring: false,
+          showValidateDocuments: false,
+          disableValidateDocuments: true,
+        } satisfies CurriculumJourneyActionsViewModel;
+      }
+
+      const stage = this.jobsFacade.getEffectiveCandidateStage(context.candidate);
+      const workflow = this.jobsFacade.getRecruiterWorkflowActions(stage);
+      const documentStatus = this.buildCandidateDocumentStatus(context.job, context.candidate);
+
+      return {
+        showAdvanceToProcess: workflow.advanceToProcess,
+        showRequestHiring: workflow.requestHiring,
+        showValidateDocuments: workflow.hireCandidate,
+        disableValidateDocuments: workflow.hireCandidate
+          ? !documentStatus.length || documentStatus.some((item) => !item.sent || item.reviewDecision !== 'accepted')
+          : true,
+      } satisfies CurriculumJourneyActionsViewModel;
+    }),
+  );
+
+  readonly candidateDocumentStatus$ = combineLatest([
+    this.route.queryParamMap,
+    this.jobsRefresh$,
+    this.documentReviewRefresh$.pipe(startWith(null)),
+  ]).pipe(
+    map(([params]) => {
+      const context = this.resolveJourneyContext(
+        params.get('jobId')?.trim() || '',
+        params.get('candidate')?.trim() || '',
+        params.get('name')?.trim() || '',
+      );
+
+      if (!context) {
+        return [];
+      }
+
+      return this.buildCandidateDocumentStatus(context.job, context.candidate);
     }),
   );
 
@@ -186,6 +268,262 @@ export class CurriculumPage {
 
   onJourneySelectionChange(index: number): void {
     this.journeySelectedIndex = index;
+  }
+
+  openDocumentsModal(): void {
+    this.documentsModalOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closeDocumentsModal(): void {
+    this.documentsModalOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  openHireCandidateModal(): void {
+    this.hireCandidateModalOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closeHireCandidateModal(): void {
+    this.hireCandidateModalOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  advanceCandidateToProcess(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return;
+    }
+
+    const stage = this.jobsFacade.getEffectiveCandidateStage(context.candidate);
+    const workflow = this.jobsFacade.getRecruiterWorkflowActions(stage);
+    if (!workflow.advanceToProcess) {
+      return;
+    }
+
+    this.jobsFacade.updateCandidateStage(
+      context.job.id,
+      context.candidate.id ?? context.candidate.name,
+      'processo',
+    );
+  }
+
+  requestCandidateHiring(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return;
+    }
+
+    const stage = this.jobsFacade.getEffectiveCandidateStage(context.candidate);
+    const workflow = this.jobsFacade.getRecruiterWorkflowActions(stage);
+    if (!workflow.requestHiring) {
+      return;
+    }
+
+    this.jobsFacade.updateCandidateStage(
+      context.job.id,
+      context.candidate.id ?? context.candidate.name,
+      'aguardando',
+    );
+  }
+
+  setCandidateDocumentReview(label: string, decision: Exclude<CurriculumDocumentReviewDecision, null>): void {
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return;
+    }
+
+    const currentStatus = this.buildCandidateDocumentStatus(context.job, context.candidate);
+    const target = currentStatus.find((item) => item.label === label);
+    if (!target?.sent) {
+      return;
+    }
+
+    this.documentReviewDecisions.set(label, decision);
+    this.jobsFacade.updateCandidateDocumentReview(
+      context.job.id,
+      context.candidate.id ?? context.candidate.name,
+      label,
+      decision,
+    );
+    this.documentReviewRefresh$.next();
+    this.cdr.markForCheck();
+  }
+
+  documentStatusIcon(label: string): string {
+    const normalized = label.trim().toLocaleLowerCase('pt-BR');
+
+    if (normalized.includes('resid')) {
+      return 'home';
+    }
+
+    if (normalized.includes('ensino') || normalized.includes('escolar') || normalized.includes('médio')) {
+      return 'school';
+    }
+
+    if (normalized.includes('certificado') || normalized.includes('diploma') || normalized.includes('universit')) {
+      return 'workspace_premium';
+    }
+
+    if (normalized.includes('identidade') || normalized.includes('rg') || normalized.includes('cpf')) {
+      return 'badge';
+    }
+
+    return 'description';
+  }
+
+  receivedDocumentsCount(items: CurriculumDocumentStatusItem[]): number {
+    return items.filter((item) => item.sent).length;
+  }
+
+  rejectedDocumentsCount(items: CurriculumDocumentStatusItem[]): number {
+    return items.filter((item) => item.reviewDecision === 'rejected').length;
+  }
+
+  canHireCandidateFromDocuments(items: CurriculumDocumentStatusItem[]): boolean {
+    return !!items.length && items.every((item) => item.sent && item.reviewDecision === 'accepted');
+  }
+
+  canShowHireCandidateChip(items: CurriculumDocumentStatusItem[]): boolean {
+    if (!this.canHireCandidateFromDocuments(items)) {
+      return false;
+    }
+
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return false;
+    }
+
+    return this.jobsFacade.getEffectiveCandidateStage(context.candidate) !== 'contratado';
+  }
+
+  hireCandidateEmailSubject(): string {
+    const candidateName = this.route.snapshot.queryParamMap.get('name')?.trim() || 'Candidato';
+    const jobTitle = this.route.snapshot.queryParamMap.get('jobTitle')?.trim() || 'vaga';
+    return `Confirmação final de contratação | ${candidateName} | ${jobTitle}`;
+  }
+
+  hireCandidateEmailPreview(): string[] {
+    const params = this.route.snapshot.queryParamMap;
+    const candidateName = params.get('name')?.trim() || 'Candidato';
+    const jobTitle = params.get('jobTitle')?.trim() || 'vaga';
+    const company = params.get('jobCompany')?.trim() || 'empresa';
+    const location = params.get('jobLocation')?.trim() || 'local combinado';
+    const contractType = params.get('jobContractType')?.trim() || 'contratação definida';
+
+    return [
+      `Olá ${candidateName},`,
+      `encerramos a validação final do seu processo para a posição de ${jobTitle} na ${company}.`,
+      `Seu fluxo foi aprovado até a última etapa e estamos prontos para registrar a contratação com base nas condições já alinhadas entre as partes.`,
+      `Resumo final do fechamento:`,
+      `• posição: ${jobTitle}`,
+      `• empresa: ${company}`,
+      `• localização: ${location}`,
+      `• contratação: ${contractType}`,
+      `Obrigado por seguir com a gente até aqui. Assim que o fechamento for confirmado no sistema, você receberá a comunicação final de boas-vindas e próximos passos.`,
+    ];
+  }
+
+  currentRecruiterFirstName(): string {
+    const fullName = this.jobsFacade.getCurrentRecruiterIdentity().name?.trim() || 'Recruiter';
+    return fullName.split(/\s+/)[0] || 'Recruiter';
+  }
+
+  showContractedSuccessArt(): boolean {
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return false;
+    }
+
+    return this.jobsFacade.getEffectiveCandidateStage(context.candidate) === 'contratado';
+  }
+
+  sendHiringConfirmationEmail(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return;
+    }
+
+    const documentStatus = this.buildCandidateDocumentStatus(context.job, context.candidate);
+    const canHireCandidate = this.canHireCandidateFromDocuments(documentStatus);
+    if (!canHireCandidate) {
+      return;
+    }
+
+    this.jobsFacade.updateCandidateStage(
+      context.job.id,
+      context.candidate.id ?? context.candidate.name,
+      'contratado',
+    );
+
+    this.documentsModalOpen = false;
+    this.closeHireCandidateModal();
+  }
+
+  validateCandidateDocuments(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const context = this.resolveJourneyContext(
+      params.get('jobId')?.trim() || '',
+      params.get('candidate')?.trim() || '',
+      params.get('name')?.trim() || '',
+    );
+
+    if (!context) {
+      return;
+    }
+
+    const stage = this.jobsFacade.getEffectiveCandidateStage(context.candidate);
+    const workflow = this.jobsFacade.getRecruiterWorkflowActions(stage);
+    const documentStatus = this.buildCandidateDocumentStatus(context.job, context.candidate);
+    const canValidateDocuments = documentStatus.length > 0
+      && documentStatus.every((item) => item.sent && item.reviewDecision === 'accepted');
+
+    if (!workflow.hireCandidate || !canValidateDocuments) {
+      return;
+    }
+
+    this.jobsFacade.updateCandidateStage(
+      context.job.id,
+      context.candidate.id ?? context.candidate.name,
+      'contratado',
+    );
   }
 
   curriculumAvatarLabel(name: string): string {
@@ -392,19 +730,12 @@ export class CurriculumPage {
     candidateId: string,
     candidateName: string,
   ): CurriculumJourneyViewModel | null {
-    if (!jobId) {
+    const context = this.resolveJourneyContext(jobId, candidateId, candidateName);
+    if (!context) {
       return null;
     }
 
-    const job = this.jobsFacade.getJobById(jobId);
-    if (!job) {
-      return null;
-    }
-
-    const candidate = this.findJourneyCandidate(job.candidates ?? [], candidateId, candidateName);
-    if (!candidate) {
-      return null;
-    }
+    const { job, candidate } = context;
 
     const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar';
     const activeIndex = this.getJourneyStageIndex(stage);
@@ -492,6 +823,79 @@ export class CurriculumPage {
       ?? candidates.find((item) => item.name.trim().toLocaleLowerCase('pt-BR') === normalizedName);
   }
 
+  private resolveJourneyContext(
+    jobId: string,
+    candidateId: string,
+    candidateName: string,
+  ): { job: NonNullable<ReturnType<JobsFacade['getJobById']>>; candidate: MockJobCandidate } | null {
+    if (!jobId) {
+      return null;
+    }
+
+    const job = this.jobsFacade.getJobById(jobId);
+    if (!job) {
+      return null;
+    }
+
+    const candidate = this.findJourneyCandidate(job.candidates ?? [], candidateId, candidateName);
+    if (!candidate) {
+      const fallbackName = candidateName.trim();
+      if (!fallbackName) {
+        return null;
+      }
+
+      return {
+        job,
+        candidate: {
+          id: candidateId || `radar-${job.id}-${fallbackName.toLocaleLowerCase('pt-BR').replace(/\s+/g, '-')}`,
+          name: fallbackName,
+          role: job.title,
+          location: job.location,
+          match: Math.max(72, Math.min(98, job.match)),
+          minutesAgo: 5,
+          status: 'online',
+          avatar: '',
+          stage: 'radar',
+          radarOnly: true,
+          source: 'seed',
+          availabilityLabel: 'Disponibilidade imediata',
+          submittedDocuments: [],
+          documentsConsentAccepted: false,
+        },
+      };
+    }
+
+    return { job, candidate };
+  }
+
+  private buildCandidateDocumentStatus(
+    job: NonNullable<ReturnType<JobsFacade['getJobById']>>,
+    candidate: MockJobCandidate,
+  ): CurriculumDocumentStatusItem[] {
+    const contextKey = `${job.id}|${candidate.id ?? candidate.name}`;
+    if (this.documentReviewContextKey !== contextKey) {
+      this.documentReviewContextKey = contextKey;
+      this.documentReviewDecisions.clear();
+    }
+
+    const requiredDocuments = (job.hiringDocuments ?? [])
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    const submittedDocuments = new Set(
+      (candidate.submittedDocuments ?? [])
+        .map((item) => item.trim()),
+    );
+
+    return requiredDocuments.map((label) => ({
+      label,
+      sent: submittedDocuments.has(label),
+      reviewDecision: (candidate.documentReviewStatuses?.[label] as CurriculumDocumentReviewDecision | undefined)
+        ?? this.documentReviewDecisions.get(label)
+        ?? null,
+    }));
+  }
+
   private resolveJourneyTimeMeta(index: number, candidate: MockJobCandidate): Pick<CurriculumJourneyStep, 'dateLabel' | 'hourLabel' | 'timeLabel'> {
     if (index === 0 && Number.isFinite(candidate.minutesAgo)) {
       const radarFoundAt = new Date(Date.now() - Math.max(0, candidate.minutesAgo) * 60_000);
@@ -504,8 +908,9 @@ export class CurriculumPage {
       }
     }
 
-    if ((index === 2 || index === 3) && candidate.recruiterStageCommittedAt) {
-      const committedAt = new Date(candidate.recruiterStageCommittedAt);
+    const stageTimestamp = this.resolveJourneyStageTimestamp(index, candidate);
+    if (stageTimestamp) {
+      const committedAt = new Date(stageTimestamp);
       if (!Number.isNaN(committedAt.getTime())) {
         return {
           dateLabel: this.formatJourneyDate(committedAt),
@@ -520,6 +925,30 @@ export class CurriculumPage {
       hourLabel: '__:__',
       timeLabel: undefined,
     };
+  }
+
+  private resolveJourneyStageTimestamp(index: number, candidate: MockJobCandidate): string | undefined {
+    const timeline = candidate.stageTimeline;
+    if (!timeline) {
+      return index === 2 || index === 3 ? candidate.recruiterStageCommittedAt : undefined;
+    }
+
+    switch (index) {
+      case 1:
+        return timeline.candidatura;
+      case 2:
+        return timeline.processo ?? timeline.tecnica ?? candidate.recruiterStageCommittedAt;
+      case 3:
+        return timeline.aguardando ?? candidate.recruiterStageCommittedAt;
+      case 4:
+        return timeline.aceito ?? timeline.proxima ?? timeline.cancelado;
+      case 5:
+        return timeline.documentacao;
+      case 6:
+        return timeline.contratado ?? timeline.proxima ?? timeline.cancelado;
+      default:
+        return undefined;
+    }
   }
 
   private formatJourneyDate(date: Date): string {

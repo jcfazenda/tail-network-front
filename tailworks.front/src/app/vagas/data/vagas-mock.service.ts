@@ -547,6 +547,7 @@ export class VagasMockService {
     const jobs = this.loadJobs();
     const existing = jobs.find((job) => job.id === jobId);
     const hasDecisionOverride = arguments.length >= 4;
+    const stageChangedAt = new Date().toISOString();
 
     if (!existing) {
       return undefined;
@@ -570,7 +571,8 @@ export class VagasMockService {
         radarOnly: stage === 'radar',
         stageOwner: this.resolveStageOwner(stage, talentDecision, 'recruiter', candidate.stageOwner),
         recruiterManagedJourney: true,
-        recruiterStageCommittedAt: new Date().toISOString(),
+        recruiterStageCommittedAt: stageChangedAt,
+        stageTimeline: this.mergeStageTimeline(candidate, stage, stageChangedAt),
         decision: hasDecisionOverride ? talentDecision : candidate.decision,
         submittedDocuments:
           options?.talentSubmittedDocuments !== undefined
@@ -622,6 +624,54 @@ export class VagasMockService {
     return this.cache.find((job) => job.id === jobId);
   }
 
+  updateCandidateDocumentReview(
+    jobId: string,
+    candidateName: string,
+    documentLabel: string,
+    decision: 'accepted' | 'rejected',
+  ): MockJobRecord | undefined {
+    const jobs = this.loadJobs();
+    const existing = jobs.find((job) => job.id === jobId);
+    if (!existing) {
+      return undefined;
+    }
+
+    const normalizedDocument = documentLabel.trim();
+    if (!normalizedDocument || !existing.hiringDocuments.includes(normalizedDocument)) {
+      return undefined;
+    }
+
+    let foundCandidate = false;
+    const nextCandidates = existing.candidates.map((candidate) => {
+      if (!this.isCandidateMatch(candidate, candidateName)) {
+        return { ...candidate };
+      }
+
+      foundCandidate = true;
+      return {
+        ...candidate,
+        documentReviewStatuses: {
+          ...(candidate.documentReviewStatuses ?? {}),
+          [normalizedDocument]: decision,
+        },
+      };
+    });
+
+    if (!foundCandidate) {
+      return undefined;
+    }
+
+    const updatedJob: MockJobRecord = this.decorateTalentVisibility({
+      ...existing,
+      candidates: nextCandidates,
+      updatedAt: new Date().toISOString(),
+    });
+
+    this.cache = jobs.map((job) => (job.id === jobId ? updatedJob : job));
+    this.persist();
+    return this.cache.find((job) => job.id === jobId);
+  }
+
   hideFromTalent(jobId: string): MockJobRecord | undefined {
     return this.updateTalentStage(jobId, 'radar', 'hidden');
   }
@@ -665,6 +715,7 @@ export class VagasMockService {
     const jobs = this.loadJobs();
     const existing = jobs.find((job) => job.id === jobId);
     const hasDecisionOverride = arguments.length >= 3;
+    const stageChangedAt = new Date().toISOString();
 
     if (!existing) {
       return undefined;
@@ -695,6 +746,7 @@ export class VagasMockService {
       stageOwner: this.resolveStageOwner(stage, talentDecision, 'talent', existingTalentCandidate?.stageOwner),
       recruiterManagedJourney: existingTalentCandidate?.recruiterManagedJourney ?? false,
       recruiterStageCommittedAt: existingTalentCandidate?.recruiterStageCommittedAt,
+      stageTimeline: this.mergeStageTimeline(existingTalentCandidate, stage, stageChangedAt),
       decision: hasDecisionOverride ? talentDecision : existingTalentCandidate?.decision,
       submittedDocuments: nextSubmittedDocuments,
       documentsConsentAccepted: nextConsentAccepted,
@@ -1302,15 +1354,18 @@ export class VagasMockService {
       stageOwner: existingCandidate?.stageOwner,
       recruiterManagedJourney: existingCandidate?.recruiterManagedJourney ?? false,
       recruiterStageCommittedAt: existingCandidate?.recruiterStageCommittedAt,
+      stageTimeline: this.normalizeStageTimeline(existingCandidate?.stageTimeline, existingCandidate?.stage, existingCandidate?.recruiterStageCommittedAt),
       decision: existingCandidate?.decision,
       submittedDocuments: this.normalizeCandidateSubmittedDocuments(existingCandidate?.submittedDocuments, job.hiringDocuments),
       documentsConsentAccepted: existingCandidate?.documentsConsentAccepted ?? false,
+      documentReviewStatuses: this.normalizeDocumentReviewStatuses(existingCandidate?.documentReviewStatuses, job.hiringDocuments),
     };
   }
 
   private decorateTalentVisibility(job: MockJobRecord, context?: { acceptedJobId?: string | null; acceptedCandidateNames?: Set<string> }): MockJobRecord {
     const canonicalJob = this.collapseTalentCandidates(job);
     const jobWithTalentState = this.withDerivedTalentState(canonicalJob);
+    const isLabJob = jobWithTalentState.id.startsWith('lab-');
     const acceptedCandidateNames = context?.acceptedCandidateNames ?? new Set<string>();
     const realtimeRadarCandidates = this.buildRealtimeRadarCandidates(jobWithTalentState, acceptedCandidateNames);
     const labRadarCandidates = this.buildLabRadarCandidates(jobWithTalentState, acceptedCandidateNames);
@@ -1325,11 +1380,13 @@ export class VagasMockService {
       .filter(Boolean);
     const totalRadar = effectiveRadarCandidates.length;
     const nonRadarCandidates = jobWithTalentState.candidates.filter((candidate) => this.getEffectiveCandidateStage(candidate) !== 'radar');
-    const candidates = labRadarCandidates.length
-      ? [...nonRadarCandidates, ...effectiveRadarCandidates]
-      : realtimeRadarCandidates.length
+    const candidates = isLabJob
+      ? nonRadarCandidates
+      : labRadarCandidates.length
         ? [...nonRadarCandidates, ...effectiveRadarCandidates]
-        : jobWithTalentState.candidates;
+        : realtimeRadarCandidates.length
+          ? [...nonRadarCandidates, ...effectiveRadarCandidates]
+          : jobWithTalentState.candidates;
 
     return {
       ...jobWithTalentState,
@@ -1477,9 +1534,11 @@ export class VagasMockService {
       stageOwner: candidate.stageOwner,
       recruiterManagedJourney: candidate.recruiterManagedJourney ?? false,
       recruiterStageCommittedAt: candidate.recruiterStageCommittedAt,
+      stageTimeline: this.normalizeStageTimeline(candidate.stageTimeline, candidate.stage, candidate.recruiterStageCommittedAt),
       decision: candidate.decision,
       submittedDocuments: this.normalizeCandidateSubmittedDocuments(candidate.submittedDocuments, allowedDocuments),
       documentsConsentAccepted: candidate.documentsConsentAccepted ?? false,
+      documentReviewStatuses: this.normalizeDocumentReviewStatuses(candidate.documentReviewStatuses, allowedDocuments),
     };
   }
 
@@ -1552,9 +1611,71 @@ export class VagasMockService {
   private cloneCandidate(candidate: MockJobCandidate, allowedDocuments: string[]): MockJobCandidate {
     return {
       ...candidate,
+      stageTimeline: this.normalizeStageTimeline(candidate.stageTimeline, candidate.stage, candidate.recruiterStageCommittedAt),
       submittedDocuments: this.normalizeCandidateSubmittedDocuments(candidate.submittedDocuments, allowedDocuments),
       documentsConsentAccepted: candidate.documentsConsentAccepted ?? false,
+      documentReviewStatuses: this.normalizeDocumentReviewStatuses(candidate.documentReviewStatuses, allowedDocuments),
     };
+  }
+
+  private normalizeDocumentReviewStatuses(
+    value: unknown,
+    allowedDocuments: string[],
+  ): Record<string, 'accepted' | 'rejected'> | undefined {
+    if (!value || typeof value !== 'object') {
+      return undefined;
+    }
+
+    const nextEntries = Object.entries(value as Record<string, unknown>)
+      .filter(([key, status]) => allowedDocuments.includes(key) && (status === 'accepted' || status === 'rejected'))
+      .map(([key, status]) => [key, status] as const);
+
+    return nextEntries.length
+      ? Object.fromEntries(nextEntries) as Record<string, 'accepted' | 'rejected'>
+      : undefined;
+  }
+
+  private mergeStageTimeline(
+    candidate: MockJobCandidate | undefined,
+    stage: MockJobCandidate['stage'],
+    changedAt: string,
+  ): Partial<Record<CandidateStage, string>> | undefined {
+    const timeline = this.normalizeStageTimeline(candidate?.stageTimeline, candidate?.stage, candidate?.recruiterStageCommittedAt);
+    if (!stage || !this.isCandidateStage(stage)) {
+      return timeline;
+    }
+
+    return {
+      ...timeline,
+      [stage]: changedAt,
+    };
+  }
+
+  private normalizeStageTimeline(
+    timeline: unknown,
+    currentStage?: MockJobCandidate['stage'],
+    recruiterStageCommittedAt?: string,
+  ): Partial<Record<CandidateStage, string>> | undefined {
+    const nextTimeline: Partial<Record<CandidateStage, string>> = {};
+
+    if (timeline && typeof timeline === 'object') {
+      for (const [key, value] of Object.entries(timeline as Record<string, unknown>)) {
+        if (this.isCandidateStage(key) && typeof value === 'string' && value.trim()) {
+          nextTimeline[key] = value;
+        }
+      }
+    }
+
+    if (
+      recruiterStageCommittedAt
+      && currentStage
+      && this.isCandidateStage(currentStage)
+      && !nextTimeline[currentStage]
+    ) {
+      nextTimeline[currentStage] = recruiterStageCommittedAt;
+    }
+
+    return Object.keys(nextTimeline).length ? nextTimeline : undefined;
   }
 
   private resolveStageOwner(
@@ -1626,6 +1747,7 @@ export class VagasMockService {
             radarOnly: job.talentDecision === 'hidden',
             recruiterManagedJourney: false,
             recruiterStageCommittedAt: undefined,
+            stageTimeline: this.normalizeStageTimeline(undefined, job.talentDecision === 'hidden' ? 'radar' : 'candidatura'),
             decision: job.talentDecision,
             submittedDocuments: topLevelSubmittedDocuments,
             documentsConsentAccepted: job.talentDocumentsConsentAccepted ?? false,
@@ -1640,6 +1762,7 @@ export class VagasMockService {
       ...talentCandidate,
       recruiterManagedJourney: talentCandidate.recruiterManagedJourney ?? false,
       recruiterStageCommittedAt: talentCandidate.recruiterStageCommittedAt,
+      stageTimeline: this.normalizeStageTimeline(talentCandidate.stageTimeline, talentCandidate.stage, talentCandidate.recruiterStageCommittedAt),
       decision: talentCandidate.decision ?? job.talentDecision,
       submittedDocuments: talentCandidate.submittedDocuments?.length
         ? this.normalizeCandidateSubmittedDocuments(talentCandidate.submittedDocuments, job.hiringDocuments)

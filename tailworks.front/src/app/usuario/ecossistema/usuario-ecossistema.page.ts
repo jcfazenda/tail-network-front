@@ -38,9 +38,34 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
   private readonly talentoJobsFacade = inject(JobsFacade);
   talentJourneySelectedIndex: number | null = null;
   private talentJourneySelectionKey = '';
+  private ecoGridJobsCacheKey = '';
+  private ecoGridJobsCache: MockJobRecord[] = [];
+  private focusedJourneyCacheKey = '';
+  private focusedJourneyCache: TalentJourneyViewModel | null = null;
+  private focusedTalentDocumentsStateKey = '';
+  private focusedTalentCheckedDocuments = new Set<string>();
+  private focusedTalentComplianceAccepted = false;
 
   get ecoGridJobs(): MockJobRecord[] {
-    return this.talentCompatibleJobs.map((view) => view.job);
+    const cacheKey = this.ecoFilteredJobs
+      .map((job) => [
+        job.id,
+        job.updatedAt || '',
+        job.createdAt || '',
+        job.talentDecision || '',
+        job.match ?? 0,
+      ].join(':'))
+      .join('|');
+
+    if (this.ecoGridJobsCacheKey === cacheKey) {
+      return this.ecoGridJobsCache;
+    }
+
+    this.ecoGridJobsCacheKey = cacheKey;
+    this.ecoGridJobsCache = this.ecoFilter === 'radar'
+      ? this.talentCompatibleJobs.map((view) => view.job)
+      : this.ecoFilteredJobs;
+    return this.ecoGridJobsCache;
   }
 
   override get paginatedEcoJobs(): MockJobRecord[] {
@@ -52,15 +77,47 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
     return Math.max(1, Math.ceil(this.ecoGridJobs.length / this.ecoJobsPageSize));
   }
 
+  override get sideRailRecentJobs(): MockJobRecord[] {
+    const jobs = this.ecoGridJobs
+      .filter((job) => job.status === 'ativas')
+      .slice()
+      .sort((left, right) => {
+        const rightTime = Date.parse(right.createdAt || right.updatedAt || '') || 0;
+        const leftTime = Date.parse(left.createdAt || left.updatedAt || '') || 0;
+        return rightTime - leftTime || (right.match ?? 0) - (left.match ?? 0);
+      });
+
+    if (!this.selectedSideRailRecentJobId) {
+      return jobs.slice(0, 3);
+    }
+
+    const selectedJob = jobs.find((job) => job.id === this.selectedSideRailRecentJobId);
+    if (!selectedJob) {
+      return jobs.slice(0, 3);
+    }
+
+    return [selectedJob, ...jobs.filter((job) => job.id !== selectedJob.id)].slice(0, 3);
+  }
+
   get focusedTalentJourney(): TalentJourneyViewModel | null {
     const job = this.sideRailRecentJobs[0];
     if (!job) {
       return null;
     }
 
-    const candidate = this.talentoJobsFacade.findTalentCandidate(job);
-    if (!candidate) {
-      return null;
+    const candidate = this.resolveFocusedTalentCandidate(job);
+
+    const cacheKey = [
+      job.id,
+      candidate.id || candidate.name,
+      this.talentoJobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar',
+      candidate.recruiterStageCommittedAt || '',
+      JSON.stringify(candidate.stageTimeline ?? {}),
+      (job.hiringDocuments ?? []).join('|'),
+    ].join('::');
+
+    if (this.focusedJourneyCacheKey === cacheKey && this.focusedJourneyCache) {
+      return this.focusedJourneyCache;
     }
 
     const journey = this.buildTalentJourneyView(job, candidate);
@@ -71,19 +128,60 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
       this.talentJourneySelectedIndex = journey.activeIndex;
     }
 
+    this.focusedJourneyCacheKey = cacheKey;
+    this.focusedJourneyCache = journey;
     return journey;
   }
 
   get canAdvanceFocusedTalentJourney(): boolean {
     const job = this.sideRailRecentJobs[0];
-    const candidate = job ? this.talentoJobsFacade.findTalentCandidate(job) : null;
+    const candidate = job ? this.resolveFocusedTalentCandidate(job) : null;
     const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
-    return stage === 'radar' || stage === 'aguardando' || stage === 'aceito' || stage === 'documentacao';
+    return stage === 'radar' || stage === 'aceito';
+  }
+
+  get showFocusedTalentJourneyDecisionActions(): boolean {
+    const job = this.sideRailRecentJobs[0];
+    const candidate = job ? this.resolveFocusedTalentCandidate(job) : null;
+    const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
+    return stage === 'aguardando';
+  }
+
+  get showFocusedTalentDocumentsForm(): boolean {
+    const job = this.sideRailRecentJobs[0];
+    const candidate = job ? this.resolveFocusedTalentCandidate(job) : null;
+    const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
+    return !!job && (stage === 'aceito' || stage === 'documentacao') && this.focusedTalentRequiredDocuments.length > 0;
+  }
+
+  get showFocusedTalentDocumentsAwaitingApproval(): boolean {
+    const job = this.sideRailRecentJobs[0];
+    const candidate = job ? this.resolveFocusedTalentCandidate(job) : null;
+    const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
+    return stage === 'documentacao';
+  }
+
+  get showFocusedTalentContractedSuccess(): boolean {
+    const job = this.sideRailRecentJobs[0];
+    const candidate = job ? this.resolveFocusedTalentCandidate(job) : null;
+    const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
+    return stage === 'contratado';
+  }
+
+  get focusedTalentRequiredDocuments(): string[] {
+    const job = this.sideRailRecentJobs[0];
+    return (job?.hiringDocuments ?? []).map((item) => item.trim()).filter(Boolean);
+  }
+
+  get canSubmitFocusedTalentDocuments(): boolean {
+    return this.focusedTalentRequiredDocuments.length > 0
+      && this.focusedTalentRequiredDocuments.every((item) => this.focusedTalentCheckedDocuments.has(item))
+      && this.focusedTalentComplianceAccepted;
   }
 
   get advanceFocusedTalentJourneyLabel(): string {
     const job = this.sideRailRecentJobs[0];
-    const candidate = job ? this.talentoJobsFacade.findTalentCandidate(job) : null;
+    const candidate = job ? this.resolveFocusedTalentCandidate(job) : null;
     const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
 
     if (stage === 'radar') {
@@ -94,8 +192,8 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
       return 'Avançar para aceite';
     }
 
-    if (stage === 'aceito' || stage === 'documentacao') {
-      return 'Avançar com documentos';
+    if (stage === 'aceito') {
+      return 'Enviar Documentação';
     }
 
     return 'Avançar';
@@ -123,22 +221,141 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
       return;
     }
 
-    const candidate = this.talentoJobsFacade.findTalentCandidate(job);
+    const candidate = this.resolveFocusedTalentCandidate(job);
     const stage = this.talentoJobsFacade.getEffectiveCandidateStage(candidate ?? undefined) ?? 'radar';
 
     if (stage === 'radar') {
       this.talentoJobsFacade.applyAsTalent(job.id);
-    } else if (stage === 'aguardando') {
-      this.talentoJobsFacade.acceptOfferAsTalent(job.id);
     } else if (stage === 'aceito' || stage === 'documentacao') {
-      const requiredDocuments = (job.hiringDocuments ?? []).map((item) => item.trim()).filter(Boolean);
-      this.talentoJobsFacade.submitTalentDocuments(job.id, requiredDocuments, true);
+      if (!this.canSubmitFocusedTalentDocuments) {
+        return;
+      }
+
+      this.talentoJobsFacade.submitTalentDocuments(
+        job.id,
+        this.focusedTalentRequiredDocuments.filter((item) => this.focusedTalentCheckedDocuments.has(item)),
+        this.focusedTalentComplianceAccepted,
+      );
     } else {
       return;
     }
 
     (this as unknown as { jobsSnapshot: MockJobRecord[] }).jobsSnapshot = this.talentoJobsFacade.getJobs();
+    this.ecoGridJobsCacheKey = '';
+    this.focusedJourneyCacheKey = '';
+    this.focusedJourneyCache = null;
     this.selectSideRailRecentJob(job.id);
+  }
+
+  isFocusedTalentDocumentChecked(document: string): boolean {
+    this.syncFocusedTalentDocumentsState();
+    return this.focusedTalentCheckedDocuments.has(document);
+  }
+
+  toggleFocusedTalentDocument(document: string, checked: boolean): void {
+    this.syncFocusedTalentDocumentsState();
+    if (checked) {
+      this.focusedTalentCheckedDocuments.add(document);
+      return;
+    }
+
+    this.focusedTalentCheckedDocuments.delete(document);
+  }
+
+  get isFocusedTalentComplianceAccepted(): boolean {
+    this.syncFocusedTalentDocumentsState();
+    return this.focusedTalentComplianceAccepted;
+  }
+
+  setFocusedTalentComplianceAccepted(checked: boolean): void {
+    this.syncFocusedTalentDocumentsState();
+    this.focusedTalentComplianceAccepted = checked;
+  }
+
+  acceptFocusedTalentHiring(): void {
+    const job = this.sideRailRecentJobs[0];
+    if (!job) {
+      return;
+    }
+
+    this.talentoJobsFacade.acceptOfferAsTalent(job.id);
+    (this as unknown as { jobsSnapshot: MockJobRecord[] }).jobsSnapshot = this.talentoJobsFacade.getJobs();
+    this.ecoGridJobsCacheKey = '';
+    this.focusedJourneyCacheKey = '';
+    this.focusedJourneyCache = null;
+    this.selectSideRailRecentJob(job.id);
+  }
+
+  keepFocusedTalentForNextOpportunity(): void {
+    const job = this.sideRailRecentJobs[0];
+    if (!job) {
+      return;
+    }
+
+    this.talentoJobsFacade.keepJobForNextOpportunity(job.id);
+    (this as unknown as { jobsSnapshot: MockJobRecord[] }).jobsSnapshot = this.talentoJobsFacade.getJobs();
+    this.ecoGridJobsCacheKey = '';
+    this.focusedJourneyCacheKey = '';
+    this.focusedJourneyCache = null;
+    this.selectSideRailRecentJob(job.id);
+  }
+
+  private resolveFocusedTalentCandidate(job: MockJobRecord): MockJobCandidate {
+    const existingCandidate = this.talentoJobsFacade.findTalentCandidate(job);
+    if (existingCandidate) {
+      return existingCandidate;
+    }
+
+    const identity = this.talentoJobsFacade.getTalentCandidateIdentity();
+    return {
+      id: `synthetic-${job.id}`,
+      name: identity.name,
+      role: `${job.seniority} ${job.title}`.trim(),
+      location: identity.location,
+      match: Math.max(72, Math.min(98, job.match ?? 72)),
+      minutesAgo: 1,
+      status: 'online',
+      avatar: identity.avatar,
+      stage: 'radar',
+      availabilityLabel: 'Disponibilidade imediata',
+      radarOnly: true,
+      source: 'system',
+      hasProfileAvatar: identity.hasProfileAvatar,
+      recruiterManagedJourney: false,
+      recruiterStageCommittedAt: undefined,
+      decision: undefined,
+      submittedDocuments: [],
+      documentsConsentAccepted: false,
+    };
+  }
+
+  private syncFocusedTalentDocumentsState(): void {
+    const job = this.sideRailRecentJobs[0];
+    if (!job) {
+      this.focusedTalentDocumentsStateKey = '';
+      this.focusedTalentCheckedDocuments = new Set<string>();
+      this.focusedTalentComplianceAccepted = false;
+      return;
+    }
+
+    const candidate = this.resolveFocusedTalentCandidate(job);
+    const key = [
+      job.id,
+      candidate.id ?? candidate.name,
+      (candidate.submittedDocuments ?? []).join('|'),
+      candidate.documentsConsentAccepted ? '1' : '0',
+      this.focusedTalentRequiredDocuments.join('|'),
+    ].join('::');
+
+    if (this.focusedTalentDocumentsStateKey === key) {
+      return;
+    }
+
+    this.focusedTalentDocumentsStateKey = key;
+    this.focusedTalentCheckedDocuments = new Set(
+      (candidate.submittedDocuments ?? []).filter((item) => this.focusedTalentRequiredDocuments.includes(item)),
+    );
+    this.focusedTalentComplianceAccepted = candidate.documentsConsentAccepted ?? false;
   }
 
   private buildTalentJourneyView(job: MockJobRecord, candidate: MockJobCandidate): TalentJourneyViewModel {
@@ -223,8 +440,9 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
       }
     }
 
-    if ((index === 2 || index === 3) && candidate.recruiterStageCommittedAt) {
-      const committedAt = new Date(candidate.recruiterStageCommittedAt);
+    const stageTimestamp = this.resolveJourneyStageTimestamp(index, candidate);
+    if (stageTimestamp) {
+      const committedAt = new Date(stageTimestamp);
       if (!Number.isNaN(committedAt.getTime())) {
         return {
           dateLabel: this.formatJourneyDate(committedAt),
@@ -237,6 +455,30 @@ export class UsuarioEcossistemaPage extends EcossistemaPage {
       dateLabel: 'Aguardando',
       hourLabel: '__:__',
     };
+  }
+
+  private resolveJourneyStageTimestamp(index: number, candidate: MockJobCandidate): string | undefined {
+    const timeline = candidate.stageTimeline;
+    if (!timeline) {
+      return index === 2 || index === 3 ? candidate.recruiterStageCommittedAt : undefined;
+    }
+
+    switch (index) {
+      case 1:
+        return timeline.candidatura;
+      case 2:
+        return timeline.processo ?? timeline.tecnica ?? candidate.recruiterStageCommittedAt;
+      case 3:
+        return timeline.aguardando ?? candidate.recruiterStageCommittedAt;
+      case 4:
+        return timeline.aceito ?? timeline.proxima ?? timeline.cancelado;
+      case 5:
+        return timeline.documentacao;
+      case 6:
+        return timeline.contratado ?? timeline.proxima ?? timeline.cancelado;
+      default:
+        return undefined;
+    }
   }
 
   private formatJourneyDate(date: Date): string {

@@ -104,7 +104,7 @@ export class LoginPage implements OnDestroy {
       return;
     }
 
-    void this.router.navigateByUrl('/home');
+    void this.router.navigateByUrl(this.returnUrl || '/home');
   }
 
   async continueWithProvider(provider: SocialProvider): Promise<void> {
@@ -124,7 +124,7 @@ export class LoginPage implements OnDestroy {
     }
 
     this.successMessage = `Acesso mock com ${provider === 'google' ? 'Google' : 'LinkedIn'} confirmado.`;
-    void this.router.navigateByUrl('/home');
+    void this.router.navigateByUrl(this.returnUrl || '/home');
   }
 
   registerRecruiter(): void {

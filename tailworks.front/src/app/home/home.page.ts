@@ -56,6 +56,15 @@ export class HomePage {
       return;
     }
 
+    if (!this.authService.canUseTalent() || this.authService.canUseRecruiter()) {
+      void this.router.navigate(['/login'], {
+        queryParams: {
+          returnUrl: '/usuario/ecossistema',
+        },
+      });
+      return;
+    }
+
     const session = this.authService.getSession();
     this.ecosystemEntryService.setMode('talent');
     this.jobsFacade.signInAsTalent(session?.name ?? 'Talento', session?.location);

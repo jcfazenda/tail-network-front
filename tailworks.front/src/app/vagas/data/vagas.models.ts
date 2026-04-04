@@ -101,9 +101,11 @@ export interface MockJobCandidate {
   stageOwner?: 'system' | 'talent' | 'recruiter';
   recruiterManagedJourney?: boolean;
   recruiterStageCommittedAt?: string;
+  stageTimeline?: Partial<Record<CandidateStage, string>>;
   decision?: TalentJobDecision;
   submittedDocuments?: string[];
   documentsConsentAccepted?: boolean;
+  documentReviewStatuses?: Record<string, 'accepted' | 'rejected'>;
 }
 
 export interface MockJobRecord extends MockJobDraft {

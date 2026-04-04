@@ -14,7 +14,8 @@
           <div class="curriculum-page__sidebar-card">
             <div class="curriculum-page__profile-card">
               <div class="curriculum-page__profile-avatar">
-                <img *ngIf="profile.avatarUrl; else curriculumAvatarFallback" [src]="profile.avatarUrl" [alt]="profile.name" />
+                <img *ngIf="profile.avatarUrl; else curriculumAvatarFallback" [src]="profile.avatarUrl"
+                  [alt]="profile.name" />
                 <ng-template #curriculumAvatarFallback>
                   <span>{{ curriculumAvatarLabel(profile.name) }}</span>
                 </ng-template>
@@ -42,18 +43,17 @@
                 <div class="curriculum-page__meter-row" *ngFor="let item of profile.personalSkills">
                   <span>{{ item.label }}</span>
                   <span class="curriculum-page__meter-dots" aria-hidden="true">
-                    <span
-                      class="material-symbols-outlined curriculum-page__meter-icon"
+                    <span class="material-symbols-outlined curriculum-page__meter-icon"
                       *ngFor="let filled of personalSkillDots(item.score)"
-                      [class.curriculum-page__meter-icon--filled]="filled"
-                    >radio_button_checked</span>
+                      [class.curriculum-page__meter-icon--filled]="filled">radio_button_checked</span>
                   </span>
                 </div>
               </div>
             </section>
           </div>
 
-          <div class="curriculum-page__sidebar-card curriculum-page__sidebar-card--compact curriculum-page__sidebar-card--footer">
+          <div
+            class="curriculum-page__sidebar-card curriculum-page__sidebar-card--compact curriculum-page__sidebar-card--footer">
             <section class="curriculum-page__side-section curriculum-page__side-section--footer-top">
               <div class="curriculum-page__section-title curriculum-page__section-title--side">
                 <span class="material-symbols-rounded" aria-hidden="true">alternate_email</span>
@@ -67,7 +67,8 @@
               </div>
             </section>
 
-            <section class="curriculum-page__side-section curriculum-page__side-section--footer" *ngIf="profile.socialLinks.length">
+            <section class="curriculum-page__side-section curriculum-page__side-section--footer"
+              *ngIf="profile.socialLinks.length">
               <div class="curriculum-page__section-title curriculum-page__section-title--side">
                 <span class="material-symbols-rounded" aria-hidden="true">hub</span>
                 <strong>Conexões</strong>
@@ -107,14 +108,11 @@
             </div>
 
             <div class="curriculum-page__bar-grid curriculum-page__bar-grid--single">
-              <div
-                class="curriculum-page__bar-row"
-                *ngFor="let item of profile.professionalSkills"
+              <div class="curriculum-page__bar-row" *ngFor="let item of profile.professionalSkills"
                 [class.curriculum-page__bar-row--high]="skillVisualTone(item.score) === 'high'"
                 [class.curriculum-page__bar-row--medium]="skillVisualTone(item.score) === 'medium'"
                 [class.curriculum-page__bar-row--soft]="skillVisualTone(item.score) === 'soft'"
-                [class.curriculum-page__bar-row--muted]="skillVisualTone(item.score) === 'muted'"
-              >
+                [class.curriculum-page__bar-row--muted]="skillVisualTone(item.score) === 'muted'">
                 <span>{{ item.label }}</span>
                 <span class="curriculum-page__bar-track" aria-hidden="true">
                   <span class="curriculum-page__bar-fill" [style.width.%]="item.score"></span>
@@ -160,14 +158,11 @@
             </div>
 
             <div class="curriculum-page__bar-grid curriculum-page__bar-grid--compact curriculum-page__bar-grid--single">
-              <div
-                class="curriculum-page__bar-row"
-                *ngFor="let item of profile.proficiencies"
+              <div class="curriculum-page__bar-row" *ngFor="let item of profile.proficiencies"
                 [class.curriculum-page__bar-row--high]="skillVisualTone(item.score) === 'high'"
                 [class.curriculum-page__bar-row--medium]="skillVisualTone(item.score) === 'medium'"
                 [class.curriculum-page__bar-row--soft]="skillVisualTone(item.score) === 'soft'"
-                [class.curriculum-page__bar-row--muted]="skillVisualTone(item.score) === 'muted'"
-              >
+                [class.curriculum-page__bar-row--muted]="skillVisualTone(item.score) === 'muted'">
                 <span>{{ item.label }}</span>
                 <span class="curriculum-page__bar-track" aria-hidden="true">
                   <span class="curriculum-page__bar-fill" [style.width.%]="item.score"></span>
@@ -181,7 +176,8 @@
     </section>
 
     <aside class="curriculum-page__side-rail" aria-label="Painéis laterais do currículo">
-      <div class="curriculum-page__side-rail-inner curriculum-page__side-rail-inner--focus" *ngIf="focusedJob$ | async as focusedJob">
+      <div class="curriculum-page__side-rail-inner curriculum-page__side-rail-inner--focus"
+        *ngIf="focusedJob$ | async as focusedJob">
         <div class="curriculum-page__focus-copy">
           <h3>Vaga em Foco</h3>
           <p>selecione uma vaga no grid para destacar aqui os dados principais da publicacao e do radar atual</p>
@@ -190,7 +186,8 @@
         <article class="curriculum-page__focus-job-card">
           <div class="curriculum-page__focus-job-head">
             <div class="curriculum-page__focus-logo">
-              <img *ngIf="focusedJob.logo; else focusedJobFallback" [src]="focusedJob.logo" [alt]="focusedJob.company || focusedJob.title" />
+              <img *ngIf="focusedJob.logo; else focusedJobFallback" [src]="focusedJob.logo"
+                [alt]="focusedJob.company || focusedJob.title" />
               <ng-template #focusedJobFallback>
                 <span>{{ focusedJobLogoLabel(focusedJob.title || focusedJob.company) }}</span>
               </ng-template>
@@ -199,13 +196,10 @@
             <div class="curriculum-page__focus-job-title-block">
               <div class="curriculum-page__focus-card-head">
                 <strong>{{ focusedJob.title }}</strong>
-                <span
-                  class="curriculum-page__focus-work-model"
-                  *ngIf="focusedJob.workModel"
+                <span class="curriculum-page__focus-work-model" *ngIf="focusedJob.workModel"
                   [class.curriculum-page__focus-work-model--remote]="focusedJob.workModel === 'Home' || focusedJob.workModel === 'Remoto'"
                   [class.curriculum-page__focus-work-model--hybrid]="focusedJob.workModel === 'Hibrido'"
-                  [class.curriculum-page__focus-work-model--onsite]="focusedJob.workModel === 'Presencial'"
-                >
+                  [class.curriculum-page__focus-work-model--onsite]="focusedJob.workModel === 'Presencial'">
                   {{ focusedJob.workModel }}
                 </span>
               </div>
@@ -222,35 +216,57 @@
           <span class="curriculum-page__focus-divider" aria-hidden="true"></span>
 
           <div class="curriculum-page__focus-meta-row">
-            <span class="curriculum-page__focus-chip" *ngIf="focusedJob.contractType">{{ focusedJob.contractType }}</span>
-            <span class="curriculum-page__focus-chip curriculum-page__focus-chip--ghost" *ngIf="!focusedJob.contractType && focusedJob.workModel">
+            <span class="curriculum-page__focus-chip" *ngIf="focusedJob.contractType">{{ focusedJob.contractType
+              }}</span>
+            <span class="curriculum-page__focus-chip curriculum-page__focus-chip--ghost"
+              *ngIf="!focusedJob.contractType && focusedJob.workModel">
               {{ focusedJob.workModel }}
             </span>
           </div>
         </article>
       </div>
-      <div class="curriculum-page__side-rail-inner curriculum-page__side-rail-inner--secondary" *ngIf="candidateJourney$ | async as journey">
+      <div class="curriculum-page__side-rail-inner curriculum-page__side-rail-inner--secondary"
+        *ngIf="candidateJourney$ | async as journey">
         <div class="curriculum-page__journey-copy">
           <h3>Status do Candidato</h3>
           <p>acompanhe aqui a leitura sequencial da jornada do talento nessa vaga, com origem da ação e avanço atual</p>
         </div>
 
-        <div class="curriculum-page__journey-stage-chip">{{ journey.currentStageLabel }}</div>
-
-        <mat-vertical-stepper
-          class="curriculum-page__journey-stepper"
-          [linear]="false"
+        <mat-vertical-stepper class="curriculum-page__journey-stepper" [linear]="false"
           [selectedIndex]="resolveJourneySelectedIndex(journey)"
-          (selectionChange)="onJourneySelectionChange($event.selectedIndex)"
-        >
-          <mat-step
-            *ngFor="let item of journey.steps"
-            [completed]="item.completed"
-          >
+          (selectionChange)="onJourneySelectionChange($event.selectedIndex)">
+          <ng-template matStepperIcon="done-active">
+            <span class="material-symbols-rounded curriculum-page__journey-stepper-done-icon" aria-hidden="true">check</span>
+          </ng-template>
+
+          <ng-template matStepperIcon="number" let-index="index">
+            <span *ngIf="journey.steps[index]?.completed; else curriculumStepNumberIcon"
+              class="material-symbols-rounded curriculum-page__journey-stepper-done-icon"
+              aria-hidden="true">check</span>
+            <ng-template #curriculumStepNumberIcon>{{ index + 1 }}</ng-template>
+          </ng-template>
+
+          <ng-template matStepperIcon="done">
+            <span class="material-symbols-rounded curriculum-page__journey-stepper-done-icon" aria-hidden="true">check</span>
+          </ng-template>
+
+          <mat-step *ngFor="let item of journey.steps" [completed]="item.completed"
+            [state]="item.completed ? (item.active ? 'done-active' : 'done') : 'number'">
             <ng-template matStepLabel>
               <div class="curriculum-page__journey-stepper-label">
+                <span class="curriculum-page__journey-stepper-status"
+                  [class.curriculum-page__journey-stepper-status--done]="item.completed"
+                  [class.curriculum-page__journey-stepper-status--active]="item.active && !item.completed"
+                  aria-hidden="true">
+                  <span class="material-symbols-rounded" *ngIf="item.completed">check</span>
+                </span>
+
                 <div class="curriculum-page__journey-stepper-time">
-                  <span>{{ item.dateLabel }}</span>
+                  <span>
+                    <ng-container *ngIf="item.dateLabel !== 'Aguardando'; else curriculumWaitingDateIcon">
+                      {{ item.dateLabel }}
+                    </ng-container>
+                  </span>
                   <small>{{ item.hourLabel }}</small>
                 </div>
                 <div class="curriculum-page__journey-stepper-meta">
@@ -258,6 +274,11 @@
                   <small>{{ item.ownerText }}</small>
                 </div>
               </div>
+            </ng-template>
+
+            <ng-template #curriculumWaitingDateIcon>
+              <span class="material-symbols-rounded curriculum-page__journey-time-icon"
+                aria-hidden="true">schedule</span>
             </ng-template>
 
             <div class="curriculum-page__journey-stepper-body">
@@ -273,6 +294,68 @@
           </mat-step>
         </mat-vertical-stepper>
 
+        <div class="curriculum-page__journey-success-art" *ngIf="showContractedSuccessArt()">
+          <span class="material-symbols-rounded" aria-hidden="true">workspace_premium</span>
+          <div class="curriculum-page__journey-success-art-copy">
+            <strong>Sucesso, contratado</strong>
+            <span>A contratação foi confirmada e a comunicação final já entrou na fase de fechamento do processo.</span>
+          </div>
+        </div>
+
+        <div class="curriculum-page__journey-document-callout"
+          *ngIf="candidateDocumentStatus$ | async as documentStatus">
+          <button *ngIf="documentStatus.length" class="curriculum-page__journey-document-callout-button" type="button"
+            (click)="openDocumentsModal()">
+            <div class="curriculum-page__journey-document-callout-copy">
+              <strong>Documentos para envio</strong>
+              <span>{{ receivedDocumentsCount(documentStatus) }} de {{ documentStatus.length }} recebidos</span>
+            </div>
+            <div class="curriculum-page__journey-document-callout-meta">
+              <span class="curriculum-page__journey-document-callout-chip"
+                [class.curriculum-page__journey-document-callout-chip--active]="receivedDocumentsCount(documentStatus) > 0">
+                <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
+                Documentação
+              </span>
+
+              <span *ngIf="canShowHireCandidateChip(documentStatus)"
+                class="curriculum-page__journey-document-callout-chip curriculum-page__journey-document-callout-chip--hire"
+                (click)="$event.stopPropagation(); openHireCandidateModal()">
+                <span class="material-symbols-rounded" aria-hidden="true">workspace_premium</span>
+                Contratar candidato
+              </span>
+
+              <span *ngIf="rejectedDocumentsCount(documentStatus) > 0"
+                class="curriculum-page__journey-document-callout-chip curriculum-page__journey-document-callout-chip--rejected">
+                <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                {{ rejectedDocumentsCount(documentStatus) }}
+              </span>
+            </div>
+          </button>
+        </div>
+
+        <div class="curriculum-page__journey-actions" *ngIf="candidateJourneyActions$ | async as actions">
+          <button *ngIf="actions.showAdvanceToProcess"
+            class="curriculum-page__journey-action curriculum-page__journey-action--primary" type="button"
+            (click)="advanceCandidateToProcess()">
+            <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+            Avançar para Processo
+          </button>
+
+          <button *ngIf="actions.showRequestHiring"
+            class="curriculum-page__journey-action curriculum-page__journey-action--primary" type="button"
+            (click)="requestCandidateHiring()">
+            <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+            Solicitar Contratação
+          </button>
+
+          <button *ngIf="actions.showValidateDocuments"
+            class="curriculum-page__journey-action curriculum-page__journey-action--primary" type="button"
+            [disabled]="actions.disableValidateDocuments" (click)="validateCandidateDocuments()">
+            <span class="material-symbols-rounded" aria-hidden="true">verified</span>
+            Documentação Validada
+          </button>
+        </div>
+
         <span class="curriculum-page__journey-divider" aria-hidden="true"></span>
 
         <div class="curriculum-page__journey-alert">
@@ -282,4 +365,136 @@
       </div>
     </aside>
   </section>
+
+  <div class="curriculum-page__documents-modal-backdrop" *ngIf="documentsModalOpen" (click)="closeDocumentsModal()">
+    <div class="curriculum-page__documents-modal" role="dialog" aria-modal="true" aria-label="Documentos para envio"
+      (click)="$event.stopPropagation()">
+      <div class="curriculum-page__documents-modal-head">
+        <strong>Documentos para envio</strong>
+        <button class="curriculum-page__documents-modal-close" type="button" aria-label="Fechar documentos"
+          (click)="closeDocumentsModal()">
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <div class="curriculum-page__documents-modal-content">
+        <div class="curriculum-page__documents-modal-intro">
+          <strong>Como essa validação funciona</strong>
+          <ul>
+            <li>Marque `Aceito` quando o documento estiver correto e pronto para seguir no fluxo.</li>
+            <li>Marque `Recusado` quando houver ajuste, inconsistência ou necessidade de reenvio.</li>
+            <li>Quando todos os itens forem aprovados, o candidato recebe o retorno de que a documentação passou sem
+              pendências.</li>
+            <li>Se existir uma ou mais recusas, o candidato recebe orientação para corrigir e reenviar os documentos
+              necessários.</li>
+          </ul>
+        </div>
+
+        <div class="curriculum-page__documents-modal-list" *ngIf="candidateDocumentStatus$ | async as documentStatus">
+          <article class="curriculum-page__documents-modal-item" *ngFor="let item of documentStatus"
+            [class.curriculum-page__documents-modal-item--sent]="item.sent"
+            [class.curriculum-page__documents-modal-item--rejected]="item.reviewDecision === 'rejected'"
+            [class.curriculum-page__documents-modal-item--accepted]="item.reviewDecision === 'accepted'">
+            <div class="curriculum-page__documents-modal-icon">
+              <span class="material-symbols-rounded" aria-hidden="true">{{ documentStatusIcon(item.label) }}</span>
+            </div>
+
+            <div class="curriculum-page__documents-modal-copy">
+              <strong>{{ item.label }}</strong>
+            </div>
+
+            <div class="curriculum-page__documents-modal-badges">
+              <div class="curriculum-page__documents-modal-review">
+                <button type="button"
+                  class="curriculum-page__documents-modal-review-chip curriculum-page__documents-modal-review-chip--reject"
+                  [class.curriculum-page__documents-modal-review-chip--active]="item.reviewDecision === 'rejected'"
+                  [disabled]="!item.sent" (click)="setCandidateDocumentReview(item.label, 'rejected')">
+                  <span class="material-symbols-rounded" aria-hidden="true">close</span>
+                  Recusado
+                </button>
+
+                <button type="button"
+                  class="curriculum-page__documents-modal-review-chip curriculum-page__documents-modal-review-chip--accept"
+                  [class.curriculum-page__documents-modal-review-chip--active]="item.reviewDecision === 'accepted'"
+                  [disabled]="!item.sent" (click)="setCandidateDocumentReview(item.label, 'accepted')">
+                  <span class="material-symbols-rounded" aria-hidden="true">check</span>
+                  Aceito
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--  E-mail : Contratar Candidato  -->
+  <div class="curriculum-page__hire-modal-backdrop" *ngIf="hireCandidateModalOpen" (click)="closeHireCandidateModal()">
+    <div class="curriculum-page__hire-modal" role="dialog" aria-modal="true" aria-label="Contratar candidato"
+      (click)="$event.stopPropagation()">
+      <div class="curriculum-page__hire-modal-head">
+        <div class="curriculum-page__hire-modal-title">
+          <span class="material-symbols-rounded" aria-hidden="true">celebration</span>
+          <strong>Contratar Candidato</strong>
+        </div>
+
+        <button class="curriculum-page__hire-modal-close" type="button" aria-label="Fechar contratação"
+          (click)="closeHireCandidateModal()">
+          <span class="material-symbols-rounded" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <div class="curriculum-page__hire-modal-layout">
+
+<div class="curriculum-page__hire-modal-flow">
+  <strong>Fechamento da jornada</strong>
+
+  <ul class="curriculum-page__hire-modal-flow-list">
+    <li>O processo já passou por entrevistas, validação técnica e conferência documental.</li>
+    <li>Com os dois lados alinhados, esta etapa consolida o “sim” entre recruiter, candidato e sistema.</li>
+    <li>Ao confirmar a contratação, o sistema registra o encerramento do fluxo e dispara a comunicação final.</li>
+    <li>Essa confirmação também prepara o terreno para onboarding, alinhamentos internos e próximos passos operacionais.</li>
+  </ul>
+
+  <p class="curriculum-page__hire-modal-flow-highlight curriculum-page__hire-modal-flow-highlight--solo">
+    <span class="material-symbols-rounded" aria-hidden="true">waving_hand</span>
+    <span>Parabéns! Esta é a confirmação final entre as partes antes do início oficial da contratação.</span>
+  </p>
+</div>
+
+
+        <div class="curriculum-page__hire-modal-email">
+          <div class="curriculum-page__hire-modal-email-head">
+            <span>
+              <span class="material-symbols-rounded" aria-hidden="true">mail</span>
+              Prévia da comunicação final
+            </span>
+            <strong>{{ hireCandidateEmailSubject() }}</strong>
+          </div>
+
+          <div class="curriculum-page__hire-modal-email-body">
+            <p *ngFor="let line of hireCandidateEmailPreview()">{{ line }}</p>
+          </div>
+
+          <div class="curriculum-page__hire-modal-email-footer">
+            <p>
+              Parabéns Recruiter {{ currentRecruiterFirstName() }} por chegar até aqui.
+              Preparamos uma comunicação final detalhando os próximos passos.
+              Você foi demais!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="curriculum-page__hire-modal-actions">
+        <button class="curriculum-page__hire-modal-email-action" type="button" (click)="sendHiringConfirmationEmail()">
+          <span class="material-symbols-rounded" aria-hidden="true">mail</span>
+          Enviar E-mail de Confirmação
+        </button>
+      </div>
+    </div>
+  </div>
+
+
 </main>

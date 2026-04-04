@@ -1,9 +1,11 @@
 .shell{
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: 328px 1fr;
   background: var(--bg);
   overflow-x: hidden;
+  overflow-y: hidden;
   transition: grid-template-columns .18s ease;
   }
 
@@ -22,7 +24,8 @@
   display: grid;
   grid-template-rows: 1fr;
   background: var(--bg);
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
 }
 
 .shell__main::before{
@@ -57,8 +60,8 @@
 
 .shell__main--ecosystem{
   grid-template-rows: minmax(0, 1fr);
-  min-height: 100vh;
-  height: auto;
+  min-height: 0;
+  height: 100%;
   background: var(--bg);
 }
 
@@ -66,8 +69,11 @@
   position: relative;
   z-index: 1;
   padding: 28px 44px 40px;
+  height: 100%;
   min-height: 0;
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .shell__content--template{
@@ -95,10 +101,10 @@
 }
 
 .shell__content--ecosystem{
-  min-height: calc(100vh - 46px);
-  height: auto;
+  min-height: 0;
+  height: 100%;
   padding: 26px 28px 18px;
-  overflow: visible;
+  overflow: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }

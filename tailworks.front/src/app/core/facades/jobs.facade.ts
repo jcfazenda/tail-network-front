@@ -146,6 +146,15 @@ export class JobsFacade {
     return this.jobsService.updateCandidateStage(jobId, candidateName, stage, talentDecision, options);
   }
 
+  updateCandidateDocumentReview(
+    jobId: string,
+    candidateName: string,
+    documentLabel: string,
+    decision: 'accepted' | 'rejected',
+  ): MockJobRecord | undefined {
+    return this.jobsService.updateCandidateDocumentReview(jobId, candidateName, documentLabel, decision);
+  }
+
   updateJobStatus(jobId: string, status: MockJobRecord['status'], statusReason?: string): MockJobRecord | undefined {
     return this.jobsService.updateJobStatus(jobId, status, statusReason);
   }

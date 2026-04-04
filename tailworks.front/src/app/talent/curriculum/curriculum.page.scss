@@ -568,14 +568,17 @@
   position: sticky;
   top: 16px;
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 16px;
-  align-self: start;
+  align-self: stretch;
+  min-height: 100%;
 }
 
 .curriculum-page__side-rail-inner{
   min-height: 560px;
   border-radius: 0 24px 24px 0;
   background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%);
+  overflow: hidden;
 }
 
 .curriculum-page__side-rail-inner--focus{
@@ -587,10 +590,11 @@
 }
 
 .curriculum-page__side-rail-inner--secondary{
-  min-height: 420px;
+  min-height: 0;
+  height: 100%;
   padding: 22px 20px;
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: 18px;
 }
 
@@ -765,16 +769,16 @@
 .curriculum-page__journey-copy h3{
   margin: 0;
   color: rgba(245, 247, 251, 0.94);
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1;
-  font-weight: 600;
+  font-weight: 550;
   letter-spacing: -0.04em;
 }
 
 .curriculum-page__journey-copy p{
   margin: 0;
-  color: rgba(224, 229, 236, 0.62);
-  font-size: 13px;
+  color: rgba(224, 229, 236, 0.58);
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -794,6 +798,43 @@
   text-transform: uppercase;
 }
 
+.curriculum-page__journey-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.curriculum-page__journey-action{
+  min-height: 36px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.curriculum-page__journey-action:disabled{
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.curriculum-page__journey-action .material-symbols-rounded{
+  font-size: 16px;
+  line-height: 1;
+}
+
+.curriculum-page__journey-action--primary{
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.24), rgba(167, 100, 50, 0.18));
+  color: #f7f8fb;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
 .curriculum-page__journey-list{
   display: grid;
   gap: 6px;
@@ -801,15 +842,53 @@
 
 .curriculum-page__journey-stepper{
   background: transparent;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .curriculum-page__journey-stepper-label{
   width: 100%;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 28px auto minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-height: 28px;
+}
+
+.curriculum-page__journey-stepper-status{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(92, 98, 108, 0.64);
+}
+
+.curriculum-page__journey-stepper-status--done{
+  background: rgba(113, 165, 124, 0.2);
+  border-color: rgba(113, 165, 124, 0.3);
+  color: rgba(173, 231, 187, 0.98);
+  box-shadow: 0 0 0 4px rgba(113, 165, 124, 0.12);
+}
+
+.curriculum-page__journey-stepper-status--active{
+  background: rgba(255, 249, 237, 0.98);
+  border-color: rgba(210, 149, 54, 0.32);
+  color: rgba(167, 103, 18, 0.94);
+  box-shadow: 0 0 0 4px rgba(240, 180, 56, 0.1);
+}
+
+.curriculum-page__journey-stepper-status .material-symbols-rounded{
+  font-size: 16px;
+  line-height: 1;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 20;
 }
 
 .curriculum-page__journey-stepper-meta{
@@ -846,6 +925,12 @@
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: 0.04em;
+}
+
+.curriculum-page__journey-time-icon{
+  font-size: 14px;
+  line-height: 1;
+  color: rgba(245, 247, 251, 0.74);
 }
 
 .curriculum-page__journey-stepper-time small{
@@ -893,8 +978,596 @@
   line-height: 1.45;
 }
 
+.curriculum-page__journey-success-art{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(126, 164, 111, 0.18), transparent 44%),
+    rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(126, 164, 111, 0.22);
+}
+
+.curriculum-page__journey-success-art .material-symbols-rounded{
+  font-size: 28px;
+  line-height: 1;
+  color: #9ad28a;
+}
+
+.curriculum-page__journey-success-art-copy{
+  display: grid;
+  gap: 4px;
+}
+
+.curriculum-page__journey-success-art-copy strong{
+  color: rgba(245, 247, 251, 0.9);
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.curriculum-page__journey-success-art-copy span{
+  color: rgba(214, 221, 229, 0.66);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.curriculum-page__journey-document-callout{
+  margin-top: 10px;
+}
+
+.curriculum-page__journey-document-callout-button{
+  width: 100%;
+  min-height: 72px;
+  padding: 16px 18px;
+  border: 1px solid rgba(109, 144, 124, 0.18);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(95, 137, 112, 0.14), transparent 44%),
+    rgba(255, 255, 255, 0.04);
+  color: #f7f8fb;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.curriculum-page__journey-document-callout-button:hover{
+  transform: translateY(-1px);
+  border-color: rgba(126, 164, 111, 0.28);
+  background:
+    radial-gradient(circle at top right, rgba(108, 156, 118, 0.18), transparent 44%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.curriculum-page__journey-document-callout-meta{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.curriculum-page__journey-document-callout-copy{
+  display: grid;
+  gap: 4px;
+}
+
+.curriculum-page__journey-document-callout-copy strong{
+  color: rgba(245, 247, 251, 0.9);
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.curriculum-page__journey-document-callout-copy span{
+  color: rgba(214, 221, 229, 0.66);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.curriculum-page__journey-document-callout-button .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+  color: rgba(245, 247, 251, 0.7);
+}
+
+.curriculum-page__journey-document-callout-chip{
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(224, 229, 236, 0.62);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.curriculum-page__journey-document-callout-chip .material-symbols-rounded{
+  font-size: 14px;
+  color: inherit;
+}
+
+.curriculum-page__journey-document-callout-chip--active{
+  background: rgba(116, 163, 128, 0.18);
+  color: #7ae5a0;
+}
+
+.curriculum-page__journey-document-callout-chip--hire{
+  background: rgba(241, 178, 32, 0.18);
+  color: #f1c665;
+}
+
+.curriculum-page__journey-document-callout-chip--rejected{
+  min-width: 40px;
+  padding: 0 10px;
+  background: rgba(215, 99, 99, 0.18);
+  color: #ff9f9f;
+}
+
+.curriculum-page__documents-modal-backdrop{
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgba(6, 10, 15, 0.62);
+  backdrop-filter: blur(14px);
+}
+
+.curriculum-page__documents-modal{
+  width: min(1260px, 100%);
+  max-height: min(82vh, 920px);
+  overflow: auto;
+  padding: 34px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top, rgba(90, 132, 101, 0.16), transparent 44%),
+    linear-gradient(180deg, rgba(19, 26, 32, 0.98) 0%, rgba(14, 19, 25, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+}
+
+.curriculum-page__documents-modal-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+  padding-inline: 10px;
+}
+
+.curriculum-page__documents-modal-head strong{
+  color: rgba(245, 247, 251, 0.9);
+  font-size: clamp(22px, 2.2vw, 30px);
+  line-height: 1.05;
+  font-weight: 560;
+  letter-spacing: -0.04em;
+}
+
+.curriculum-page__documents-modal-close{
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(214, 229, 219, 0.82);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.curriculum-page__documents-modal-content{
+  padding-inline: 10px;
+}
+
+.curriculum-page__documents-modal-intro{
+  max-width: none;
+  margin: 0 0 32px;
+  display: grid;
+  gap: 10px;
+  padding-left: 12px;
+}
+
+.curriculum-page__documents-modal-intro strong{
+  color: rgba(245, 247, 251, 0.86);
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.curriculum-page__documents-modal-intro ul{
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.curriculum-page__documents-modal-intro li{
+  color: rgba(214, 221, 229, 0.68);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: nowrap;
+}
+
+.curriculum-page__documents-modal-list{
+  display: grid;
+  gap: 14px;
+}
+
+.curriculum-page__documents-modal-item{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.curriculum-page__documents-modal-icon{
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  display: inline-grid;
+  place-items: center;
+  color: rgba(179, 191, 204, 0.74);
+}
+
+.curriculum-page__documents-modal-icon .material-symbols-rounded{
+  font-size: 42px;
+  line-height: 1;
+}
+
+.curriculum-page__documents-modal-copy strong{
+  color: rgba(245, 247, 251, 0.86);
+  font-size: clamp(18px, 1.5vw, 24px);
+  line-height: 1.14;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.curriculum-page__documents-modal-badges{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.curriculum-page__documents-modal-review-chip{
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(214, 221, 229, 0.72);
+  font-size: clamp(14px, 1.1vw, 18px);
+  line-height: 1;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.curriculum-page__documents-modal-review-chip .material-symbols-rounded{
+  font-size: 18px;
+  line-height: 1;
+}
+
+.curriculum-page__documents-modal-review{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.curriculum-page__documents-modal-review-chip{
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(214, 221, 229, 0.72);
+}
+
+.curriculum-page__documents-modal-review-chip:disabled{
+  opacity: 0.34;
+  cursor: not-allowed;
+}
+
+.curriculum-page__documents-modal-review-chip--reject.curriculum-page__documents-modal-review-chip--active{
+  background: rgba(215, 99, 99, 0.18);
+  color: #ffb0b0;
+}
+
+.curriculum-page__documents-modal-review-chip--accept.curriculum-page__documents-modal-review-chip--active{
+  background: rgba(116, 163, 128, 0.2);
+  color: #8fe1a8;
+}
+
+.curriculum-page__documents-modal-item--accepted{
+  border-color: rgba(116, 163, 128, 0.28);
+}
+
+.curriculum-page__documents-modal-item--rejected{
+  border-color: rgba(215, 99, 99, 0.22);
+}
+
+/* HIRE MODAL CORRIGIDO */
+.curriculum-page__hire-modal-backdrop{
+  position: fixed;
+  inset: 0;
+  z-index: 81;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgba(6, 10, 15, 0.68);
+  backdrop-filter: blur(16px);
+}
+
+.curriculum-page__hire-modal{
+  width: min(1180px, 100%);
+  max-height: min(94vh, 980px);
+  overflow: auto;
+  padding: 28px;
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at top, rgba(196, 163, 93, 0.18), transparent 36%),
+    radial-gradient(circle at bottom right, rgba(83, 132, 97, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(20, 25, 30, 0.98) 0%, rgba(13, 17, 21, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.38);
+}
+
+.curriculum-page__hire-modal-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.curriculum-page__hire-modal-title{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.curriculum-page__hire-modal-title .material-symbols-rounded{
+  font-size: 28px;
+  color: #f0c672;
+}
+
+.curriculum-page__hire-modal-title strong{
+  color: rgba(245, 247, 251, 0.92);
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.04;
+  font-weight: 560;
+  letter-spacing: -0.04em;
+}
+
+.curriculum-page__hire-modal-close{
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(245, 247, 251, 0.8);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.curriculum-page__hire-modal-close:hover{
+  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.curriculum-page__hire-modal-layout{
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+  gap: 22px;
+  align-items: stretch;
+}
+
+/* HIRE MODAL CORRIGIDO*/
+
+.curriculum-page__hire-modal-flow{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.025) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  height: 100%;
+}
+
+.curriculum-page__hire-modal-flow-highlight--solo{
+  margin-top: auto;
+}
+
+.curriculum-page__hire-modal-flow strong{
+  color: rgba(245, 247, 251, 0.9);
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.curriculum-page__hire-modal-flow-list{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 16px;
+}
+
+.curriculum-page__hire-modal-flow-list li{
+  position: relative;
+  padding-left: 28px;
+  color: rgba(219, 224, 231, 0.74);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.curriculum-page__hire-modal-flow-list li::before{
+  content: '✦';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #8fd0a1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.curriculum-page__hire-modal-flow-highlight{
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.08), rgba(122, 187, 137, 0.05));
+  border: 1px solid rgba(241, 178, 32, 0.1);
+  color: rgba(244, 199, 110, 0.94);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.curriculum-page__hire-modal-flow-highlight .material-symbols-rounded{
+  font-size: 20px;
+  line-height: 1;
+  margin-top: 1px;
+  color: #f0c672;
+}
+
+ 
+.curriculum-page__hire-modal-email{
+  display: grid;
+  gap: 0;
+  padding: 22px 24px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  min-width: 0;
+}
+
+.curriculum-page__hire-modal-email-head{
+  display: grid;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.curriculum-page__hire-modal-email-head span{
+  color: rgba(214, 221, 229, 0.52);
+  font-size: 11px;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.curriculum-page__hire-modal-email-head span .material-symbols-rounded{
+  font-size: 16px;
+  line-height: 1;
+}
+
+.curriculum-page__hire-modal-email-head strong{
+  color: rgba(245, 247, 251, 0.92);
+  font-size: 17px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.curriculum-page__hire-modal-email-body{
+  display: grid;
+  gap: 10px;
+  padding-top: 16px;
+}
+
+.curriculum-page__hire-modal-email-body p{
+  margin: 0;
+  color: rgba(219, 224, 231, 0.74);
+  font-size: 13px;
+  line-height: 1.72;
+}
+
+.curriculum-page__hire-modal-email-footer{
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.curriculum-page__hire-modal-email-footer p{
+  margin: 0;
+  color: rgba(219, 224, 231, 0.7);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.curriculum-page__hire-modal-actions{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.curriculum-page__hire-modal-email-action{
+  min-height: 50px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(180deg, #7ea46f 0%, #5d8a52 100%);
+  color: #f6fff4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 10px 26px rgba(88, 130, 78, 0.28);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.curriculum-page__hire-modal-email-action:hover{
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 14px 30px rgba(88, 130, 78, 0.32);
+}
+
+.curriculum-page__hire-modal-email-action .material-symbols-rounded{
+  font-size: 20px;
+  line-height: 1;
+}
+
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-header{
-  padding: 8px 0;
+  padding: 12px 0;
   height: auto;
   align-items: center;
 }
@@ -912,26 +1585,19 @@
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-icon{
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(92, 98, 108, 0.64);
-  font-size: 12px;
-  font-weight: 700;
+  display: none;
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-icon-selected{
-  background: rgba(255, 249, 237, 0.98);
-  border-color: rgba(210, 149, 54, 0.32);
-  color: rgba(167, 103, 18, 0.94);
-  box-shadow: 0 0 0 4px rgba(240, 180, 56, 0.1);
+  display: none;
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-step-icon-state-done{
-  background: rgba(255, 247, 232, 0.94);
-  border-color: rgba(186, 123, 36, 0.26);
-  color: rgba(148, 91, 18, 0.9);
+  display: none;
+}
+
+:host ::ng-deep .curriculum-page__journey-stepper .mat-step-icon-state-done-active{
+  display: none;
 }
 
 :host ::ng-deep .curriculum-page__journey-stepper .mat-stepper-vertical-line::before{
@@ -948,6 +1614,16 @@
   height: 100%;
   line-height: 1;
   transform: none;
+}
+
+.curriculum-page__journey-stepper-done-icon{
+  font-size: 16px;
+  line-height: 1;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 20;
 }
 
 .curriculum-page__journey-step{
@@ -1270,11 +1946,35 @@
   color: rgba(16, 18, 22, 0.78);
 }
 
+:host-context(body[data-theme='light']) .curriculum-page__journey-stepper-status{
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(16, 18, 22, 0.08);
+  color: rgba(68, 74, 82, 0.62);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-stepper-status--done{
+  background: rgba(53, 138, 76, 0.14);
+  border-color: rgba(53, 138, 76, 0.22);
+  color: #2d9a56;
+  box-shadow: 0 0 0 4px rgba(53, 138, 76, 0.08);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-stepper-status--active{
+  background: rgba(255, 248, 234, 0.98);
+  border-color: rgba(210, 149, 54, 0.24);
+  color: rgba(167, 103, 18, 0.9);
+  box-shadow: 0 0 0 4px rgba(240, 180, 56, 0.08);
+}
+
 :host-context(body[data-theme='light']) .curriculum-page__journey-stepper-meta small{
   color: rgba(16, 18, 22, 0.52);
 }
 
 :host-context(body[data-theme='light']) .curriculum-page__journey-stepper-time span{
+  color: rgba(16, 18, 22, 0.72);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-time-icon{
   color: rgba(16, 18, 22, 0.72);
 }
 
@@ -1294,22 +1994,339 @@
   color: rgba(16, 18, 22, 0.6);
 }
 
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-button{
+  background:
+    radial-gradient(circle at top right, rgba(102, 164, 115, 0.12), transparent 44%),
+    rgba(255, 255, 255, 0.86);
+  border-color: rgba(53, 138, 76, 0.14);
+  color: rgba(16, 18, 22, 0.88);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-button:hover{
+  border-color: rgba(53, 138, 76, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(102, 164, 115, 0.16), transparent 44%),
+    rgba(255, 255, 255, 0.92);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-success-art{
+  background:
+    radial-gradient(circle at top right, rgba(102, 164, 115, 0.12), transparent 44%),
+    rgba(255, 255, 255, 0.86);
+  border-color: rgba(53, 138, 76, 0.14);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-success-art .material-symbols-rounded{
+  color: #2d9a56;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-success-art-copy strong{
+  color: rgba(16, 18, 22, 0.82);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-success-art-copy span{
+  color: rgba(67, 83, 102, 0.72);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-chip{
+  background: rgba(15, 23, 42, 0.05);
+  color: rgba(67, 83, 102, 0.64);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-chip--active{
+  background: rgba(35, 155, 86, 0.12);
+  color: #239b56;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-chip--hire{
+  background: rgba(210, 149, 54, 0.14);
+  color: #a76b12;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-chip--rejected{
+  background: rgba(208, 77, 77, 0.14);
+  color: #b93e3e;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-copy strong{
+  color: rgba(16, 18, 22, 0.82);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-copy span{
+  color: rgba(67, 83, 102, 0.66);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__journey-document-callout-button .material-symbols-rounded{
+  color: rgba(67, 83, 102, 0.72);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-backdrop{
+  background: rgba(20, 28, 38, 0.28);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal{
+  background:
+    radial-gradient(circle at top, rgba(152, 180, 159, 0.08), transparent 44%),
+    linear-gradient(180deg, #ffffff 0%, #f6f7f4 100%);
+  box-shadow: 0 22px 56px rgba(15, 23, 42, 0.14);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-head strong{
+  color: rgba(32, 41, 52, 0.88);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-close{
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(48, 71, 56, 0.88);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-intro strong{
+  color: rgba(32, 41, 52, 0.84);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-intro li{
+  color: rgba(67, 83, 102, 0.72);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-item{
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(120, 128, 141, 0.16);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-icon{
+  color: rgba(110, 121, 134, 0.88);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-copy strong{
+  color: rgba(45, 55, 66, 0.88);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-review-chip{
+  background: rgba(120, 128, 141, 0.1);
+  color: rgba(86, 96, 109, 0.9);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-review-chip--reject.curriculum-page__documents-modal-review-chip--active{
+  background: rgba(208, 77, 77, 0.12);
+  color: #b93e3e;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-review-chip--accept.curriculum-page__documents-modal-review-chip--active{
+  background: rgba(35, 155, 86, 0.12);
+  color: #239b56;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-item--accepted{
+  border-color: rgba(35, 155, 86, 0.16);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__documents-modal-item--rejected{
+  border-color: rgba(208, 77, 77, 0.16);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-backdrop{
+  background: rgba(20, 28, 38, 0.3);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal{
+  background:
+    radial-gradient(circle at top, rgba(216, 188, 124, 0.12), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(124, 170, 136, 0.12), transparent 36%),
+    linear-gradient(180deg, #ffffff 0%, #f6f7f4 100%);
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 22px 56px rgba(15, 23, 42, 0.14);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-title .material-symbols-rounded{
+  color: #b88319;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-title strong{
+  color: rgba(32, 41, 52, 0.9);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-close{
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(32, 41, 52, 0.82);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-flow,
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email{
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-flow strong,
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-head strong{
+  color: rgba(32, 41, 52, 0.88);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-flow-list li,
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-body p{
+  color: rgba(67, 83, 102, 0.76);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-flow-list li::before{
+  color: #239b56;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-flow-highlight{
+  color: #b88319;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-flow-highlight .material-symbols-rounded{
+  color: #b88319;
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-head span{
+  color: rgba(67, 83, 102, 0.58);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-head{
+  border-bottom-color: rgba(15, 23, 42, 0.12);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-footer{
+  border-top-color: rgba(15, 23, 42, 0.08);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-footer p{
+  color: rgba(67, 83, 102, 0.74);
+}
+
+:host-context(body[data-theme='light']) .curriculum-page__hire-modal-email-action{
+  background: linear-gradient(180deg, #88b06f 0%, #6f9958 100%);
+  color: #f7fff4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 10px 24px rgba(111, 153, 88, 0.22);
+}
+
+@media (max-width: 1100px){
+  .curriculum-page__documents-modal{
+    padding: 28px;
+    border-radius: 28px;
+  }
+
+  .curriculum-page__documents-modal-item{
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .curriculum-page__documents-modal-badges{
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    padding-left: 120px;
+  }
+
+  .curriculum-page__documents-modal-intro li{
+    white-space: normal;
+  }
+
+  .curriculum-page__hire-modal{
+    padding: 28px;
+    border-radius: 28px;
+    overflow: auto;
+  }
+
+  .curriculum-page__hire-modal-layout{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px){
+  .curriculum-page__documents-modal-backdrop{
+    padding: 18px;
+  }
+
+  .curriculum-page__documents-modal{
+    padding: 22px;
+    border-radius: 24px;
+  }
+
+  .curriculum-page__documents-modal-item{
+    padding: 18px;
+    gap: 16px;
+  }
+
+  .curriculum-page__documents-modal-icon{
+    width: 68px;
+    height: 68px;
+  }
+
+  .curriculum-page__documents-modal-icon .material-symbols-rounded{
+    font-size: 42px;
+  }
+
+  .curriculum-page__documents-modal-copy strong{
+    font-size: 24px;
+  }
+
+  .curriculum-page__documents-modal-badges{
+    padding-left: 0;
+  }
+
+  .curriculum-page__documents-modal-badge,
+  .curriculum-page__documents-modal-review-chip{
+    min-height: 50px;
+    padding: 0 18px;
+    font-size: 18px;
+  }
+
+  .curriculum-page__documents-modal-badge .material-symbols-rounded,
+  .curriculum-page__documents-modal-review-chip .material-symbols-rounded{
+    font-size: 22px;
+  }
+
+  .curriculum-page__hire-modal-backdrop{
+    padding: 18px;
+  }
+
+  .curriculum-page__hire-modal{
+    padding: 22px;
+    border-radius: 24px;
+    overflow: auto;
+  }
+
+  .curriculum-page__hire-modal-flow,
+  .curriculum-page__hire-modal-email{
+    padding: 18px;
+  }
+
+  .curriculum-page__hire-modal-title strong{
+    font-size: 24px;
+  }
+
+  .curriculum-page__hire-modal-email-head strong{
+    font-size: 14px;
+  }
+
+  .curriculum-page__hire-modal-actions{
+    justify-content: stretch;
+  }
+
+  .curriculum-page__hire-modal-email-action{
+    width: 100%;
+  }
+}
+
 :host-context(body[data-theme='light']) ::ng-deep .curriculum-page__journey-stepper .mat-step-icon{
-  background: rgba(255, 255, 255, 0.92);
-  border-color: rgba(16, 18, 22, 0.08);
-  color: rgba(68, 74, 82, 0.62);
+  display: none;
 }
 
 :host-context(body[data-theme='light']) ::ng-deep .curriculum-page__journey-stepper .mat-step-icon-selected{
-  background: rgba(255, 248, 234, 0.98);
-  border-color: rgba(210, 149, 54, 0.24);
-  color: rgba(167, 103, 18, 0.9);
+  display: none;
 }
 
 :host-context(body[data-theme='light']) ::ng-deep .curriculum-page__journey-stepper .mat-step-icon-state-done{
-  background: rgba(255, 247, 232, 0.96);
-  border-color: rgba(186, 123, 36, 0.2);
-  color: rgba(148, 91, 18, 0.88);
+  display: none;
+}
+
+:host-context(body[data-theme='light']) ::ng-deep .curriculum-page__journey-stepper .mat-step-icon-state-done-active{
+  display: none;
 }
 
 :host-context(body[data-theme='light']) ::ng-deep .curriculum-page__journey-stepper .mat-stepper-vertical-line::before{

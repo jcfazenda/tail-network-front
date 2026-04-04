@@ -40,7 +40,7 @@
             [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'week'"
             (click)="setOverviewRange('week')"
           >
-            Semana
+            Semana,
           </button>
           <button
             class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--short"
@@ -444,12 +444,26 @@
       <div class="ecosystem-desktop__side-summary ecosystem-desktop__side-summary--secondary">
         <div class="ecosystem-desktop__side-summary-feature ecosystem-desktop__side-summary-feature--column">
           <div class="ecosystem-desktop__side-summary-headline">
-            <span>Aderentes</span>
+            <div class="ecosystem-desktop__side-summary-title-block">
+              <span>Aderentes</span>
+            </div>
             <strong>{{ sideRailCandidatesCount }} avatares</strong>
           </div>
           <p class="ecosystem-desktop__side-summary-copy">
             talentos que cruzam a meta atual da vaga em foco e merecem prioridade no radar de abordagem
           </p>
+          <div class="ecosystem-desktop__side-summary-chips">
+            <button
+              *ngFor="let source of sideRailCandidateSources"
+              class="ecosystem-desktop__side-summary-chip"
+              type="button"
+              [class.ecosystem-desktop__side-summary-chip--active]="sideRailCandidateSource === source.id"
+              (click)="setSideRailCandidateSource(source.id)"
+            >
+              <span>{{ source.label }}</span>
+              <strong>{{ source.count }}</strong>
+            </button>
+          </div>
         </div>
       </div>
 

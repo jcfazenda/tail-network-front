@@ -476,7 +476,7 @@
 
 .ecosystem-desktop__side-summary-feature--column{
   display: grid;
-  gap: 6px;
+  gap: 10px;
   width: 100%;
 }
 
@@ -485,6 +485,49 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 12px;
+}
+
+.ecosystem-desktop__side-summary-title-block{
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ecosystem-desktop__side-summary-chips{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.ecosystem-desktop__side-summary-chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, #ffffff 8%, transparent);
+  color: rgba(245, 247, 251, 0.68);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.ecosystem-desktop__side-summary-chip strong{
+  color: inherit;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.ecosystem-desktop__side-summary-chip--active{
+  background: linear-gradient(135deg, rgba(241, 178, 32, 0.24), rgba(167, 100, 50, 0.18));
+  color: #f7f8fb;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
 }
 
 .ecosystem-desktop__side-summary-headline strong{
@@ -500,17 +543,18 @@
 
 .ecosystem-desktop__side-summary-feature span{
   color: rgba(245, 247, 251, 0.82);
-  font-size: 30px;
+  font-size: 22px;
   line-height: 1;
   font-weight: 500;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .ecosystem-desktop__side-summary-copy{
   margin: 0;
   color: rgba(245, 247, 251, 0.56);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.55;
+  max-width: 240px;
 }
 
 .ecosystem-desktop__side-candidates{
@@ -537,20 +581,67 @@
   cursor: grabbing;
 }
 
+/* ADERENTES */
 .ecosystem-desktop__candidate-card{
   padding: 18px;
   border-radius: 18px;
-  background: #2c292d;
+  position: relative;
+
+  background:
+    linear-gradient(180deg, rgba(70, 70, 70, 0.03), rgba(255, 255, 255, 0.01)),
+    linear-gradient(180deg, #6c6c6c 0%, #a1a1a1 100%);
+
+  /* REMOVIDO */
+  border: none;
+  box-shadow: none;
+
+  backdrop-filter: blur(6px);
+
   display: grid;
   gap: 16px;
   align-content: start;
 }
+ 
+.ecosystem-desktop__candidate-card:hover{
+  transform: translateY(-3px);
+  transition: 0.2s ease;
 
+  /* sombra bem sutil e limpa */
+  box-shadow: 0 8px 20px rgba(100, 100, 100, 0.4);
+}
+.ecosystem-desktop__candidate-card::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.04),
+    transparent
+  );
+
+  border-radius: 18px;
+  pointer-events: none;
+}
+
+/* VAGAS EM FOCO */
 .ecosystem-desktop__candidate-card--job{
   background:
-    linear-gradient(180deg, rgba(214, 149, 99, 0.12) 0%, rgba(167, 100, 50, 0.06) 100%),
-    linear-gradient(180deg, rgba(9, 71, 93, 0.88) 0%, rgba(99, 124, 132, 0.94) 100%);
+    linear-gradient(180deg, rgba(64, 64, 64, 0.18), rgba(255, 140, 0, 0.05)),
+    linear-gradient(180deg, #414141 0%, #757575 100%);
+
+  border: 1px solid rgba(145, 145, 145, 0.25);
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.7),
+    0 0 20px rgba(255, 140, 0, 0.08),
+    inset 0 1px 0 rgba(59, 59, 59, 0.15);
 }
+
+
 
 .ecosystem-desktop__candidate-card-head{
   display: grid;
@@ -564,7 +655,7 @@
   height: 56px;
   border-radius: 50%;
   display: block;
-  background: linear-gradient(180deg, rgba(255,255,255,0.26), rgba(255,255,255,0.08));
+  background: linear-gradient(180deg, rgba(86, 84, 84, 0.26), rgba(255,255,255,0.08));
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.96);
 }
