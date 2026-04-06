@@ -1,5 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, ViewChild, effect, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  ViewChild,
+  effect,
+  inject,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { AuthFacade } from '../../core/facades/auth.facade';
@@ -26,6 +38,7 @@ type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
 type EcoFilter = TalentEcoFilter | RecruiterEcoFilter;
 type OverviewRange = 'week' | 'month' | 'year';
+
 type EcoKpiItem = {
   icon: string;
   value: string;
@@ -109,6 +122,7 @@ type SideRailCandidateCard = {
   name: string;
   role: string;
   status: string;
+  isHired: boolean;
   adherence: number;
   adherenceTone: 'high' | 'medium' | 'low';
   summary: string;
@@ -120,7 +134,7 @@ type SideRailCandidateCard = {
   avatarUrl: string;
 };
 
-type SideRailCandidateSource = 'ecosystem' | 'job';
+type SideRailCandidateSource = 'ecosystem' | 'job' | 'processo';
 
 @Component({
   standalone: true,
@@ -132,6 +146,7 @@ type SideRailCandidateSource = 'ecosystem' | 'job';
 })
 export class EcossistemaPage implements AfterViewInit, OnDestroy {
   readonly fallbackAvatarUrl = '/assets/avatars/john-doe.jpeg';
+
   private readonly avatarBadgeCache = new Map<string, Array<{ src: string; label: string }>>();
   private readonly authFacade = inject(AuthFacade);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
@@ -150,28 +165,34 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
+
   private copyRotationTimer: number | null = null;
   private hiredRotationTimer: number | null = null;
   private hiredAutoScrollInFlight = false;
   private lastManualHiredInteractionAt = 0;
   private resizeListener?: () => void;
+
   private readonly flippedJobCardIds = new Set<string>();
   private readonly brokenCompanyLogoJobIds = new Set<string>();
+
   private static readonly radarCategoriesStorageKey = 'tailworks:template-radar-categories-selection:v1';
+  private static readonly candidateStacksStorageKey = 'tailworks:candidate-stacks-draft:v5';
+  private static readonly candidateExperiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
+
   private readonly warmGray = { r: 170, g: 174, b: 180 };
   private readonly brandOrangeDark = { r: 140, g: 76, b: 18 };
   private readonly brandOrangeMid = { r: 188, g: 109, b: 24 };
   private readonly brandOrangeLight = { r: 242, g: 179, b: 26 };
-  private static readonly candidateStacksStorageKey = 'tailworks:candidate-stacks-draft:v5';
-  private static readonly candidateExperiencesStorageKey = 'tailworks:candidate-experiences-draft:v1';
 
   private jobsSnapshot: MockJobRecord[] = [];
   private copyIndex = 0;
+
   copyIsFading = false;
   selectedJobPanel: ChatJob | null = null;
   openingRecruiterPanelJobId: string | null = null;
   recruiterPanelProgressCurrent = 0;
   recruiterPanelProgressTotal = 0;
+
   private recruiterPanelWatchdogTimer: number | null = null;
   private recruiterPanelCountdownTimer: number | null = null;
 
@@ -304,24 +325,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     },
   ];
 
-  get desktopVisibleHiredCards(): HiredSpotlightCard[] {
-    const cards = this.hiredSpotlightDeck;
-    if (!cards.length) {
-      return [];
-    }
-
-    const visibleCount = typeof window !== 'undefined' && window.innerWidth >= 1180 ? 3 : 2;
-    const startIndex = this.activeHiredIndex % cards.length;
-
-    return Array.from({ length: Math.min(visibleCount, cards.length) }, (_item, index) => (
-      cards[(startIndex + index) % cards.length]
-    ));
-  }
-
-  get activeHiringCopy() {
-    return this.hiringCopy[this.copyIndex];
-  }
-
   readonly radarTotal = 87;
   readonly radarDelta = 12;
   readonly allRadarCategories: RadarCategory[] = [
@@ -374,7 +377,16 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       color: 'linear-gradient(90deg, rgba(140, 76, 18, 0.86), rgba(188, 109, 24, 0.84) 58%, rgba(242, 179, 26, 0.72))',
     },
   ];
-  private readonly defaultRadarCategoryIds = ['backend', 'frontend', 'ia', 'cloud', 'mobile', 'seguranca', 'devops'];
+
+  private readonly defaultRadarCategoryIds = [
+    'backend',
+    'frontend',
+    'ia',
+    'cloud',
+    'mobile',
+    'seguranca',
+    'devops',
+  ];
 
   showRadarCategoryPicker = false;
   selectedRadarCategoryIds = [...this.defaultRadarCategoryIds];
@@ -387,6 +399,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.refreshJobs();
     void this.ensureSyncedJobs();
     void this.ensureSyncedTalentProfiles();
+
     this.subscriptions.add(
       this.jobsFacade.jobsChanged$.subscribe(() => {
         this.refreshJobs();
@@ -401,7 +414,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       window.addEventListener('resize', this.resizeListener, { passive: true });
     }
 
-    // Re-render quando a busca da topbar mudar.
     effect(() => {
       this.ecosystemSearchService.query();
       this.cdr.markForCheck();
@@ -423,6 +435,24 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  get desktopVisibleHiredCards(): HiredSpotlightCard[] {
+    const cards = this.hiredSpotlightDeck;
+    if (!cards.length) {
+      return [];
+    }
+
+    const visibleCount = typeof window !== 'undefined' && window.innerWidth >= 1180 ? 3 : 2;
+    const startIndex = this.activeHiredIndex % cards.length;
+
+    return Array.from({ length: Math.min(visibleCount, cards.length) }, (_item, index) => (
+      cards[(startIndex + index) % cards.length]
+    ));
+  }
+
+  get activeHiringCopy() {
+    return this.hiringCopy[this.copyIndex];
   }
 
   get isTalentEcosystemMode(): boolean {
@@ -452,7 +482,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return this.ecoFilters;
     }
 
-    // Linha única como na referência (sem "solicitada" por enquanto).
     return this.ecoFilters.filter((item) =>
       item.id === 'radar' || item.id === 'candidaturas' || item.id === 'processo' || item.id === 'contratados'
     );
@@ -467,7 +496,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return 'star';
     }
 
-    return null; // "No Radar" fica sem icone
+    return null;
   }
 
   get ecoKpisLeft(): EcoKpiItem[] {
@@ -486,7 +515,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   get ecoAderenciaKpi(): EcoKpiItem {
     const jobs = this.ecoFilteredJobs;
     const jobCount = jobs.length;
-    const avgMatch = jobCount ? Math.round(jobs.reduce((sum, job) => sum + (job.match ?? 0), 0) / jobCount) : 0;
+    const avgMatch = jobCount
+      ? Math.round(jobs.reduce((sum, job) => sum + (job.match ?? 0), 0) / jobCount)
+      : 0;
+
     return { icon: 'trending_up', value: `${avgMatch}%`, suffix: 'aderência' };
   }
 
@@ -601,6 +633,9 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   setEcoFilter(filter: EcoFilter): void {
     this.ecoFilter = filter;
+    if (!this.isTalentEcosystemMode) {
+      this.sideRailCandidateSource = this.preferredSideRailCandidateSource(filter as RecruiterEcoFilter);
+    }
     this.ecoJobsPage = 0;
     this.ecosystemViewFilterService.setSelected(filter);
     this.cdr.markForCheck();
@@ -638,26 +673,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   get ecoFilteredJobs(): MockJobRecord[] {
-    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
-    const filters = this.ecosystemJobFiltersService.filters();
-    const base = this.jobsSnapshot.filter((job) => job.status === 'ativas');
-    const scoped = this.isTalentEcosystemMode
-      ? base
-      : base.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
-
-    const filteredByMode = (this.isTalentEcosystemMode
-      ? scoped.filter((job) => this.talentJobMatchesFilter(job, this.ecoFilter as TalentEcoFilter))
-      : scoped.filter((job) => this.recruiterJobMatchesFilter(job, this.ecoFilter as RecruiterEcoFilter)))
-      .filter((job) => this.matchesSavedFilters(job, filters));
-
-    if (!query) {
-      return filteredByMode;
-    }
-
-    return filteredByMode.filter((job) => {
-      const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
-      return haystack.includes(query);
-    });
+    return this.buildFilteredJobs(this.ecoFilter, true);
   }
 
   get talentCompatibleJobs(): TalentCompatibleJobView[] {
@@ -747,9 +763,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   get sideRailRecentJobs(): MockJobRecord[] {
-    const jobs = this.jobsSnapshot
+    const jobs = this.ecoFilteredJobs
       .filter((job) => job.status === 'ativas')
-      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
       .sort((left, right) => {
         const rightTime = Date.parse(right.createdAt || right.updatedAt || '') || 0;
         const leftTime = Date.parse(left.createdAt || left.updatedAt || '') || 0;
@@ -774,35 +789,73 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return [];
     }
 
-    return this.buildSideRailCandidateCards(job, this.sideRailCandidateSource);
+    const preferred = this.buildSideRailCandidateCards(job, this.sideRailCandidateSource);
+    if (preferred.length) {
+      return preferred;
+    }
+
+    const fallbackSource: SideRailCandidateSource = this.sideRailCandidateSource === 'ecosystem'
+      ? 'job'
+      : 'ecosystem';
+    return this.buildSideRailCandidateCards(job, fallbackSource);
   }
 
   get sideRailCandidateSources(): Array<{ id: SideRailCandidateSource; label: string; count: number }> {
     const job = this.sideRailRecentJobs[0];
+
+    if (!this.isTalentEcosystemMode && this.ecoFilter === 'contratados') {
+      const hiredCount = job
+        ? this.sideRailCandidatesBySource(job, 'job').filter((candidate) => (
+            (this.jobsFacade.getEffectiveCandidateStage(candidate) ?? candidate.stage ?? 'radar') === 'contratado'
+          )).length
+        : 0;
+
+      return [
+        { id: 'job', label: 'Contratado', count: hiredCount },
+      ];
+    }
+
     const ecosystemCount = job ? this.sideRailCandidatesBySource(job, 'ecosystem').length : 0;
     const jobCount = job ? this.sideRailCandidatesBySource(job, 'job').length : 0;
+    const inProgressCount = job ? this.sideRailCandidatesBySource(job, 'processo').length : 0;
 
     return [
       { id: 'ecosystem', label: 'Ecossistema', count: ecosystemCount },
       { id: 'job', label: 'Candidatos', count: jobCount },
+      { id: 'processo', label: 'Andamento', count: inProgressCount },
     ];
   }
 
   get sideRailJobAvatarBadges(): Array<{ src: string; label: string }> {
-    return this.sideRailCandidateCards
-      .slice(0, 4)
-      .map((candidate) => ({
-        src: candidate.avatarUrl,
-        label: this.personInitials(candidate.name),
-      }));
+    const job = this.sideRailRecentJobs[0];
+    return job ? this.jobInteractionAvatarBadges(job) : [];
   }
 
   get sideRailJobAvatarExtraCount(): number {
-    return Math.max(0, this.sideRailCandidateCards.length - this.sideRailJobAvatarBadges.length);
+    const job = this.sideRailRecentJobs[0];
+    return job ? this.jobBoardRadarExtraCount(job) : 0;
   }
 
   get sideRailCandidatesCount(): number {
     return this.sideRailCandidateCards.length;
+  }
+
+  get sideRailCandidatesTitle(): string {
+    return !this.isTalentEcosystemMode && this.ecoFilter === 'contratados'
+      ? 'Contratação Fechada'
+      : 'Aderentes';
+  }
+
+  get sideRailCandidatesCountLabel(): string {
+    return !this.isTalentEcosystemMode && this.ecoFilter === 'contratados'
+      ? `${this.sideRailCandidatesCount} contratado`
+      : `${this.sideRailCandidatesCount} avatares`;
+  }
+
+  get sideRailCandidatesCopy(): string {
+    return !this.isTalentEcosystemMode && this.ecoFilter === 'contratados'
+      ? 'talento que concluiu a jornada desta vaga e representa o fechamento final da contratação'
+      : 'talentos que cruzam a meta atual da vaga em foco e merecem prioridade no radar de abordagem';
   }
 
   setSideRailCandidateSource(source: SideRailCandidateSource): void {
@@ -812,6 +865,18 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     this.sideRailCandidateSource = source;
     this.cdr.markForCheck();
+  }
+
+  private preferredSideRailCandidateSource(filter: RecruiterEcoFilter): SideRailCandidateSource {
+    if (filter === 'radar') {
+      return 'ecosystem';
+    }
+
+    if (filter === 'processo' || filter === 'solicitada') {
+      return 'processo';
+    }
+
+    return 'job';
   }
 
   get sideRailInProgressCandidatesCount(): number {
@@ -868,7 +933,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get ecoEmptyHint(): string {
     if (this.hasEcoSearch) {
-      return 'Tente buscar por cargo, empresa ou localidade. Você também pode limpar a busca e voltar para a visão completa.';
+      return 'Tente buscar por cargo, empresa, código, stack ou localidade. Você também pode limpar a busca e voltar para a visão completa.';
     }
 
     if (this.ecoFilter !== 'radar') {
@@ -911,46 +976,13 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return this.isRadarJob(job);
   }
 
-  private recruiterJobMatchesFilter(job: MockJobRecord, filter: RecruiterEcoFilter): boolean {
-    return this.jobMatchesBoardView(job, filter);
-  }
-
   private countJobsForFilter(filter: RecruiterEcoFilter): number {
-    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
-    const filters = this.ecosystemJobFiltersService.filters();
-    const base = this.jobsSnapshot
-      .filter((job) => job.status === 'ativas')
-      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
-      .filter((job) => this.recruiterJobMatchesFilter(job, filter))
-      .filter((job) => this.matchesSavedFilters(job, filters));
-
-    if (!query) {
-      return base.length;
-    }
-
-    return base.filter((job) => {
-      const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
-      return haystack.includes(query);
-    }).length;
+    return this.buildFilteredJobs(filter, true).length;
   }
 
   private countTalentJobsForFilter(filter: TalentEcoFilter): number {
-    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
-    const filters = this.ecosystemJobFiltersService.filters();
     const talentProfile = this.readTalentProfile();
-
-    const base = this.jobsSnapshot
-      .filter((job) => job.status === 'ativas')
-      .filter((job) => this.talentJobMatchesFilter(job, filter))
-      .filter((job) => this.matchesSavedFilters(job, filters))
-      .filter((job) => {
-        if (!query) {
-          return true;
-        }
-
-        const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
-        return haystack.includes(query);
-      });
+    const base = this.buildFilteredJobs(filter, true);
 
     if (filter !== 'radar') {
       return base.length;
@@ -962,62 +994,82 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     }).length;
   }
 
+  private buildFilteredJobs(filter: EcoFilter, applyQuery: boolean): MockJobRecord[] {
+    const filters = this.ecosystemJobFiltersService.filters();
+
+    let jobs = this.jobsSnapshot.filter((job) => job.status === 'ativas');
+
+    if (!this.isTalentEcosystemMode) {
+      jobs = jobs.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
+    }
+
+    jobs = this.isTalentEcosystemMode
+      ? jobs.filter((job) => this.talentJobMatchesFilter(job, filter as TalentEcoFilter))
+      : this.recruiterBoardJobs(jobs, filter as RecruiterEcoFilter);
+
+    jobs = jobs.filter((job) => this.matchesSavedFilters(job, filters));
+
+    if (!applyQuery) {
+      return jobs;
+    }
+
+    const query = this.normalizeSearchText(this.ecosystemSearchService.query());
+    if (!query) {
+      return jobs;
+    }
+
+    return jobs.filter((job) => this.jobMatchesSearch(job, query));
+  }
+
+  private normalizeSearchText(value: string | null | undefined): string {
+    return (value ?? '')
+      .toLocaleLowerCase('pt-BR')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private buildJobSearchIndex(job: MockJobRecord): string {
+    const techNames = (job.techStack ?? []).map((stack) => stack.name);
+    const candidateNames = (job.candidates ?? []).map((candidate) => candidate.name);
+    const candidateRoles = (job.candidates ?? []).map((candidate) => candidate.role ?? '');
+    const code = job.code ?? '';
+    const salaryRange = job.salaryRange ?? '';
+    const workModel = job.workModel ?? '';
+    const seniority = job.seniority ?? '';
+    const contractType = job.contractType ?? '';
+
+    return this.normalizeSearchText([
+      job.title,
+      job.company,
+      job.location,
+      code,
+      seniority,
+      workModel,
+      contractType,
+      salaryRange,
+      ...techNames,
+      ...candidateNames,
+      ...candidateRoles,
+    ].join(' '));
+  }
+
+  private jobMatchesSearch(job: MockJobRecord, normalizedQuery: string): boolean {
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    const haystack = this.buildJobSearchIndex(job);
+    return haystack.includes(normalizedQuery);
+  }
+
   private get sideRailSpotlightSourceFilter(): RecruiterEcoFilter {
     return this.ecoFilter === 'candidaturas' ? 'candidaturas' : 'radar';
   }
 
-  private recruiterJobsForFilter(filter: RecruiterEcoFilter): MockJobRecord[] {
-    const query = this.ecosystemSearchService.query().trim().toLocaleLowerCase('pt-BR');
-    const filters = this.ecosystemJobFiltersService.filters();
-    const base = this.jobsSnapshot
-      .filter((job) => job.status === 'ativas')
-      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
-      .filter((job) => this.recruiterJobMatchesFilter(job, filter))
-      .filter((job) => this.matchesSavedFilters(job, filters));
-
-    if (!query) {
-      return base;
-    }
-
-    return base.filter((job) => {
-      const haystack = `${job.title} ${job.company} ${job.location}`.toLocaleLowerCase('pt-BR');
-      return haystack.includes(query);
-    });
-  }
-
-  private jobMatchesBoardView(job: MockJobRecord, view: RecruiterEcoFilter): boolean {
-    const effectiveStages = job.candidates
-      .map((candidate) => this.jobsFacade.getEffectiveCandidateStage(candidate))
-      .filter((stage): stage is NonNullable<typeof stage> => !!stage);
-
-    const hasAnyInteraction = effectiveStages.some((stage) => stage !== 'radar');
-
-    if (view === 'candidaturas') {
-      return effectiveStages.some((stage) => stage === 'candidatura');
-    }
-
-    if (view === 'solicitada') {
-      return effectiveStages.some((stage) => stage === 'aguardando');
-    }
-
-    if (view === 'contratados') {
-      return effectiveStages.some((stage) => stage === 'contratado');
-    }
-
-    if (view === 'processo') {
-      return effectiveStages.some((stage) =>
-        stage === 'processo'
-        || stage === 'tecnica'
-        || stage === 'aceito'
-        || stage === 'documentacao',
-      );
-    }
-
-    if (hasAnyInteraction) {
-      return false;
-    }
-
-    return job.radarCount > 0 || effectiveStages.some((stage) => stage === 'radar');
+  private recruiterBoardJobs(jobs: MockJobRecord[], filter: RecruiterEcoFilter): MockJobRecord[] {
+    return jobs.filter((job) => this.jobsFacade.getRecruiterBoardStatusId(job) === filter);
   }
 
   private jobStageCount(job: MockJobRecord, view: RecruiterEcoFilter): number {
@@ -1038,7 +1090,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         stage === 'processo'
         || stage === 'tecnica'
         || stage === 'aceito'
-        || stage === 'documentacao',
+        || stage === 'documentacao'
       ).length;
     }
 
@@ -1091,7 +1143,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       return null;
     }
 
-    // pega o primeiro numero do range (bom o suficiente pro mock).
     const match = value.match(/(\d[\d.\s]*,\d{2}|\d[\d.\s]*)/);
     if (!match) {
       return null;
@@ -1120,7 +1171,14 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private buildSideRailCandidateCards(job: MockJobRecord, source: SideRailCandidateSource): SideRailCandidateCard[] {
-    return this.sideRailCandidatesBySource(job, source)
+    const candidates = this.sideRailCandidatesBySource(job, source);
+    const hiredCandidates = this.ecoFilter === 'contratados'
+      ? candidates.filter((candidate) => (
+          (this.jobsFacade.getEffectiveCandidateStage(candidate) ?? candidate.stage ?? 'radar') === 'contratado'
+        ))
+      : [];
+
+    return (hiredCandidates.length ? hiredCandidates : candidates)
       .slice(0, 6)
       .map((candidate, index) => this.mapSideRailCandidateCard(job, candidate, index));
   }
@@ -1128,6 +1186,14 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private sideRailCandidatesBySource(job: MockJobRecord, source: SideRailCandidateSource): MockJobCandidate[] {
     if (source === 'job') {
       return this.sortedCandidatesForSideRailJob(job);
+    }
+
+    if (source === 'processo') {
+      return this.sortedInProgressCandidatesForSideRailJob(job);
+    }
+
+    if (!this.isTalentEcosystemMode && this.ecoFilter === 'radar') {
+      return this.buildRadarPanelCandidates(job);
     }
 
     return this.sideRailCompatibleCandidates(job);
@@ -1140,6 +1206,22 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       .filter((candidate) => {
         const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? candidate.stage ?? 'radar';
         return stage !== 'cancelado' && stage !== 'proxima';
+      })
+      .sort((left, right) => {
+        const stageLeft = this.jobsFacade.getEffectiveCandidateStage(left) ?? left.stage ?? 'radar';
+        const stageRight = this.jobsFacade.getEffectiveCandidateStage(right) ?? right.stage ?? 'radar';
+        return order.indexOf(stageLeft) - order.indexOf(stageRight) || right.match - left.match;
+      });
+  }
+
+  private sortedInProgressCandidatesForSideRailJob(job: MockJobRecord): MockJobCandidate[] {
+    const activeStages: CandidateStage[] = ['tecnica', 'processo', 'aguardando', 'aceito', 'documentacao'];
+    const order: CandidateStage[] = ['tecnica', 'processo', 'aguardando', 'aceito', 'documentacao', 'contratado', 'proxima', 'cancelado'];
+
+    return [...(job.candidates ?? [])]
+      .filter((candidate) => {
+        const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? candidate.stage ?? 'radar';
+        return activeStages.includes(stage);
       })
       .sort((left, right) => {
         const stageLeft = this.jobsFacade.getEffectiveCandidateStage(left) ?? left.stage ?? 'radar';
@@ -1195,6 +1277,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       name: candidate.name,
       role: this.sideRailCandidateRole(job, candidate),
       status: this.recruiterPanelStageLabel(stage),
+      isHired: stage === 'contratado',
       adherence: this.matchDomainService.clampScore(candidate.match),
       adherenceTone: this.getCandidateAdherenceTone(candidate.match),
       summary,
@@ -1244,7 +1327,9 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         const candidateKnowledge = repoId ? (candidateProfile.stackScores[repoId] ?? 0) : 0;
         const requiredKnowledge = Math.max(1, stack.match || 0);
         const score = candidateKnowledge > 0
-          ? this.matchDomainService.clampScore(Math.round((Math.min(candidateKnowledge, requiredKnowledge) / requiredKnowledge) * 100))
+          ? this.matchDomainService.clampScore(
+              Math.round((Math.min(candidateKnowledge, requiredKnowledge) / requiredKnowledge) * 100),
+            )
           : 0;
 
         return {
@@ -1290,9 +1375,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   private sideRailCandidateSummary(job: MockJobRecord, candidate: MockJobCandidate, stacks: string[]): string {
     const location = candidate.location?.trim();
     const availability = candidate.availabilityLabel?.trim();
-    //const stackCopy = stacks.length ? `aderencia em ${stacks.join(' e ')}` : `aderencia alinhada a ${job.title}`;
-
-    const stackCopy = stacks.length ? `` : `aderencia alinhada a ${job.title}`;
+    const stackCopy = stacks.length ? '' : `aderencia alinhada a ${job.title}`;
 
     if (location && availability) {
       return `${location}. ${availability}. ${stackCopy}.`;
@@ -1322,7 +1405,6 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // Espera o template renderizar para medir scrollWidth/clientWidth.
     if (typeof window === 'undefined') {
       return;
     }
@@ -1332,14 +1414,17 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+
     if (this.copyRotationTimer) {
       window.clearInterval(this.copyRotationTimer);
       this.copyRotationTimer = null;
     }
+
     if (this.hiredRotationTimer) {
       window.clearInterval(this.hiredRotationTimer);
       this.hiredRotationTimer = null;
     }
+
     if (this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
       this.resizeListener = undefined;
@@ -1403,18 +1488,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   polaroidTilt(seed: string): string {
-    // Deterministico, mas "aleatorio" o suficiente: alguns retos, outros levemente inclinados.
     let hash = 0;
     for (let i = 0; i < seed.length; i += 1) {
       hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
     }
 
-    // Alguns ficam retos.
     if (hash % 5 === 0) {
       return '0deg';
     }
 
-    // Tilt mais evidente (polaroid "solto"), mas ainda sutil o suficiente para nao parecer bugado.
     const tiltSteps = [-3.2, -2.4, -1.6, -0.9, 0.9, 1.6, 2.4, 3.2];
     const tilt = tiltSteps[hash % tiltSteps.length] ?? 0;
     return `${tilt}deg`;
@@ -1423,6 +1505,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   hiredPolaroidTilt(cardIndex: number, seed: string): string {
     const base = this.polaroidTilt(seed);
     const numeric = Number.parseFloat(base.replace('deg', ''));
+
     if (!Number.isFinite(numeric) || numeric === 0) {
       return cardIndex % 2 === 0 ? '-2deg' : '2deg';
     }
@@ -1434,6 +1517,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   hiredTapeTilt(pageIndex: number, cardIndex: number, seed: string): string {
     let hash = 0;
     const compositeSeed = `${pageIndex}:${cardIndex}:${seed}:tape`;
+
     for (let i = 0; i < compositeSeed.length; i += 1) {
       hash = (hash * 33 + compositeSeed.charCodeAt(i)) >>> 0;
     }
@@ -1446,6 +1530,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   hiredMatch(seed: string): number {
     let hash = 0;
     const compositeSeed = `${seed}:match`;
+
     for (let i = 0; i < compositeSeed.length; i += 1) {
       hash = (hash * 37 + compositeSeed.charCodeAt(i)) >>> 0;
     }
@@ -1464,20 +1549,19 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     const nextPage = Math.min(this.hiredPageCount - 1, Math.max(0, this.activeHiredIndex + direction));
     this.lastManualHiredInteractionAt = Date.now();
     el.scrollTo({ left: nextPage * pageWidth, behavior: 'smooth' });
+
     if (nextPage !== this.activeHiredIndex) {
       this.activeHiredIndex = nextPage;
       this.cdr.markForCheck();
     }
   }
 
-  onHiredScroll(): void {
-    // Mobile strip no longer uses scroll-driven pagination.
-  }
+  onHiredScroll(): void {}
 
   private autoAdvanceHired(): void {
     this.syncHiredPagination();
-    // Se o usuario mexeu recentemente (scroll/arrow), nao briga com ele.
     const now = Date.now();
+
     if (now - this.lastManualHiredInteractionAt < 7000) {
       return;
     }
@@ -1501,9 +1585,11 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     this.hiredPageCount = nextPageCount;
     this.hiredPages = Array.from({ length: nextPageCount }, (_, i) => i);
+
     if (this.activeHiredIndex > nextPageCount - 1) {
       this.activeHiredIndex = nextPageCount - 1;
     }
+
     this.cdr.markForCheck();
   }
 
@@ -1549,12 +1635,14 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   get featuredJob(): MockJobRecord | null {
     const accessibleActive = this.jobsSnapshot
       .filter((job) => job.status === 'ativas' && this.jobsFacade.canCurrentRecruiterAccessJob(job));
+
     if (accessibleActive.length) {
       return accessibleActive[0];
     }
 
     const accessibleAny = this.jobsSnapshot
       .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
+
     return accessibleAny[0] ?? this.jobsSnapshot[0] ?? null;
   }
 
@@ -1610,6 +1698,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   jobCreatedAtLabel(job: MockJobRecord): string {
     const raw = job.createdAt || job.updatedAt || '';
     const timestamp = Date.parse(raw);
+
     if (!Number.isFinite(timestamp)) {
       return 'Sem data';
     }
@@ -1792,8 +1881,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     this.openingRecruiterPanelJobId = job.id;
     this.recruiterPanelProgressCurrent = 0;
     this.recruiterPanelProgressTotal = Math.max(1, this.jobTalentCount(job));
+
     const totalSteps = this.recruiterPanelProgressTotal;
     const stepDuration = Math.max(120, Math.round(5000 / totalSteps));
+
     this.recruiterPanelCountdownTimer = window.setInterval(() => {
       this.ngZone.run(() => {
         if (this.recruiterPanelProgressCurrent < this.recruiterPanelProgressTotal) {
@@ -1802,6 +1893,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         }
       });
     }, stepDuration);
+
     this.recruiterPanelWatchdogTimer = window.setTimeout(() => {
       this.ngZone.run(() => {
         if (this.openingRecruiterPanelJobId === job.id && !this.selectedJobPanel) {
@@ -1815,8 +1907,8 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
         }
       });
     }, 5000);
-    this.cdr.markForCheck();
 
+    this.cdr.markForCheck();
     void this.ensureSyncedTalentProfiles(1400);
   }
 
@@ -1905,8 +1997,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     });
   }
 
-  handleRecruiterCandidateProfile(_context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' }): void {
-    // O fluxo principal aqui é lateral: lista -> chat.
+  handleRecruiterCandidateProfile(
+    _context: { job: ChatJob; candidate: ChatCandidate; initialTab: 'journey' | 'curriculum' },
+  ): void {
+    // fluxo lateral
   }
 
   private asChatJob(job: MockJobRecord): ChatJob {
@@ -1932,59 +2026,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
   }
 
   private buildRadarPanelCandidates(job: MockJobRecord): MockJobCandidate[] {
-    const jobProfile = this.matchDomainService.buildJobProfile({
-      techStack: job.techStack,
-      seniority: job.seniority,
-      responsibilitySections: job.responsibilitySections,
-    });
-
-    if (!jobProfile.requiredRepoIds.length) {
-      return this.fallbackRadarCandidates(job);
-    }
-
-    const talentByName = new Map(
-      this.talentDirectoryService.listTalents().map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent]),
-    );
-
-    const adherenceThreshold = this.jobRadarAdherenceThreshold(job);
-
-    const rankedProfiles = this.talentProfileStore.listRankableCandidates()
-      .map(({ candidate, talentProfile }, index) => {
-        const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
-        const directoryTalent = talentByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
-
-        return {
-          id: `radar-${job.id}-${index + 1}`,
-          name: candidate.name,
-          role: this.jobRadarTalentStacks(
-            job,
-            talentProfile.stackScores,
-            score.matchedRepoIds,
-          ).join(' / '),
-          location: directoryTalent?.location || candidate.location,
-          match: score.overallScore,
-          minutesAgo: 5 + index,
-          status: 'online' as const,
-          avatar: directoryTalent?.avatarUrl || '/assets/avatars/avatar-default.svg',
-          stage: 'radar',
-          radarOnly: true,
-          source: 'seed' as const,
-          availabilityLabel: 'Disponibilidade imediata',
-        } satisfies MockJobCandidate;
-      })
-      .filter((candidate) => candidate.match >= adherenceThreshold)
-      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
-
-    if (rankedProfiles.length) {
-      return rankedProfiles;
-    }
-
-    const matchingLabCandidates = this.buildRadarCandidatesFromMatchingLab(job);
-    if (matchingLabCandidates.length) {
-      return matchingLabCandidates;
-    }
-
-    return this.fallbackRadarCandidates(job);
+    return this.jobsFacade.getRadarCandidates(job);
   }
 
   private async ensureSyncedTalentProfiles(timeoutMs = 2000): Promise<void> {
@@ -2120,6 +2162,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     return true;
   }
+
   isJobCardFlipped(job: MockJobRecord): boolean {
     return this.flippedJobCardIds.has(job.id);
   }
@@ -2239,23 +2282,33 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     job: MockJobRecord,
     filters: { code: string; company: string; state: string; stack: string },
   ): boolean {
-    if (filters.code && (job.code?.trim().toUpperCase() ?? '') !== filters.code.trim().toUpperCase()) {
-      return false;
+    if (filters.code) {
+      const normalizedCode = this.normalizeSearchText(job.code);
+      const selectedCode = this.normalizeSearchText(filters.code);
+      if (normalizedCode !== selectedCode) {
+        return false;
+      }
     }
 
-    if (filters.company && job.company !== filters.company) {
-      return false;
+    if (filters.company) {
+      const normalizedCompany = this.normalizeSearchText(job.company);
+      const selectedCompany = this.normalizeSearchText(filters.company);
+      if (normalizedCompany !== selectedCompany) {
+        return false;
+      }
     }
 
     if (filters.state) {
-      const jobState = job.location.split('-').pop()?.trim() ?? '';
-      if (jobState !== filters.state) {
+      const jobState = this.normalizeSearchText(job.location.split('-').pop()?.trim() ?? '');
+      const selectedState = this.normalizeSearchText(filters.state);
+      if (jobState !== selectedState) {
         return false;
       }
     }
 
     if (filters.stack) {
-      const hasStack = job.techStack.some((stack) => stack.name.trim() === filters.stack);
+      const selectedStack = this.normalizeSearchText(filters.stack);
+      const hasStack = job.techStack.some((stack) => this.normalizeSearchText(stack.name) === selectedStack);
       if (!hasStack) {
         return false;
       }
@@ -2275,7 +2328,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     }
 
     const storedStacks = this.browserStorage.readJson<StoredCandidateStacksDraft>(EcossistemaPage.candidateStacksStorageKey);
-    const storedExperiences = this.browserStorage.readJson<StoredCandidateExperience[]>(EcossistemaPage.candidateExperiencesStorageKey) ?? [];
+    const storedExperiences = this.browserStorage.readJson<StoredCandidateExperience[]>(
+      EcossistemaPage.candidateExperiencesStorageKey,
+    ) ?? [];
+
     const stackScores: Record<string, number> = {};
     const allStacks = [...(storedStacks?.primary ?? []), ...(storedStacks?.extra ?? [])];
 
@@ -2314,7 +2370,10 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     const hasProfileData = Object.keys(talentProfile.stackScores).length > 0 || (talentProfile.experiences?.length ?? 0) > 0;
     if (!hasProfileData) {
-      const fallback = this.matchDomainService.clampScore(job.match || this.matchDomainService.estimateJobReadinessFromTechStack(job.techStack));
+      const fallback = this.matchDomainService.clampScore(
+        job.match || this.matchDomainService.estimateJobReadinessFromTechStack(job.techStack),
+      );
+
       return {
         overallScore: fallback,
         stackScore: fallback,
@@ -2637,10 +2696,13 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     return this.hasRealAvatar(avatar) ? avatar!.trim() : this.fallbackAvatarUrl;
   }
 
-  private radarTone(value: number): { dark: { r: number; g: number; b: number }; mid: { r: number; g: number; b: number }; light: { r: number; g: number; b: number } } {
-    // Smoothly blend from gray to brand orange as the percentage increases.
-    // 0-10%: mostly gray. 45%+: mostly orange.
+  private radarTone(value: number): {
+    dark: { r: number; g: number; b: number };
+    mid: { r: number; g: number; b: number };
+    light: { r: number; g: number; b: number };
+  } {
     const t = this.clamp01((value - 10) / 35);
+
     return {
       dark: this.mixRgb(this.warmGray, this.brandOrangeDark, t),
       mid: this.mixRgb(this.warmGray, this.brandOrangeMid, t),
@@ -2648,8 +2710,13 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     };
   }
 
-  private mixRgb(a: { r: number; g: number; b: number }, b: { r: number; g: number; b: number }, t: number): { r: number; g: number; b: number } {
+  private mixRgb(
+    a: { r: number; g: number; b: number },
+    b: { r: number; g: number; b: number },
+    t: number,
+  ): { r: number; g: number; b: number } {
     const clamped = this.clamp01(t);
+
     return {
       r: Math.round(a.r + (b.r - a.r) * clamped),
       g: Math.round(a.g + (b.g - a.g) * clamped),
@@ -2665,6 +2732,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
     if (Number.isNaN(value)) {
       return 0;
     }
+
     return Math.max(0, Math.min(1, value));
   }
 }

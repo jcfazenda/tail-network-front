@@ -1,6 +1,6 @@
 import { Injectable, NgZone, inject } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobRecord, RecruiterIdentity, TalentJobDecision } from './vagas.models';
+import { CandidateStage, JobBenefitItem, JobResponsibilitySection, SaveMockJobCommand, MockJobCandidate, MockJobDraft, MockJobRecord, RecruiterIdentity, TalentJobDecision } from './vagas.models';
 import { TalentNotificationService } from '../../usuario/talent-notification.service';
 import { RecruiterDirectoryService } from '../../recruiter/recruiter-directory.service';
 import { TalentDirectoryService, TalentRecord } from '../../talent/talent-directory.service';
@@ -159,25 +159,30 @@ export class VagasMockService {
     return this.recruiterDirectoryService.getRecruiterCompanies();
   }
 
-  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'id' | 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
-    if (job.id.startsWith('lab-')) {
-      return true;
-    }
-
-    const recruiter = this.readRecruiterIdentity();
-    const accessibleCompanies = this.getCurrentRecruiterCompanies();
-
-    if (!accessibleCompanies.includes(job.company)) {
-      return false;
-    }
-
-    if (recruiter.isMaster) {
-      return true;
-    }
-
-    return job.createdByRecruiterId === recruiter.id
-      || !!job.recruiterWatcherIds?.includes(recruiter.id);
+canCurrentRecruiterAccessJob(
+  job: Pick<MockJobRecord, 'id' | 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>,
+): boolean {
+  if (job.id.startsWith('lab-')) {
+    return true;
   }
+
+  const recruiter = this.readRecruiterIdentity();
+  const accessibleCompanies = this.getCurrentRecruiterCompanies();
+  const normalizedJobCompany = job.company.trim();
+  const normalizedRecruiterCompany = recruiter.company.trim();
+
+  const sameCompany = accessibleCompanies.some((company) => company.trim() === normalizedJobCompany)
+    || normalizedRecruiterCompany === normalizedJobCompany;
+
+  const isOwner = job.createdByRecruiterId === recruiter.id;
+  const isWatcher = !!job.recruiterWatcherIds?.includes(recruiter.id);
+
+  if (recruiter.isMaster) {
+    return sameCompany || isOwner || isWatcher;
+  }
+
+  return sameCompany || isOwner || isWatcher;
+}
 
   findTalentCandidate(job: Pick<MockJobRecord, 'candidates'>): MockJobCandidate | undefined {
     const identity = this.readTalentIdentity();
@@ -245,6 +250,30 @@ export class VagasMockService {
       respondToProposal: applied && stage === 'aguardando',
       submitDocuments: stage === 'aceito',
     };
+  }
+
+  getRecruiterBoardStatusId(
+    job: Pick<MockJobRecord, 'candidates' | 'radarCount' | 'recruiterBoardStatusId'>,
+  ): 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados' {
+    return this.resolveRecruiterBoardStatusId(job);
+  }
+
+  getRadarCandidates(
+    job: Pick<MockJobDraft, 'techStack' | 'seniority' | 'responsibilitySections'>
+      & Partial<Pick<MockJobRecord, 'id' | 'candidates' | 'radarAdherenceThreshold'>>,
+  ): MockJobCandidate[] {
+    const acceptedCandidateNames = new Set<string>();
+    const realtimeCandidates = this.buildRealtimeRadarCandidates(job, acceptedCandidateNames);
+    if (realtimeCandidates.length) {
+      return realtimeCandidates;
+    }
+
+    const labCandidates = this.buildLabRadarCandidates(job, acceptedCandidateNames);
+    if (labCandidates.length) {
+      return labCandidates;
+    }
+
+    return this.fallbackRadarCandidates(job);
   }
 
   getEffectiveCandidateStage(
@@ -1004,8 +1033,8 @@ export class VagasMockService {
 
   private buildRecord(command: SaveMockJobCommand, existing?: MockJobRecord): MockJobRecord {
     const now = new Date().toISOString();
-    const talents = Math.max(8, command.previewAvatarExtraCount + command.previewAvatars.length);
-    const radarCount = Math.max(4, Math.round(talents * 0.72));
+    const radarCount = Math.max(0, command.previewAvatarExtraCount + command.previewAvatars.length);
+    const talents = Math.max(radarCount, existing?.talents ?? 0);
     const match = Math.min(99, Math.max(42, this.matchDomainService.clampScore(command.previewAderencia)));
     const recruiterIdentity = this.syncRecruiterWorkspaceForCompany(command.draft.company);
     const recruiterWatcherIds = Array.from(new Set([
@@ -1395,11 +1424,45 @@ export class VagasMockService {
       radarCount: totalRadar,
       avatars: highlightedAvatars.slice(0, 3),
       extraCount: Math.max(0, totalRadar - Math.min(3, highlightedAvatars.length)),
+      recruiterBoardStatusId: this.resolveRecruiterBoardStatusId(jobWithTalentState),
     };
   }
 
-  private buildLabRadarCandidates(job: MockJobRecord, acceptedCandidateNames: Set<string>): MockJobCandidate[] {
-    if (!job.id.startsWith('lab-')) {
+  private resolveRecruiterBoardStatusId(
+    job: Pick<MockJobRecord, 'candidates' | 'radarCount' | 'recruiterBoardStatusId'>,
+  ): 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados' {
+    const effectiveStages = (job.candidates ?? [])
+      .map((candidate) => this.getEffectiveCandidateStage(candidate))
+      .filter((stage): stage is CandidateStage => !!stage);
+
+    if (effectiveStages.some((stage) => stage === 'contratado')) {
+      return 'contratados';
+    }
+
+    if (effectiveStages.some((stage) => stage === 'aguardando')) {
+      return 'solicitada';
+    }
+
+    if (effectiveStages.some((stage) =>
+      stage === 'processo'
+      || stage === 'tecnica'
+      || stage === 'aceito'
+      || stage === 'documentacao')) {
+      return 'processo';
+    }
+
+    if (effectiveStages.some((stage) => stage === 'candidatura')) {
+      return 'candidaturas';
+    }
+
+    return 'radar';
+  }
+
+  private buildLabRadarCandidates(
+    job: Pick<MockJobDraft, 'techStack'> & Partial<Pick<MockJobRecord, 'id' | 'radarAdherenceThreshold'>>,
+    acceptedCandidateNames: Set<string>,
+  ): MockJobCandidate[] {
+    if (!job.id?.startsWith('lab-')) {
       return [];
     }
 
@@ -1438,7 +1501,11 @@ export class VagasMockService {
       });
   }
 
-  private buildRealtimeRadarCandidates(job: MockJobRecord, acceptedCandidateNames: Set<string>): MockJobCandidate[] {
+  private buildRealtimeRadarCandidates(
+    job: Pick<MockJobDraft, 'techStack' | 'seniority' | 'responsibilitySections'>
+      & Partial<Pick<MockJobRecord, 'id' | 'radarAdherenceThreshold'>>,
+    acceptedCandidateNames: Set<string>,
+  ): MockJobCandidate[] {
     const jobProfile = this.matchDomainService.buildJobProfile({
       techStack: job.techStack,
       seniority: job.seniority,
@@ -1462,7 +1529,7 @@ export class VagasMockService {
         const talent = talentByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
 
         return {
-          id: `realtime-${job.id}-${index + 1}`,
+          id: `realtime-${job.id ?? 'draft'}-${index + 1}`,
           name: candidate.name,
           role: candidate.summary,
           location: candidate.location,
@@ -1480,7 +1547,13 @@ export class VagasMockService {
       .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
   }
 
-  private jobRadarAdherenceThreshold(job: MockJobRecord): number {
+  private jobRadarAdherenceThreshold(
+    job: Pick<MockJobDraft, 'techStack'> & Partial<Pick<MockJobRecord, 'radarAdherenceThreshold'>>,
+  ): number {
+    if (Number.isFinite(job.radarAdherenceThreshold)) {
+      return Math.max(35, Math.min(95, Math.round(job.radarAdherenceThreshold ?? 85)));
+    }
+
     const primaryStacks = [...(job.techStack ?? [])]
       .filter((stack) => Number.isFinite(stack.match) && stack.match > 0)
       .sort((left, right) => right.match - left.match)
@@ -1492,6 +1565,14 @@ export class VagasMockService {
 
     const average = primaryStacks.reduce((sum, stack) => sum + stack.match, 0) / primaryStacks.length;
     return Math.max(35, Math.min(95, Math.round(average)));
+  }
+
+  private fallbackRadarCandidates(
+    job: Partial<Pick<MockJobRecord, 'candidates'>>,
+  ): MockJobCandidate[] {
+    return [...(job.candidates ?? [])]
+      .filter((candidate) => (this.getEffectiveCandidateStage(candidate) ?? 'radar') === 'radar')
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'));
   }
 
   private matchingLabCompanyLogoUrl(company: string): string {

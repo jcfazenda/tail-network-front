@@ -29,6 +29,19 @@ export class JobsFacade {
     return this.jobsService.getCurrentRecruiterIdentity();
   }
 
+  getRecruiterBoardStatusId(
+    job: Pick<MockJobRecord, 'candidates' | 'radarCount' | 'recruiterBoardStatusId'>,
+  ): 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados' {
+    return this.jobsService.getRecruiterBoardStatusId(job);
+  }
+
+  getRadarCandidates(
+    job: Pick<MockJobDraft, 'techStack' | 'seniority' | 'responsibilitySections'>
+      & Partial<Pick<MockJobRecord, 'id' | 'candidates' | 'radarAdherenceThreshold'>>,
+  ): MockJobCandidate[] {
+    return this.jobsService.getRadarCandidates(job);
+  }
+
   getTalentCandidateIdentity() {
     return this.jobsService.getTalentCandidateIdentity();
   }
@@ -37,7 +50,9 @@ export class JobsFacade {
     return this.jobsService.getRecruitersForCompany(companyName);
   }
 
-  canCurrentRecruiterAccessJob(job: Pick<MockJobRecord, 'id' | 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>): boolean {
+  canCurrentRecruiterAccessJob(
+    job: Pick<MockJobRecord, 'id' | 'company' | 'createdByRecruiterId' | 'recruiterWatcherIds'>,
+  ): boolean {
     return this.jobsService.canCurrentRecruiterAccessJob(job);
   }
 
@@ -101,7 +116,11 @@ export class JobsFacade {
     return this.jobsService.keepJobForNextOpportunity(jobId);
   }
 
-  submitTalentDocuments(jobId: string, submittedDocuments: string[], consentAccepted: boolean): MockJobRecord | undefined {
+  submitTalentDocuments(
+    jobId: string,
+    submittedDocuments: string[],
+    consentAccepted: boolean,
+  ): MockJobRecord | undefined {
     return this.jobsService.submitTalentDocuments(jobId, submittedDocuments, consentAccepted);
   }
 
@@ -155,7 +174,11 @@ export class JobsFacade {
     return this.jobsService.updateCandidateDocumentReview(jobId, candidateName, documentLabel, decision);
   }
 
-  updateJobStatus(jobId: string, status: MockJobRecord['status'], statusReason?: string): MockJobRecord | undefined {
+  updateJobStatus(
+    jobId: string,
+    status: MockJobRecord['status'],
+    statusReason?: string,
+  ): MockJobRecord | undefined {
     return this.jobsService.updateJobStatus(jobId, status, statusReason);
   }
 
@@ -167,7 +190,11 @@ export class JobsFacade {
     return this.jobsService.getTalentWorkflowActions(stage, decision);
   }
 
-  updateTalentStage(jobId: string, stage: MockJobCandidate['stage'], decision?: TalentJobDecision): MockJobRecord | undefined {
+  updateTalentStage(
+    jobId: string,
+    stage: MockJobCandidate['stage'],
+    decision?: TalentJobDecision,
+  ): MockJobRecord | undefined {
     if (stage === 'radar' && decision === 'hidden') {
       return this.jobsService.hideFromTalent(jobId);
     }

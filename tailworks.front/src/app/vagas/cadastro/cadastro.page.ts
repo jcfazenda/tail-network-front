@@ -1456,7 +1456,7 @@ private getRichContentPlainText(value: string): string {
     return this.currentRadarPreviewMatches
       .slice(0, 4)
       .map((talent) => ({
-        src: this.resolvePreviewAvatar(talent.avatarUrl),
+        src: this.resolvePreviewAvatar(talent.avatar),
         label: this.personInitial(talent.name),
       }));
   }
@@ -1466,55 +1466,14 @@ private getRichContentPlainText(value: string): string {
   }
 
   private get currentRadarPreviewMatches() {
-    const threshold = this.radarAdherenceThreshold;
-    const jobProfile = this.matchDomainService.buildJobProfile({
+    return this.jobsFacade.getRadarCandidates({
+      id: this.editingJobId ?? undefined,
       techStack: this.cardTechStackItems,
       seniority: this.jobDraft.seniority,
       responsibilitySections: this.responsibilitySections,
+      radarAdherenceThreshold: this.radarAdherenceThreshold,
+      candidates: this.editingJobId ? this.jobsFacade.getJobById(this.editingJobId)?.candidates ?? [] : [],
     });
-
-    const directoryByName = new Map(
-      this.talentDirectoryService.listTalents()
-        .map((talent) => [talent.name.trim().toLocaleLowerCase('pt-BR'), talent] as const),
-    );
-
-    if (jobProfile.requiredRepoIds.length) {
-      const rankedTalents = this.talentProfileStore.listRankableCandidates()
-        .map(({ candidate, talentProfile }, index) => {
-          const directoryTalent = directoryByName.get(candidate.name.trim().toLocaleLowerCase('pt-BR'));
-          const score = this.matchDomainService.scoreTalentAgainstJob(jobProfile, talentProfile);
-
-          return {
-            id: directoryTalent?.id ?? `ranked-${index + 1}`,
-            name: candidate.name,
-            avatarUrl: directoryTalent?.avatarUrl ?? '',
-            visibleInEcosystem: directoryTalent?.visibleInEcosystem ?? true,
-            availableForHiring: directoryTalent?.availableForHiring ?? true,
-            score: score.overallScore,
-          };
-        })
-        .filter((talent) => talent.visibleInEcosystem && talent.availableForHiring && talent.score >= threshold)
-        .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name, 'pt-BR'));
-
-      if (rankedTalents.length) {
-        return rankedTalents;
-      }
-    }
-
-    const fallbackCandidates = (this.editingJobId ? this.jobsFacade.getJobById(this.editingJobId)?.candidates : [])
-      ?? [];
-
-    return [...fallbackCandidates]
-      .filter((candidate) => (this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar') === 'radar' && candidate.match >= threshold)
-      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-      .map((candidate, index) => ({
-        id: candidate.id ?? `fallback-${index + 1}`,
-        name: candidate.name,
-        avatarUrl: candidate.avatar,
-        visibleInEcosystem: true,
-        availableForHiring: true,
-        score: candidate.match,
-      }));
   }
 
   get previewContractType(): ContractType {
@@ -2205,12 +2164,17 @@ private getRichContentPlainText(value: string): string {
   }
 
   private persistJob(status: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas') {
+    const previewRadarCandidates = this.currentRadarPreviewMatches;
+    const previewAvatars = previewRadarCandidates
+      .slice(0, 4)
+      .map((candidate) => this.resolvePreviewAvatar(candidate.avatar));
+
     const command = {
       draft: this.buildDraftPayload(),
       status,
       previewAderencia: this.previewAderencia,
-      previewAvatars: this.previewAvatars,
-      previewAvatarExtraCount: this.previewAvatarExtraCount,
+      previewAvatars,
+      previewAvatarExtraCount: Math.max(0, previewRadarCandidates.length - previewAvatars.length),
     } satisfies SaveMockJobCommand;
 
     if (!this.editingJobId) {

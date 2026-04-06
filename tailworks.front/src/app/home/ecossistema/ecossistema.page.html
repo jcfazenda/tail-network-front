@@ -194,6 +194,15 @@
             <span>Em Andamento</span>
             <b>{{ processoJobsCount }}</b>
           </button>
+          <button
+            class="ecosystem-desktop__jobs-tab"
+            type="button"
+            [class.ecosystem-desktop__jobs-tab--active]="ecoFilter === 'contratados'"
+            (click)="setEcoFilter('contratados')"
+          >
+            <span>Contratados</span>
+            <b>{{ sideRailContractedCount }}</b>
+          </button>
         </div>
 
         <label class="ecosystem-desktop__jobs-search" aria-label="Buscar vagas">
@@ -424,46 +433,42 @@
 
           <span class="ecosystem-desktop__candidate-dotted-line" aria-hidden="true"></span>
 
-          <div class="ecosystem-desktop__candidate-stack-row">
-            <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
-            <div class="ecosystem-desktop__candidate-avatars" *ngIf="sideRailJobAvatarBadges.length; else noRecentJobAvatars">
-              <ng-container *ngFor="let badge of sideRailJobAvatarBadges; trackBy: trackByAvatarBadge">
-                <img class="ecosystem-desktop__candidate-avatar-stack" [src]="badge.src" [alt]="badge.label" />
-              </ng-container>
-              <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="sideRailJobAvatarExtraCount > 0">
-                +{{ sideRailJobAvatarExtraCount }}
-              </span>
+          <div class="ecosystem-desktop__candidate-task-board ecosystem-desktop__candidate-task-board--job">
+            <div class="ecosystem-desktop__candidate-stack-row">
+              <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
+              <div class="ecosystem-desktop__candidate-avatars" *ngIf="sideRailJobAvatarBadges.length; else noRecentJobAvatars">
+                <ng-container *ngFor="let badge of sideRailJobAvatarBadges; trackBy: trackByAvatarBadge">
+                  <img class="ecosystem-desktop__candidate-avatar-stack" [src]="badge.src" [alt]="badge.label" />
+                </ng-container>
+                <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="sideRailJobAvatarExtraCount > 0">
+                  +{{ sideRailJobAvatarExtraCount }}
+                </span>
+              </div>
+              <ng-template #noRecentJobAvatars>
+                <span class="ecosystem-desktop__candidate-chip ecosystem-desktop__candidate-chip--low">Sem radar</span>
+              </ng-template>
             </div>
-            <ng-template #noRecentJobAvatars>
-              <span class="ecosystem-desktop__candidate-chip ecosystem-desktop__candidate-chip--low">Sem radar</span>
-            </ng-template>
           </div>
         </article>
       </div>
 
       <div class="ecosystem-desktop__side-summary ecosystem-desktop__side-summary--secondary">
         <div class="ecosystem-desktop__side-summary-feature ecosystem-desktop__side-summary-feature--column">
-          <div class="ecosystem-desktop__side-summary-headline">
-            <div class="ecosystem-desktop__side-summary-title-block">
-              <span>Aderentes</span>
-            </div>
-            <strong>{{ sideRailCandidatesCount }} avatares</strong>
-          </div>
-          <p class="ecosystem-desktop__side-summary-copy">
-            talentos que cruzam a meta atual da vaga em foco e merecem prioridade no radar de abordagem
-          </p>
-          <div class="ecosystem-desktop__side-summary-chips">
+          <div class="ecosystem-desktop__jobs-tabs ecosystem-desktop__jobs-tabs--side" role="tablist" aria-label="Filtros de aderentes">
             <button
               *ngFor="let source of sideRailCandidateSources"
-              class="ecosystem-desktop__side-summary-chip"
+              class="ecosystem-desktop__jobs-tab"
               type="button"
-              [class.ecosystem-desktop__side-summary-chip--active]="sideRailCandidateSource === source.id"
+              [class.ecosystem-desktop__jobs-tab--active]="sideRailCandidateSource === source.id"
               (click)="setSideRailCandidateSource(source.id)"
             >
               <span>{{ source.label }}</span>
-              <strong>{{ source.count }}</strong>
+              <b>{{ source.count }}</b>
             </button>
           </div>
+          <p class="ecosystem-desktop__side-summary-copy">
+            {{ sideRailCandidatesCopy }}
+          </p>
         </div>
       </div>
 
@@ -477,7 +482,11 @@
         (pointercancel)="stopSideCandidatesDrag($event)"
         (pointerleave)="stopSideCandidatesDrag($event)"
       >
-        <article class="ecosystem-desktop__candidate-card" *ngFor="let candidate of sideRailCandidateCards; trackBy: trackBySideRailCandidate">
+        <article
+          class="ecosystem-desktop__candidate-card"
+          [class.ecosystem-desktop__candidate-card--hired]="candidate.isHired"
+          *ngFor="let candidate of sideRailCandidateCards; trackBy: trackBySideRailCandidate"
+        >
           <div class="ecosystem-desktop__candidate-card-head">
             <img class="ecosystem-desktop__candidate-avatar" [src]="candidate.avatarUrl" [alt]="candidate.name" />
             <div class="ecosystem-desktop__candidate-copy">
@@ -503,15 +512,20 @@
             {{ candidate.summary }}
           </p>
 
-          <div class="ecosystem-desktop__candidate-dotted-line"></div>
-
-          <div class="ecosystem-desktop__candidate-signal-list" *ngIf="candidate.standoutStacks.length">
-            <div class="ecosystem-desktop__candidate-signal-row" *ngFor="let stack of candidate.standoutStacks">
-              <span class="ecosystem-desktop__candidate-signal-label">{{ stack.label }}</span>
-              <span class="ecosystem-desktop__candidate-signal-track" aria-hidden="true">
-                <span class="ecosystem-desktop__candidate-signal-fill" [style.width.%]="stack.score"></span>
-              </span>
-              <strong class="ecosystem-desktop__candidate-signal-value">{{ stack.score }}%</strong>
+          <div
+            class="ecosystem-desktop__candidate-task-board"
+            [class.ecosystem-desktop__candidate-task-board--high]="candidate.adherenceTone === 'high'"
+            [class.ecosystem-desktop__candidate-task-board--medium]="candidate.adherenceTone === 'medium'"
+            [class.ecosystem-desktop__candidate-task-board--low]="candidate.adherenceTone === 'low'"
+          >
+            <div class="ecosystem-desktop__candidate-signal-list" *ngIf="candidate.standoutStacks.length">
+              <div class="ecosystem-desktop__candidate-signal-row" *ngFor="let stack of candidate.standoutStacks">
+                <span class="ecosystem-desktop__candidate-signal-label">{{ stack.label }}</span>
+                <span class="ecosystem-desktop__candidate-signal-track" aria-hidden="true">
+                  <span class="ecosystem-desktop__candidate-signal-fill" [style.width.%]="stack.score"></span>
+                </span>
+                <strong class="ecosystem-desktop__candidate-signal-value">{{ stack.score }}%</strong>
+              </div>
             </div>
           </div>
         </article>

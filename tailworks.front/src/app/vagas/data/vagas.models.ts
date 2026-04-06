@@ -123,6 +123,7 @@ export interface MockJobRecord extends MockJobDraft {
   postedLabel: string;
   avatars: string[];
   extraCount: number;
+  recruiterBoardStatusId?: 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
   status: JobStatus;
   talentDecision?: TalentJobDecision;
   talentSubmittedDocuments?: string[];
