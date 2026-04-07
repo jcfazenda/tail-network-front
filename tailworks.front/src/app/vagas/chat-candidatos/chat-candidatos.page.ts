@@ -9,6 +9,14 @@ interface SidebarMenuItem {
   readonly notify?: boolean;
 }
 
+interface ContactItem {
+  readonly id: number;
+  readonly name: string;
+  readonly avatar: string;
+  readonly status: 'online' | 'offline' | 'busy' | 'away';
+  readonly statusLabel: string;
+}
+
 @Component({
   standalone: true,
   selector: 'app-chat-candidatos-page',
@@ -21,7 +29,7 @@ export class ChatCandidatosPage {
   readonly profile = {
     name: 'Adrain Nader',
     email: 'adrain.nader@yahoo.com',
-    avatar: 'https://i.pravatar.cc/220?img=12',
+    avatar: 'https://i.pravatar.cc/240?img=12',
     unreadCount: 2,
   };
 
@@ -36,7 +44,23 @@ export class ChatCandidatosPage {
     { id: 8, label: 'Settings', icon: 'build' },
   ];
 
+  readonly contacts: ContactItem[] = [
+    { id: 1, name: 'Alberta Reyes', avatar: 'https://i.pravatar.cc/120?img=32', status: 'online', statusLabel: 'Online' },
+    { id: 2, name: 'Ivan Gibbs', avatar: 'https://i.pravatar.cc/120?img=12', status: 'online', statusLabel: 'Online' },
+    { id: 3, name: 'Mabelle Jones', avatar: 'https://i.pravatar.cc/120?img=47', status: 'offline', statusLabel: 'Offline' },
+    { id: 4, name: 'Jennie Salazar', avatar: 'https://i.pravatar.cc/120?img=5', status: 'online', statusLabel: 'Online' },
+    { id: 5, name: 'Miguel Lewis', avatar: 'https://i.pravatar.cc/120?img=15', status: 'offline', statusLabel: 'Offline' },
+    { id: 6, name: 'Lou Franklin', avatar: 'https://i.pravatar.cc/120?img=58', status: 'busy', statusLabel: 'Do not disturb' },
+    { id: 7, name: 'Allie Carson', avatar: 'https://i.pravatar.cc/120?img=25', status: 'away', statusLabel: 'Not available' },
+    { id: 8, name: 'Lida Abbott', avatar: 'https://i.pravatar.cc/120?img=29', status: 'online', statusLabel: 'Online' },
+    { id: 9, name: 'Maggie Wise', avatar: 'https://i.pravatar.cc/120?img=44', status: 'offline', statusLabel: 'Offline' },
+  ];
+
   trackByMenuItem(_: number, item: SidebarMenuItem): number {
+    return item.id;
+  }
+
+  trackByContact(_: number, item: ContactItem): number {
     return item.id;
   }
 }

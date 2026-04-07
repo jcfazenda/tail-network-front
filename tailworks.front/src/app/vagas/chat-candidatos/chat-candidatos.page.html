@@ -1,56 +1,106 @@
-<section class="left-sidebar">
-  <div class="left-sidebar__top">
-    <button class="left-sidebar__tiny-icon" type="button" aria-label="Perfil">
-      <span class="material-symbols-rounded">person</span>
-    </button>
+<section class="layout-root">
+  <section class="left-sidebar">
+    <div class="left-sidebar__top">
+      <button class="left-sidebar__tiny-icon" type="button" aria-label="Perfil">
+        <span class="material-symbols-rounded">person</span>
+      </button>
 
-    <button class="left-sidebar__tiny-icon" type="button" aria-label="Mais opções">
-      <span class="material-symbols-rounded">more_horiz</span>
-    </button>
-  </div>
-
-  <div class="left-sidebar__profile">
-    <div class="left-sidebar__avatar-wrap">
-      <div class="left-sidebar__avatar-ring">
-        <img [src]="profile.avatar" [alt]="profile.name" class="left-sidebar__avatar" />
-      </div>
-
-      <span class="left-sidebar__badge">{{ profile.unreadCount }}</span>
+      <button class="left-sidebar__tiny-icon" type="button" aria-label="Mais opções">
+        <span class="material-symbols-rounded">more_horiz</span>
+      </button>
     </div>
 
-    <strong>{{ profile.name }}</strong>
-    <span>{{ profile.email }}</span>
-  </div>
+    <div class="left-sidebar__profile">
+      <div class="left-sidebar__avatar-wrap">
+        <div class="left-sidebar__avatar-ring">
+          <img [src]="profile.avatar" [alt]="profile.name" class="left-sidebar__avatar" />
+        </div>
 
-  <div class="left-sidebar__menu-grid">
-    <button
-      *ngFor="let item of menuItems; trackBy: trackByMenuItem"
-      type="button"
-      class="left-sidebar__menu-item"
-      [class.left-sidebar__menu-item--active]="item.active"
-      [attr.aria-label]="item.label"
-    >
-      <span class="left-sidebar__menu-notify" *ngIf="item.notify"></span>
+        <span class="left-sidebar__badge">{{ profile.unreadCount }}</span>
+      </div>
 
-      <span class="material-symbols-rounded left-sidebar__menu-icon">
-        {{ item.icon }}
-      </span>
+      <strong>{{ profile.name }}</strong>
+      <span>{{ profile.email }}</span>
+    </div>
 
-      <small>{{ item.label }}</small>
-    </button>
-  </div>
+    <div class="left-sidebar__menu-grid">
+      <button
+        *ngFor="let item of menuItems; trackBy: trackByMenuItem"
+        type="button"
+        class="left-sidebar__menu-item"
+        [class.left-sidebar__menu-item--active]="item.active"
+        [attr.aria-label]="item.label"
+      >
+        <span class="left-sidebar__menu-notify" *ngIf="item.notify"></span>
 
-  <div class="left-sidebar__footer-links">
-    <button type="button" class="left-sidebar__footer-link">
-      <span class="material-symbols-rounded">chat</span>
-      <span>Send Feedback</span>
-      <span class="material-symbols-rounded">arrow_forward</span>
-    </button>
+        <span class="material-symbols-rounded left-sidebar__menu-icon">
+          {{ item.icon }}
+        </span>
 
-    <button type="button" class="left-sidebar__footer-link">
-      <span class="material-symbols-rounded">help</span>
-      <span>Knowledge Base</span>
-      <span class="material-symbols-rounded">arrow_forward</span>
-    </button>
-  </div>
+        <small>{{ item.label }}</small>
+      </button>
+    </div>
+
+    <div class="left-sidebar__footer-links">
+      <button type="button" class="left-sidebar__footer-link">
+        <span class="material-symbols-rounded">chat</span>
+        <span>Send Feedback</span>
+        <span class="material-symbols-rounded">arrow_forward</span>
+      </button>
+
+      <button type="button" class="left-sidebar__footer-link">
+        <span class="material-symbols-rounded">help</span>
+        <span>Knowledge Base</span>
+        <span class="material-symbols-rounded">arrow_forward</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="chat-placeholder" aria-label="Área do chat"></section>
+
+  <aside class="right-sidebar">
+    <div class="right-sidebar__search">
+      <span class="material-symbols-rounded">search</span>
+      <input type="text" placeholder="Search in Contacts" readonly />
+    </div>
+
+    <div class="right-sidebar__list">
+      <div class="contact" *ngFor="let c of contacts; trackBy: trackByContact">
+        <div class="contact__avatar">
+          <img [src]="c.avatar" [alt]="c.name" />
+          <span
+            class="contact__status"
+            [class.contact__status--online]="c.status === 'online'"
+            [class.contact__status--offline]="c.status === 'offline'"
+            [class.contact__status--busy]="c.status === 'busy'"
+            [class.contact__status--away]="c.status === 'away'"
+          ></span>
+        </div>
+
+        <div class="contact__info">
+          <small>{{ c.statusLabel }}</small>
+          <strong>{{ c.name }}</strong>
+        </div>
+
+        <button class="contact__more" type="button" aria-label="Mais opções">
+          <span class="material-symbols-rounded">more_vert</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="right-sidebar__bottom">
+      <button type="button" aria-label="Groups">
+        <span class="material-symbols-rounded">group</span>
+      </button>
+      <button type="button" aria-label="Messages">
+        <span class="material-symbols-rounded">chat</span>
+      </button>
+      <button type="button" aria-label="Calls">
+        <span class="material-symbols-rounded">call</span>
+      </button>
+      <button type="button" aria-label="Settings">
+        <span class="material-symbols-rounded">settings</span>
+      </button>
+    </div>
+  </aside>
 </section>
