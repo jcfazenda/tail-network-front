@@ -41,7 +41,58 @@
       </button>
     </div>
 
+    
+
     <div class="left-sidebar__footer-links">
+
+      <!-- -->
+<div class="left-sidebar__quick-actions">
+
+  <div class="left-sidebar__quick-header">
+    <strong>Diego Waller</strong>
+    <small>@Waller • Product Designer</small>
+  </div>
+
+  <div class="left-sidebar__quick-grid">
+    <button class="quick-item">
+      <span class="material-symbols-rounded">volume_off</span>
+      <small>Mute</small>
+    </button>
+
+    <button class="quick-item">
+      <span class="material-symbols-rounded">mic</span>
+      <small>Voice</small>
+    </button>
+
+    <button class="quick-item">
+      <span class="material-symbols-rounded">videocam</span>
+      <small>Video</small>
+    </button>
+
+    <button class="quick-item">
+      <span class="material-symbols-rounded">search</span>
+      <small>Search</small>
+    </button>
+  </div>
+
+  <div class="left-sidebar__quick-settings">
+    <div class="quick-setting">
+      <span>Disappearing messages</span>
+      <small>Off</small>
+    </div>
+
+    <div class="quick-setting">
+      <span>Screenshot settings</span>
+      <small>Off</small>
+    </div>
+  </div>
+
+</div>
+
+
+
+      <div class="alss"></div>
+
       <button type="button" class="left-sidebar__footer-link">
         <span class="material-symbols-rounded">chat</span>
         <span>Send Feedback</span>
@@ -56,7 +107,100 @@
     </div>
   </section>
 
-  <section class="chat-placeholder" aria-label="Área do chat"></section>
+  <section class="chat-panel">
+    <header class="chat-panel__header">
+      <div class="chat-panel__user">
+        <img [src]="activeChat.avatar" [alt]="activeChat.name" />
+        <div>
+          <strong>{{ activeChat.name }}</strong>
+          <small>{{ activeChat.status }}</small>
+        </div>
+      </div>
+
+      <div class="chat-panel__actions">
+        <button type="button" aria-label="Chamada">
+          <span class="material-symbols-rounded">call</span>
+        </button>
+        <button type="button" aria-label="Vídeo">
+          <span class="material-symbols-rounded">videocam</span>
+        </button>
+        <button type="button" aria-label="Mais opções">
+          <span class="material-symbols-rounded">more_vert</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="chat-panel__body">
+      <div
+        class="chat-message"
+        *ngFor="let message of messages; trackBy: trackByMessage"
+        [class.chat-message--me]="message.author === 'me'"
+      >
+        <div class="chat-message__row">
+          <img
+            *ngIf="message.author === 'other'"
+            class="chat-message__avatar chat-message__avatar--left"
+            [src]="activeChat.avatar"
+            [alt]="activeChat.name"
+          />
+
+          <div class="chat-message__stack">
+            <div
+              class="chat-bubble"
+              [class.chat-bubble--me]="message.author === 'me'"
+            >
+              {{ message.content }}
+            </div>
+
+            <div
+              class="chat-message__meta"
+              [class.chat-message__meta--me]="message.author === 'me'"
+            >
+              {{ message.seenLabel }}
+            </div>
+          </div>
+
+          <img
+            *ngIf="message.author === 'me'"
+            class="chat-message__avatar chat-message__avatar--right"
+            [src]="profile.avatar"
+            [alt]="profile.name"
+          />
+        </div>
+      </div>
+    </div>
+
+    <footer class="chat-panel__footer">
+      <div class="chat-panel__composer">
+        <input type="text" placeholder="Type a message..." readonly />
+
+        <div class="chat-panel__footer-toolbar">
+          <button type="button" aria-label="Bold">
+            <span class="material-symbols-rounded">format_bold</span>
+          </button>
+          <button type="button" aria-label="Italic">
+            <span class="material-symbols-rounded">format_italic</span>
+          </button>
+          <button type="button" aria-label="Underline">
+            <span class="material-symbols-rounded">format_underlined</span>
+          </button>
+          <button type="button" aria-label="Lista">
+            <span class="material-symbols-rounded">format_list_bulleted</span>
+          </button>
+          <button type="button" aria-label="Imagem">
+            <span class="material-symbols-rounded">image</span>
+          </button>
+          <button type="button" aria-label="Anexo">
+            <span class="material-symbols-rounded">attach_file</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="chat-panel__send" type="button" aria-label="Enviar">
+        Send
+      </button>
+    </footer>
+  </section>
 
   <aside class="right-sidebar">
     <div class="right-sidebar__search">

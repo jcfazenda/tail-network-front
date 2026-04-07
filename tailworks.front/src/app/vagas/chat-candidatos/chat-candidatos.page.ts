@@ -17,6 +17,13 @@ interface ContactItem {
   readonly statusLabel: string;
 }
 
+interface ChatMessage {
+  readonly id: number;
+  readonly author: 'other' | 'me';
+  readonly content: string;
+  readonly seenLabel: string;
+}
+
 @Component({
   standalone: true,
   selector: 'app-chat-candidatos-page',
@@ -31,6 +38,12 @@ export class ChatCandidatosPage {
     email: 'adrain.nader@yahoo.com',
     avatar: 'https://i.pravatar.cc/240?img=12',
     unreadCount: 2,
+  };
+
+  readonly activeChat = {
+    name: 'Alberta Reyes',
+    status: 'Online',
+    avatar: 'https://i.pravatar.cc/160?img=32',
   };
 
   readonly menuItems: SidebarMenuItem[] = [
@@ -56,11 +69,42 @@ export class ChatCandidatosPage {
     { id: 9, name: 'Maggie Wise', avatar: 'https://i.pravatar.cc/120?img=44', status: 'offline', statusLabel: 'Offline' },
   ];
 
+  readonly messages: ChatMessage[] = [
+    {
+      id: 1,
+      author: 'other',
+      content: 'Welcome to Weavesocial! Whether you’re opening an online store or are interested in using Weavesocial as your platform, you can find out more information about your options here.',
+      seenLabel: 'Message seen 1:13pm',
+    },
+    {
+      id: 2,
+      author: 'me',
+      content: 'After you register for a free trial, follow the initial setup guide to start using Weavesocial. The initial setup guide features step-by-step tutorials for the main tasks you need to complete before you start selling.',
+      seenLabel: 'Message seen 1:04pm',
+    },
+    {
+      id: 3,
+      author: 'other',
+      content: 'We work to make sure your business is available when your customers want to shop.',
+      seenLabel: 'Message seen 12:28pm',
+    },
+    {
+      id: 4,
+      author: 'me',
+      content: 'Sweet! Where do I sign up! Take my money!',
+      seenLabel: 'Message seen 11:00am',
+    },
+  ];
+
   trackByMenuItem(_: number, item: SidebarMenuItem): number {
     return item.id;
   }
 
   trackByContact(_: number, item: ContactItem): number {
+    return item.id;
+  }
+
+  trackByMessage(_: number, item: ChatMessage): number {
     return item.id;
   }
 }
