@@ -72,6 +72,12 @@ export const routes: Routes = [
     canActivate: [recruiterAuthGuard],
   },
   {
+    path: 'vagas/chat-candidatos',
+    loadComponent: () => import('./vagas/chat-candidatos/chat-candidatos.page').then((m) => m.ChatCandidatosPage),
+    data: { title: 'Chat com Candidatos' },
+    canActivate: [recruiterAuthGuard],
+  },
+  {
     path: 'recruiter/panel',
     loadComponent: () => import('./recruiter/recruiter-panel/recruiter-panel.page').then((m) => m.RecruiterPanelPage),
     data: { title: 'Recruiters' },

@@ -12,7 +12,7 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { AuthFacade } from '../../core/facades/auth.facade';
 import { SidebarVisibilityService } from '../../core/layout/sidebar/sidebar-visibility.service';
@@ -139,7 +139,7 @@ type SideRailCandidateSource = 'ecosystem' | 'job' | 'processo';
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, PanelCandidatosListComponent, ProfitLossCardComponent],
+  imports: [CommonModule, RouterLink, PanelCandidatosListComponent, ProfitLossCardComponent],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -1933,6 +1933,15 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
     void this.router.navigate(['/vagas/cadastro'], {
       queryParams: { edit: jobId },
+    });
+  }
+
+  openCandidatesChat(jobId: string, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    void this.router.navigate(['/vagas/chat-candidatos'], {
+      queryParams: jobId?.trim() ? { jobId } : undefined,
     });
   }
 

@@ -1,0 +1,129 @@
+<ng-container *ngIf="selectedConversation as conversation">
+  <header class="chat-topbar">
+    <div class="chat-topbar__profile">
+      <img [src]="conversation.avatar" [alt]="conversation.name" />
+
+      <div>
+        <strong>{{ conversation.name }}</strong>
+        <span>{{ conversation.status }}</span>
+      </div>
+    </div>
+
+    <div class="chat-topbar__actions">
+      <button class="chat-icon-button" type="button" aria-label="Favoritar conversa">
+        <span class="material-symbols-rounded">star</span>
+      </button>
+      <button class="chat-icon-button" type="button" aria-label="Buscar mensagens">
+        <span class="material-symbols-rounded">search</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="chat-sidebar__header">
+    <div>
+      <span class="chat-sidebar__eyebrow">Inbox</span>
+      <h1>Chats com candidatos</h1>
+    </div>
+
+    <button class="chat-icon-button" type="button" aria-label="Favoritos">
+      <span class="material-symbols-rounded">star</span>
+    </button>
+  </div>
+
+  <section class="chat-info-panel" aria-label="Vaga em foco" *ngIf="selectedJob as job">
+    <div class="chat-info-panel__inner">
+      <div class="chat-info-panel__kicker">
+        <span>Vaga em Foco</span>
+      </div>
+
+      <p class="chat-info-panel__copy">
+        destaque da vaga vinculada a esta conversa com dados principais da publicação e do radar atual
+      </p>
+
+      <article class="chat-focus-card">
+        <div class="chat-focus-card__head">
+          <div class="chat-focus-card__logo">
+            <img *ngIf="jobCompanyLogoUrl(job); else companyInitials" [src]="jobCompanyLogoUrl(job)" [alt]="job.company" />
+            <ng-template #companyInitials>
+              <span>{{ jobCompanyLabel(job) }}</span>
+            </ng-template>
+          </div>
+
+          <div class="chat-focus-card__identity">
+            <strong>
+              {{ job.title }}
+              <span>- {{ jobWorkModelLabel(job) }}</span>
+            </strong>
+            <span>{{ jobLocationLabel(job) }}</span>
+          </div>
+
+          <button class="chat-focus-card__action" type="button" aria-label="Abrir vaga">
+            <span class="material-symbols-rounded">work</span>
+          </button>
+        </div>
+
+        <div class="chat-focus-card__status">
+          <strong>{{ job.company }}</strong>
+          <small>{{ jobSalaryLabel(job) }}</small>
+        </div>
+
+        <span class="chat-focus-card__divider" aria-hidden="true"></span>
+
+        <div class="chat-focus-card__footer">
+          <span class="chat-focus-card__chip" *ngIf="job.contractType">{{ job.contractType }}</span>
+
+          <div class="chat-focus-card__avatars" *ngIf="selectedJobAvatarBadges.length; else noJobAvatars">
+            <img
+              *ngFor="let badge of selectedJobAvatarBadges; trackBy: trackByAvatar"
+              class="chat-focus-card__avatar-stack"
+              [src]="badge.src"
+              [alt]="badge.label"
+            />
+            <span class="chat-focus-card__avatar-extra" *ngIf="selectedJobAvatarExtraCount > 0">
+              +{{ selectedJobAvatarExtraCount }}
+            </span>
+          </div>
+
+          <ng-template #noJobAvatars>
+            <span class="chat-focus-card__chip chat-focus-card__chip--soft">Sem radar</span>
+          </ng-template>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="chat-panel__timeline">
+    <div class="chat-panel__day-divider">
+      <span>Hoje</span>
+      <small>06:32 PM</small>
+    </div>
+
+    <article
+      *ngFor="let message of conversation.messages; trackBy: trackByMessage"
+      class="chat-bubble"
+      [class.chat-bubble--reply]="message.author === 'recruiter'"
+    >
+      <p>{{ message.content }}</p>
+      <span>{{ message.time }}</span>
+    </article>
+  </div>
+
+  <footer class="chat-panel__composer">
+    <div class="chat-panel__composer-shell">
+      <input type="text" placeholder="Type your message here..." readonly />
+
+      <div class="chat-panel__composer-actions">
+        <button class="chat-icon-button chat-icon-button--ghost" type="button" aria-label="Enviar">
+          <span class="material-symbols-rounded">send</span>
+        </button>
+        <button class="chat-icon-button chat-icon-button--ghost" type="button" aria-label="Áudio">
+          <span class="material-symbols-rounded">mic</span>
+        </button>
+        <button class="chat-icon-button chat-icon-button--ghost" type="button" aria-label="Emoji">
+          <span class="material-symbols-rounded">mood</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+</ng-container>

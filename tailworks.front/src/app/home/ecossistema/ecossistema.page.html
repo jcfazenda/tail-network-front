@@ -286,7 +286,14 @@
               <span class="ecosystem-desktop__jobs-radar-separator" aria-hidden="true"></span>
 
               <div class="ecosystem-desktop__jobs-actions" aria-label="Ações da vaga">
-                <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Abrir chat">
+                <button
+                  class="ecosystem-desktop__jobs-action"
+                  type="button"
+                  aria-label="Abrir chat"
+                  [routerLink]="['/vagas/chat-candidatos']"
+                  [queryParams]="{ jobId: job.id }"
+                  (click)="$event.stopPropagation()"
+                >
                   <span class="material-symbols-rounded" aria-hidden="true">chat</span>
                 </button>
                 <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga" (click)="openEditJob(job.id)">
@@ -308,7 +315,14 @@
                 <span class="ecosystem-desktop__jobs-radar-empty">Sem radar</span>
                 <span class="ecosystem-desktop__jobs-radar-separator" aria-hidden="true"></span>
                 <div class="ecosystem-desktop__jobs-actions" aria-label="Ações da vaga">
-                  <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Abrir chat">
+                  <button
+                    class="ecosystem-desktop__jobs-action"
+                    type="button"
+                    aria-label="Abrir chat"
+                    [routerLink]="['/vagas/chat-candidatos']"
+                    [queryParams]="{ jobId: job.id }"
+                    (click)="$event.stopPropagation()"
+                  >
                     <span class="material-symbols-rounded" aria-hidden="true">chat</span>
                   </button>
                   <button class="ecosystem-desktop__jobs-action" type="button" aria-label="Editar vaga" (click)="openEditJob(job.id)">
