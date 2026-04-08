@@ -84,12 +84,6 @@ export const routes: Routes = [
     canActivate: [recruiterAuthGuard],
   },
   {
-    path: 'recruiter/time',
-    loadComponent: () => import('./recruiter/recruiter-time/recruiter-time.page').then((m) => m.RecruiterTimePage),
-    data: { title: 'Chat do Time' },
-    canActivate: [recruiterAuthGuard],
-  },
-  {
     path: 'recruiter/core-algoritimo',
     loadComponent: () => import('./recruiter/core-algoritimo/core-algoritimo.page').then((m) => m.CoreAlgoritimoPage),
     data: { title: 'Core Algoritimo' },
@@ -117,24 +111,6 @@ export const routes: Routes = [
     path: 'vagas',
     loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
     data: { title: 'Minhas Vagas' },
-    canActivate: [recruiterAuthGuard],
-  },
-  {
-    path: 'radar',
-    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
-    data: { title: 'Radar' },
-    canActivate: [recruiterAuthGuard],
-  },
-  {
-    path: 'talentos',
-    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
-    data: { title: 'Talentos' },
-    canActivate: [recruiterAuthGuard],
-  },
-  {
-    path: 'propostas',
-    loadComponent: () => import('./stub/stub.page').then((m) => m.StubPage),
-    data: { title: 'Propostas' },
     canActivate: [recruiterAuthGuard],
   },
   { path: '**', redirectTo: 'home' },

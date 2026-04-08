@@ -94,10 +94,7 @@ export class SidebarComponent {
   private confettiPieces: NotificationConfettiPiece[] = [];
 
   private readonly recruiterItems: NavItem[] = [
-    { label: 'Radar', route: '/radar', icon: 'radar' },
     { label: 'Minhas Vagas', route: '/home/ecossistema', icon: 'work' },
-    { label: 'Talentos', route: '/talentos', icon: 'group' },
-    { label: 'Propostas', route: '/propostas', icon: 'assignment' },
     { label: 'Sair', route: '/login', icon: 'logout' },
   ];
 
@@ -155,11 +152,8 @@ export class SidebarComponent {
       {
         label: 'Recrutamento',
         items: [
-          { label: 'Radar', icon: 'radar', route: '/radar' },
           { label: 'Novo Card', icon: 'add_box', route: '/vagas/cadastro' },
           { label: 'Minhas Vagas', icon: 'work', route: '/home/ecossistema' },
-          { label: 'Talentos', icon: 'group', route: '/talentos' },
-          { label: 'Propostas', icon: 'assignment', route: '/propostas' },
         ],
       },
       {
@@ -663,7 +657,7 @@ export class SidebarComponent {
     return !notification.readAt;
   }
 
-  @HostListener(`window:${SidebarComponent.photoUpdatedEventName}`)
+  @HostListener('window:tailworks:candidate-photo-updated')
   handlePhotoUpdated(): void {
     this.cdr.markForCheck();
   }
