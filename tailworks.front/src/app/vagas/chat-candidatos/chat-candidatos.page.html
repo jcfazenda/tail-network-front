@@ -13,10 +13,15 @@
             </div>
 
             <span class="left-sidebar__badge">{{ profile.unreadCount }}</span>
+
+            <div class="left-sidebar__profile_name">
+              <strong>{{ profile.name }}</strong>
+            </div> 
+
           </div>
 
           <div class="left-sidebar__quick-user-copy left-sidebar__quick-user-copy--profile">
-            <strong>{{ profile.name }}</strong>
+            
 
             <div class="left-sidebar__profile-info-grid">
               <div class="left-sidebar__profile-info-item">
@@ -50,10 +55,14 @@
                 </div>
                 <small>Pacific Daylight Time</small>
               </div>
-            </div>
+            </div> 
+
           </div>
+
+          
         </div>
 
+        
         <div class="left-sidebar__quick-grid">
           <button class="quick-item" type="button">
             <span class="material-symbols-rounded">notifications_off</span>
@@ -74,12 +83,34 @@
             <span class="material-symbols-rounded">search</span>
             <small>Search</small>
           </button>
-        </div>
-        
+        </div> 
+
+        <div class="alss"></div>
 
         <div class="left-sidebar__quick-card-title left-sidebar__quick-actions--status">
           <strong>Jornada do Candidato</strong>
           <small>Linha do tempo do candidato no ecossistema.</small>
+        </div>
+
+                <div class="left-sidebar__stacks">
+                    <div class="candidate-card__skills">
+            <div class="candidate-skill" *ngFor="let skill of highlightedCandidate.skills">
+              <div class="candidate-skill__row">
+                <span class="candidate-skill__label">{{ skill.label }}</span>
+
+                <div class="candidate-skill__bar-wrap">
+                  <div class="candidate-skill__track">
+                    <div
+                      class="candidate-skill__fill"
+                      [style.width.%]="skill.score"
+                    ></div>
+                  </div>
+                </div>
+
+                <strong class="candidate-skill__score">{{ skill.score }}%</strong>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="left-sidebar__quick-settings">
@@ -212,7 +243,7 @@
 
           <button class="quick-item quick-item--success" type="button">
             <span class="material-symbols-rounded">description</span>
-            <small>Docs</small>
+            <small>CV</small>
           </button>
 
           <button class="quick-item quick-item--success" type="button">
@@ -222,7 +253,7 @@
 
           <button class="quick-item quick-item--success" type="button">
             <span class="material-symbols-rounded">task_alt</span>
-            <small>Home</small>
+            <small>Stack</small>
           </button>
 
         </div>        

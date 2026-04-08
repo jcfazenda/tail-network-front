@@ -140,28 +140,28 @@ export class ChatCandidatosPage {
   readonly messages: ChatMessage[] = [
     {
       id: 1,
-      author: 'other',
+      author: 'me',
       content:
         'Welcome to Weavesocial! Whether you’re opening an online store or are interested in using Weavesocial as your platform, you can find out more information about your options here.',
       seenLabel: 'Message seen 1:13pm',
     },
     {
       id: 2,
-      author: 'me',
+      author: 'other',
       content:
         'After you register for a free trial, follow the initial setup guide to start using Weavesocial. The initial setup guide features step-by-step tutorials for the main tasks you need to complete before you start selling.',
       seenLabel: 'Message seen 1:04pm',
     },
     {
       id: 3,
-      author: 'other',
+      author: 'me',
       content:
         'We work to make sure your business is available when your customers want to shop.',
       seenLabel: 'Message seen 12:28pm',
     },
     {
       id: 4,
-      author: 'me',
+      author: 'other',
       content: 'Sweet! Where do I sign up! Take my money!',
       seenLabel: 'Message seen 11:00am',
     },

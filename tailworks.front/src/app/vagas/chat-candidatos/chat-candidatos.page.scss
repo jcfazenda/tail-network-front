@@ -40,7 +40,7 @@
   width: 100%;
   box-sizing: border-box;
   border-radius: 26px;
-  background: linear-gradient(180deg, rgba(221, 221, 221, 0.62), rgba(255, 255, 255, 0.42));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42));
   box-shadow:
     0 18px 34px rgba(15, 23, 42, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.75);
@@ -53,8 +53,8 @@
 }
 
 .left-sidebar__quick-actions--status {
-  padding: 16px 18px 18px;
-  margin-bottom: 8px;
+  padding: 16px 18px 15px;
+  margin-bottom: 20px;
 }
 
 .left-sidebar__quick-user--profile {
@@ -269,8 +269,8 @@
   height: calc(100vh - 64px);
   max-height: calc(100vh - 64px);
   background:
-    radial-gradient(circle at top right, rgba(59, 109, 255, 0.03), transparent 24%),
-    linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+    radial-gradient(circle at top right, rgba(126, 126, 126, 0.03), transparent 24%),
+    linear-gradient(180deg, #9f9e9e 0%, #fcfcfd 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -354,7 +354,7 @@
   height: 120px;
   padding: 5px;
   border-radius: 50%;
-  background: linear-gradient(180deg, #c7d5ff 0%, #9eb7ff 100%);
+  background: linear-gradient(180deg, #828282 0%, #9eb7ff 100%);
   box-sizing: border-box;
   box-shadow:
     0 14px 34px rgba(59, 109, 255, 0.28),
@@ -396,7 +396,7 @@
   width: 100%;
   box-sizing: border-box;
   border-radius: 22px;
-  background: linear-gradient(180deg, rgba(240, 240, 240, 0.62), rgba(201, 201, 201, 0.42));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(201, 201, 201, 0.42));
   box-shadow:
     0 18px 34px rgba(174, 174, 174, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.75);
@@ -493,7 +493,10 @@
 .left-sidebar__timeline {
   margin-bottom: 14px;
 }
- 
+ .left-sidebar__stacks {
+  margin-top: 34px;
+  margin-bottom: 34px;
+}
 
 .left-sidebar__quick-card-title strong {
 
@@ -503,7 +506,9 @@
   font-weight: 700;
   color: #2f3a4b;
   line-height: 1.2;
-  margin-top: 54px;
+  margin-top: 44px;
+  gap: 32px;
+  
 }
 
 .left-sidebar__quick-card-title small {
@@ -752,7 +757,7 @@
   flex-direction: column;
   gap: 30px;
   overflow: auto;
-  background: linear-gradient(180deg, #ececec 0%, #fcfcfc 100%);
+  background: linear-gradient(180deg, #e1e1e1 0%, #fcfcfc 100%);
 }
 
 .chat-message {
@@ -974,7 +979,7 @@
 
 .candidate-card {
   border-radius: 22px;
-  background: linear-gradient(180deg, #ffffff 0%, #d9d9d9 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #cbc9c7 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     0 10px 24px rgba(15, 23, 42, 0.08);
@@ -1010,7 +1015,7 @@
   display: block;
   flex: 0 0 auto;
   filter: grayscale(1);
-  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 16px rgba(224, 155, 25, 0.12);
 }
 
 .candidate-card__identity-copy {
@@ -1155,8 +1160,14 @@
   font-size: 18px;
 }
 
+.left-sidebar__profile_name {
+  width: 100%;
+  margin-top: 22px;
+}
+
 .left-sidebar__quick-user-copy--profile {
   width: 100%;
+  margin-top: 22px;
 }
 
 .left-sidebar__quick-user-copy--profile strong {
@@ -1165,7 +1176,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
-  color: #7f8b9e;
+  color: #f2f2f2;
   text-align: center;
 }
 
