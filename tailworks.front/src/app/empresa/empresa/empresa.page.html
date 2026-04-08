@@ -74,73 +74,64 @@
     </div>
   </section>
 
-  <section class="empresa-page__cards">
-    <article class="empresa-card" *ngFor="let company of companies; trackBy: trackCompany">
-      <div class="empresa-card__head">
-        <div class="empresa-card__identity">
-          <div
-            class="empresa-card__avatar"
-            [class.empresa-card__avatar--image]="!!company.logoUrl"
-            [style.backgroundImage]="company.logoUrl ? 'url(' + company.logoUrl + ')' : null"
-          >
-            <span *ngIf="!company.logoUrl">{{ company.logoLabel | uppercase }}</span>
-          </div>
-
-          <div class="empresa-card__copy">
-            <strong>{{ company.name }}</strong>
-            <span>{{ company.sector }}</span>
-          </div>
+  <section class="empresa-page__cards ecosystem-desktop__jobs-grid-table">
+    <div class="ecosystem-desktop__jobs-grid-header">
+      <span>Logo</span>
+      <span>Empresa</span>
+      <span>Setor</span>
+      <span>Status</span>
+      <span>Ações</span>
+    </div>
+    <article class="ecosystem-desktop__jobs-grid-row" *ngFor="let company of companies; trackBy: trackCompany">
+      <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--logo">
+        <div
+          class="empresa-card__avatar ecosystem-desktop__jobs-company-logo"
+          [class.empresa-card__avatar--image]="!!company.logoUrl"
+          [style.backgroundImage]="company.logoUrl ? 'url(' + company.logoUrl + ')' : null"
+        >
+          <span *ngIf="!company.logoUrl">{{ company.logoLabel | uppercase }}</span>
         </div>
-
+      </div>
+      <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--title">
+        <strong>{{ company.name }}</strong>
+      </div>
+      <div class="ecosystem-desktop__jobs-grid-cell">
+        <span>{{ company.sector }}</span>
+      </div>
+      <div class="ecosystem-desktop__jobs-grid-cell">
         <span class="empresa-card__pill" [class.empresa-card__pill--inactive]="!company.active">
           {{ company.active ? 'Ativa' : 'Inativa' }}
         </span>
       </div>
-
-      <div class="empresa-card__meta">
-        <div>
-          <strong>{{ formatCompanyLocation(company.location) }}</strong>
+      <div class="ecosystem-desktop__jobs-grid-cell">
+        <div class="empresa-card__actions">
+          <a
+            class="empresa-card__action empresa-card__action--primary"
+            routerLink="/empresa/cadastro"
+            [queryParams]="{ edit: company.id }"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+            <span>Editar</span>
+          </a>
+          <button class="empresa-card__action" type="button" (click)="toggleCompanyActive(company)">
+            <span class="material-symbols-rounded" aria-hidden="true">{{ company.active ? 'pause_circle' : 'play_circle' }}</span>
+            <span>{{ company.active ? 'Inativar' : 'Ativar' }}</span>
+          </button>
+          <button
+            class="empresa-card__action"
+            type="button"
+            [disabled]="!canDeleteCompany(company)"
+            (click)="deleteCompany(company)"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+            <span>Excluir</span>
+          </button>
         </div>
+        <small class="empresa-card__hint" *ngIf="!canDeleteCompany(company)">
+          So pode excluir empresa sem recruiters e sem vagas ligadas.
+        </small>
       </div>
-
-      <p class="empresa-card__description">{{ company.description }}</p>
-
-      <div class="empresa-card__stats">
-        <span>{{ recruiterCount(company.name) }} recruiters ligados</span>
-        <span>{{ jobCount(company.name) }} vagas no mock</span>
-      </div>
-
-      <div class="empresa-card__actions">
-        <a
-          class="empresa-card__action empresa-card__action--primary"
-          routerLink="/empresa/cadastro"
-          [queryParams]="{ edit: company.id }"
-        >
-          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-          <span>Editar</span>
-        </a>
-
-        <button class="empresa-card__action" type="button" (click)="toggleCompanyActive(company)">
-          <span class="material-symbols-rounded" aria-hidden="true">{{ company.active ? 'pause_circle' : 'play_circle' }}</span>
-          <span>{{ company.active ? 'Inativar' : 'Ativar' }}</span>
-        </button>
-
-        <button
-          class="empresa-card__action"
-          type="button"
-          [disabled]="!canDeleteCompany(company)"
-          (click)="deleteCompany(company)"
-        >
-          <span class="material-symbols-rounded" aria-hidden="true">delete</span>
-          <span>Excluir</span>
-        </button>
-      </div>
-
-      <small class="empresa-card__hint" *ngIf="!canDeleteCompany(company)">
-        So pode excluir empresa sem recruiters e sem vagas ligadas.
-      </small>
     </article>
-
     <article class="empresa-page__empty" *ngIf="companies.length === 0">
       <span class="material-symbols-rounded" aria-hidden="true">domain_disabled</span>
       <strong>Nenhuma empresa encontrada</strong>
