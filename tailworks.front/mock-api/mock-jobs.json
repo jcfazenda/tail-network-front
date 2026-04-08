@@ -1,1 +1,1657 @@
-[]
+[
+  {
+    "id": "lab-job-02",
+    "code": "VG-0002",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "SÃO PAULO - SP",
+    "match": 65,
+    "talents": 21,
+    "radarCount": 21,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 18,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-08T18:54:56.369Z",
+    "updatedAt": "2026-04-08T19:26:14.672Z",
+    "title": "Backend Java Pleno",
+    "company": "Mercado Livre",
+    "companyLogoUrl": "data:image/jpeg;base64,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",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir serviços de pagamentos, sustentar arquitetura distribuída e acelerar entregas críticas com produto e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "R$ 10.000",
+    "radarAdherenceThreshold": 77,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 92
+      },
+      {
+        "name": "AWS",
+        "match": 76
+      },
+      {
+        "name": "Docker",
+        "match": 64
+      },
+      {
+        "name": "Kubernetes",
+        "match": 48
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 30
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:java",
+        "name": "Java / Spring",
+        "knowledge": 92,
+        "description": ""
+      },
+      {
+        "repoId": "repo:aws",
+        "name": "AWS",
+        "knowledge": 76,
+        "description": ""
+      },
+      {
+        "repoId": "repo:docker",
+        "name": "Docker",
+        "knowledge": 64,
+        "description": ""
+      },
+      {
+        "repoId": "repo:kubernetes",
+        "name": "Kubernetes",
+        "knowledge": 48,
+        "description": ""
+      },
+      {
+        "name": "SQL / Dados",
+        "knowledge": 30,
+        "description": ""
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "lab-job-01",
+    "code": "VG-0001",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 73,
+    "talents": 2,
+    "radarCount": 2,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-08T18:55:56.368Z",
+    "updatedAt": "2026-04-08T19:00:28.605Z",
+    "title": "Backend .NET Senior",
+    "company": "Itaú Unibanco",
+    "companyLogoUrl": "/assets/images/logo-itau.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "R$ 14.000",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 94
+      },
+      {
+        "name": "Azure",
+        "match": 78
+      },
+      {
+        "name": "Docker",
+        "match": 72
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 32
+      },
+      {
+        "name": "Angular",
+        "match": 84
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:dotnet",
+        "name": ".NET / C#",
+        "knowledge": 94,
+        "description": ""
+      },
+      {
+        "repoId": "repo:azure",
+        "name": "Azure",
+        "knowledge": 78,
+        "description": ""
+      },
+      {
+        "repoId": "repo:docker",
+        "name": "Docker",
+        "knowledge": 72,
+        "description": ""
+      },
+      {
+        "name": "SQL / Dados",
+        "knowledge": 32,
+        "description": ""
+      },
+      {
+        "repoId": "repo:angular",
+        "name": "Angular",
+        "knowledge": 84,
+        "description": ""
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "lab-job-03",
+    "code": "VG-0003",
+    "title": "Frontend Angular Senior",
+    "company": "CI&T",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 11.000",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Angular",
+        "match": 95
+      },
+      {
+        "name": "TypeScript",
+        "match": 88
+      },
+      {
+        "name": "UX / UI",
+        "match": 46
+      },
+      {
+        "name": "React",
+        "match": 28
+      },
+      {
+        "name": "Figma",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 4,
+    "radarCount": 4,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 1,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:53:56.369Z",
+    "updatedAt": "2026-04-08T18:53:56.369Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-04",
+    "code": "VG-0004",
+    "title": "Frontend React Pleno",
+    "company": "Nubank",
+    "companyLogoUrl": "/assets/images/logo-nubank.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "Curitiba - PR",
+    "workModel": "Remoto",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir jornadas web, sustentar arquitetura de frontend e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 9.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "React",
+        "match": 95
+      },
+      {
+        "name": "TypeScript",
+        "match": 84
+      },
+      {
+        "name": "UX / UI",
+        "match": 38
+      },
+      {
+        "name": "Node.js",
+        "match": 30
+      },
+      {
+        "name": "Figma",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 12,
+    "radarCount": 12,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 9,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:52:56.370Z",
+    "updatedAt": "2026-04-08T18:52:56.370Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-05",
+    "code": "VG-0005",
+    "title": "Fullstack .NET + React",
+    "company": "Accenture",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Belo Horizonte - MG",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs e interfaces, sustentar arquitetura distribuída e acelerar entregas críticas com produto e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 12.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 88
+      },
+      {
+        "name": "React",
+        "match": 82
+      },
+      {
+        "name": "TypeScript",
+        "match": 66
+      },
+      {
+        "name": "Azure",
+        "match": 42
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 30
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 100,
+    "talents": 11,
+    "radarCount": 11,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 8,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:51:56.370Z",
+    "updatedAt": "2026-04-08T18:51:56.370Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-06",
+    "code": "VG-0006",
+    "title": "Fullstack Java + Angular",
+    "company": "Stefanini",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Brasília - DF",
+    "workModel": "Presencial",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir serviços e interfaces, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 11.800",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 90
+      },
+      {
+        "name": "Angular",
+        "match": 82
+      },
+      {
+        "name": "TypeScript",
+        "match": 58
+      },
+      {
+        "name": "AWS",
+        "match": 34
+      },
+      {
+        "name": "QA Automação",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 68,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:50:56.370Z",
+    "updatedAt": "2026-04-08T18:50:56.370Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-07",
+    "code": "VG-0007",
+    "title": "Mobile Flutter Pleno",
+    "company": "PicPay",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Recife - PE",
+    "workModel": "Remoto",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir fluxos mobile, sustentar arquitetura do app e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 9.000",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Flutter",
+        "match": 94
+      },
+      {
+        "name": "TypeScript",
+        "match": 34
+      },
+      {
+        "name": "AWS",
+        "match": 28
+      },
+      {
+        "name": "UX / UI",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 79,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:49:56.370Z",
+    "updatedAt": "2026-04-08T18:49:56.370Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-08",
+    "code": "VG-0008",
+    "title": "Mobile React Native Senior",
+    "company": "iFood",
+    "companyLogoUrl": "/assets/images/logo-nubank.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir aplicativos móveis, sustentar arquitetura escalável e acelerar entregas críticas com produto e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 11.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "React Native",
+        "match": 94
+      },
+      {
+        "name": "React",
+        "match": 72
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "Node.js",
+        "match": 34
+      },
+      {
+        "name": "AWS",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 83,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:48:56.370Z",
+    "updatedAt": "2026-04-08T18:48:56.370Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-09",
+    "code": "VG-0009",
+    "title": "DevOps Cloud Senior",
+    "company": "TIVIT",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Campinas - SP",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir esteiras, sustentar arquitetura de plataforma e acelerar entregas críticas junto ao time de engenharia.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 13.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "AWS",
+        "match": 90
+      },
+      {
+        "name": "Docker",
+        "match": 86
+      },
+      {
+        "name": "Kubernetes",
+        "match": 80
+      },
+      {
+        "name": "Segurança",
+        "match": 36
+      },
+      {
+        "name": "Python",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 91,
+    "talents": 7,
+    "radarCount": 7,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 4,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:47:56.370Z",
+    "updatedAt": "2026-04-08T18:47:56.370Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-10",
+    "code": "VG-0010",
+    "title": "Data Engineer Senior",
+    "company": "Globo",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir pipelines, sustentar arquitetura de dados e acelerar entregas críticas junto ao time de analytics.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 13.800",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Python",
+        "match": 90
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 88
+      },
+      {
+        "name": "AWS",
+        "match": 52
+      },
+      {
+        "name": "Google Cloud",
+        "match": 46
+      },
+      {
+        "name": "IA / ML",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 86,
+    "talents": 3,
+    "radarCount": 3,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:46:56.371Z",
+    "updatedAt": "2026-04-08T18:46:56.371Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-11",
+    "code": "VG-0011",
+    "title": "Machine Learning Engineer",
+    "company": "VTEX",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Florianópolis - SC",
+    "workModel": "Remoto",
+    "seniority": "Especialista",
+    "summary": "Profissional para evoluir modelos, sustentar arquitetura de inferência e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 16.000",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Python",
+        "match": 92
+      },
+      {
+        "name": "IA / ML",
+        "match": 90
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 66
+      },
+      {
+        "name": "Google Cloud",
+        "match": 46
+      },
+      {
+        "name": "AWS",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 86,
+    "talents": 3,
+    "radarCount": 3,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:45:56.371Z",
+    "updatedAt": "2026-04-08T18:45:56.371Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-12",
+    "code": "VG-0012",
+    "title": "QA Automação Pleno",
+    "company": "Capgemini",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Fortaleza - CE",
+    "workModel": "Hibrido",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir automações, sustentar arquitetura de testes e acelerar entregas críticas junto ao time de engenharia.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 8.200",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "QA Automação",
+        "match": 94
+      },
+      {
+        "name": "TypeScript",
+        "match": 54
+      },
+      {
+        "name": "Node.js",
+        "match": 36
+      },
+      {
+        "name": "React",
+        "match": 26
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 24,
+    "radarCount": 24,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 21,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:44:56.371Z",
+    "updatedAt": "2026-04-08T18:44:56.371Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-13",
+    "code": "VG-0013",
+    "title": "Cloud Security Analyst",
+    "company": "Stone",
+    "companyLogoUrl": "/assets/images/logo-nubank.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir controles, sustentar arquitetura segura e acelerar entregas críticas junto ao time de cloud e plataforma.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 12.800",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Segurança",
+        "match": 92
+      },
+      {
+        "name": "AWS",
+        "match": 74
+      },
+      {
+        "name": "Azure",
+        "match": 56
+      },
+      {
+        "name": "Kubernetes",
+        "match": 34
+      },
+      {
+        "name": "Docker",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 99,
+    "talents": 10,
+    "radarCount": 10,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 7,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:43:56.371Z",
+    "updatedAt": "2026-04-08T18:43:56.371Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-14",
+    "code": "VG-0014",
+    "title": "UX/UI Product Designer",
+    "company": "OLX Brasil",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir jornadas, sustentar arquitetura de interface e acelerar entregas críticas junto ao time de produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 8.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "UX / UI",
+        "match": 92
+      },
+      {
+        "name": "Figma",
+        "match": 86
+      },
+      {
+        "name": "React",
+        "match": 28
+      },
+      {
+        "name": "Angular",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 7,
+    "radarCount": 7,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 4,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:42:56.371Z",
+    "updatedAt": "2026-04-08T18:42:56.371Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-15",
+    "code": "VG-0015",
+    "title": "Backend Node Pleno",
+    "company": "Magalu",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Porto Alegre - RS",
+    "workModel": "Hibrido",
+    "seniority": "Pleno",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time de produtos.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 9.300",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Node.js",
+        "match": 92
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "AWS",
+        "match": 44
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 36
+      },
+      {
+        "name": "QA Automação",
+        "match": 26
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 74,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:41:56.372Z",
+    "updatedAt": "2026-04-08T18:41:56.372Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-16",
+    "code": "VG-0016",
+    "title": "Platform Engineer",
+    "company": "BRQ Digital Solutions",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Remoto",
+    "seniority": "Especialista",
+    "summary": "Profissional para evoluir plataforma interna, sustentar arquitetura distribuída e acelerar entregas críticas para engenharia.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 16.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Kubernetes",
+        "match": 92
+      },
+      {
+        "name": "Docker",
+        "match": 84
+      },
+      {
+        "name": "AWS",
+        "match": 70
+      },
+      {
+        "name": "Segurança",
+        "match": 42
+      },
+      {
+        "name": "Python",
+        "match": 36
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 91,
+    "talents": 7,
+    "radarCount": 7,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 4,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:40:56.372Z",
+    "updatedAt": "2026-04-08T18:40:56.372Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-17",
+    "code": "VG-0017",
+    "title": "Analytics Engineer",
+    "company": "XP Inc.",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Hibrido",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir camada analítica, sustentar arquitetura de dados e acelerar entregas críticas com produto e analytics.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 12.200",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "SQL / Dados",
+        "match": 92
+      },
+      {
+        "name": "Python",
+        "match": 74
+      },
+      {
+        "name": "AWS",
+        "match": 36
+      },
+      {
+        "name": "QA Automação",
+        "match": 30
+      },
+      {
+        "name": "IA / ML",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 37,
+    "radarCount": 37,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 34,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:39:56.372Z",
+    "updatedAt": "2026-04-08T18:39:56.372Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-18",
+    "code": "VG-0018",
+    "title": "Frontend Angular Junior",
+    "company": "B3",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Salvador - BA",
+    "workModel": "Presencial",
+    "seniority": "Junior",
+    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 4.200",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Angular",
+        "match": 88
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "UX / UI",
+        "match": 28
+      },
+      {
+        "name": "Figma",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 13,
+    "radarCount": 13,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 10,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:38:56.372Z",
+    "updatedAt": "2026-04-08T18:38:56.372Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-19",
+    "code": "VG-0019",
+    "title": "Java Specialist Payments",
+    "company": "C6 Bank",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "São Paulo - SP",
+    "workModel": "Hibrido",
+    "seniority": "Especialista",
+    "summary": "Profissional para evoluir serviços financeiros, sustentar arquitetura distribuída e acelerar entregas críticas com produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 17.000",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Java / Spring",
+        "match": 96
+      },
+      {
+        "name": "AWS",
+        "match": 62
+      },
+      {
+        "name": "Kubernetes",
+        "match": 58
+      },
+      {
+        "name": "Segurança",
+        "match": 32
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 28
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 90,
+    "talents": 15,
+    "radarCount": 15,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 12,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:37:56.373Z",
+    "updatedAt": "2026-04-08T18:37:56.373Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  },
+  {
+    "id": "lab-job-20",
+    "code": "VG-0020",
+    "title": "AI Product Engineer",
+    "company": "Claro",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir aplicações com IA, sustentar arquitetura distribuída e acelerar entregas críticas com produto.",
+    "contractType": "CLT",
+    "statusReason": "",
+    "salaryRange": "R$ 14.500",
+    "radarAdherenceThreshold": 85,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "hybridOnsiteDaysDescription": "",
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "IA / ML",
+        "match": 88
+      },
+      {
+        "name": "Python",
+        "match": 82
+      },
+      {
+        "name": "React",
+        "match": 42
+      },
+      {
+        "name": "SQL / Dados",
+        "match": 36
+      },
+      {
+        "name": "AWS",
+        "match": 30
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "Carga local",
+    "match": 80,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "Carga local",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "candidates": [],
+    "createdAt": "2026-04-08T18:36:56.373Z",
+    "updatedAt": "2026-04-08T18:36:56.373Z",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
+  }
+]
