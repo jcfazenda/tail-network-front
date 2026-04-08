@@ -169,8 +169,7 @@ export class SidebarComponent {
         ? [{
             label: 'Empresas',
             items: [
-              { label: 'Lista de Empresas', icon: 'apartment', route: '/empresa' },
-              { label: 'Nova Empresa', icon: 'domain_add', route: '/empresa/cadastro' },
+              { label: 'Empresas', icon: 'apartment', route: '/empresa' }, 
             ],
           } satisfies CandidateTreeGroup]
         : []),

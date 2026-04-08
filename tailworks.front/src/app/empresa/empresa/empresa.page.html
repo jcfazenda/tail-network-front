@@ -41,7 +41,11 @@
   <section class="empresa-page__toolbar">
     <div class="empresa-page__search">
       <span class="material-symbols-rounded" aria-hidden="true">search</span>
-      <input type="search" placeholder="Buscar empresa, setor ou localidade" [(ngModel)]="searchTerm" />
+      <input
+        type="search"
+        placeholder="Buscar empresa, setor ou localidade"
+        [(ngModel)]="searchTerm"
+      />
     </div>
 
     <div class="empresa-page__filters">
@@ -74,78 +78,77 @@
     </div>
   </section>
 
-  <section class="empresa-page__cards ecosystem-desktop__jobs-grid-table" *ngIf="companies.length; else emptyBoard">
-    <div class="ecosystem-desktop__jobs-grid-header">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <article class="ecosystem-desktop__jobs-grid-row" *ngFor="let company of companies; trackBy: trackCompany">
-      <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--logo">
-        <button class="ecosystem-desktop__jobs-company-logo ecosystem-desktop__jobs-company-logo-button" type="button" [attr.aria-label]="'Destacar ' + company.name + ' na lateral'">
-          <img
-            *ngIf="company.logoUrl; else companyInitials"
-            class="ecosystem-desktop__jobs-company-logo-image"
-            [src]="company.logoUrl"
-            [alt]="company.name"
-          />
-          <ng-template #companyInitials>
-            <span class="ecosystem-desktop__jobs-company-logo-fallback">{{ company.logoLabel | uppercase }}</span>
-          </ng-template>
-        </button>
-      </div>
-      <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--title">
-        <strong>
-          <span class="ecosystem-desktop__jobs-title-text">{{ company.name }}</span>
-          <span class="ecosystem-desktop__jobs-model-prefix">{{ company.sector }}</span>
-        </strong>
-        <small>{{ formatCompanyLocation(company.location) }}</small>
-      </div>
-      <div class="ecosystem-desktop__jobs-grid-cell">
-        <div class="ecosystem-desktop__jobs-company-copy">
-          <strong>{{ recruiterCount(company.name) }} recruiters</strong>
-          <small>{{ jobCount(company.name) }} vagas</small>
+  <section class="empresa-page__list-grid" *ngIf="companies.length; else emptyBoard">
+    <article class="empresa-page__list-row" *ngFor="let company of companies; trackBy: trackCompany">
+      <div class="empresa-page__list-cell empresa-page__list-cell--identity">
+        <div
+          class="empresa-page__logo"
+          [style.background-image]="company.logoUrl ? 'url(' + company.logoUrl + ')' : 'none'"
+          [class.empresa-page__logo--image]="!!company.logoUrl"
+        >
+          <ng-container *ngIf="!company.logoUrl">
+            {{ company.logoLabel | uppercase }}
+          </ng-container>
+        </div>
+
+        <div class="empresa-page__identity-copy">
+          <strong>
+            {{ company.name }}
+            <span>{{ company.sector }}</span>
+          </strong>
+          <small>{{ formatCompanyLocation(company.location) }}</small>
         </div>
       </div>
-      <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--meta">
-        <div class="ecosystem-desktop__jobs-meta-copy">
-          <span class="empresa-card__pill" [class.empresa-card__pill--inactive]="!company.active">
-            {{ company.active ? 'Ativa' : 'Inativa' }}
+
+      <div class="empresa-page__list-cell empresa-page__list-cell--numbers">
+        <strong>{{ recruiterCount(company.name) }} recruiters</strong>
+        <small>{{ jobCount(company.name) }} vagas</small>
+      </div>
+
+      <div class="empresa-page__list-cell empresa-page__list-cell--status">
+        <span class="empresa-page__status-pill" [class.empresa-page__status-pill--inactive]="!company.active">
+          {{ company.active ? 'Ativa' : 'Inativa' }}
+        </span>
+      </div>
+
+      <div class="empresa-page__list-cell empresa-page__list-cell--actions">
+        <a
+          class="empresa-page__icon-button empresa-page__icon-button--primary"
+          routerLink="/empresa/cadastro"
+          [queryParams]="{ edit: company.id }"
+          aria-label="Editar empresa"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+        </a>
+
+        <button
+          class="empresa-page__icon-button"
+          type="button"
+          (click)="toggleCompanyActive(company)"
+          [attr.aria-label]="company.active ? 'Inativar empresa' : 'Ativar empresa'"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">
+            {{ company.active ? 'pause_circle' : 'play_circle' }}
           </span>
-        </div>
-      </div>
-      <div class="ecosystem-desktop__jobs-grid-cell ecosystem-desktop__jobs-grid-cell--radar">
-        <div class="ecosystem-desktop__jobs-actions" aria-label="Ações da empresa">
-          <a
-            class="empresa-card__action empresa-card__action--primary"
-            routerLink="/empresa/cadastro"
-            [queryParams]="{ edit: company.id }"
-          >
-            <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-          </a>
-          <button class="empresa-card__action" type="button" (click)="toggleCompanyActive(company)">
-            <span class="material-symbols-rounded" aria-hidden="true">{{ company.active ? 'pause_circle' : 'play_circle' }}</span>
-          </button>
-          <button
-            class="empresa-card__action"
-            type="button"
-            [disabled]="!canDeleteCompany(company)"
-            (click)="deleteCompany(company)"
-          >
-            <span class="material-symbols-rounded" aria-hidden="true">delete</span>
-          </button>
-        </div>
-        <small class="empresa-card__hint" *ngIf="!canDeleteCompany(company)">
-          Só pode excluir empresa sem recruiters e sem vagas ligadas.
-        </small>
+        </button>
+
+        <button
+          class="empresa-page__icon-button"
+          type="button"
+          [disabled]="!canDeleteCompany(company)"
+          (click)="deleteCompany(company)"
+          aria-label="Excluir empresa"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+        </button>
       </div>
     </article>
   </section>
+
   <ng-template #emptyBoard>
-    <div class="ecosystem-desktop__jobs-board-empty">
-      Nenhuma empresa encontrada.
+    <div class="empresa-page__empty">
+      <strong>Nenhuma empresa encontrada.</strong>
+      <p>Tente ajustar a busca ou os filtros.</p>
     </div>
   </ng-template>
 </section>
