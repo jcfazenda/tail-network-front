@@ -9,12 +9,23 @@ interface SidebarMenuItem {
   readonly notify?: boolean;
 }
 
+interface CandidateSkill {
+  readonly label: string;
+  readonly score: number;
+}
+
 interface ContactItem {
   readonly id: number;
   readonly name: string;
   readonly avatar: string;
   readonly status: 'online' | 'offline' | 'busy' | 'away';
   readonly statusLabel: string;
+  readonly role: string;
+  readonly company: string;
+  readonly pipelineStatus: string;
+  readonly location: string;
+  readonly availability: string;
+  readonly skills: CandidateSkill[];
 }
 
 interface ChatMessage {
@@ -58,34 +69,94 @@ export class ChatCandidatosPage {
   ];
 
   readonly contacts: ContactItem[] = [
-    { id: 1, name: 'Alberta Reyes', avatar: 'https://i.pravatar.cc/120?img=32', status: 'online', statusLabel: 'Online' },
-    { id: 2, name: 'Ivan Gibbs', avatar: 'https://i.pravatar.cc/120?img=12', status: 'online', statusLabel: 'Online' },
-    { id: 3, name: 'Mabelle Jones', avatar: 'https://i.pravatar.cc/120?img=47', status: 'offline', statusLabel: 'Offline' },
-    { id: 4, name: 'Jennie Salazar', avatar: 'https://i.pravatar.cc/120?img=5', status: 'online', statusLabel: 'Online' },
-    { id: 5, name: 'Miguel Lewis', avatar: 'https://i.pravatar.cc/120?img=15', status: 'offline', statusLabel: 'Offline' },
-    { id: 6, name: 'Lou Franklin', avatar: 'https://i.pravatar.cc/120?img=58', status: 'busy', statusLabel: 'Do not disturb' },
-    { id: 7, name: 'Allie Carson', avatar: 'https://i.pravatar.cc/120?img=25', status: 'away', statusLabel: 'Not available' },
-    { id: 8, name: 'Lida Abbott', avatar: 'https://i.pravatar.cc/120?img=29', status: 'online', statusLabel: 'Online' },
-    { id: 9, name: 'Maggie Wise', avatar: 'https://i.pravatar.cc/120?img=44', status: 'offline', statusLabel: 'Offline' },
+    {
+      id: 1,
+      name: 'Mariana Gama',
+      avatar: 'https://i.pravatar.cc/160?img=47',
+      status: 'online',
+      statusLabel: 'Online',
+      role: 'Software Engineer',
+      company: 'Accenture',
+      pipelineStatus: 'Radar',
+      location: 'Curitiba - PR',
+      availability: 'Disponibilidade imediata',
+      skills: [
+        { label: '.NET / C#', score: 99 },
+        { label: 'Docker', score: 100 },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Alberta Reyes',
+      avatar: 'https://i.pravatar.cc/160?img=32',
+      status: 'online',
+      statusLabel: 'Online',
+      role: 'Front-end Engineer',
+      company: 'Nubank',
+      pipelineStatus: 'Em avaliação',
+      location: 'São Paulo - SP',
+      availability: 'Disponível em 15 dias',
+      skills: [
+        { label: 'Angular', score: 96 },
+        { label: 'Design System', score: 91 },
+      ],
+    },
+    {
+      id: 3,
+      name: 'Ivan Gibbs',
+      avatar: 'https://i.pravatar.cc/160?img=12',
+      status: 'online',
+      statusLabel: 'Online',
+      role: 'Back-end Engineer',
+      company: 'Stone',
+      pipelineStatus: 'Entrevista técnica',
+      location: 'Belo Horizonte - MG',
+      availability: 'Disponível em 30 dias',
+      skills: [
+        { label: '.NET', score: 94 },
+        { label: 'Azure', score: 88 },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Mabelle Jones',
+      avatar: 'https://i.pravatar.cc/160?img=5',
+      status: 'offline',
+      statusLabel: 'Offline',
+      role: 'Product Designer',
+      company: 'iFood',
+      pipelineStatus: 'Case enviado',
+      location: 'Rio de Janeiro - RJ',
+      availability: 'Disponibilidade imediata',
+      skills: [
+        { label: 'UX', score: 97 },
+        { label: 'Research', score: 89 },
+      ],
+    },
   ];
+
+  readonly highlightedCandidate: ContactItem = this.contacts[0];
 
   readonly messages: ChatMessage[] = [
     {
       id: 1,
       author: 'other',
-      content: 'Welcome to Weavesocial! Whether you’re opening an online store or are interested in using Weavesocial as your platform, you can find out more information about your options here.',
+      content:
+        'Welcome to Weavesocial! Whether you’re opening an online store or are interested in using Weavesocial as your platform, you can find out more information about your options here.',
       seenLabel: 'Message seen 1:13pm',
     },
     {
       id: 2,
       author: 'me',
-      content: 'After you register for a free trial, follow the initial setup guide to start using Weavesocial. The initial setup guide features step-by-step tutorials for the main tasks you need to complete before you start selling.',
+      content:
+        'After you register for a free trial, follow the initial setup guide to start using Weavesocial. The initial setup guide features step-by-step tutorials for the main tasks you need to complete before you start selling.',
       seenLabel: 'Message seen 1:04pm',
     },
     {
       id: 3,
       author: 'other',
-      content: 'We work to make sure your business is available when your customers want to shop.',
+      content:
+        'We work to make sure your business is available when your customers want to shop.',
       seenLabel: 'Message seen 12:28pm',
     },
     {

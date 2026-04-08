@@ -1,109 +1,233 @@
 <section class="layout-root">
   <section class="left-sidebar">
-    <div class="left-sidebar__top">
-      <button class="left-sidebar__tiny-icon" type="button" aria-label="Perfil">
-        <span class="material-symbols-rounded">person</span>
-      </button>
-
-      <button class="left-sidebar__tiny-icon" type="button" aria-label="Mais opções">
-        <span class="material-symbols-rounded">more_horiz</span>
-      </button>
-    </div>
-
     <div class="left-sidebar__profile">
-      <div class="left-sidebar__avatar-wrap">
-        <div class="left-sidebar__avatar-ring">
-          <img [src]="profile.avatar" [alt]="profile.name" class="left-sidebar__avatar" />
+      <div class="left-sidebar__quick-actions left-sidebar__quick-actions--profile">
+        <button class="left-sidebar__quick-edit" type="button" aria-label="Editar">
+          <span class="material-symbols-rounded">edit</span>
+        </button>
+
+        <div class="left-sidebar__quick-user left-sidebar__quick-user--profile">
+          <div class="left-sidebar__avatar-wrap">
+            <div class="left-sidebar__avatar-ring">
+              <img [src]="profile.avatar" [alt]="profile.name" class="left-sidebar__avatar" />
+            </div>
+
+            <span class="left-sidebar__badge">{{ profile.unreadCount }}</span>
+          </div>
+
+          <div class="left-sidebar__quick-user-copy left-sidebar__quick-user-copy--profile">
+            <strong>{{ profile.name }}</strong>
+
+            <div class="left-sidebar__profile-info-grid">
+              <div class="left-sidebar__profile-info-item">
+                <div class="left-sidebar__profile-info-label">
+                  <span class="material-symbols-rounded">mail</span>
+                  <span>Email</span>
+                </div>
+                <small>{{ profile.email }}</small>
+              </div>
+
+              <div class="left-sidebar__profile-info-item">
+                <div class="left-sidebar__profile-info-label">
+                  <span class="material-symbols-rounded">call</span>
+                  <span>Phone</span>
+                </div>
+                <small>(515) 4645-6864</small>
+              </div>
+
+              <div class="left-sidebar__profile-info-item">
+                <div class="left-sidebar__profile-info-label">
+                  <span class="material-symbols-rounded">location_on</span>
+                  <span>Location</span>
+                </div>
+                <small>Los Angeles, California</small>
+              </div>
+
+              <div class="left-sidebar__profile-info-item">
+                <div class="left-sidebar__profile-info-label">
+                  <span class="material-symbols-rounded">schedule</span>
+                  <span>Time Zone</span>
+                </div>
+                <small>Pacific Daylight Time</small>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <span class="left-sidebar__badge">{{ profile.unreadCount }}</span>
+        <div class="left-sidebar__quick-grid">
+          <button class="quick-item" type="button">
+            <span class="material-symbols-rounded">notifications_off</span>
+            <small>Mute</small>
+          </button>
+
+          <button class="quick-item" type="button">
+            <span class="material-symbols-rounded">mic</span>
+            <small>Voice</small>
+          </button>
+
+          <button class="quick-item" type="button">
+            <span class="material-symbols-rounded">videocam</span>
+            <small>Video</small>
+          </button>
+
+          <button class="quick-item" type="button">
+            <span class="material-symbols-rounded">search</span>
+            <small>Search</small>
+          </button>
+        </div>
+        
+
+        <div class="left-sidebar__quick-card-title left-sidebar__quick-actions--status">
+          <strong>Jornada do Candidato</strong>
+          <small>Linha do tempo do candidato no ecossistema.</small>
+        </div>
+
+        <div class="left-sidebar__quick-settings">
+
+          <button class="quick-setting" type="button">
+            <span>Entrou no Radar</span>
+            <div class="quick-setting__meta">
+              <small>29 Jun</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+          <button class="quick-setting" type="button">
+            <span>Candidatou-se</span>
+            <div class="quick-setting__meta">
+              <small>01 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+          <button class="quick-setting" type="button">
+            <span>Recrutador Garimpou</span>
+            <div class="quick-setting__meta">
+              <small>03 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+          <button class="quick-setting" type="button">
+            <span>Call com Especialistas</span>
+            <div class="quick-setting__meta">
+              <small>05 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+          <button class="quick-setting" type="button">
+            <span>Contratação Solicitada</span>
+            <div class="quick-setting__meta">
+              <small>06 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+          <button class="quick-setting" type="button">
+            <span>Aceitou Proposta</span>
+            <div class="quick-setting__meta">
+              <small>06 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>          
+
+          <button class="quick-setting" type="button">
+            <span>Validação de Documentos</span>
+            <div class="quick-setting__meta">
+              <small>08 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+          <button class="quick-setting" type="button">
+            <span>Contratado</span>
+            <div class="quick-setting__meta">
+              <small>10 Jul</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
+
+        </div>
+
       </div>
-
-      <strong>{{ profile.name }}</strong>
-      <span>{{ profile.email }}</span>
     </div>
 
-    <div class="left-sidebar__menu-grid">
-      <button
-        *ngFor="let item of menuItems; trackBy: trackByMenuItem"
-        type="button"
-        class="left-sidebar__menu-item"
-        [class.left-sidebar__menu-item--active]="item.active"
-        [attr.aria-label]="item.label"
-      >
-        <span class="left-sidebar__menu-notify" *ngIf="item.notify"></span>
-
-        <span class="material-symbols-rounded left-sidebar__menu-icon">
-          {{ item.icon }}
-        </span>
-
-        <small>{{ item.label }}</small>
-      </button>
-    </div>
-
-    
+    <div class="left-sidebar__menu-grid"></div>
+ 
 
     <div class="left-sidebar__footer-links">
+      <div class="left-sidebar__quick-actions left-sidebar__quick-actions--status">
 
-      <!-- -->
-<div class="left-sidebar__quick-actions">
+        <div class="left-sidebar__quick-settings">
 
-  <div class="left-sidebar__quick-header">
-    <strong>Diego Waller</strong>
-    <small>@Waller • Product Designer</small>
-  </div>
+          <button class="quick-setting" type="button">
+            <span>Documentação</span>
+            <div class="quick-setting__meta">
+              <small>Em dia</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
 
-  <div class="left-sidebar__quick-grid">
-    <button class="quick-item">
-      <span class="material-symbols-rounded">volume_off</span>
-      <small>Mute</small>
-    </button>
+          <button class="quick-setting" type="button">
+            <span>Vale alimentação</span>
+            <div class="quick-setting__meta">
+              <small>R$ 500,00</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
 
-    <button class="quick-item">
-      <span class="material-symbols-rounded">mic</span>
-      <small>Voice</small>
-    </button>
+          <button class="quick-setting" type="button">
+            <span>Vale Refeição</span>
+            <div class="quick-setting__meta">
+              <small>R$ 35,00 dia</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
 
-    <button class="quick-item">
-      <span class="material-symbols-rounded">videocam</span>
-      <small>Video</small>
-    </button>
+          <button class="quick-setting" type="button">
+            <span>Plano de Saude</span>
+            <div class="quick-setting__meta">
+              <small>100% cobertura</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button>
 
-    <button class="quick-item">
-      <span class="material-symbols-rounded">search</span>
-      <small>Search</small>
-    </button>
-  </div>
+          <button class="quick-setting" type="button">
+            <span>Odontológico</span>
+            <div class="quick-setting__meta">
+              <small>100% cobertura</small>
+              <span class="material-symbols-rounded">chevron_right</span>
+            </div>
+          </button> 
 
-  <div class="left-sidebar__quick-settings">
-    <div class="quick-setting">
-      <span>Disappearing messages</span>
-      <small>Off</small>
-    </div>
+        </div>        
 
-    <div class="quick-setting">
-      <span>Screenshot settings</span>
-      <small>Off</small>
-    </div>
-  </div>
+        <div class="left-sidebar__quick-grid">
 
-</div>
+          <button class="quick-item quick-item--success" type="button">
+            <span class="material-symbols-rounded">check_circle</span>
+            <small>CLT</small>
+          </button>
 
+          <button class="quick-item quick-item--success" type="button">
+            <span class="material-symbols-rounded">description</span>
+            <small>Docs</small>
+          </button>
 
+          <button class="quick-item quick-item--success" type="button">
+            <span class="material-symbols-rounded">badge</span>
+            <small>Perfil</small>
+          </button>
 
-      <div class="alss"></div>
+          <button class="quick-item quick-item--success" type="button">
+            <span class="material-symbols-rounded">task_alt</span>
+            <small>Home</small>
+          </button>
 
-      <button type="button" class="left-sidebar__footer-link">
-        <span class="material-symbols-rounded">chat</span>
-        <span>Send Feedback</span>
-        <span class="material-symbols-rounded">arrow_forward</span>
-      </button>
-
-      <button type="button" class="left-sidebar__footer-link">
-        <span class="material-symbols-rounded">help</span>
-        <span>Knowledge Base</span>
-        <span class="material-symbols-rounded">arrow_forward</span>
-      </button>
+        </div>        
+ 
+      </div>
     </div>
   </section>
 
@@ -145,17 +269,11 @@
           />
 
           <div class="chat-message__stack">
-            <div
-              class="chat-bubble"
-              [class.chat-bubble--me]="message.author === 'me'"
-            >
+            <div class="chat-bubble" [class.chat-bubble--me]="message.author === 'me'">
               {{ message.content }}
             </div>
 
-            <div
-              class="chat-message__meta"
-              [class.chat-message__meta--me]="message.author === 'me'"
-            >
+            <div class="chat-message__meta" [class.chat-message__meta--me]="message.author === 'me'">
               {{ message.seenLabel }}
             </div>
           </div>
@@ -200,36 +318,64 @@
         Send
       </button>
     </footer>
+
   </section>
 
   <aside class="right-sidebar">
     <div class="right-sidebar__search">
       <span class="material-symbols-rounded">search</span>
-      <input type="text" placeholder="Search in Contacts" readonly />
+      <input type="text" placeholder="Search candidates" readonly />
     </div>
 
     <div class="right-sidebar__list">
-      <div class="contact" *ngFor="let c of contacts; trackBy: trackByContact">
-        <div class="contact__avatar">
-          <img [src]="c.avatar" [alt]="c.name" />
-          <span
-            class="contact__status"
-            [class.contact__status--online]="c.status === 'online'"
-            [class.contact__status--offline]="c.status === 'offline'"
-            [class.contact__status--busy]="c.status === 'busy'"
-            [class.contact__status--away]="c.status === 'away'"
-          ></span>
-        </div>
+      <article class="candidate-card candidate-card--featured">
+        <header class="candidate-card__header">
+          <div class="candidate-card__identity">
+            <img
+              class="candidate-card__avatar"
+              [src]="highlightedCandidate.avatar"
+              [alt]="highlightedCandidate.name"
+            />
 
-        <div class="contact__info">
-          <small>{{ c.statusLabel }}</small>
-          <strong>{{ c.name }}</strong>
-        </div>
+            <div class="candidate-card__identity-copy">
+              <strong>{{ highlightedCandidate.name }}</strong>
+              <small>{{ highlightedCandidate.role }} • {{ highlightedCandidate.company }}</small>
+            </div>
+          </div>
 
-        <button class="contact__more" type="button" aria-label="Mais opções">
-          <span class="material-symbols-rounded">more_vert</span>
-        </button>
-      </div>
+          <button class="candidate-card__action" type="button" aria-label="Abrir perfil">
+            <span class="material-symbols-rounded">contact_page</span>
+          </button>
+        </header>
+
+        <div class="candidate-card__body">
+          <span class="candidate-card__eyebrow">Status do Candidato na vaga</span>
+          <strong class="candidate-card__status">{{ highlightedCandidate.pipelineStatus }}</strong>
+
+          <p class="candidate-card__summary">
+            {{ highlightedCandidate.location }}. {{ highlightedCandidate.availability }}.
+          </p>
+
+          <div class="candidate-card__skills">
+            <div class="candidate-skill" *ngFor="let skill of highlightedCandidate.skills">
+              <div class="candidate-skill__row">
+                <span class="candidate-skill__label">{{ skill.label }}</span>
+
+                <div class="candidate-skill__bar-wrap">
+                  <div class="candidate-skill__track">
+                    <div
+                      class="candidate-skill__fill"
+                      [style.width.%]="skill.score"
+                    ></div>
+                  </div>
+                </div>
+
+                <strong class="candidate-skill__score">{{ skill.score }}%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
     </div>
 
     <div class="right-sidebar__bottom">
@@ -247,4 +393,5 @@
       </button>
     </div>
   </aside>
+
 </section>
