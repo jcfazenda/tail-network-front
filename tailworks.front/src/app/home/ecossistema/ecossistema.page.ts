@@ -268,7 +268,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       name: 'Daniela Costa',
       roleTitle: 'Backend Java',
       company: 'Nubank',
-      companyLogoUrl: '/assets/images/logo-nubank-roxinho.webp',
+      companyLogoUrl: '/assets/images/logo-nubank.png',
       avatarUrl: '/assets/images/polaroid/daniela-costa.png',
       stacks: [
         { label: 'Java', tone: 'accent' },
@@ -316,7 +316,7 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
       name: 'Mario Solaro',
       roleTitle: 'DevOps',
       company: 'Globo',
-      companyLogoUrl: '/assets/images/logo-nubank-roxinho.webp',
+      companyLogoUrl: '/assets/images/logo-nubank.png',
       avatarUrl: '/assets/images/polaroid/mario-solaro.png',
       stacks: [
         { label: 'AWS', tone: 'accent' },

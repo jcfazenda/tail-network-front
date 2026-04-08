@@ -29,8 +29,8 @@ export class LoginPage implements OnDestroy {
   registerFlow: RegisterFlow = 'organization';
   returnUrl = '';
 
-  email = 'julio@tailworks.com';
-  password = 'julio@56';
+  email = ''; // 'julio@tailworks.com';
+  password = ''; // 'julio@56';
   errorMessage = '';
   successMessage = '';
 
@@ -69,8 +69,8 @@ export class LoginPage implements OnDestroy {
     await this.authService.resetWorkspace();
     this.errorMessage = '';
     this.successMessage = '';
-    this.email = 'julio@tailworks.com';
-    this.password = 'julio@56';
+    this.email = ''; //'julio@tailworks.com';
+    this.password = ''; //'julio@56';
     this.accessView = 'register';
     this.registerFlow = 'organization';
     this.recruiterSignup = this.createRecruiterSignupDraft();
@@ -166,9 +166,9 @@ export class LoginPage implements OnDestroy {
 
   private createRecruiterInviteDraft(): RecruiterInviteDraft {
     return {
-      name: 'Breno Recrutador Jr.',
-      email: 'breno@tailworks.com',
-      password: 'breno@56',
+      name: 'Recrutador Jr.',
+      email: 'recrutador@tailworks.com',
+      password: '', //'breno@56',
       role: 'Recruiter Jr.',
     };
   }
@@ -184,11 +184,11 @@ export class LoginPage implements OnDestroy {
 
   private createRecruiterSignupDraft(): RecruiterSignupDraft {
     return {
-      name: 'Julio Recutador Sr.',
-      email: 'julio@tailworks.com',
-      password: 'julio@56',
+      name: 'Recutador Sr.',
+      email: '',//'julio@tailworks.com',
+      password: '',//'julio@56',
       role: 'Recruiter Sr.',
-      companyName: 'Criatti SA',
+      companyName: 'Empresa SA',
       companySector: 'Tecnologia',
       companyLocation: 'Rio de Janeiro - RJ',
       companyDescription: '',
@@ -200,7 +200,7 @@ export class LoginPage implements OnDestroy {
 
   private createTalentSignupDraft(): TalentSignupDraft {
     return {
-      name: 'Janaina Talento',
+      name: 'Janaina Candidata',
       email: 'janaina@gmail.com',
       password: 'janaina@56',
       location: 'Rio de Janeiro - RJ',

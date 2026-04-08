@@ -1583,7 +1583,7 @@ canCurrentRecruiterAccessJob(
     }
 
     if (normalized.includes('nubank')) {
-      return '/assets/images/logo-nubank-roxinho.webp';
+      return '/assets/images/logo-nubank.png';
     }
 
     if (normalized.includes('mercado livre') || normalized.includes('ifood') || normalized.includes('stone')) {
