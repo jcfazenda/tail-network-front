@@ -56,6 +56,14 @@
       </article>
     </section>
 
+    <!-- Botão Nova Empresa fora do grid/lista -->
+    <div class="empresa-page__new-company-bar">
+      <button class="empresa-page__primary-action empresa-page__primary-action--small" type="button" (click)="openCreateModal()">
+        <span class="material-symbols-rounded" aria-hidden="true">add_business</span>
+        <span>Nova empresa</span>
+      </button>
+    </div>
+
     <div class="empresa-page__content">
       <div class="empresa-page__main">
         <section class="empresa-page__headline">
@@ -195,14 +203,14 @@
               </button>
             </div>
           </article>
-
-          <div class="button_new">
-            <button class="empresa-page__primary-action" type="button" (click)="openCreateModal()">
-              <span class="material-symbols-rounded" aria-hidden="true">add_business</span>
-              <span>Nova empresa</span>
-            </button>
-          </div>
         </section>
+
+        <ng-template #emptyBoard>
+          <div class="empresa-page__empty">
+            <strong>Nenhuma empresa encontrada.</strong>
+            <p>Tente ajustar a busca ou os filtros.</p>
+          </div>
+        </ng-template>
 
         <footer class="empresa-page__pagination" *ngIf="totalPages > 1">
           <button
@@ -237,13 +245,6 @@
             <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
           </button>
         </footer>
-
-        <ng-template #emptyBoard>
-          <div class="empresa-page__empty">
-            <strong>Nenhuma empresa encontrada.</strong>
-            <p>Tente ajustar a busca ou os filtros.</p>
-          </div>
-        </ng-template>
       </div>
 
       <aside class="empresa-page__aside">
