@@ -1,159 +1,208 @@
 <section class="empresa-page">
-  <div class="empresa-page__layout">
-    <div class="empresa-page__main">
-      <header class="empresa-page__hero">
-        <div class="empresa-page__hero-copy">
-          <span class="empresa-page__eyebrow">Base de empresas</span>
-          <h1>Empresas do ecossistema</h1>
-          <p>Cadastre, edite e organize as empresas que podem ser usadas por recruiters ao abrir vagas.</p>
+  <div class="empresa-page__shell">
+    <div class="empresa-page__intro">
+      <div class="empresa-page__intro-copy">
+        <h1>Empresas</h1>
+        <p>
+          Gerencie empresas do ecossistema, acompanhe vínculos com recruiters e
+          visualize rapidamente a disponibilidade operacional da base.
+        </p>
+      </div>
+    </div>
+
+    <section class="empresa-page__metrics">
+      <article class="empresa-page__metric-card">
+        <div class="empresa-page__metric-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">apartment</span>
         </div>
-
-        <button class="empresa-page__primary-action" type="button" (click)="openCreateModal()">
-          <span class="material-symbols-rounded" aria-hidden="true">domain_add</span>
-          <span>Nova empresa</span>
-        </button>
-      </header>
-
-      <section class="empresa-page__metrics">
-        <article class="empresa-page__metric-card">
+        <div class="empresa-page__metric-content">
           <span>Empresas</span>
           <strong>{{ totalCompanies }}</strong>
-          <small>Base total cadastrada</small>
-        </article>
+          <small>Total cadastradas na base</small>
+        </div>
+      </article>
 
-        <article class="empresa-page__metric-card">
+      <article class="empresa-page__metric-card">
+        <div class="empresa-page__metric-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">fact_check</span>
+        </div>
+        <div class="empresa-page__metric-content">
           <span>Ativas</span>
           <strong>{{ activeCompanies }}</strong>
-          <small>Disponiveis para recruiters</small>
-        </article>
+          <small>Disponíveis para operação</small>
+        </div>
+      </article>
 
-        <article class="empresa-page__metric-card">
-          <span>Inativas</span>
-          <strong>{{ inactiveCompanies }}</strong>
-          <small>Fora da operacao</small>
-        </article>
-
-        <article class="empresa-page__metric-card">
+      <article class="empresa-page__metric-card">
+        <div class="empresa-page__metric-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">group</span>
+        </div>
+        <div class="empresa-page__metric-content">
           <span>Recruiters ligados</span>
           <strong>{{ linkedRecruiters }}</strong>
-          <small>Operando empresas ativas</small>
-        </article>
-      </section>
-
-      <section class="empresa-page__toolbar">
-        <div class="empresa-page__search">
-          <span class="material-symbols-rounded" aria-hidden="true">search</span>
-          <input
-            type="search"
-            placeholder="Buscar empresa, setor ou localidade"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onSearchChange()"
-          />
+          <small>Conectados às empresas</small>
         </div>
+      </article>
 
-        <div class="empresa-page__toolbar-actions">
-          <div class="empresa-page__filters">
-            <button
-              class="empresa-page__filter-chip"
-              type="button"
-              [class.empresa-page__filter-chip--active]="statusFilter === 'all'"
-              (click)="setStatusFilter('all')"
-            >
-              Todas
-            </button>
+      <article class="empresa-page__metric-card">
+        <div class="empresa-page__metric-icon">
+          <span class="material-symbols-rounded" aria-hidden="true">block</span>
+        </div>
+        <div class="empresa-page__metric-content">
+          <span>Inativas</span>
+          <strong>{{ inactiveCompanies }}</strong>
+          <small>Fora da operação</small>
+        </div>
+      </article>
+    </section>
 
-            <button
-              class="empresa-page__filter-chip"
-              type="button"
-              [class.empresa-page__filter-chip--active]="statusFilter === 'active'"
-              (click)="setStatusFilter('active')"
-            >
-              Ativas
-            </button>
-
-            <button
-              class="empresa-page__filter-chip"
-              type="button"
-              [class.empresa-page__filter-chip--active]="statusFilter === 'inactive'"
-              (click)="setStatusFilter('inactive')"
-            >
-              Inativas
-            </button>
+    <div class="empresa-page__content">
+      <div class="empresa-page__main">
+        <section class="empresa-page__headline">
+          <div>
+            <strong>{{ totalCompanies }}</strong>
+            <span>Empresas</span>
           </div>
 
-          <button class="empresa-page__secondary-button" type="button" (click)="openFilterModal()">
-            <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-            <span>Filtros</span>
-            <span class="empresa-page__filter-count" *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</span>
-          </button>
-        </div>
-      </section>
+          <p>
+            Visualize a base cadastrada, acompanhe vagas abertas, recruiters
+            associados e mantenha o ecossistema organizado em uma experiência
+            mais limpa, premium e operacional.
+          </p>
+        </section>
 
-      <section class="empresa-page__list-grid" *ngIf="companies.length; else emptyBoard">
-        <article class="empresa-page__list-row" *ngFor="let company of companies; trackBy: trackCompany">
-          <div class="empresa-page__list-cell empresa-page__list-cell--identity">
-            <div
-              class="empresa-page__logo"
-              [style.background-image]="company.logoUrl ? 'url(' + company.logoUrl + ')' : 'none'"
-              [class.empresa-page__logo--image]="!!company.logoUrl"
-            >
-              <ng-container *ngIf="!company.logoUrl">
-                {{ company.logoLabel | uppercase }}
-              </ng-container>
+        <section class="empresa-page__list" *ngIf="companies.length; else emptyBoard">
+          <div class="empresa-page__list-topbar">
+            <div class="empresa-page__search">
+              <span class="material-symbols-rounded" aria-hidden="true">search</span>
+              <input
+                type="search"
+                placeholder="Buscar empresa, setor ou localidade"
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearchChange()"
+              />
             </div>
 
-            <div class="empresa-page__identity-copy">
-              <strong>
-                {{ company.name }}
-                <span>{{ company.sector }}</span>
-              </strong>
-              <small>{{ formatCompanyLocation(company.location) }}</small>
+            <div class="empresa-page__toolbar-actions">
+              <div class="empresa-page__filters">
+                <button
+                  class="empresa-page__filter-chip"
+                  type="button"
+                  [class.empresa-page__filter-chip--active]="statusFilter === 'all'"
+                  (click)="setStatusFilter('all')"
+                >
+                  Todas
+                </button>
+
+                <button
+                  class="empresa-page__filter-chip"
+                  type="button"
+                  [class.empresa-page__filter-chip--active]="statusFilter === 'active'"
+                  (click)="setStatusFilter('active')"
+                >
+                  Ativas
+                </button>
+
+                <button
+                  class="empresa-page__filter-chip"
+                  type="button"
+                  [class.empresa-page__filter-chip--active]="statusFilter === 'inactive'"
+                  (click)="setStatusFilter('inactive')"
+                >
+                  Inativas
+                </button>
+              </div>
+
+              <button class="empresa-page__ghost-button" type="button" (click)="openFilterModal()">
+                <span class="material-symbols-rounded" aria-hidden="true">tune</span>
+                <span>Filtros</span>
+                <span class="empresa-page__filter-count" *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</span>
+              </button>
             </div>
           </div>
 
-          <div class="empresa-page__list-cell empresa-page__list-cell--numbers">
-            <strong>{{ recruiterCount(company.name) }} recruiters</strong>
-            <small>{{ jobCount(company.name) }} vagas</small>
-          </div>
+          <header class="empresa-page__list-head">
+            <span>Empresa</span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </header>
 
-          <div class="empresa-page__list-cell empresa-page__list-cell--status">
-            <span class="empresa-page__status-pill" [class.empresa-page__status-pill--inactive]="!company.active">
-              {{ company.active ? 'Ativa' : 'Inativa' }}
-            </span>
-          </div>
+          <article class="empresa-page__list-row" *ngFor="let company of companies; trackBy: trackCompany">
+            <div class="empresa-page__company">
+              <div
+                class="empresa-page__logo"
+                [style.background-image]="company.logoUrl ? 'url(' + company.logoUrl + ')' : 'none'"
+                [class.empresa-page__logo--image]="!!company.logoUrl"
+              >
+                <ng-container *ngIf="!company.logoUrl">
+                  {{ company.logoLabel | uppercase }}
+                </ng-container>
+              </div>
 
-          <div class="empresa-page__list-cell empresa-page__list-cell--actions">
-            <button
-              class="empresa-page__icon-button empresa-page__icon-button--primary"
-              type="button"
-              (click)="openEditModal(company)"
-              aria-label="Editar empresa"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-            </button>
+              <div class="empresa-page__company-copy">
+                <strong>{{ company.name }}</strong>
+                <small>{{ company.sector }} · {{ formatCompanyLocation(company.location) }}</small>
+              </div>
+            </div>
 
-            <button
-              class="empresa-page__icon-button"
-              type="button"
-              (click)="toggleCompanyActive(company)"
-              [attr.aria-label]="company.active ? 'Inativar empresa' : 'Ativar empresa'"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">
-                {{ company.active ? 'pause_circle' : 'play_circle' }}
+            <div class="empresa-page__list-meta">
+              <strong>Recrutadores ligados</strong>
+              <small>{{ recruiterCount(company.name) }}</small>
+            </div>
+
+            <div class="empresa-page__list-meta">
+              <strong>Cards ligados</strong>
+              <small>{{ jobCount(company.name) }}</small>
+            </div>
+
+            <div class="empresa-page__list-status">
+              <span class="empresa-page__status-pill" [class.empresa-page__status-pill--inactive]="!company.active">
+                {{ company.active ? 'Ativa' : 'Inativa' }}
               </span>
-            </button>
+            </div>
 
-            <button
-              class="empresa-page__icon-button"
-              type="button"
-              [disabled]="!canDeleteCompany(company)"
-              (click)="deleteCompany(company)"
-              aria-label="Excluir empresa"
-            >
-              <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+            <div class="empresa-page__row-actions">
+              <button
+                class="empresa-page__icon-button empresa-page__icon-button--primary"
+                type="button"
+                (click)="openEditModal(company)"
+                aria-label="Editar empresa"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+              </button>
+
+              <button
+                class="empresa-page__icon-button"
+                type="button"
+                (click)="toggleCompanyActive(company)"
+                [attr.aria-label]="company.active ? 'Inativar empresa' : 'Ativar empresa'"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">
+                  {{ company.active ? 'pause_circle' : 'play_circle' }}
+                </span>
+              </button>
+
+              <button
+                class="empresa-page__icon-button"
+                type="button"
+                [disabled]="!canDeleteCompany(company)"
+                (click)="deleteCompany(company)"
+                aria-label="Excluir empresa"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+              </button>
+            </div>
+          </article>
+
+          <div class="button_new">
+            <button class="empresa-page__primary-action" type="button" (click)="openCreateModal()">
+              <span class="material-symbols-rounded" aria-hidden="true">add_business</span>
+              <span>Nova empresa</span>
             </button>
           </div>
-        </article>
+        </section>
 
         <footer class="empresa-page__pagination" *ngIf="totalPages > 1">
           <button
@@ -188,33 +237,94 @@
             <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
           </button>
         </footer>
-      </section>
 
-      <ng-template #emptyBoard>
-        <div class="empresa-page__empty">
-          <strong>Nenhuma empresa encontrada.</strong>
-          <p>Tente ajustar a busca ou os filtros.</p>
-        </div>
-      </ng-template>
-    </div>
-
-    <aside class="empresa-page__side-panel">
-      <div class="empresa-page__side-panel-card">
-        <div class="empresa-page__side-panel-head">
-          <span class="empresa-page__side-panel-badge">Em breve</span>
-          <h3>Painel lateral</h3>
-        </div>
-
-        <p>
-          Espaço reservado para insights, atalhos, favoritos, histórico ou qualquer conteúdo complementar.
-        </p>
-
-        <div class="empresa-page__side-panel-placeholder">
-          <span class="material-symbols-rounded" aria-hidden="true">dashboard_customize</span>
-          <small>Área vazia pronta para expansão</small>
-        </div>
+        <ng-template #emptyBoard>
+          <div class="empresa-page__empty">
+            <strong>Nenhuma empresa encontrada.</strong>
+            <p>Tente ajustar a busca ou os filtros.</p>
+          </div>
+        </ng-template>
       </div>
-    </aside>
+
+      <aside class="empresa-page__aside">
+        <section class="empresa-page__spotlight">
+          <div class="empresa-page__spotlight-head">
+            <span class="empresa-page__badge">Destaque</span>
+          </div>
+
+          <div class="empresa-page__spotlight-card">
+            <small>Empresa em foco</small>
+            <strong>
+              {{
+                companies.length
+                  ? companies[0].name
+                  : 'Selecione uma empresa'
+              }}
+            </strong>
+            <p>
+              {{
+                companies.length
+                  ? formatCompanyLocation(companies[0].location)
+                  : 'Sem dados disponíveis no momento.'
+              }}
+            </p>
+          </div>
+
+          <div class="empresa-page__spotlight-stats">
+            <div>
+              <span>Vagas</span>
+              <strong>
+                {{
+                  companies.length
+                    ? jobCount(companies[0].name)
+                    : 0
+                }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Recruiters</span>
+              <strong>
+                {{
+                  companies.length
+                    ? recruiterCount(companies[0].name)
+                    : 0
+                }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="empresa-page__recruiters-panel">
+          <header class="empresa-page__aside-title">
+            <span>Empresas rápidas</span>
+            <small>Acesso lateral</small>
+          </header>
+
+          <div class="empresa-page__recruiter-list">
+            <article class="empresa-page__recruiter-item" *ngFor="let company of companies | slice:0:6">
+              <div class="empresa-page__recruiter-avatar">
+                <span class="material-symbols-rounded" aria-hidden="true">domain</span>
+              </div>
+
+              <div class="empresa-page__recruiter-copy">
+                <strong>{{ company.name }}</strong>
+                <small>{{ company.sector }}</small>
+              </div>
+
+              <button
+                class="empresa-page__mini-action"
+                type="button"
+                (click)="openEditModal(company)"
+                aria-label="Abrir empresa"
+              >
+                <span class="material-symbols-rounded" aria-hidden="true">more_horiz</span>
+              </button>
+            </article>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
 
   <div class="empresa-page__modal-backdrop" *ngIf="isFilterModalOpen" (click)="closeFilterModal()"></div>
@@ -277,7 +387,7 @@
     </div>
 
     <footer class="empresa-page__modal-footer">
-      <button class="empresa-page__secondary-button" type="button" (click)="clearFiltersFromModal()">
+      <button class="empresa-page__ghost-button" type="button" (click)="clearFiltersFromModal()">
         Limpar filtros
       </button>
 
@@ -320,7 +430,7 @@
 
         <div class="empresa-page__form-field">
           <label for="companyLocation">Localização</label>
-          <input id="companyLocation" type="text" [(ngModel)]="companyForm.location" placeholder="Ex.: Sao Paulo - Brasil" />
+          <input id="companyLocation" type="text" [(ngModel)]="companyForm.location" placeholder="Ex.: São Paulo - Brasil" />
         </div>
 
         <div class="empresa-page__form-field">
@@ -357,7 +467,7 @@
     </div>
 
     <footer class="empresa-page__modal-footer">
-      <button class="empresa-page__secondary-button" type="button" (click)="closeModal()">
+      <button class="empresa-page__ghost-button" type="button" (click)="closeModal()">
         Cancelar
       </button>
 

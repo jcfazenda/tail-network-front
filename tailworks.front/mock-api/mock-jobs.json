@@ -43,16 +43,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 97,
-    "talents": 4,
-    "radarCount": 4,
+    "talents": 9,
+    "radarCount": 9,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -60,11 +60,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 1,
+    "extraCount": 6,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:55:17.275Z",
-    "updatedAt": "2026-04-08T19:55:17.275Z",
+    "createdAt": "2026-04-09T11:39:50.578Z",
+    "updatedAt": "2026-04-09T11:39:50.578Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -113,11 +113,11 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 91,
@@ -133,8 +133,8 @@
     "extraCount": 8,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:54:17.275Z",
-    "updatedAt": "2026-04-08T19:54:17.275Z",
+    "createdAt": "2026-04-09T11:38:50.578Z",
+    "updatedAt": "2026-04-09T11:38:50.578Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -183,27 +183,28 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 89,
-    "talents": 2,
-    "radarCount": 2,
+    "match": 90,
+    "talents": 6,
+    "radarCount": 6,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
       "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 0,
+    "extraCount": 3,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:53:17.276Z",
-    "updatedAt": "2026-04-08T19:53:17.276Z",
+    "createdAt": "2026-04-09T11:37:50.578Z",
+    "updatedAt": "2026-04-09T11:37:50.578Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -252,16 +253,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 11,
-    "radarCount": 11,
+    "talents": 7,
+    "radarCount": 7,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -269,11 +270,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 8,
+    "extraCount": 4,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:52:17.276Z",
-    "updatedAt": "2026-04-08T19:52:17.276Z",
+    "createdAt": "2026-04-09T11:36:50.578Z",
+    "updatedAt": "2026-04-09T11:36:50.578Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -322,11 +323,11 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 100,
@@ -342,8 +343,8 @@
     "extraCount": 3,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:51:17.276Z",
-    "updatedAt": "2026-04-08T19:51:17.276Z",
+    "createdAt": "2026-04-09T11:35:50.579Z",
+    "updatedAt": "2026-04-09T11:35:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -392,14 +393,14 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 69,
+    "match": 68,
     "talents": 0,
     "radarCount": 0,
     "ageLabel": "Agora",
@@ -408,8 +409,8 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:50:17.276Z",
-    "updatedAt": "2026-04-08T19:50:17.276Z",
+    "createdAt": "2026-04-09T11:34:50.579Z",
+    "updatedAt": "2026-04-09T11:34:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -458,14 +459,14 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 77,
+    "match": 78,
     "talents": 0,
     "radarCount": 0,
     "ageLabel": "Agora",
@@ -474,8 +475,8 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:49:17.276Z",
-    "updatedAt": "2026-04-08T19:49:17.276Z",
+    "createdAt": "2026-04-09T11:33:50.579Z",
+    "updatedAt": "2026-04-09T11:33:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -524,11 +525,11 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 83,
@@ -540,8 +541,8 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:48:17.276Z",
-    "updatedAt": "2026-04-08T19:48:17.276Z",
+    "createdAt": "2026-04-09T11:32:50.579Z",
+    "updatedAt": "2026-04-09T11:32:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -590,16 +591,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 91,
-    "talents": 9,
-    "radarCount": 9,
+    "talents": 7,
+    "radarCount": 7,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -607,11 +608,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 6,
+    "extraCount": 4,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:47:17.276Z",
-    "updatedAt": "2026-04-08T19:47:17.276Z",
+    "createdAt": "2026-04-09T11:31:50.579Z",
+    "updatedAt": "2026-04-09T11:31:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -660,27 +661,28 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 88,
-    "talents": 2,
-    "radarCount": 2,
+    "match": 86,
+    "talents": 3,
+    "radarCount": 3,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
+      "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:46:17.276Z",
-    "updatedAt": "2026-04-08T19:46:17.276Z",
+    "createdAt": "2026-04-09T11:30:50.579Z",
+    "updatedAt": "2026-04-09T11:30:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -729,27 +731,28 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 88,
-    "talents": 2,
-    "radarCount": 2,
+    "match": 86,
+    "talents": 3,
+    "radarCount": 3,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
+      "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:45:17.276Z",
-    "updatedAt": "2026-04-08T19:45:17.276Z",
+    "createdAt": "2026-04-09T11:29:50.579Z",
+    "updatedAt": "2026-04-09T11:29:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -798,16 +801,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 23,
-    "radarCount": 23,
+    "talents": 29,
+    "radarCount": 29,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -815,11 +818,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 20,
+    "extraCount": 26,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:44:17.276Z",
-    "updatedAt": "2026-04-08T19:44:17.276Z",
+    "createdAt": "2026-04-09T11:28:50.579Z",
+    "updatedAt": "2026-04-09T11:28:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -868,16 +871,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 100,
-    "talents": 9,
-    "radarCount": 9,
+    "match": 99,
+    "talents": 8,
+    "radarCount": 8,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -885,11 +888,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 6,
+    "extraCount": 5,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:43:17.276Z",
-    "updatedAt": "2026-04-08T19:43:17.276Z",
+    "createdAt": "2026-04-09T11:27:50.579Z",
+    "updatedAt": "2026-04-09T11:27:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -938,16 +941,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 88,
-    "talents": 6,
-    "radarCount": 6,
+    "match": 90,
+    "talents": 11,
+    "radarCount": 11,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -955,11 +958,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 3,
+    "extraCount": 8,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:42:17.276Z",
-    "updatedAt": "2026-04-08T19:42:17.276Z",
+    "createdAt": "2026-04-09T11:26:50.579Z",
+    "updatedAt": "2026-04-09T11:26:50.579Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -1008,14 +1011,14 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 74,
+    "match": 70,
     "talents": 0,
     "radarCount": 0,
     "ageLabel": "Agora",
@@ -1024,8 +1027,8 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:41:17.277Z",
-    "updatedAt": "2026-04-08T19:41:17.277Z",
+    "createdAt": "2026-04-09T11:25:50.580Z",
+    "updatedAt": "2026-04-09T11:25:50.580Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -1074,16 +1077,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 91,
-    "talents": 9,
-    "radarCount": 9,
+    "talents": 6,
+    "radarCount": 6,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1091,11 +1094,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 6,
+    "extraCount": 3,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:40:17.277Z",
-    "updatedAt": "2026-04-08T19:40:17.277Z",
+    "createdAt": "2026-04-09T11:24:50.580Z",
+    "updatedAt": "2026-04-09T11:24:50.580Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -1144,16 +1147,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 33,
-    "radarCount": 33,
+    "talents": 28,
+    "radarCount": 28,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1161,11 +1164,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 30,
+    "extraCount": 25,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:39:17.277Z",
-    "updatedAt": "2026-04-08T19:39:17.277Z",
+    "createdAt": "2026-04-09T11:23:50.580Z",
+    "updatedAt": "2026-04-09T11:23:50.580Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -1214,16 +1217,16 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 5,
-    "radarCount": 5,
+    "talents": 8,
+    "radarCount": 8,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1231,11 +1234,11 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 2,
+    "extraCount": 5,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:38:17.277Z",
-    "updatedAt": "2026-04-08T19:38:17.277Z",
+    "createdAt": "2026-04-09T11:22:50.580Z",
+    "updatedAt": "2026-04-09T11:22:50.580Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -1284,11 +1287,11 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
     "match": 90,
@@ -1304,8 +1307,8 @@
     "extraCount": 11,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:37:17.277Z",
-    "updatedAt": "2026-04-08T19:37:17.277Z",
+    "createdAt": "2026-04-09T11:21:50.580Z",
+    "updatedAt": "2026-04-09T11:21:50.580Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
@@ -1354,14 +1357,14 @@
     ],
     "differentials": [],
     "responsibilitySections": [],
-    "createdByRecruiterId": "recutador-sr",
-    "createdByRecruiterName": "Recutador Sr.",
-    "createdByRecruiterRole": "Recruiter Sr.",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
-      "recutador-sr"
+      "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 80,
+    "match": 78,
     "talents": 0,
     "radarCount": 0,
     "ageLabel": "Agora",
@@ -1370,8 +1373,8 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-08T19:36:17.277Z",
-    "updatedAt": "2026-04-08T19:36:17.277Z",
+    "createdAt": "2026-04-09T11:20:50.580Z",
+    "updatedAt": "2026-04-09T11:20:50.580Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
     "recruiterBoardStatusId": "radar"
