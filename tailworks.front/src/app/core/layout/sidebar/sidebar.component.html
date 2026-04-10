@@ -102,11 +102,22 @@
 
   <div class="sidebar__bottom" *ngIf="!isCollapsed">
     <div class="brand">
+
+
+
+      
       <div class="sidebarFooterBrand sidebarFooterBrand--top" aria-hidden="true">
+
+<a class="menuItem sidebarLogout">
+  <span class="material-symbols-rounded icon">waving_hand</span> <span>Já volto</span>
+</a>
+
         <img src="/assets/images/logo-tail.png" alt="TailWorks" class="sidebarFooterBrand__image" />
         <span class="sidebarFooterBrand__copyright">All rights reserved © 2026</span>
       </div>
     </div>
+
+
 
     <div class="sidebarTheme" *ngIf="isProfileSidebarMode">
       <button

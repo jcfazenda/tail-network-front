@@ -1443,3 +1443,26 @@
   background: linear-gradient(135deg, rgba(248, 248, 248, 0.96), rgba(255,255,255,0.94));
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.05);
 }
+
+/* SAIR */
+.sidebarLogout{
+  margin: 2px 0 22px;   // mais respiro (fica bem melhor visualmente)
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.sidebarLogout .icon{
+  font-size: 40px;       // 🔥 aqui é o ganho real
+  opacity: 0.75;
+  transition: all .2s ease;
+}
+
+/* hover leve elegante */
+.sidebarLogout:hover .icon{
+  color: #ff5a5a;
+ // transform: scale(1.12); // dá vida no hover
+}

@@ -34,6 +34,8 @@ import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candi
 import { ChatCandidate, ChatJob } from '../../chat/domain/chat.models';
 import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
 
+import { MatIconModule } from '@angular/material/icon';
+
 type TalentEcoFilter = 'radar' | 'applications' | 'processo';
 type RecruiterEcoFilter = 'radar' | 'candidaturas' | 'processo' | 'solicitada' | 'contratados';
 type EcoFilter = TalentEcoFilter | RecruiterEcoFilter;
@@ -139,7 +141,7 @@ type SideRailCandidateSource = 'ecosystem' | 'job' | 'processo';
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, RouterLink, PanelCandidatosListComponent, ProfitLossCardComponent],
+  imports: [CommonModule, RouterLink, PanelCandidatosListComponent, ProfitLossCardComponent, MatIconModule],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

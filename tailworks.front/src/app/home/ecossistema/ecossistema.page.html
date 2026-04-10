@@ -1,5 +1,7 @@
 <main class="ecosystem-desktop">
+
   <section class="ecosystem-desktop__shell">
+
     <div class="ecosystem-desktop__chip-row">
       <div class="ecosystem-desktop__page-title-block">
         <div class="ecosystem-desktop__page-title">Ecossistema</div>
@@ -8,142 +10,11 @@
           das contratacoes que estao movimentando o ecossistema agora.
         </p>
       </div>
-
-      <div class="ecosystem-desktop__recruiter-chip">
-        <div class="ecosystem-desktop__recruiter-avatar">
-          <img [src]="fallbackAvatarUrl" [alt]="recruiterPanelDisplayName" />
-        </div>
-        <div class="ecosystem-desktop__recruiter-copy">
-          <strong>{{ recruiterPanelDisplayName }}</strong>
-          <span>{{ recruiterPanelDisplayRole }}</span>
-        </div>
-        <button class="ecosystem-desktop__recruiter-action" type="button" aria-label="Ações do recruiter">
-          <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-        </button>
-      </div>
     </div>
-    <section class="ecosystem-desktop__panel">
-      <div class="ecosystem-desktop__panel-head">
-        <div class="ecosystem-desktop__panel-tools">
-          <button class="ecosystem-desktop__tool" type="button" aria-label="Visão geral">
-            <span class="material-symbols-rounded" aria-hidden="true">dashboard</span>
-          </button>
-          <button class="ecosystem-desktop__tool" type="button" aria-label="Tema">
-            <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
-          </button>
-        </div>
+ 
 
-        <div class="ecosystem-desktop__panel-pills">
-          <button
-            class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--wide"
-            type="button"
-            [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'week'"
-            (click)="setOverviewRange('week')"
-          >
-            Semana,
-          </button>
-          <button
-            class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--short"
-            type="button"
-            [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'month'"
-            (click)="setOverviewRange('month')"
-          >
-            Mes
-          </button>
-          <button
-            class="ecosystem-desktop__panel-pill ecosystem-desktop__panel-pill--short"
-            type="button"
-            [class.ecosystem-desktop__panel-pill--active]="overviewRange === 'year'"
-            (click)="setOverviewRange('year')"
-          >
-            Ano
-          </button>
-        </div>
-      </div>
-
-      <div class="ecosystem-desktop__overview">
-        <div class="ecosystem-desktop__section-kicker">
-          <span class="material-symbols-rounded" aria-hidden="true">dashboard</span>
-          <span>Overview</span>
-        </div>
-
-        <p class="ecosystem-desktop__overview-copy">
-          As stacks abaixo representam a concentracao tecnica mais demandada pelo pipeline atual de contratacoes, considerando
-          os movimentos mais recentes do radar, as conversoes em andamento e a aderencia media esperada para as vagas abertas.
-          Esse bloco ajuda a antecipar onde o recrutamento precisa ganhar velocidade, profundidade tecnica e recorrencia de busca.
-        </p>
-      </div>
-
-      <div class="ecosystem-desktop__stack-divider" aria-hidden="true"></div>
-
-      <div class="ecosystem-desktop__stack-board">
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">.NET</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 91%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">91%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">Angular</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 88%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">88%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">React</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 84%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">84%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">Node.js</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 80%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">80%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">Java</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 76%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">76%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">Python</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 73%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">73%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">AWS</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 68%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">68%</strong>
-        </div>
-
-        <div class="ecosystem-desktop__stack-row">
-          <span class="ecosystem-desktop__stack-name">TypeScript</span>
-          <span class="ecosystem-desktop__stack-track" aria-hidden="true">
-            <span class="ecosystem-desktop__stack-fill" style="width: 64%"></span>
-          </span>
-          <strong class="ecosystem-desktop__stack-value">64%</strong>
-        </div>
-      </div>
-    </section>
-
-    <section class="ecosystem-desktop__panel ecosystem-desktop__panel--secondary">
+     <!-- graficos  
+    <section class="ecosystem-desktop__panel ecosystem-desktop__panel--secondary" hidden="true">
       <div class="ecosystem-desktop__panel-head ecosystem-desktop__panel-head--secondary">
         <div class="ecosystem-desktop__signal-target">
           <span class="ecosystem-desktop__signal-target-label">Meta de aderencia</span>
@@ -161,7 +32,124 @@
       </div>
       <app-profit-loss-card />
     </section>
+-->
+    
+    <!-- VIDEOS DO CARD  -->
+    <div class="ecosystem-desktop__panel-resorces">
+      <div class="menu-feature-header">
+        <div class="menu-feature-header__content">
+          <h4>Conheça a vaga em detalhes</h4>
 
+          <p class="ecosystem-desktop__page-copy">
+            Visualize o pulso do mercado em um unico lugar: vagas abertas, stacks mais
+            exigidas, aderencia media esperada e o ritmo real das contratacoes que
+            estao movimentando o ecossistema agora.
+          </p>
+        </div>
+
+        <div class="job-side-bottom">
+          <div class="job-side-people">
+            <div class="job-side-avatars">
+              <img src="https://i.pravatar.cc/56?img=12" alt="Pessoa 1" />
+              <img src="https://i.pravatar.cc/56?img=13" alt="Pessoa 2" />
+              <img src="https://i.pravatar.cc/56?img=14" alt="Pessoa 3" />
+            </div>
+            <span>+2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-feature-card">
+        <div class="menu-feature-video">
+          <img src="assets/img/video-preview.jpg" alt="Vídeo da vaga" />
+
+          <div class="menu-feature-overlay">
+            <button type="button" class="menu-play-btn">
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+
+            <div class="menu-video-meta">
+              <span>00:06</span>
+              <div class="menu-video-bar">
+                <div class="menu-video-bar-fill"></div>
+              </div>
+              <span>08:24</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-mega-content">
+        <div class="job-side-content">
+          <div class="job-side-top">
+            <div class="job-side-brand-row">
+              <div class="job-side-logo">itaú</div>
+
+              <div class="job-side-title-wrap">
+                <h3>Backend .NET Senior - Híbrido</h3>
+                <strong>Itaú Unibanco</strong>
+              </div>
+
+              <div class="job-side-info-wrap">
+                <div class="job-side-meta">
+                  <span class="job-side-location">Rio de Janeiro - RJ</span>
+                  <span class="job-side-chip">Híbrido</span>
+                </div>
+
+                <div class="job-side-salary">R$ 14.000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-side-dashed-line"></div> 
+
+          <div class="job-side-bottom-grid">
+            <!-- STACKS -->
+            <div class="job-side-stacks">
+              <span class="job-side-stacks__title">Stacks mais específicas</span>
+
+              <div class="job-stack-item">
+                <span class="job-stack-item__name">.NET</span>
+                <div class="job-stack-item__track">
+                  <div class="job-stack-item__fill" style="width: 91%;"></div>
+                </div>
+                <span class="job-stack-item__value">91%</span>
+              </div>
+
+              <div class="job-stack-item">
+                <span class="job-stack-item__name">Angular</span>
+                <div class="job-stack-item__track">
+                  <div class="job-stack-item__fill" style="width: 88%;"></div>
+                </div>
+                <span class="job-stack-item__value">88%</span>
+              </div>
+
+              <div class="job-stack-item">
+                <span class="job-stack-item__name">React</span>
+                <div class="job-stack-item__track">
+                  <div class="job-stack-item__fill" style="width: 84%;"></div>
+                </div>
+                <span class="job-stack-item__value">84%</span>
+              </div>
+            </div>
+
+            <!-- ADERÊNCIA -->
+            <div class="job-side-match">
+              <div class="job-side-match__value">88%</div>
+
+              <div class="job-side-match__label">Aderência</div>
+
+              <p class="job-side-match__desc">
+                Percentual mínimo esperado para se candidatar a esta vaga
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- GRID  -->
     <section class="ecosystem-desktop__jobs-board">
       <div class="ecosystem-desktop__jobs-board-divider" aria-hidden="true"></div>
 
@@ -387,10 +375,19 @@
   <aside class="ecosystem-desktop__side-rail" aria-hidden="true">
     <div class="ecosystem-desktop__side-rail-inner">
       <div class="ecosystem-desktop__side-toolbar">
-        <button class="ecosystem-desktop__side-create" type="button" aria-label="Criar vaga">
-          <span class="material-symbols-rounded" aria-hidden="true">add</span>
-          <span>CRIAR VAGA</span>
+        
+       <div class="ecosystem-desktop__recruiter-chip">
+        <div class="ecosystem-desktop__recruiter-avatar">
+          <img [src]="fallbackAvatarUrl" [alt]="recruiterPanelDisplayName" />
+        </div>
+        <div class="ecosystem-desktop__recruiter-copy">
+          <strong>{{ recruiterPanelDisplayName }}</strong>
+          <span>{{ recruiterPanelDisplayRole }}</span>
+        </div>
+        <button class="ecosystem-desktop__recruiter-action" type="button" aria-label="Ações do recruiter">
+          <span class="material-symbols-rounded" aria-hidden="true">tune</span>
         </button>
+      </div>
 
         <div class="ecosystem-desktop__side-toolbar-actions">
           <button class="ecosystem-desktop__side-toolbar-action" type="button" aria-label="Filtrar vagas" (click)="openEcosystemFilters()">
@@ -403,68 +400,7 @@
             <span class="material-symbols-rounded" aria-hidden="true">notifications</span>
           </button>
         </div>
-      </div>
-
-      <div class="ecosystem-desktop__side-kicker">
-        <span>Vaga em Foco</span>
-      </div>
-
-      <p class="ecosystem-desktop__side-kicker-copy">
-        selecione uma vaga no grid para destacar aqui os dados principais da publicacao e do radar atual
-      </p>
-
-      <div class="ecosystem-desktop__side-spotlights">
-        <article class="ecosystem-desktop__candidate-card ecosystem-desktop__candidate-card--job" *ngIf="sideRailRecentJobs[0] as job">
-          <div class="ecosystem-desktop__candidate-card-head">
-            <div class="ecosystem-desktop__jobs-company-logo ecosystem-desktop__jobs-company-logo--side">
-              <img
-                *ngIf="jobCompanyLogoUrl(job); else sideCompanyInitials"
-                class="ecosystem-desktop__jobs-company-logo-image"
-                [src]="jobCompanyLogoUrl(job)"
-                [alt]="job.company"
-                (error)="markCompanyLogoAsBroken(job.id)"
-              />
-              <ng-template #sideCompanyInitials>
-                <span class="ecosystem-desktop__jobs-company-logo-fallback">{{ jobCompanyLogoLabel(job) }}</span>
-              </ng-template>
-            </div>
-            <div class="ecosystem-desktop__candidate-copy">
-              <strong>
-                {{ job.title }}
-                <span class="ecosystem-desktop__candidate-job-model">- {{ jobCardWorkModel(job) }}</span>
-              </strong>
-              <span>{{ jobCardLocation(job) }}</span>
-            </div>
-            <button class="ecosystem-desktop__candidate-card-action" type="button" aria-label="Abrir vaga">
-              <span class="material-symbols-rounded" aria-hidden="true">work</span>
-            </button>
-          </div>
-
-          <div class="ecosystem-desktop__candidate-status-block">
-            <strong>{{ job.company }}</strong>
-            <small>{{ jobCardSalary(job) || 'R$ a combinar' }}</small>
-          </div>
-
-          <span class="ecosystem-desktop__candidate-dotted-line" aria-hidden="true"></span>
-
-          <div class="ecosystem-desktop__candidate-task-board ecosystem-desktop__candidate-task-board--job">
-            <div class="ecosystem-desktop__candidate-stack-row">
-              <span class="ecosystem-desktop__candidate-chip" *ngIf="job.contractType">{{ job.contractType }}</span>
-              <div class="ecosystem-desktop__candidate-avatars" *ngIf="sideRailJobAvatarBadges.length; else noRecentJobAvatars">
-                <ng-container *ngFor="let badge of sideRailJobAvatarBadges; trackBy: trackByAvatarBadge">
-                  <img class="ecosystem-desktop__candidate-avatar-stack" [src]="badge.src" [alt]="badge.label" />
-                </ng-container>
-                <span class="ecosystem-desktop__candidate-avatar-extra" *ngIf="sideRailJobAvatarExtraCount > 0">
-                  +{{ sideRailJobAvatarExtraCount }}
-                </span>
-              </div>
-              <ng-template #noRecentJobAvatars>
-                <span class="ecosystem-desktop__candidate-chip ecosystem-desktop__candidate-chip--low">Sem radar</span>
-              </ng-template>
-            </div>
-          </div>
-        </article>
-      </div>
+      </div> 
 
       <div class="ecosystem-desktop__side-summary ecosystem-desktop__side-summary--secondary">
         <div class="ecosystem-desktop__side-summary-feature ecosystem-desktop__side-summary-feature--column">
@@ -517,11 +453,6 @@
             </button>
           </div>
 
-          <div class="ecosystem-desktop__candidate-status-block">
-            <span>Status do Candidato na vaga</span>
-            <strong>{{ candidate.status }}</strong>
-          </div>
-
           <p class="ecosystem-desktop__candidate-summary">
             {{ candidate.summary }}
           </p>
@@ -546,6 +477,7 @@
       </div>
     </div>
   </aside>
+
 </main>
 
 <aside class="job-side-panel" *ngIf="selectedJobPanel && !isTalentEcosystemMode">
