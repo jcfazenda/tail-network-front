@@ -15,28 +15,35 @@ import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemFilterModalService } from '../ecosystem-filter-modal.service';
 
 type NavItem = { label: string; route: string; icon: string };
+
 type CandidateTreeItem = {
   label: string;
   icon: string;
   route?: string;
   queryParams?: Params;
+  badge?: number | string | null;
 };
+
 type CandidateTreeGroup = {
   label: string;
   items: CandidateTreeItem[];
 };
+
 type CandidateBasicProfile = {
   name?: string;
   city?: string;
   state?: string;
   location?: string;
 };
+
 type CandidateBasicDraft = {
   profile?: CandidateBasicProfile;
   photoPreviewUrl?: string;
   photoFileName?: string;
 };
+
 type ThemeMode = 'light' | 'dark';
+
 type NotificationConfettiPiece = {
   left: string;
   top: string;
@@ -60,11 +67,14 @@ type NotificationConfettiPiece = {
 export class SidebarComponent {
   readonly overlayMode = input(false);
   readonly collapsedMode = input(false);
+
   private static readonly basicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   private static readonly photoUpdatedEventName = 'tailworks:candidate-photo-updated';
   private static readonly themeStorageKey = 'tailworks:theme-mode:v1';
+
   readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
+
   private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthFacade);
@@ -75,6 +85,7 @@ export class SidebarComponent {
   private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
   private readonly ecosystemFilterModalService = inject(EcosystemFilterModalService);
   private readonly cdr = inject(ChangeDetectorRef);
+
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -83,15 +94,20 @@ export class SidebarComponent {
     ),
     { initialValue: this.router.url },
   );
+
   activeThemeMode: ThemeMode = 'light';
+
   filterCompany = '';
   filterState = '';
   filterStack = '';
   filterCode = '';
+
   readonly isFilterPopupOpen = this.ecosystemFilterModalService.isOpen;
+
   private notificationModal: TalentNotification | null = null;
   private notificationsOpen = false;
   private confettiPieces: NotificationConfettiPiece[] = [];
+  private footerMenuOpen = false;
 
   private readonly recruiterItems: NavItem[] = [
     { label: 'Minhas Vagas', route: '/home/ecossistema', icon: 'work' },
@@ -150,31 +166,28 @@ export class SidebarComponent {
 
     return [
       {
-        label: 'Recrutamento',
+        label: '',
         items: [
           { label: 'Novo Card', icon: 'add_box', route: '/vagas/cadastro' },
           { label: 'Minhas Vagas', icon: 'work', route: '/home/ecossistema' },
         ],
       },
       {
-        label: 'Time',
+        label: '',
         items: [
-          { label: 'Chat do Time', icon: 'forum', route: '/recruiter/time' },
-          { label: 'Core Algoritimo', icon: 'psychology', route: '/recruiter/core-algoritimo' },
+          { label: 'Treinamento IA', icon: 'psychology', route: '/recruiter/core-algoritimo' },
           ...(canManageDirectory ? [{ label: 'Recruiters', icon: 'badge', route: '/recruiter/panel' }] : []),
           ...(canCreateRecruiter ? [{ label: 'Novo Recruiter', icon: 'person_add', route: '/recruiter/cadastro' }] : []),
         ],
       },
       ...(canManageDirectory
         ? [{
-            label: 'Empresas',
-            items: [
-              { label: 'Empresas', icon: 'apartment', route: '/empresa' }, 
-            ],
+            label: '',
+            items: [{ label: 'Empresas', icon: 'apartment', route: '/empresa' }],
           } satisfies CandidateTreeGroup]
         : []),
       {
-        label: 'Conta',
+        label: '',
         items: [
           { label: 'Sair', icon: 'logout', route: '/login' },
         ],
@@ -334,6 +347,32 @@ export class SidebarComponent {
 
   get sidebarDisplayInitials(): string {
     return this.isCandidateMode ? this.candidateDisplayInitials : this.recruiterDisplayInitials;
+  }
+
+  // ===== Footer profile =====
+
+  get footerAvatarUrl(): string {
+    return this.sidebarAvatarUrl;
+  }
+
+  get footerDisplayName(): string {
+    return this.sidebarDisplayName;
+  }
+
+  get footerDisplayMeta(): string {
+    return this.isCandidateMode ? 'Premium version' : this.sidebarDisplayMeta;
+  }
+
+  get footerDisplayInitials(): string {
+    return this.sidebarDisplayInitials;
+  }
+
+  get isFooterMenuOpen(): boolean {
+    return this.footerMenuOpen;
+  }
+
+  get shouldShowFooterProfile(): boolean {
+    return this.isProfileSidebarMode && !this.isCollapsed;
   }
 
   get isTemplateLanding(): boolean {
@@ -496,6 +535,7 @@ export class SidebarComponent {
       this.authService.logout();
     }
 
+    this.footerMenuOpen = false;
     this.hideSidebarOnCompactViewport();
   }
 
@@ -504,6 +544,7 @@ export class SidebarComponent {
       this.authService.logout();
     }
 
+    this.footerMenuOpen = false;
     this.hideSidebarOnCompactViewport();
   }
 
@@ -546,6 +587,36 @@ export class SidebarComponent {
     if (input) {
       input.value = '';
     }
+  }
+
+  openFooterProfileMenu(): void {
+    this.footerMenuOpen = !this.footerMenuOpen;
+    this.cdr.markForCheck();
+  }
+
+  closeFooterProfileMenu(): void {
+    if (!this.footerMenuOpen) {
+      return;
+    }
+
+    this.footerMenuOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  goToProfileFromFooter(): void {
+    this.footerMenuOpen = false;
+
+    if (this.isCandidateMode) {
+      void this.router.navigate(['/usuario/dados-cadastrais']);
+      return;
+    }
+
+    void this.router.navigate(['/recruiter/panel']);
+  }
+
+  logoutFromFooter(): void {
+    this.footerMenuOpen = false;
+    this.authService.logout();
   }
 
   openCreateJob(): void {
@@ -595,23 +666,30 @@ export class SidebarComponent {
     this.notificationsOpen = !this.notificationsOpen;
     if (this.notificationsOpen) {
       this.notificationModal = null;
+      this.footerMenuOpen = false;
     }
+
+    this.cdr.markForCheck();
   }
 
   closeNotificationModal(): void {
     this.notificationModal = null;
     this.notificationsOpen = false;
     this.confettiPieces = [];
+    this.footerMenuOpen = false;
     this.ecosystemFilterModalService.close();
+    this.cdr.markForCheck();
   }
 
   openNotificationPreview(notification: TalentNotification): void {
     this.talentNotificationsFacade.markAsRead(notification.id);
     this.notificationModal = notification;
     this.notificationsOpen = false;
+    this.footerMenuOpen = false;
     this.confettiPieces = this.shouldLaunchNotificationConfetti(notification, this.activeTalentNotificationStage)
       ? this.buildNotificationConfetti()
       : [];
+    this.cdr.markForCheck();
   }
 
   openNotificationConversation(): void {
@@ -668,8 +746,21 @@ export class SidebarComponent {
       return;
     }
 
+    if (this.footerMenuOpen) {
+      this.closeFooterProfileMenu();
+      return;
+    }
+
     if (this.notificationsOpen || this.notificationModal) {
       this.closeNotificationModal();
+    }
+  }
+
+  @HostListener('document:click')
+  handleDocumentClick(): void {
+    if (this.footerMenuOpen) {
+      this.footerMenuOpen = false;
+      this.cdr.markForCheck();
     }
   }
 
@@ -731,6 +822,7 @@ export class SidebarComponent {
 
   private buildNotificationConfetti(): NotificationConfettiPiece[] {
     const palette = ['#f59e0b', '#f97316', '#fde68a', '#fb7185', '#38bdf8', '#34d399'];
+
     return Array.from({ length: 350 }, (_, index) => {
       const angle = (Math.PI * 2 * index) / 350;
       const ring = index % 5;
