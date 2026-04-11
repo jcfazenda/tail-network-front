@@ -6,6 +6,8 @@ import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { CompanyRecord } from '../empresa.models';
+import { RecruiterRecord } from '../../recruiter/recruiter.models';
+import { MockJobRecord } from '../../vagas/data/vagas.models';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type RecruiterFilter = 'all' | 'withRecruiters' | 'withoutRecruiters';
@@ -20,6 +22,18 @@ type CompanyFormModel = {
   logoUrl: string;
   logoLabel: string;
   active: boolean;
+};
+
+type CompanyDetailTab = 'recruiters' | 'jobs';
+
+type CompanyViewModel = {
+  company: CompanyRecord;
+  formattedLocation: string;
+  recruiterCount: number;
+  jobCount: number;
+  recruiters: RecruiterRecord[];
+  jobs: MockJobRecord[];
+  canDelete: boolean;
 };
 
 @Component({
@@ -66,6 +80,9 @@ export class EmpresaPage implements OnDestroy {
   private readonly jobsFacade = inject(JobsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
+  private companyViewModels: CompanyViewModel[] = [];
+  private filteredCompaniesSnapshot: CompanyViewModel[] = [];
+  private pagedCompaniesSnapshot: CompanyViewModel[] = [];
 
   searchTerm = '';
   statusFilter: CompanyStatusFilter = 'all';
@@ -84,22 +101,14 @@ export class EmpresaPage implements OnDestroy {
   isFilterModalOpen = false;
 
   companyForm: CompanyFormModel = this.createEmptyForm();
+  selectedCompanyId = '';
+  activeDetailTab: CompanyDetailTab = 'recruiters';
 
   constructor() {
-    this.subscriptions.add(this.companiesFacade.changes$.subscribe(() => {
-      this.ensureValidCurrentPage();
-      this.cdr.markForCheck();
-    }));
-
-    this.subscriptions.add(this.recruitersFacade.changes$.subscribe(() => {
-      this.ensureValidCurrentPage();
-      this.cdr.markForCheck();
-    }));
-
-    this.subscriptions.add(this.jobsFacade.jobsChanged$.subscribe(() => {
-      this.ensureValidCurrentPage();
-      this.cdr.markForCheck();
-    }));
+    this.subscriptions.add(this.companiesFacade.changes$.subscribe(() => this.refreshViewState()));
+    this.subscriptions.add(this.recruitersFacade.changes$.subscribe(() => this.refreshViewState()));
+    this.subscriptions.add(this.jobsFacade.jobsChanged$.subscribe(() => this.refreshViewState()));
+    this.refreshViewState();
   }
 
   ngOnDestroy(): void {
@@ -107,89 +116,31 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get allCompanies(): CompanyRecord[] {
-    return this.companiesFacade.listCompanies(true);
+    return this.companyViewModels.map((entry) => entry.company);
   }
 
-  get filteredCompanies(): CompanyRecord[] {
-    const normalizedSearch = this.searchTerm.trim().toLocaleLowerCase('pt-BR');
-
-    const filtered = this.allCompanies.filter((company) => {
-      if (this.statusFilter === 'active' && !company.active) {
-        return false;
-      }
-
-      if (this.statusFilter === 'inactive' && company.active) {
-        return false;
-      }
-
-      if (this.sectorFilter !== 'all' && company.sector !== this.sectorFilter) {
-        return false;
-      }
-
-      const formattedLocation = this.formatCompanyLocation(company.location);
-      if (this.locationFilter !== 'all' && formattedLocation !== this.locationFilter) {
-        return false;
-      }
-
-      const recruiterCount = this.recruiterCount(company.name);
-      if (this.recruiterFilter === 'withRecruiters' && recruiterCount === 0) {
-        return false;
-      }
-
-      if (this.recruiterFilter === 'withoutRecruiters' && recruiterCount > 0) {
-        return false;
-      }
-
-      if (!normalizedSearch) {
-        return true;
-      }
-
-      return [
-        company.name,
-        company.sector,
-        company.location,
-        company.description,
-        company.logoLabel,
-      ]
-        .join(' ')
-        .toLocaleLowerCase('pt-BR')
-        .includes(normalizedSearch);
-    });
-
-    return filtered.sort((companyA, companyB) => {
-      switch (this.sortBy) {
-        case 'name-desc':
-          return companyB.name.localeCompare(companyA.name, 'pt-BR');
-        case 'jobs-desc':
-          return this.jobCount(companyB.name) - this.jobCount(companyA.name);
-        case 'recruiters-desc':
-          return this.recruiterCount(companyB.name) - this.recruiterCount(companyA.name);
-        case 'name-asc':
-        default:
-          return companyA.name.localeCompare(companyB.name, 'pt-BR');
-      }
-    });
+  get filteredCompanies(): CompanyViewModel[] {
+    return this.filteredCompaniesSnapshot;
   }
 
-  get companies(): CompanyRecord[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredCompanies.slice(start, start + this.pageSize);
+  get companies(): CompanyViewModel[] {
+    return this.pagedCompaniesSnapshot;
   }
 
   get totalCompanies(): number {
-    return this.allCompanies.length;
+    return this.companyViewModels.length;
   }
 
   get activeCompanies(): number {
-    return this.allCompanies.filter((company) => company.active).length;
+    return this.companyViewModels.filter(({ company }) => company.active).length;
   }
 
   get inactiveCompanies(): number {
-    return this.allCompanies.filter((company) => !company.active).length;
+    return this.companyViewModels.filter(({ company }) => !company.active).length;
   }
 
   get linkedRecruiters(): number {
-    return this.recruitersFacade.listAllRecruiters().filter((recruiter) => recruiter.active).length;
+    return this.companyViewModels.reduce((total, entry) => total + entry.recruiters.filter((recruiter) => recruiter.active).length, 0);
   }
 
   get totalPages(): number {
@@ -216,13 +167,100 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get sectorOptions(): string[] {
-    return [...new Set(this.allCompanies.map((company) => company.sector).filter(Boolean))]
+    return [...new Set(this.companyViewModels.map(({ company }) => company.sector).filter(Boolean))]
       .sort((first, second) => first.localeCompare(second, 'pt-BR'));
   }
 
   get locationOptions(): string[] {
-    return [...new Set(this.allCompanies.map((company) => this.formatCompanyLocation(company.location)).filter(Boolean))]
+    return [...new Set(this.companyViewModels.map(({ formattedLocation }) => formattedLocation).filter(Boolean))]
       .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+  }
+
+  get selectedCompany(): CompanyViewModel | undefined {
+    return this.companyViewModels.find((entry) => entry.company.id === this.selectedCompanyId)
+      ?? this.filteredCompaniesSnapshot[0]
+      ?? this.companyViewModels[0];
+  }
+
+  get selectedCompanyRecruiters(): RecruiterRecord[] {
+    return this.selectedCompany?.recruiters ?? [];
+  }
+
+  get selectedCompanyJobs(): MockJobRecord[] {
+    return this.selectedCompany?.jobs ?? [];
+  }
+
+  get companyResourceSummary(): string {
+    const selected = this.selectedCompany;
+    if (!selected) {
+      return 'Selecione uma empresa para visualizar contexto, recruiters e vagas vinculadas no ecossistema.';
+    }
+
+    return selected.company.description?.trim()
+      || `${selected.company.name} opera em ${selected.company.sector} com ${selected.recruiterCount} recruiters e ${selected.jobCount} vagas ligadas ao ecossistema.`;
+  }
+
+  get companyResourceAvatarBadges(): Array<{ src: string; label: string }> {
+    return this.selectedCompanyRecruiters
+      .filter((recruiter) => !!recruiter.avatarUrl)
+      .slice(0, 4)
+      .map((recruiter) => ({ src: recruiter.avatarUrl as string, label: recruiter.name }));
+  }
+
+  get companyResourceAvatarExtraCount(): number {
+    return Math.max(0, this.selectedCompanyRecruiters.length - this.companyResourceAvatarBadges.length);
+  }
+
+  get companyResourcePrimaryJob(): MockJobRecord | undefined {
+    return this.selectedCompanyJobs[0];
+  }
+
+  get companyResourceHasPreview(): boolean {
+    return !!this.companyResourcePrimaryJob?.homeAnnouncementImageUrl;
+  }
+
+  get companyResourcePreviewUrl(): string {
+    return this.companyResourcePrimaryJob?.homeAnnouncementImageUrl ?? '';
+  }
+
+  get companyResourceStacks(): Array<{ name: string; match: number }> {
+    const stackMap = new Map<string, { total: number; count: number }>();
+
+    this.selectedCompanyJobs.forEach((job) => {
+      job.techStack.forEach((stack) => {
+        const current = stackMap.get(stack.name) ?? { total: 0, count: 0 };
+        current.total += stack.match;
+        current.count += 1;
+        stackMap.set(stack.name, current);
+      });
+    });
+
+    return [...stackMap.entries()]
+      .map(([name, value]) => ({
+        name,
+        match: Math.round(value.total / value.count),
+      }))
+      .sort((left, right) => right.match - left.match)
+      .slice(0, 5);
+  }
+
+  get companyResourceAdherence(): number {
+    if (!this.selectedCompanyJobs.length) {
+      return 0;
+    }
+
+    const total = this.selectedCompanyJobs.reduce((sum, job) => sum + job.match, 0);
+    return Math.round(total / this.selectedCompanyJobs.length);
+  }
+
+  get companyResourceMetricLabel(): string {
+    const selected = this.selectedCompany;
+    if (!selected) {
+      return 'Sem operação ativa';
+    }
+
+    const activeJobs = selected.jobs.filter((job) => job.status === 'ativas').length;
+    return `${activeJobs} vagas ativas`;
   }
 
   get hasActiveFilters(): boolean {
@@ -248,11 +286,11 @@ export class EmpresaPage implements OnDestroy {
 
   setStatusFilter(filter: CompanyStatusFilter): void {
     this.statusFilter = filter;
-    this.currentPage = 1;
+    this.applyFilters();
   }
 
   onSearchChange(): void {
-    this.currentPage = 1;
+    this.applyFilters();
   }
 
   openFilterModal(): void {
@@ -264,7 +302,7 @@ export class EmpresaPage implements OnDestroy {
   }
 
   applyAdvancedFilters(): void {
-    this.currentPage = 1;
+    this.applyFilters();
     this.closeFilterModal();
   }
 
@@ -275,7 +313,7 @@ export class EmpresaPage implements OnDestroy {
     this.sectorFilter = 'all';
     this.locationFilter = 'all';
     this.sortBy = 'name-asc';
-    this.currentPage = 1;
+    this.applyFilters();
   }
 
   clearFiltersFromModal(): void {
@@ -332,9 +370,13 @@ export class EmpresaPage implements OnDestroy {
   }
 
   saveCompany(): void {
+    const existing = this.companyForm.id
+      ? this.companiesFacade.getCompanyById(this.companyForm.id)
+      : this.companiesFacade.getCompanyByName(this.companyForm.name);
+
     const payload: CompanyFormModel = {
       ...this.companyForm,
-      id: this.companyForm.id || this.generateCompanyId(),
+      id: this.companyForm.id || existing?.id || this.generateCompanyId(),
       name: this.companyForm.name.trim(),
       sector: this.companyForm.sector.trim(),
       location: this.companyForm.location.trim(),
@@ -349,35 +391,32 @@ export class EmpresaPage implements OnDestroy {
       return;
     }
 
-    const facade = this.companiesFacade as unknown as {
-      createCompany?: (company: CompanyRecord) => void;
-      updateCompany?: (company: CompanyRecord) => void;
-    };
+    const savedCompany = this.companiesFacade.saveCompany({
+      id: payload.id,
+      name: payload.name,
+      sector: payload.sector,
+      location: payload.location,
+      description: payload.description,
+      logoUrl: payload.logoUrl || undefined,
+      logoLabel: payload.logoLabel,
+      active: payload.active,
+      followers: existing?.followers ?? '120.000 seguidores',
+      linkedinCount: existing?.linkedinCount ?? '120.000 no LinkedIn',
+      website: existing?.website,
+      emailDomain: existing?.emailDomain,
+      monthlyHiringCount: existing?.monthlyHiringCount ?? 0,
+      notes: existing?.notes,
+    });
 
-    if (this.modalMode === 'create') {
-      if (!facade.createCompany) {
-        this.modalError = 'Não encontrei createCompany no facade. Ajuste o nome do método no save.';
-        return;
-      }
-
-      facade.createCompany(payload as CompanyRecord);
-    } else {
-      if (!facade.updateCompany) {
-        this.modalError = 'Não encontrei updateCompany no facade. Ajuste o nome do método no save.';
-        return;
-      }
-
-      facade.updateCompany(payload as CompanyRecord);
-    }
-
+    this.selectedCompanyId = savedCompany.id;
+    this.activeDetailTab = 'recruiters';
     this.closeModal();
-    this.ensureValidCurrentPage();
-    this.cdr.markForCheck();
+    this.refreshViewState();
   }
 
   toggleCompanyActive(company: CompanyRecord): void {
     this.companiesFacade.toggleCompanyActive(company.id);
-    this.ensureValidCurrentPage();
+    this.refreshViewState();
   }
 
   deleteCompany(company: CompanyRecord): void {
@@ -386,21 +425,22 @@ export class EmpresaPage implements OnDestroy {
     }
 
     this.companiesFacade.deleteCompany(company.id);
-    this.ensureValidCurrentPage();
+    if (this.selectedCompanyId === company.id) {
+      this.selectedCompanyId = '';
+    }
+    this.refreshViewState();
   }
 
   recruiterCount(companyName: string): number {
-    return this.recruitersFacade
-      .listAllRecruiters()
-      .filter((recruiter) => recruiter.managedCompanies.includes(companyName)).length;
+    return this.findCompanyViewModelByName(companyName)?.recruiterCount ?? 0;
   }
 
   jobCount(companyName: string): number {
-    return this.jobsFacade.getJobs().filter((job) => job.company === companyName).length;
+    return this.findCompanyViewModelByName(companyName)?.jobCount ?? 0;
   }
 
   canDeleteCompany(company: CompanyRecord): boolean {
-    return this.recruiterCount(company.name) === 0 && this.jobCount(company.name) === 0;
+    return this.findCompanyViewModelByName(company.name)?.canDelete ?? true;
   }
 
   formatCompanyLocation(location: string): string {
@@ -425,11 +465,174 @@ export class EmpresaPage implements OnDestroy {
     return company.id;
   }
 
+  trackCompanyViewModel(_index: number, entry: CompanyViewModel): string {
+    return entry.company.id;
+  }
+
+  trackRecruiter(_index: number, recruiter: RecruiterRecord): string {
+    return recruiter.id;
+  }
+
+  trackJob(_index: number, job: MockJobRecord): string {
+    return job.id;
+  }
+
+  selectCompany(companyId: string): void {
+    if (this.selectedCompanyId === companyId) {
+      return;
+    }
+
+    this.selectedCompanyId = companyId;
+    this.activeDetailTab = 'recruiters';
+    this.cdr.markForCheck();
+  }
+
+  setDetailTab(tab: CompanyDetailTab): void {
+    this.activeDetailTab = tab;
+  }
+
+  recruiterInitials(recruiter: RecruiterRecord): string {
+    return recruiter.name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join('')
+      .toUpperCase();
+  }
+
+  totalOpenJobsForSelectedCompany(): number {
+    return this.selectedCompanyJobs.filter((job) => job.status === 'ativas').length;
+  }
+
+  companyLogoLabel(company: CompanyRecord): string {
+    return (company.logoLabel || this.buildLogoLabel(company.name)).slice(0, 2).toUpperCase();
+  }
+
   private ensureValidCurrentPage(): void {
     const adjustedTotalPages = Math.max(1, Math.ceil(this.filteredCompanies.length / this.pageSize));
     if (this.currentPage > adjustedTotalPages) {
       this.currentPage = adjustedTotalPages;
     }
+  }
+
+  private refreshViewState(): void {
+    this.companyViewModels = this.buildCompanyViewModels();
+    this.applyFilters(false);
+  }
+
+  private applyFilters(markForCheck = true): void {
+    const normalizedSearch = this.searchTerm.trim().toLocaleLowerCase('pt-BR');
+
+    this.filteredCompaniesSnapshot = this.companyViewModels
+      .filter((entry) => {
+        if (this.statusFilter === 'active' && !entry.company.active) {
+          return false;
+        }
+
+        if (this.statusFilter === 'inactive' && entry.company.active) {
+          return false;
+        }
+
+        if (this.sectorFilter !== 'all' && entry.company.sector !== this.sectorFilter) {
+          return false;
+        }
+
+        if (this.locationFilter !== 'all' && entry.formattedLocation !== this.locationFilter) {
+          return false;
+        }
+
+        if (this.recruiterFilter === 'withRecruiters' && entry.recruiterCount === 0) {
+          return false;
+        }
+
+        if (this.recruiterFilter === 'withoutRecruiters' && entry.recruiterCount > 0) {
+          return false;
+        }
+
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        return [
+          entry.company.name,
+          entry.company.sector,
+          entry.company.location,
+          entry.company.description,
+          entry.company.logoLabel,
+        ]
+          .join(' ')
+          .toLocaleLowerCase('pt-BR')
+          .includes(normalizedSearch);
+      })
+      .sort((left, right) => {
+        switch (this.sortBy) {
+          case 'name-desc':
+            return right.company.name.localeCompare(left.company.name, 'pt-BR');
+          case 'jobs-desc':
+            return right.jobCount - left.jobCount;
+          case 'recruiters-desc':
+            return right.recruiterCount - left.recruiterCount;
+          case 'name-asc':
+          default:
+            return left.company.name.localeCompare(right.company.name, 'pt-BR');
+        }
+      });
+
+    this.ensureValidCurrentPage();
+
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.pagedCompaniesSnapshot = this.filteredCompaniesSnapshot.slice(start, start + this.pageSize);
+
+    if (!this.selectedCompanyId || !this.filteredCompaniesSnapshot.some((entry) => entry.company.id === this.selectedCompanyId)) {
+      this.selectedCompanyId = this.filteredCompaniesSnapshot[0]?.company.id ?? this.companyViewModels[0]?.company.id ?? '';
+    }
+
+    if (markForCheck) {
+      this.cdr.markForCheck();
+    }
+  }
+
+  private buildCompanyViewModels(): CompanyViewModel[] {
+    const companies = this.companiesFacade.listCompanies(true);
+    const recruiters = this.recruitersFacade.listAllRecruiters();
+    const jobs = this.jobsFacade.getJobs();
+
+    const recruitersByCompany = new Map<string, RecruiterRecord[]>();
+    const jobsByCompany = new Map<string, MockJobRecord[]>();
+
+    recruiters.forEach((recruiter) => {
+      recruiter.managedCompanies.forEach((companyName) => {
+        const bucket = recruitersByCompany.get(companyName) ?? [];
+        bucket.push(recruiter);
+        recruitersByCompany.set(companyName, bucket);
+      });
+    });
+
+    jobs.forEach((job) => {
+      const bucket = jobsByCompany.get(job.company) ?? [];
+      bucket.push(job);
+      jobsByCompany.set(job.company, bucket);
+    });
+
+    return companies.map((company) => {
+      const companyRecruiters = recruitersByCompany.get(company.name) ?? [];
+      const companyJobs = jobsByCompany.get(company.name) ?? [];
+
+      return {
+        company,
+        formattedLocation: this.formatCompanyLocation(company.location),
+        recruiterCount: companyRecruiters.length,
+        jobCount: companyJobs.length,
+        recruiters: [...companyRecruiters].sort((left, right) => left.name.localeCompare(right.name, 'pt-BR')),
+        jobs: [...companyJobs].sort((left, right) => right.match - left.match),
+        canDelete: companyRecruiters.length === 0 && companyJobs.length === 0,
+      };
+    });
+  }
+
+  private findCompanyViewModelByName(companyName: string): CompanyViewModel | undefined {
+    return this.companyViewModels.find((entry) => entry.company.name === companyName);
   }
 
   private createEmptyForm(): CompanyFormModel {

@@ -1,483 +1,90 @@
-<section class="empresa-page">
+<div class="empresa-page">
   <div class="empresa-page__shell">
-    <div class="empresa-page__intro">
-      <div class="empresa-page__intro-copy">
-        <h1>Empresas</h1>
-        <p>
-          Gerencie empresas do ecossistema, acompanhe vínculos com recruiters e
-          visualize rapidamente a disponibilidade operacional da base.
-        </p>
+
+    <!-- TOPBAR -->
+    <div class="empresa-page__topbar">
+      <div class="empresa-page__topbar-left">
+        <div class="topbar-header">
+          <div class="topbar-header__title">Empresas</div>
+          <div class="topbar-header__description">
+            Gerencie empresas cadastradas, acompanhe vínculos e visualize rapidamente o status do ecossistema.
+          </div>
+        </div>
+      </div>
+
+      <div class="empresa-page__topbar-right"></div>
+    </div>
+
+    <!-- COLUNAS -->
+    <div class="empresa-page__column empresa-page__column--left"></div>
+
+    <div class="empresa-page__column empresa-page__column--center"></div>
+
+    <div class="empresa-page__column empresa-page__column--right">
+      <div class="company-panel">
+
+        <div class="company-panel__header">
+          <div class="company-panel__title-block">
+            <div class="company-panel__title">Empresas</div>
+            <div class="company-panel__description">
+              Acompanhe e gerencie todas as empresas cadastradas.
+            </div>
+          </div>
+
+          <div class="company-panel__count">24 Empresas</div>
+        </div>
+
+        <div class="company-panel__search">
+          <input type="text" placeholder="Pesquisar empresa..." />
+        </div>
+
+        <div class="company-list">
+          <div class="company-card" *ngFor="let item of [1,2,3,4]">
+
+            <div class="company-card__top">
+              <div class="company-card__logo"></div>
+
+              <div class="company-card__info">
+                <div class="company-card__header">
+                  <div class="company-card__title">
+                    <div class="company-card__name">Empresa Nome</div>
+                    <div class="company-card__location">São Paulo - SP</div>
+                  </div>
+
+                  <div class="company-card__type-chip company-card__type-chip--consultoria">
+                    Consultoria
+                  </div>
+                </div>
+
+                <div class="company-card__description">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non justo vitae massa fermentum aliquam.
+                </div>
+              </div>
+            </div>
+
+            <div class="company-card__footer">
+              <div class="company-card__footer-item">
+                <span class="company-card__footer-label">Vagas em aberto</span>
+                <strong class="company-card__footer-value">12</strong>
+              </div>
+
+              <div class="company-card__footer-divider" aria-hidden="true"></div>
+
+              <div class="company-card__footer-item">
+                <span class="company-card__footer-label">Vagas em finalização</span>
+                <strong class="company-card__footer-value">05</strong>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="company-panel__footer">
+          <button class="company-panel__button">+ Nova Empresa</button>
+        </div>
+
       </div>
     </div>
 
-    <section class="empresa-page__metrics">
-      <article class="empresa-page__metric-card">
-        <div class="empresa-page__metric-icon">
-          <span class="material-symbols-rounded" aria-hidden="true">apartment</span>
-        </div>
-        <div class="empresa-page__metric-content">
-          <span>Empresas</span>
-          <strong>{{ totalCompanies }}</strong>
-          <small>Total cadastradas na base</small>
-        </div>
-      </article>
-
-      <article class="empresa-page__metric-card">
-        <div class="empresa-page__metric-icon">
-          <span class="material-symbols-rounded" aria-hidden="true">fact_check</span>
-        </div>
-        <div class="empresa-page__metric-content">
-          <span>Ativas</span>
-          <strong>{{ activeCompanies }}</strong>
-          <small>Disponíveis para operação</small>
-        </div>
-      </article>
-
-      <article class="empresa-page__metric-card">
-        <div class="empresa-page__metric-icon">
-          <span class="material-symbols-rounded" aria-hidden="true">group</span>
-        </div>
-        <div class="empresa-page__metric-content">
-          <span>Recruiters ligados</span>
-          <strong>{{ linkedRecruiters }}</strong>
-          <small>Conectados às empresas</small>
-        </div>
-      </article>
-
-      <article class="empresa-page__metric-card">
-        <div class="empresa-page__metric-icon">
-          <span class="material-symbols-rounded" aria-hidden="true">block</span>
-        </div>
-        <div class="empresa-page__metric-content">
-          <span>Inativas</span>
-          <strong>{{ inactiveCompanies }}</strong>
-          <small>Fora da operação</small>
-        </div>
-      </article>
-    </section>
-
-    <!-- Botão Nova Empresa fora do grid/lista -->
-    <div class="empresa-page__new-company-bar">
-      <button class="empresa-page__primary-action empresa-page__primary-action--small" type="button" (click)="openCreateModal()">
-        <span class="material-symbols-rounded" aria-hidden="true">add_business</span>
-        <span>Nova empresa</span>
-      </button>
-    </div>
-
-    <div class="empresa-page__content">
-      <div class="empresa-page__main">
-        <section class="empresa-page__headline">
-          <div>
-            <strong>{{ totalCompanies }}</strong>
-            <span>Empresas</span>
-          </div>
-
-          <p>
-            Visualize a base cadastrada, acompanhe vagas abertas, recruiters
-            associados e mantenha o ecossistema organizado em uma experiência
-            mais limpa, premium e operacional.
-          </p>
-        </section>
-
-        <section class="empresa-page__list" *ngIf="companies.length; else emptyBoard">
-          <div class="empresa-page__list-topbar">
-            <div class="empresa-page__search">
-              <span class="material-symbols-rounded" aria-hidden="true">search</span>
-              <input
-                type="search"
-                placeholder="Buscar empresa, setor ou localidade"
-                [(ngModel)]="searchTerm"
-                (ngModelChange)="onSearchChange()"
-              />
-            </div>
-
-            <div class="empresa-page__toolbar-actions">
-              <div class="empresa-page__filters">
-                <button
-                  class="empresa-page__filter-chip"
-                  type="button"
-                  [class.empresa-page__filter-chip--active]="statusFilter === 'all'"
-                  (click)="setStatusFilter('all')"
-                >
-                  Todas
-                </button>
-
-                <button
-                  class="empresa-page__filter-chip"
-                  type="button"
-                  [class.empresa-page__filter-chip--active]="statusFilter === 'active'"
-                  (click)="setStatusFilter('active')"
-                >
-                  Ativas
-                </button>
-
-                <button
-                  class="empresa-page__filter-chip"
-                  type="button"
-                  [class.empresa-page__filter-chip--active]="statusFilter === 'inactive'"
-                  (click)="setStatusFilter('inactive')"
-                >
-                  Inativas
-                </button>
-              </div>
-
-              <button class="empresa-page__ghost-button" type="button" (click)="openFilterModal()">
-                <span class="material-symbols-rounded" aria-hidden="true">tune</span>
-                <span>Filtros</span>
-                <span class="empresa-page__filter-count" *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</span>
-              </button>
-            </div>
-          </div>
-
-          <header class="empresa-page__list-head">
-            <span>Empresa</span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </header>
-
-          <article class="empresa-page__list-row" *ngFor="let company of companies; trackBy: trackCompany">
-            <div class="empresa-page__company">
-              <div
-                class="empresa-page__logo"
-                [style.background-image]="company.logoUrl ? 'url(' + company.logoUrl + ')' : 'none'"
-                [class.empresa-page__logo--image]="!!company.logoUrl"
-              >
-                <ng-container *ngIf="!company.logoUrl">
-                  {{ company.logoLabel | uppercase }}
-                </ng-container>
-              </div>
-
-              <div class="empresa-page__company-copy">
-                <strong>{{ company.name }}</strong>
-                <small>{{ company.sector }} · {{ formatCompanyLocation(company.location) }}</small>
-              </div>
-            </div>
-
-            <div class="empresa-page__list-meta">
-              <strong>Recrutadores ligados</strong>
-              <small>{{ recruiterCount(company.name) }}</small>
-            </div>
-
-            <div class="empresa-page__list-meta">
-              <strong>Cards ligados</strong>
-              <small>{{ jobCount(company.name) }}</small>
-            </div>
-
-            <div class="empresa-page__list-status">
-              <span class="empresa-page__status-pill" [class.empresa-page__status-pill--inactive]="!company.active">
-                {{ company.active ? 'Ativa' : 'Inativa' }}
-              </span>
-            </div>
-
-            <div class="empresa-page__row-actions">
-              <button
-                class="empresa-page__icon-button empresa-page__icon-button--primary"
-                type="button"
-                (click)="openEditModal(company)"
-                aria-label="Editar empresa"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">edit</span>
-              </button>
-
-              <button
-                class="empresa-page__icon-button"
-                type="button"
-                (click)="toggleCompanyActive(company)"
-                [attr.aria-label]="company.active ? 'Inativar empresa' : 'Ativar empresa'"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">
-                  {{ company.active ? 'pause_circle' : 'play_circle' }}
-                </span>
-              </button>
-
-              <button
-                class="empresa-page__icon-button"
-                type="button"
-                [disabled]="!canDeleteCompany(company)"
-                (click)="deleteCompany(company)"
-                aria-label="Excluir empresa"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">delete</span>
-              </button>
-            </div>
-          </article>
-        </section>
-
-        <ng-template #emptyBoard>
-          <div class="empresa-page__empty">
-            <strong>Nenhuma empresa encontrada.</strong>
-            <p>Tente ajustar a busca ou os filtros.</p>
-          </div>
-        </ng-template>
-
-        <footer class="empresa-page__pagination" *ngIf="totalPages > 1">
-          <button
-            class="empresa-page__pagination-arrow"
-            type="button"
-            (click)="goToPreviousPage()"
-            [disabled]="currentPage === 1"
-            aria-label="Página anterior"
-          >
-            <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
-          </button>
-
-          <div class="empresa-page__pagination-pages">
-            <button
-              class="empresa-page__pagination-page"
-              type="button"
-              *ngFor="let page of visiblePages"
-              [class.empresa-page__pagination-page--active]="page === currentPage"
-              (click)="goToPage(page)"
-            >
-              {{ page < 10 ? ('0' + page) : page }}
-            </button>
-          </div>
-
-          <button
-            class="empresa-page__pagination-arrow"
-            type="button"
-            (click)="goToNextPage()"
-            [disabled]="currentPage === totalPages"
-            aria-label="Próxima página"
-          >
-            <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
-          </button>
-        </footer>
-      </div>
-
-      <aside class="empresa-page__aside">
-        <section class="empresa-page__spotlight">
-          <div class="empresa-page__spotlight-head">
-            <span class="empresa-page__badge">Destaque</span>
-          </div>
-
-          <div class="empresa-page__spotlight-card">
-            <small>Empresa em foco</small>
-            <strong>
-              {{
-                companies.length
-                  ? companies[0].name
-                  : 'Selecione uma empresa'
-              }}
-            </strong>
-            <p>
-              {{
-                companies.length
-                  ? formatCompanyLocation(companies[0].location)
-                  : 'Sem dados disponíveis no momento.'
-              }}
-            </p>
-          </div>
-
-          <div class="empresa-page__spotlight-stats">
-            <div>
-              <span>Vagas</span>
-              <strong>
-                {{
-                  companies.length
-                    ? jobCount(companies[0].name)
-                    : 0
-                }}
-              </strong>
-            </div>
-
-            <div>
-              <span>Recruiters</span>
-              <strong>
-                {{
-                  companies.length
-                    ? recruiterCount(companies[0].name)
-                    : 0
-                }}
-              </strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="empresa-page__recruiters-panel">
-          <header class="empresa-page__aside-title">
-            <span>Empresas rápidas</span>
-            <small>Acesso lateral</small>
-          </header>
-
-          <div class="empresa-page__recruiter-list">
-            <article class="empresa-page__recruiter-item" *ngFor="let company of companies | slice:0:6">
-              <div class="empresa-page__recruiter-avatar">
-                <span class="material-symbols-rounded" aria-hidden="true">domain</span>
-              </div>
-
-              <div class="empresa-page__recruiter-copy">
-                <strong>{{ company.name }}</strong>
-                <small>{{ company.sector }}</small>
-              </div>
-
-              <button
-                class="empresa-page__mini-action"
-                type="button"
-                (click)="openEditModal(company)"
-                aria-label="Abrir empresa"
-              >
-                <span class="material-symbols-rounded" aria-hidden="true">more_horiz</span>
-              </button>
-            </article>
-          </div>
-        </section>
-      </aside>
-    </div>
   </div>
-
-  <div class="empresa-page__modal-backdrop" *ngIf="isFilterModalOpen" (click)="closeFilterModal()"></div>
-
-  <section
-    class="empresa-page__modal empresa-page__modal--filter"
-    *ngIf="isFilterModalOpen"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="filter-modal-title"
-  >
-    <header class="empresa-page__modal-header">
-      <div>
-        <span class="empresa-page__modal-eyebrow">Filtros</span>
-        <h2 id="filter-modal-title">Refinar empresas</h2>
-      </div>
-
-      <button class="empresa-page__modal-close" type="button" (click)="closeFilterModal()" aria-label="Fechar filtros">
-        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-      </button>
-    </header>
-
-    <div class="empresa-page__modal-body">
-      <div class="empresa-page__form-grid">
-        <div class="empresa-page__form-field">
-          <label for="sectorFilterModal">Setor</label>
-          <select id="sectorFilterModal" [(ngModel)]="sectorFilter">
-            <option value="all">Todos</option>
-            <option *ngFor="let sector of sectorOptions" [value]="sector">{{ sector }}</option>
-          </select>
-        </div>
-
-        <div class="empresa-page__form-field">
-          <label for="locationFilterModal">Localidade</label>
-          <select id="locationFilterModal" [(ngModel)]="locationFilter">
-            <option value="all">Todas</option>
-            <option *ngFor="let location of locationOptions" [value]="location">{{ location }}</option>
-          </select>
-        </div>
-
-        <div class="empresa-page__form-field">
-          <label for="recruiterFilterModal">Recruiters</label>
-          <select id="recruiterFilterModal" [(ngModel)]="recruiterFilter">
-            <option value="all">Todos</option>
-            <option value="withRecruiters">Com recruiters</option>
-            <option value="withoutRecruiters">Sem recruiters</option>
-          </select>
-        </div>
-
-        <div class="empresa-page__form-field">
-          <label for="sortByModal">Ordenar por</label>
-          <select id="sortByModal" [(ngModel)]="sortBy">
-            <option value="name-asc">Nome A-Z</option>
-            <option value="name-desc">Nome Z-A</option>
-            <option value="jobs-desc">Mais vagas</option>
-            <option value="recruiters-desc">Mais recruiters</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <footer class="empresa-page__modal-footer">
-      <button class="empresa-page__ghost-button" type="button" (click)="clearFiltersFromModal()">
-        Limpar filtros
-      </button>
-
-      <button class="empresa-page__primary-action empresa-page__primary-action--modal" type="button" (click)="applyAdvancedFilters()">
-        <span class="material-symbols-rounded" aria-hidden="true">check</span>
-        <span>Aplicar filtros</span>
-      </button>
-    </footer>
-  </section>
-
-  <div class="empresa-page__modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()"></div>
-
-  <section class="empresa-page__modal" *ngIf="isModalOpen" role="dialog" aria-modal="true" aria-labelledby="company-modal-title">
-    <header class="empresa-page__modal-header">
-      <div>
-        <span class="empresa-page__modal-eyebrow">
-          {{ modalMode === 'create' ? 'Nova empresa' : 'Editar empresa' }}
-        </span>
-        <h2 id="company-modal-title">
-          {{ modalMode === 'create' ? 'Cadastrar empresa' : 'Atualizar empresa' }}
-        </h2>
-      </div>
-
-      <button class="empresa-page__modal-close" type="button" (click)="closeModal()" aria-label="Fechar popup">
-        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-      </button>
-    </header>
-
-    <div class="empresa-page__modal-body">
-      <div class="empresa-page__form-grid">
-        <div class="empresa-page__form-field empresa-page__form-field--full">
-          <label for="companyName">Nome</label>
-          <input id="companyName" type="text" [(ngModel)]="companyForm.name" placeholder="Ex.: Nubank" />
-        </div>
-
-        <div class="empresa-page__form-field">
-          <label for="companySector">Setor</label>
-          <input id="companySector" type="text" [(ngModel)]="companyForm.sector" placeholder="Ex.: Tecnologia" />
-        </div>
-
-        <div class="empresa-page__form-field">
-          <label for="companyLocation">Localização</label>
-          <input id="companyLocation" type="text" [(ngModel)]="companyForm.location" placeholder="Ex.: São Paulo - Brasil" />
-        </div>
-
-        <div class="empresa-page__form-field">
-          <label for="companyLogoLabel">Sigla</label>
-          <input id="companyLogoLabel" type="text" [(ngModel)]="companyForm.logoLabel" maxlength="2" placeholder="NU" />
-        </div>
-
-        <div class="empresa-page__form-field empresa-page__form-field--wide">
-          <label for="companyLogoUrl">Logo URL</label>
-          <input id="companyLogoUrl" type="text" [(ngModel)]="companyForm.logoUrl" placeholder="https://..." />
-        </div>
-
-        <div class="empresa-page__form-field empresa-page__form-field--full">
-          <label for="companyDescription">Descrição</label>
-          <textarea
-            id="companyDescription"
-            rows="4"
-            [(ngModel)]="companyForm.description"
-            placeholder="Descreva a empresa"
-          ></textarea>
-        </div>
-
-        <div class="empresa-page__form-switch empresa-page__form-field--full">
-          <label>
-            <input type="checkbox" [(ngModel)]="companyForm.active" />
-            <span>Empresa ativa</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="empresa-page__modal-error" *ngIf="modalError">
-        {{ modalError }}
-      </div>
-    </div>
-
-    <footer class="empresa-page__modal-footer">
-      <button class="empresa-page__ghost-button" type="button" (click)="closeModal()">
-        Cancelar
-      </button>
-
-      <button class="empresa-page__primary-action empresa-page__primary-action--modal" type="button" (click)="saveCompany()">
-        <span class="material-symbols-rounded" aria-hidden="true">
-          {{ modalMode === 'create' ? 'add_business' : 'save' }}
-        </span>
-        <span>{{ modalMode === 'create' ? 'Cadastrar' : 'Salvar alterações' }}</span>
-      </button>
-    </footer>
-  </section>
-</section>
+</div>
