@@ -41,62 +41,86 @@
           <h4>Conheça a vaga em detalhes</h4>
 
           <p class="ecosystem-desktop__page-copy">
-            Visualize o pulso do mercado em um unico lugar: vagas abertas, stacks mais
-            exigidas, aderencia media esperada e o ritmo real das contratacoes que
-            estao movimentando o ecossistema agora.
+            {{ resourcePanelSummary }}
           </p>
         </div>
 
         <div class="job-side-bottom">
-          <div class="job-side-people">
+          <div class="job-side-people" *ngIf="resourcePanelAvatarBadges.length">
             <div class="job-side-avatars">
-              <img src="https://i.pravatar.cc/56?img=12" alt="Pessoa 1" />
-              <img src="https://i.pravatar.cc/56?img=13" alt="Pessoa 2" />
-              <img src="https://i.pravatar.cc/56?img=14" alt="Pessoa 3" />
+              <img
+                *ngFor="let avatar of resourcePanelAvatarBadges"
+                [src]="avatar.src"
+                [alt]="'Avatar ' + avatar.label"
+              />
             </div>
-            <span>+2</span>
+            <span *ngIf="resourcePanelAvatarExtraCount > 0">+{{ resourcePanelAvatarExtraCount }}</span>
           </div>
         </div>
       </div>
 
       <div class="menu-feature-card">
         <div class="menu-feature-video">
-          <img src="assets/img/video-preview.jpg" alt="Vídeo da vaga" />
+          <img
+            *ngIf="resourcePanelHasVideoPreview; else pendingVideoPreview"
+            [src]="resourcePanelVideoThumbnailUrl"
+            [alt]="'Prévia da vaga ' + (resourcePanelJob?.title ?? '')"
+          />
+
+          <ng-template #pendingVideoPreview>
+            <div class="menu-feature-video__placeholder">
+              <mat-icon aria-hidden="true">smart_display</mat-icon>
+              <strong>Vídeo em preparação</strong>
+              <span>O espaço já está pronto para receber a apresentação desta vaga.</span>
+            </div>
+          </ng-template>
 
           <div class="menu-feature-overlay">
-            <button type="button" class="menu-play-btn">
+            <button type="button" class="menu-play-btn" disabled aria-label="Vídeo disponível em breve">
               <mat-icon>play_arrow</mat-icon>
             </button>
 
             <div class="menu-video-meta">
-              <span>00:06</span>
+              <span>{{ resourcePanelHasVideoPreview ? 'Preview' : 'Em breve' }}</span>
               <div class="menu-video-bar">
-                <div class="menu-video-bar-fill"></div>
+                <div class="menu-video-bar-fill" [class.menu-video-bar-fill--pending]="!resourcePanelHasVideoPreview"></div>
               </div>
-              <span>08:24</span>
+              <span>{{ resourcePanelHasVideoPreview ? 'Mídia pronta' : 'Sem vídeo' }}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="menu-mega-content">
-        <div class="job-side-content">
+        <div class="job-side-content" *ngIf="resourcePanelJob as job">
           <div class="job-side-top">
             <div class="job-side-brand-row">
-              <div class="job-side-logo">itaú</div>
+              <div class="job-side-logo">
+                <img
+                  *ngIf="jobCompanyLogoUrl(job); else resourcePanelLogoFallback"
+                  class="job-side-logo__image"
+                  [src]="jobCompanyLogoUrl(job)"
+                  [alt]="job.company"
+                  (error)="markCompanyLogoAsBroken(job.id)"
+                />
+                <ng-template #resourcePanelLogoFallback>
+                  {{ jobCompanyLogoLabel(job) }}
+                </ng-template>
+              </div>
 
               <div class="job-side-title-wrap">
-                <h3>Backend .NET Senior - Híbrido</h3>
-                <strong>Itaú Unibanco</strong>
+                <h3>{{ job.title }}</h3>
+                <strong>{{ job.company }}</strong>
               </div>
 
               <div class="job-side-info-wrap">
                 <div class="job-side-meta">
-                  <span class="job-side-location">Rio de Janeiro - RJ</span>
-                  <span class="job-side-chip">Híbrido</span>
+                  <span class="job-side-location">{{ jobCardLocation(job) }}</span>
+                  <span class="job-side-chip">{{ jobCardWorkModel(job) }}</span>
+                  <span class="job-side-chip">{{ job.contractType }}</span>
                 </div>
 
-                <div class="job-side-salary">R$ 14.000</div>
+                <div class="job-side-salary">{{ resourcePanelSalary }}</div>
               </div>
             </div>
           </div>
@@ -108,39 +132,23 @@
             <div class="job-side-stacks">
               <span class="job-side-stacks__title">Stacks mais específicas</span>
 
-              <div class="job-stack-item">
-                <span class="job-stack-item__name">.NET</span>
+              <div class="job-stack-item" *ngFor="let stack of resourcePanelStacks">
+                <span class="job-stack-item__name">{{ stack.name }}</span>
                 <div class="job-stack-item__track">
-                  <div class="job-stack-item__fill" style="width: 91%;"></div>
+                  <div class="job-stack-item__fill" [style.width.%]="stack.match"></div>
                 </div>
-                <span class="job-stack-item__value">91%</span>
-              </div>
-
-              <div class="job-stack-item">
-                <span class="job-stack-item__name">Angular</span>
-                <div class="job-stack-item__track">
-                  <div class="job-stack-item__fill" style="width: 88%;"></div>
-                </div>
-                <span class="job-stack-item__value">88%</span>
-              </div>
-
-              <div class="job-stack-item">
-                <span class="job-stack-item__name">React</span>
-                <div class="job-stack-item__track">
-                  <div class="job-stack-item__fill" style="width: 84%;"></div>
-                </div>
-                <span class="job-stack-item__value">84%</span>
+                <span class="job-stack-item__value">{{ stack.match }}%</span>
               </div>
             </div>
 
             <!-- ADERÊNCIA -->
             <div class="job-side-match">
-              <div class="job-side-match__value">88%</div>
+              <div class="job-side-match__value">{{ resourcePanelAdherence }}%</div>
 
               <div class="job-side-match__label">Aderência</div>
 
               <p class="job-side-match__desc">
-                Percentual mínimo esperado para se candidatar a esta vaga
+                Score atual da vaga com base no matching e no contexto do ecossistema.
               </p>
             </div>
           </div>

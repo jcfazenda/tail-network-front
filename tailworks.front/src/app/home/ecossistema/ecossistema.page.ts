@@ -32,7 +32,6 @@ import { MatchLabJobResult, MatchLabRankingEntry } from '../../core/matching-lab
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 import { PanelCandidatosListComponent } from '../../panel-candidatos/panel-candidatos-list.component';
 import { ChatCandidate, ChatJob } from '../../chat/domain/chat.models';
-import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
 
 import { MatIconModule } from '@angular/material/icon';
 
@@ -141,7 +140,7 @@ type SideRailCandidateSource = 'ecosystem' | 'job' | 'processo';
 @Component({
   standalone: true,
   selector: 'app-ecossistema-page',
-  imports: [CommonModule, RouterLink, PanelCandidatosListComponent, ProfitLossCardComponent, MatIconModule],
+  imports: [CommonModule, RouterLink, PanelCandidatosListComponent, MatIconModule],
   templateUrl: './ecossistema.page.html',
   styleUrls: ['./ecossistema.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -1632,6 +1631,53 @@ export class EcossistemaPage implements AfterViewInit, OnDestroy {
 
   get currentHiringCopy(): { title: string; body: string } {
     return this.hiringCopy[this.copyIndex % this.hiringCopy.length];
+  }
+
+  get resourcePanelJob(): MockJobRecord | null {
+    return this.sideRailRecentJobs[0] ?? this.featuredJob;
+  }
+
+  get resourcePanelSummary(): string {
+    const summary = this.resourcePanelJob?.summary?.trim();
+    return summary || 'Os detalhes desta vaga serão exibidos aqui conforme novos dados forem sincronizados.';
+  }
+
+  get resourcePanelAvatarBadges(): Array<{ src: string; label: string }> {
+    const job = this.resourcePanelJob;
+    return job ? this.jobInteractionAvatarBadges(job) : [];
+  }
+
+  get resourcePanelAvatarExtraCount(): number {
+    const job = this.resourcePanelJob;
+    return job ? this.jobBoardRadarExtraCount(job) : 0;
+  }
+
+  get resourcePanelStacks(): TechStackItem[] {
+    const job = this.resourcePanelJob;
+    if (!job) {
+      return [];
+    }
+
+    return [...job.techStack]
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .slice(0, 3);
+  }
+
+  get resourcePanelAdherence(): number {
+    const job = this.resourcePanelJob;
+    return job ? this.matchDomainService.clampScore(job.match ?? this.jobRadarAdherenceThreshold(job)) : 0;
+  }
+
+  get resourcePanelSalary(): string {
+    return this.resourcePanelJob ? (this.jobCardSalary(this.resourcePanelJob) ?? 'Faixa sob consulta') : 'Faixa indisponível';
+  }
+
+  get resourcePanelVideoThumbnailUrl(): string {
+    return this.resourcePanelJob?.homeAnnouncementImageUrl?.trim() ?? '';
+  }
+
+  get resourcePanelHasVideoPreview(): boolean {
+    return this.resourcePanelVideoThumbnailUrl.length > 0;
   }
 
   get featuredJob(): MockJobRecord | null {
