@@ -1,16 +1,55 @@
 :host {
   display: block;
   min-height: 100vh;
-  --eco-panel-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
+  --eco-panel-shadow: 0 14px 34px rgba(47, 50, 50, 0.06);
   --eco-heading: var(--text-strong);
   --eco-text: var(--text);
   --eco-muted: var(--muted);
-  --eco-side-panel-shadow: -8px 0 32px rgba(15, 23, 42, 0.1);
+  --eco-side-panel-shadow: -12px 0 32px rgba(47, 50, 50, 0.08);
+  --eco-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.16));
+  --eco-shell-border: rgba(47, 50, 50, 0.06);
+  --eco-surface: rgba(255, 255, 255, 0.9);
+  --eco-surface-soft: rgba(255, 255, 255, 0.72);
+  --eco-surface-muted: rgba(243, 239, 236, 0.94);
+  --eco-surface-accent: rgba(236, 102, 45, 0.08);
+  --eco-border: rgba(47, 50, 50, 0.08);
+  --eco-border-strong: rgba(47, 50, 50, 0.12);
+  --eco-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 247, 245, 0.94));
+  --eco-card-bg-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 244, 242, 0.96));
+  --eco-card-highlight: linear-gradient(135deg, rgba(236, 102, 45, 0.16), rgba(236, 102, 45, 0.04));
+  --eco-card-shadow: 0 10px 26px rgba(47, 50, 50, 0.06);
+  --eco-card-shadow-hover: 0 16px 30px rgba(47, 50, 50, 0.08);
+  --eco-chip-bg: rgba(47, 50, 50, 0.05);
+  --eco-chip-text: rgba(47, 50, 50, 0.76);
+  --eco-track: rgba(47, 50, 50, 0.1);
+  --eco-track-strong: rgba(47, 50, 50, 0.14);
+  --eco-accent: var(--accent);
+  --eco-accent-soft: rgba(236, 102, 45, 0.14);
+  --eco-avatar-ring: rgba(255, 255, 255, 0.96);
 }
 
 :host-context(body[data-theme='dark']) {
-  --eco-panel-shadow: 0 28px 56px rgba(0, 0, 0, 0.24);
-  --eco-side-panel-shadow: -8px 0 32px rgba(0, 0, 0, 0.28);
+  --eco-panel-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  --eco-side-panel-shadow: -12px 0 34px rgba(0, 0, 0, 0.22);
+  --eco-shell-bg: linear-gradient(180deg, rgba(22, 28, 26, 0.72), rgba(15, 20, 18, 0.48));
+  --eco-shell-border: rgba(255, 255, 255, 0.04);
+  --eco-surface: rgba(22, 28, 26, 0.92);
+  --eco-surface-soft: rgba(24, 31, 28, 0.8);
+  --eco-surface-muted: rgba(27, 35, 32, 0.96);
+  --eco-surface-accent: rgba(236, 102, 45, 0.12);
+  --eco-border: rgba(255, 255, 255, 0.06);
+  --eco-border-strong: rgba(255, 255, 255, 0.1);
+  --eco-card-bg: linear-gradient(180deg, rgba(22, 28, 26, 0.96), rgba(18, 24, 22, 0.94));
+  --eco-card-bg-hover: linear-gradient(180deg, rgba(26, 33, 30, 0.98), rgba(20, 26, 24, 0.96));
+  --eco-card-highlight: linear-gradient(135deg, rgba(236, 102, 45, 0.22), rgba(236, 102, 45, 0.06));
+  --eco-card-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  --eco-card-shadow-hover: 0 18px 34px rgba(0, 0, 0, 0.22);
+  --eco-chip-bg: rgba(255, 255, 255, 0.05);
+  --eco-chip-text: rgba(234, 234, 234, 0.76);
+  --eco-track: rgba(255, 255, 255, 0.08);
+  --eco-track-strong: rgba(255, 255, 255, 0.12);
+  --eco-accent-soft: rgba(236, 102, 45, 0.18);
+  --eco-avatar-ring: rgba(15, 20, 18, 0.96);
 }
 
 :host-context(body[data-theme='light']) {
@@ -1766,6 +1805,291 @@
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
+/* -------------------------- TailWorks Design System ------------------------- */
+
+.ecosystem-desktop {
+  background:
+    radial-gradient(circle at top right, var(--eco-surface-accent), transparent 26%),
+    radial-gradient(circle at 20% 14%, color-mix(in srgb, var(--eco-accent) 7%, transparent), transparent 30%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, white 4%), color-mix(in srgb, var(--bg) 100%, transparent));
+  box-shadow: inset 0 0 0 1px var(--eco-shell-border);
+}
+
+.ecosystem-desktop__page-title {
+  color: var(--eco-heading);
+}
+
+.ecosystem-desktop__page-copy {
+  color: var(--eco-muted);
+}
+
+.ecosystem-desktop__panel,
+.ecosystem-desktop__panel--secondary,
+.ecosystem-desktop__side-rail-inner,
+.job-side-panel,
+.job-side-panel__topcard {
+  background: var(--eco-shell-bg);
+  border: 1px solid var(--eco-border);
+  box-shadow: var(--eco-panel-shadow);
+  backdrop-filter: blur(14px);
+}
+
+.ecosystem-desktop__tool,
+.ecosystem-desktop__panel-pill,
+.ecosystem-desktop__signal-tab,
+.ecosystem-desktop__jobs-search,
+.ecosystem-desktop__jobs-page-control,
+.ecosystem-desktop__jobs-page-track,
+.ecosystem-desktop__recruiter-action,
+.ecosystem-desktop__side-toolbar-action {
+  background: var(--eco-surface-soft);
+  border: 1px solid var(--eco-border);
+  box-shadow: none;
+}
+
+.ecosystem-desktop__tool,
+.ecosystem-desktop__panel-pill,
+.ecosystem-desktop__signal-tab {
+  color: var(--eco-muted);
+}
+
+.ecosystem-desktop__tool:hover,
+.ecosystem-desktop__panel-pill:hover,
+.ecosystem-desktop__signal-tab:hover,
+.ecosystem-desktop__jobs-action:hover,
+.ecosystem-desktop__candidate-card-action:hover,
+.ecosystem-desktop__recruiter-action:hover,
+.ecosystem-desktop__side-toolbar-action:hover {
+  background: color-mix(in srgb, var(--eco-accent) 7%, var(--eco-surface));
+  color: var(--eco-heading);
+}
+
+.ecosystem-desktop__panel-pill--active,
+.ecosystem-desktop__signal-tab--active,
+.ecosystem-desktop__signal-target-submit {
+  background: var(--eco-card-highlight);
+  color: var(--eco-heading);
+  border: 1px solid color-mix(in srgb, var(--eco-accent) 20%, var(--eco-border));
+  box-shadow: none;
+}
+
+.ecosystem-desktop__overview-copy,
+.ecosystem-desktop__jobs-board-head span,
+.ecosystem-desktop__jobs-board-empty,
+.ecosystem-desktop__signal-target-label,
+.ecosystem-desktop__side-summary-copy {
+  color: var(--eco-muted);
+}
+
+.ecosystem-desktop__section-kicker {
+  color: var(--eco-heading);
+}
+
+.ecosystem-desktop__stack-divider,
+.ecosystem-desktop__jobs-board-divider,
+.ecosystem-desktop__jobs-radar-separator {
+  border-color: var(--eco-border);
+  background: var(--eco-border);
+}
+
+.ecosystem-desktop__stack-name,
+.ecosystem-desktop__stack-value,
+.ecosystem-desktop__signal-target-value,
+.ecosystem-desktop__jobs-title-copy strong,
+.ecosystem-desktop__jobs-company-copy strong,
+.ecosystem-desktop__jobs-meta-copy strong,
+.ecosystem-desktop__jobs-match strong,
+.ecosystem-desktop__recruiter-copy strong,
+.ecosystem-desktop__candidate-copy strong,
+.ecosystem-desktop__candidate-status-block strong,
+.job-side-panel__profile-name,
+.job-side-panel__title {
+  color: var(--eco-heading);
+}
+
+.ecosystem-desktop__signal-target-value {
+  background: var(--eco-surface);
+  border: 1px solid var(--eco-border);
+  box-shadow: none;
+}
+
+.ecosystem-desktop__jobs-tab {
+  color: var(--eco-muted);
+}
+
+.ecosystem-desktop__jobs-tab b {
+  color: var(--eco-accent);
+}
+
+.ecosystem-desktop__jobs-tab--active::after {
+  background: var(--eco-accent);
+}
+
+.ecosystem-desktop__jobs-tab--active,
+.ecosystem-desktop__jobs-tab--active b {
+  color: var(--eco-heading);
+}
+
+.ecosystem-desktop__jobs-search .material-symbols-rounded,
+.ecosystem-desktop__jobs-company-copy small,
+.ecosystem-desktop__jobs-title-copy small,
+.ecosystem-desktop__jobs-meta-copy small,
+.ecosystem-desktop__jobs-meta-copy strong,
+.ecosystem-desktop__jobs-model-prefix,
+.ecosystem-desktop__jobs-avatar-extra,
+.ecosystem-desktop__jobs-radar-empty,
+.ecosystem-desktop__jobs-page-control,
+.ecosystem-desktop__candidate-copy span,
+.ecosystem-desktop__candidate-job-model,
+.ecosystem-desktop__candidate-status-block span,
+.ecosystem-desktop__candidate-status-block small,
+.ecosystem-desktop__candidate-summary,
+.ecosystem-desktop__candidate-avatar-extra,
+.job-side-panel__profile-role,
+.job-side-panel__meta {
+  color: var(--eco-muted);
+}
+
+.ecosystem-desktop__jobs-search input {
+  color: var(--eco-text);
+}
+
+.ecosystem-desktop__jobs-search input::placeholder {
+  color: color-mix(in srgb, var(--eco-muted) 72%, transparent);
+}
+
+.ecosystem-desktop__jobs-grid-header {
+  color: color-mix(in srgb, var(--eco-muted) 82%, transparent);
+}
+
+.ecosystem-desktop__jobs-grid-row {
+  min-height: 82px;
+  background: var(--eco-card-bg);
+  border: 1px solid var(--eco-border);
+  border-radius: 12px;
+  box-shadow: var(--eco-card-shadow);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ecosystem-desktop__jobs-grid-row:hover {
+  transform: translateY(-2px) scale(1.002);
+  background: var(--eco-card-bg-hover);
+  border-color: color-mix(in srgb, var(--eco-accent) 16%, var(--eco-border));
+  box-shadow: var(--eco-card-shadow-hover);
+}
+
+.ecosystem-desktop__jobs-grid-cell {
+  color: var(--eco-text);
+}
+
+.ecosystem-desktop__jobs-company-logo,
+.ecosystem-desktop__candidate-avatar,
+.ecosystem-desktop__recruiter-avatar {
+  background: var(--eco-surface-muted);
+  box-shadow: inset 0 0 0 1px var(--eco-border);
+}
+
+.ecosystem-desktop__jobs-company-logo-fallback {
+  color: color-mix(in srgb, var(--eco-heading) 72%, transparent);
+}
+
+.ecosystem-desktop__jobs-avatar,
+.ecosystem-desktop__candidate-avatar-stack,
+.job-side-panel__avatar {
+  border-color: var(--eco-avatar-ring);
+}
+
+.ecosystem-desktop__stack-track,
+.ecosystem-desktop__jobs-match-bar,
+.ecosystem-desktop__candidate-signal-track {
+  background: var(--eco-track);
+}
+
+.ecosystem-desktop__stack-fill,
+.ecosystem-desktop__jobs-match-bar-fill,
+.ecosystem-desktop__candidate-signal-fill {
+  background: var(--accent-gradient);
+}
+
+.ecosystem-desktop__candidate-card,
+.ecosystem-desktop__candidate-card--job,
+:host-context(body[data-theme='dark']) .ecosystem-desktop__candidate-card,
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-card,
+:host-context(body[data-theme='dark']) .ecosystem-desktop__side-spotlights .ecosystem-desktop__candidate-card--job,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-spotlights .ecosystem-desktop__candidate-card--job {
+  background: var(--eco-card-bg) !important;
+  border: 1px solid var(--eco-border) !important;
+  border-radius: 12px;
+  box-shadow: var(--eco-card-shadow) !important;
+  backdrop-filter: blur(12px);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ecosystem-desktop__candidate-card:hover,
+.ecosystem-desktop__candidate-card--job:hover,
+:host-context(body[data-theme='dark']) .ecosystem-desktop__candidate-card:hover,
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-card:hover,
+:host-context(body[data-theme='dark']) .ecosystem-desktop__side-spotlights .ecosystem-desktop__candidate-card--job:hover,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-spotlights .ecosystem-desktop__candidate-card--job:hover {
+  transform: translateY(-2px) scale(1.01);
+  background: var(--eco-card-bg-hover) !important;
+  border-color: color-mix(in srgb, var(--eco-accent) 18%, var(--eco-border)) !important;
+  box-shadow: var(--eco-card-shadow-hover) !important;
+}
+
+.ecosystem-desktop__candidate-card::after,
+:host-context(body[data-theme='dark']) .ecosystem-desktop__candidate-card::after,
+:host-context(body[data-theme='light']) .ecosystem-desktop__candidate-card::after,
+:host-context(body[data-theme='light']) .ecosystem-desktop__side-spotlights .ecosystem-desktop__candidate-card--job::after {
+  height: 30%;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--eco-accent) 10%, white), transparent) !important;
+  opacity: 0.2;
+}
+
+.ecosystem-desktop__candidate-card--hired {
+  background:
+    radial-gradient(circle at top right, rgba(95, 125, 104, 0.12), transparent 42%),
+    var(--eco-card-bg) !important;
+}
+
+.ecosystem-desktop__candidate-task-board,
+.ecosystem-desktop__candidate-task-board--job,
+.ecosystem-desktop__candidate-task-board--high,
+.ecosystem-desktop__candidate-task-board--medium,
+.ecosystem-desktop__candidate-task-board--low {
+  background: var(--eco-surface-soft) !important;
+  border: 1px solid var(--eco-border);
+  box-shadow: none !important;
+  backdrop-filter: blur(8px);
+}
+
+.ecosystem-desktop__candidate-chip,
+.ecosystem-desktop__candidate-chip--low,
+.ecosystem-desktop__candidate-job-model {
+  background: var(--eco-chip-bg) !important;
+  border: 1px solid var(--eco-border) !important;
+  color: var(--eco-chip-text) !important;
+}
+
+.ecosystem-desktop__candidate-signal-label,
+.ecosystem-desktop__candidate-signal-value {
+  color: var(--eco-heading) !important;
+}
+
+.job-side-panel__close {
+  background: var(--eco-surface-soft);
+  border: 1px solid var(--eco-border);
+  color: var(--eco-muted);
+}
+
 @media (max-width: 1680px) {
   .ecosystem-desktop {
     grid-template-columns: minmax(0, 1fr) minmax(252px, 18vw);
@@ -1998,33 +2322,110 @@
 .menu-feature-video__placeholder {
   width: 100%;
   height: 100%;
-  padding: 28px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: 10px;
-  color: #3f3f3f;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 194, 102, 0.34), transparent 24%),
+    radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.18), transparent 18%),
+    linear-gradient(135deg, rgba(34, 34, 34, 0.84) 0%, rgba(76, 52, 27, 0.9) 52%, rgba(125, 87, 42, 0.92) 100%);
+  color: #f6f1e8;
 
-  mat-icon {
-    width: 42px;
-    height: 42px;
-    font-size: 42px;
-    color: #8b5c2c;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 100% 32px, 32px 100%;
+    opacity: 0.28;
+    pointer-events: none;
   }
+}
+
+.menu-feature-video__placeholder-chip,
+.menu-feature-video__placeholder-center,
+.menu-feature-video__placeholder-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-feature-video__placeholder-chip {
+  align-self: flex-start;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.menu-feature-video__placeholder-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 0 24px;
 
   strong {
-    font-size: 24px;
-    line-height: 1.1;
+    font-size: 28px;
+    line-height: 1.05;
     font-weight: 700;
-    color: #202020;
+    color: #ffffff;
   }
 
   span {
-    max-width: 320px;
+    max-width: 360px;
     font-size: 14px;
     line-height: 1.5;
-    color: #595959;
+    color: rgba(255, 248, 240, 0.86);
+  }
+}
+
+.menu-feature-video__placeholder-play {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(8px);
+
+  mat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 40px;
+    color: #ffffff;
+    margin-left: 4px;
+  }
+}
+
+.menu-feature-video__placeholder-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  b {
+    font-size: 18px;
+    line-height: 1.2;
+    color: #ffffff;
+  }
+
+  small {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 248, 240, 0.7);
   }
 }
 

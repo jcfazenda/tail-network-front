@@ -13,6 +13,8 @@ import { SidebarVisibilityService } from './sidebar-visibility.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
 import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemFilterModalService } from '../ecosystem-filter-modal.service';
+import { RecruitersFacade } from '../../facades/recruiters.facade';
+import { CompaniesFacade } from '../../facades/companies.facade';
 
 type NavItem = { label: string; route: string; icon: string };
 
@@ -84,6 +86,8 @@ export class SidebarComponent {
   private readonly browserStorage = inject(BrowserStorageService);
   private readonly ecosystemJobFiltersService = inject(EcosystemJobFiltersService);
   private readonly ecosystemFilterModalService = inject(EcosystemFilterModalService);
+  private readonly recruitersFacade = inject(RecruitersFacade);
+  private readonly companiesFacade = inject(CompaniesFacade);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly currentUrl = toSignal(
@@ -111,7 +115,6 @@ export class SidebarComponent {
 
   private readonly recruiterItems: NavItem[] = [
     { label: 'Minhas Vagas', route: '/home/ecossistema', icon: 'work' },
-    { label: 'Sair', route: '/login', icon: 'logout' },
   ];
 
   private readonly candidateTreeGroupsValue: CandidateTreeGroup[] = [
@@ -169,30 +172,40 @@ export class SidebarComponent {
         label: '',
         items: [
           { label: 'Novo Card', icon: 'add_box', route: '/vagas/cadastro' },
-          { label: 'Minhas Vagas', icon: 'work', route: '/home/ecossistema' },
+          { label: 'Minhas Vagas', icon: 'work', route: '/home/ecossistema', badge: this.recruiterJobsCount },
         ],
       },
       {
         label: '',
         items: [
           { label: 'Treinamento IA', icon: 'psychology', route: '/recruiter/core-algoritimo' },
-          ...(canManageDirectory ? [{ label: 'Recruiters', icon: 'badge', route: '/recruiter/panel' }] : []),
+          ...(canManageDirectory ? [{ label: 'Recruiters', icon: 'badge', route: '/recruiter/panel', badge: this.recruitersCount }] : []),
           ...(canCreateRecruiter ? [{ label: 'Novo Recruiter', icon: 'person_add', route: '/recruiter/cadastro' }] : []),
         ],
       },
       ...(canManageDirectory
         ? [{
             label: '',
-            items: [{ label: 'Empresas', icon: 'apartment', route: '/empresa' }],
+            items: [{ label: 'Empresas', icon: 'apartment', route: '/empresa', badge: this.companiesCount }],
           } satisfies CandidateTreeGroup]
         : []),
-      {
-        label: '',
-        items: [
-          { label: 'Sair', icon: 'logout', route: '/login' },
-        ],
-      },
     ];
+  }
+
+  get recruiterJobsCount(): number {
+    return this.jobsFacade.getJobs()
+      .filter((job) => job.status === 'ativas')
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job))
+      .length;
+  }
+
+  get recruitersCount(): number {
+    const recruiter = this.jobsFacade.getCurrentRecruiterIdentity();
+    return this.recruitersFacade.listRecruiters(recruiter.company).length;
+  }
+
+  get companiesCount(): number {
+    return this.companiesFacade.listCompanies(true).length;
   }
 
   get sidebarTreeGroups(): CandidateTreeGroup[] {
@@ -617,6 +630,7 @@ export class SidebarComponent {
   logoutFromFooter(): void {
     this.footerMenuOpen = false;
     this.authService.logout();
+    void this.router.navigate(['/login']);
   }
 
   openCreateJob(): void {

@@ -64,7 +64,14 @@
                 (click)="handleTreeItemClick(item)">
                 <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
                 <span class="menuTree__itemLabel" *ngIf="!isCollapsed">{{ item.label }}</span>
-                <span class="menuTree__itemBadge" *ngIf="!isCollapsed && item.badge">{{ item.badge }}</span>
+                <span
+                  class="menuTree__itemBadge"
+                  *ngIf="!isCollapsed && item.badge"
+                  [class.menuTree__itemBadge--jobs]="item.label === 'Minhas Vagas'"
+                  [class.menuTree__itemBadge--recruiters]="item.label === 'Recruiters'"
+                  [class.menuTree__itemBadge--companies]="item.label === 'Empresas'">
+                  {{ item.badge }}
+                </span>
               </a>
 
               <ng-template #placeholderItem>
@@ -108,9 +115,10 @@
       
       <div class="sidebarFooterBrand sidebarFooterBrand--top" aria-hidden="true">
 
-<a class="menuItem sidebarLogout">
-  <span class="material-symbols-rounded icon">waving_hand</span> <span>Já volto</span>
-</a>
+<button class="menuItem sidebarLogout" type="button" (click)="logoutFromFooter()" aria-label="Sair">
+  <span class="material-symbols-rounded icon">logout</span>
+  <span>Sair</span>
+</button>
 
         <img src="/assets/images/logo-tail.png" alt="TailWorks" class="sidebarFooterBrand__image" />
         <span class="sidebarFooterBrand__copyright">All rights reserved © 2026</span>
