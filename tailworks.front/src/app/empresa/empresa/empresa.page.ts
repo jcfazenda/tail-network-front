@@ -60,6 +60,13 @@ type CompanyViewModel = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaPage implements OnDestroy {
+  readonly recruiterShowcasePhotos = [
+    'assets/images/polaroid/daniela-costa.png',
+    'assets/images/polaroid/lucas-pereira.png',
+    'assets/images/polaroid/juliana-oliveira.png',
+    'assets/images/polaroid/marcos-oliveira.png',
+  ];
+
   private readonly brazilStateAbbreviations: Record<string, string> = {
     Acre: 'AC',
     Alagoas: 'AL',

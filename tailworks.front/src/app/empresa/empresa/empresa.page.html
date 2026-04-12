@@ -248,11 +248,11 @@
               </div>
 
               <div class="company-identity__cards">
-                <div class="company-identity__mini-card" *ngFor="let item of [1,2,3,4]">
+                <div class="company-identity__mini-card" *ngFor="let photo of recruiterShowcasePhotos">
 
                   <div class="company-identity__mini-media">
                     <div class="company-identity__mini-icon-wrap">
-                      <img class="company-identity__mini-logo" src="assets/images/logo-tail.png" alt="TailWorks" />
+                      <img class="company-identity__mini-photo" [src]="photo" alt="Foto do recrutador" />
                     </div>
                   </div>
 
@@ -285,7 +285,14 @@
                   </div>
 
                   <div class="company-identity__mini-footer">
-                    <span class="company-identity__mini-link">Explorar</span>
+                    <button type="button" class="company-identity__mini-chat">
+                      <span class="material-symbols-rounded" aria-hidden="true">chat</span>
+                      <span>Chat</span>
+                    </button>
+
+                    <div class="company-identity__mini-rating" aria-label="Desempenho do recrutador">
+                      <span class="material-symbols-rounded" *ngFor="let star of [1,2,3,4,5]" aria-hidden="true">star</span>
+                    </div>
                   </div>
 
                 </div>

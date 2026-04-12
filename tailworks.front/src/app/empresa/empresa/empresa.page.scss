@@ -1,5 +1,7 @@
 :host {
   display: block;
+  min-width: 0;
+  min-height: 0;
 }
 
 /* =========================================================
@@ -7,26 +9,37 @@
 ========================================================= */
 
 .empresa-page {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: calc(100% - 490px);
+  --empresa-side-column: minmax(220px, 0.72fr);
+  --empresa-topbar-side-column: minmax(240px, 0.88fr);
+  --empresa-shell-border: color-mix(in srgb, var(--text) 14%, transparent);
+  --empresa-sidebar-offset: 0px;
+  position: relative;
+  inset: 0;
+  width: calc(100% - var(--empresa-sidebar-offset));
+  max-width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 100%;
   margin: 0;
+  margin-left: var(--empresa-sidebar-offset);
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
-  background: #f7f7f7;
-  border: 2px dashed rgba(47, 50, 50, 0.18);
+  background: var(--bg);
+  border: 2px dashed var(--empresa-shell-border);
 }
 
 .empresa-page__shell {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   padding: 16px;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 520px 520px;
+  grid-template-columns:
+    minmax(0, 1.9fr)
+    minmax(160px, 0.38fr)
+    minmax(160px, 0.38fr);
 
   /* 3 linhas */
   grid-template-rows: 150px minmax(0, 1fr) minmax(0, 1fr);
@@ -46,7 +59,7 @@
 .empresa-page__topbar {
   grid-area: topbar;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 520px;
+  grid-template-columns: minmax(0, 1.85fr) minmax(220px, 0.55fr);
   gap: 12px;
   min-width: 0;
   min-height: 0;
@@ -58,8 +71,8 @@
 }
   
 .empresa-page__column {
-  background: #ffffff;
-  border: 2px dashed rgba(47, 50, 50, 0.18);
+  background: var(--card-strong);
+  border: 2px dashed var(--empresa-shell-border);
   border-radius: 14px;
   box-sizing: border-box;
   overflow: hidden;
@@ -90,14 +103,14 @@
   line-height: 1.05;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #2f3232;
+  color: var(--text);
 }
 
 .topbar-header__description {
   max-width: 660px;
   font-size: 23px;
   line-height: 1.45;
-  color: #6b7280;
+  color: var(--muted);
 }
 
 /* =========================================================
@@ -946,14 +959,15 @@
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 1.15fr 0.95fr; 
+  grid-template-rows: 1.15fr 0.95fr;
+  background: #efefef;
   position: relative;
 }
 
 .company-identity__hero {
   position: relative;
   padding: 40px 42px 92px;
-  background: linear-gradient(180deg, #dcdcdc 0%, #f9f9f9 100%);
+  background: linear-gradient(180deg, #8a8888 0%, #f9f9f9 100%);
   overflow: visible;
   height: 100%;
 }
@@ -1026,7 +1040,7 @@
   margin-top: 0;
   padding: 38px;
   border-radius: 14px;
-  background: #e2e2e2;
+  background: #cfcfcf !important;
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.12);
   z-index: 2;
   box-sizing: border-box;
@@ -1151,14 +1165,16 @@
 }
 
 .company-identity__mini-card {
-  width: 300px;
-  min-width: 300px;
+  width: 360px;
+  height: auto;
+  min-height: 520px;
+  min-width: 340px;
   max-width: 300px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: #f3f3f3;
-  border: 1px solid rgba(47, 50, 50, 0.05);
+  border: 1px solid rgba(53, 53, 53, 0.05);
   border-radius: 6px;
   transition: all 0.2s ease;
   cursor: pointer;
@@ -1171,11 +1187,12 @@
 }
 
 .company-identity__mini-media {
-  height: 170px;
+  height: 360px;
   background: #dcdcdc;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .company-identity__mini-icon-wrap {
@@ -1195,42 +1212,92 @@
   opacity: 0.92;
 }
 
+.company-identity__mini-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: grayscale(0.08) contrast(1.02);
+}
+
 .company-identity__mini-content {
   padding: 12px 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  align-items: center;
+  text-align: center;
 }
 
 .company-identity__mini-title {
   font-size: 11px;
   font-weight: 700;
   color: #2f3232;
-  text-align: left;
+  text-align: center;
 }
 
 .company-identity__mini-text {
   font-size: 10px;
   line-height: 1.4;
   color: #6b7280;
-  text-align: left;
+  text-align: center;
+}
+
+.company-identity__mini-card .company-card__contact {
+  align-items: center;
+}
+
+.company-identity__mini-card .company-card__contact-item {
+  justify-content: center;
 }
 
 .company-identity__mini-footer {
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-top: 1px solid rgba(47, 50, 50, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.company-identity__mini-link {
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #9ca3af;
+.company-identity__mini-chat {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(47, 50, 50, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+
+  .material-symbols-rounded {
+    font-size: 16px;
+    line-height: 1;
+  }
 }
 
-.company-identity__mini-card:hover .company-identity__mini-link {
-  color: #2f3232;
+.company-identity__mini-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #d29a36;
+
+  .material-symbols-rounded {
+    font-size: 16px;
+    line-height: 1;
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 600,
+      'GRAD' 0,
+      'opsz' 20;
+  }
 }
 
 .company-identity__bottom-meta {
@@ -2244,5 +2311,264 @@
   min-width: 156px;
   padding-inline: 20px;
   flex: 0 0 auto;
+}
+
+/* =========================================================
+   RESPONSIVE + THEME
+========================================================= */
+
+.company-context,
+.company-panel,
+.company-identity,
+.empresa-vaga-shell,
+.company-context__profile-card,
+.ecosystem-desktop__panel-resorces,
+.empresa-vaga-talent-card,
+.empresa-vaga-card__item,
+.company-identity__mini-card {
+  color: var(--text);
+}
+
+.company-context,
+.company-panel,
+.company-context__profile-card,
+.ecosystem-desktop__panel-resorces,
+.empresa-vaga-talent-card,
+.empresa-vaga-card__item,
+.company-identity__mini-card, 
+.empresa-filter {
+  background: var(--card-strong);
+  border-color: var(--border);
+}
+
+.empresa-vaga-shell {
+  background: var(--bg);
+}
+
+.company-identity__bottom {
+ background: linear-gradient(180deg, #fbfbfb, #e6e6e6);
+}
+
+
+.company-identity {
+  background: #efefef !important;
+}
+
+ 
+.company-identity__cards {
+  background: transparent;
+}
+
+.company-identity__hero {
+background: linear-gradient(180deg, #dbdbdb, #ffffff);
+}
+
+.company-identity__floating-card,
+.company-context__info-item,
+.company-context__quick-action,
+.empresa-vaga-talent-card__stacks,
+.company-panel__count,
+.empresa-vaga-card__item-chip--neutral {
+  background: var(--card-soft);
+}
+
+.company-panel__button,
+.empresa-vaga-card__button {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.empresa-vaga-card__button--secondary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+}
+
+.company-panel__button--ghost,
+.company-identity__button--ghost,
+.company-panel__button--secondary {
+  background: var(--card-soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.topbar-header__description,
+.company-panel__description,
+.company-card__location,
+.company-card__description,
+.company-context__company-subtitle,
+.company-context__info-copy strong,
+.company-context__map-overlay span,
+.company-identity__bottom-subtitle,
+.company-identity__mini-text,
+.empresa-vaga-talent-card__identity span,
+.empresa-vaga-talent-card__location,
+.empresa-vaga-card__item-company,
+.empresa-vaga-card__item-location {
+  color: var(--muted);
+}
+
+.company-panel__title,
+.company-card__name,
+.company-context__company-title,
+.company-context__profile-name,
+.company-identity__bottom-title,
+.company-identity__mini-title,
+.empresa-vaga-card__item-title,
+.empresa-vaga-card__item-salary,
+.job-side-title-wrap h3,
+.job-side-salary,
+.job-side-match__value {
+  color: var(--text);
+}
+
+.company-card__footer,
+.company-card__divider,
+.job-side-dashed-line,
+.company-identity__mini-footer {
+  border-color: var(--border-strong);
+}
+
+.company-card__logo,
+.company-identity__mini-media {
+  background: color-mix(in srgb, var(--text) 10%, var(--card-strong));
+}
+
+.job-side-chip,
+.empresa-vaga-card__item-chip {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.empresa-filter__select,
+.company-panel__search input {
+  color: var(--text);
+  background: transparent;
+}
+
+.empresa-filter__icon,
+.empresa-filter__arrow,
+.company-context__quick-action mat-icon,
+.empresa-vaga-talent-card__action,
+.company-context__info-item mat-icon {
+  color: var(--muted);
+}
+
+.company-context__quick-action span,
+.company-context__info-copy span,
+.empresa-vaga-card__item-chip--neutral,
+.company-card__footer-label,
+.job-side-location,
+.job-side-match__label,
+.job-side-match__desc,
+.job-stack-item__name,
+.job-stack-item__value {
+  color: var(--muted);
+}
+
+.job-stack-item__track,
+.empresa-vaga-talent-card__track {
+  background: color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+@media (max-width: 1680px) {
+  .empresa-page {
+    --empresa-sidebar-offset: 24px;
+  }
+
+  .company-identity__bottom-jobs-grid--side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1440px) {
+  .empresa-page {
+    --empresa-sidebar-offset: 12px;
+  }
+
+  .topbar-header__title {
+    font-size: 42px;
+  }
+
+  .topbar-header__description {
+    font-size: 18px;
+  }
+
+  .company-identity__bottom-title {
+    font-size: 36px;
+  }
+
+  .company-identity__cards {
+    flex-wrap: wrap;
+  }
+
+  .empresa-vaga-talents__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1280px) {
+  .empresa-page {
+    --empresa-sidebar-offset: 0px;
+  }
+
+  .empresa-page__shell {
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.7fr);
+    grid-template-rows: 150px minmax(0, 1fr) minmax(280px, 1fr) minmax(220px, 1fr);
+    grid-template-areas:
+      "topbar topbar"
+      "left side"
+      "left side-bottom"
+      "left side-bottom";
+  }
+
+  .empresa-page__topbar {
+    grid-template-columns: minmax(0, 1.45fr) minmax(220px, 0.7fr);
+  }
+
+  .company-identity__bottom-jobs-grid--side,
+  .empresa-vaga-talents__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+:host-context(.shell:not(.shell--sidebar-collapsed)) .empresa-page {
+  --empresa-sidebar-offset: 128px;
+}
+
+@media (max-width: 1540px) {
+  :host-context(.shell:not(.shell--sidebar-collapsed)) .empresa-page {
+    --empresa-sidebar-offset: 8px;
+  }
+}
+
+@media (max-width: 1280px) {
+  :host-context(.shell:not(.shell--sidebar-collapsed)) .empresa-page {
+    --empresa-sidebar-offset: 0px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .empresa-page__shell {
+    overflow: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) minmax(320px, auto) minmax(240px, auto);
+    grid-template-areas:
+      "topbar"
+      "left"
+      "side"
+      "side-bottom";
+  }
+
+  .empresa-page__topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .empresa-page__column--workspace,
+  .empresa-page__column--side,
+  .empresa-page__column--bottom {
+    height: auto;
+    min-height: 0;
+  }
 }
  
