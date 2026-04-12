@@ -69,21 +69,9 @@
 
           <ng-template #pendingVideoPreview>
             <div class="menu-feature-video__placeholder">
-              <div class="menu-feature-video__placeholder-chip">Preview da vaga</div>
-
-              <div class="menu-feature-video__placeholder-center">
-                <div class="menu-feature-video__placeholder-play" aria-hidden="true">
-                  <mat-icon>play_arrow</mat-icon>
-                </div>
-
-                <strong>Vídeo em preparação</strong>
-                <span>Estrutura pronta para receber a apresentação desta vaga.</span>
-              </div>
-
-              <div class="menu-feature-video__placeholder-bottom">
-                <b>{{ resourcePanelJob?.title || 'Apresentação da vaga' }}</b>
-                <small>{{ resourcePanelJob?.company || 'Tailworks' }}</small>
-              </div>
+              <mat-icon aria-hidden="true">smart_display</mat-icon>
+              <strong>Vídeo em preparação</strong>
+              <span>O espaço já está pronto para receber a apresentação desta vaga.</span>
             </div>
           </ng-template>
 

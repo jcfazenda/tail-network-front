@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
@@ -25,6 +26,20 @@ type CompanyFormModel = {
 };
 
 type CompanyDetailTab = 'recruiters' | 'jobs';
+type EmpresaCenterView = 'identity' | 'job';
+
+type ResourcePanelJobVm = {
+  id: string;
+  title: string;
+  company: string;
+  companyLogoUrl?: string;
+  homeAnnouncementImageUrl?: string;
+  location: string;
+  workModel: string;
+  contractType: string;
+  salaryRange?: string;
+  techStack: Array<{ name: string; match: number }>;
+};
 
 type CompanyViewModel = {
   company: CompanyRecord;
@@ -39,7 +54,7 @@ type CompanyViewModel = {
 @Component({
   standalone: true,
   selector: 'app-empresa-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './empresa.page.html',
   styleUrls: ['./empresa.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,6 +118,24 @@ export class EmpresaPage implements OnDestroy {
   companyForm: CompanyFormModel = this.createEmptyForm();
   selectedCompanyId = '';
   activeDetailTab: CompanyDetailTab = 'recruiters';
+  centerView: EmpresaCenterView = 'identity';
+
+  private readonly fallbackResourcePanelJob: ResourcePanelJobVm = {
+    id: 'vaga-demo',
+    title: 'Analista de Sistemas',
+    company: 'TailWorks',
+    location: 'Sao Paulo - SP',
+    workModel: 'Hibrido',
+    contractType: 'CLT',
+    salaryRange: 'R$ 9.500 - R$ 12.000',
+    techStack: [
+      { name: 'Angular', match: 94 },
+      { name: 'TypeScript', match: 91 },
+      { name: 'Node.js', match: 86 },
+      { name: 'Design System', match: 82 },
+      { name: 'UX Strategy', match: 78 },
+    ],
+  };
 
   constructor() {
     this.subscriptions.add(this.companiesFacade.changes$.subscribe(() => this.refreshViewState()));
@@ -261,6 +294,59 @@ export class EmpresaPage implements OnDestroy {
 
     const activeJobs = selected.jobs.filter((job) => job.status === 'ativas').length;
     return `${activeJobs} vagas ativas`;
+  }
+
+  get resourcePanelSummary(): string {
+    return this.companyResourceSummary;
+  }
+
+  get resourcePanelAvatarBadges(): Array<{ src: string; label: string }> {
+    return this.companyResourceAvatarBadges;
+  }
+
+  get resourcePanelAvatarExtraCount(): number {
+    return this.companyResourceAvatarExtraCount;
+  }
+
+  get resourcePanelJob(): ResourcePanelJobVm {
+    const primaryJob = this.companyResourcePrimaryJob;
+
+    if (!primaryJob) {
+      return this.fallbackResourcePanelJob;
+    }
+
+    return {
+      id: primaryJob.id,
+      title: primaryJob.title,
+      company: primaryJob.company,
+      companyLogoUrl: primaryJob.companyLogoUrl,
+      homeAnnouncementImageUrl: primaryJob.homeAnnouncementImageUrl,
+      location: primaryJob.location,
+      workModel: primaryJob.workModel,
+      contractType: primaryJob.contractType,
+      salaryRange: primaryJob.salaryRange,
+      techStack: primaryJob.techStack,
+    };
+  }
+
+  get resourcePanelHasVideoPreview(): boolean {
+    return !!this.resourcePanelJob.homeAnnouncementImageUrl?.trim();
+  }
+
+  get resourcePanelVideoThumbnailUrl(): string {
+    return this.resourcePanelJob.homeAnnouncementImageUrl?.trim() ?? '';
+  }
+
+  get resourcePanelStacks(): Array<{ name: string; match: number }> {
+    return this.companyResourceStacks.length ? this.companyResourceStacks : this.resourcePanelJob.techStack.slice(0, 5);
+  }
+
+  get resourcePanelAdherence(): number {
+    return this.companyResourceAdherence || 91;
+  }
+
+  get resourcePanelSalary(): string {
+    return this.resourcePanelJob.salaryRange?.trim() || 'R$ 9.500 - R$ 12.000';
   }
 
   get hasActiveFilters(): boolean {
@@ -487,6 +573,24 @@ export class EmpresaPage implements OnDestroy {
     this.cdr.markForCheck();
   }
 
+  showIdentityCenter(): void {
+    if (this.centerView === 'identity') {
+      return;
+    }
+
+    this.centerView = 'identity';
+    this.cdr.markForCheck();
+  }
+
+  showJobCenter(): void {
+    if (this.centerView === 'job') {
+      return;
+    }
+
+    this.centerView = 'job';
+    this.cdr.markForCheck();
+  }
+
   setDetailTab(tab: CompanyDetailTab): void {
     this.activeDetailTab = tab;
   }
@@ -507,6 +611,27 @@ export class EmpresaPage implements OnDestroy {
 
   companyLogoLabel(company: CompanyRecord): string {
     return (company.logoLabel || this.buildLogoLabel(company.name)).slice(0, 2).toUpperCase();
+  }
+
+  companyContactEmail(company: CompanyRecord): string {
+    const domain = company.emailDomain?.trim();
+    return domain ? `contato@${domain}` : 'contato@empresa.com.br';
+  }
+
+  jobCompanyLogoUrl(job: ResourcePanelJobVm): string {
+    return job.companyLogoUrl?.trim() ?? '';
+  }
+
+  jobCompanyLogoLabel(job: ResourcePanelJobVm): string {
+    return this.buildLogoLabel(job.company);
+  }
+
+  jobCardLocation(job: ResourcePanelJobVm): string {
+    return this.formatCompanyLocation(job.location);
+  }
+
+  jobCardWorkModel(job: ResourcePanelJobVm): string {
+    return job.workModel || 'Hibrido';
   }
 
   private ensureValidCurrentPage(): void {

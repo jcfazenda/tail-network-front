@@ -12,151 +12,408 @@
         </div>
       </div>
 
-      <div class="empresa-page__topbar-right"></div>
-    </div>
+      <div class="empresa-page__topbar-right">
 
-    <!-- COLUNAS -->
-    <div class="empresa-page__column empresa-page__column--left"></div>
+<div class="empresa-filter-block">
+  <label class="empresa-filter__label">Filtrar empresas</label>
 
-    <div class="empresa-page__column empresa-page__column--center">
+  <div class="empresa-filter">
+    <span class="material-symbols-rounded empresa-filter__icon">tune</span>
 
-        <div class="company-identity">
+    <select class="empresa-filter__select">
+      <option>Todas as empresas</option>
+      <option>Ativas</option>
+      <option>Inativas</option>
+      <option>Em onboarding</option>
+      <option>Com vagas abertas</option>
+      <option>Sem vagas</option>
+      <option>Com vínculo ativo</option>
+      <option>Sem vínculo</option>
+      <option>Recentemente adicionadas</option>
+      <option>Maior volume de vagas</option>
+    </select>
 
-          <div class="company-identity__hero">
-            <div class="company-identity__hero-content">
-              <div class="company-identity__eyebrow">Empresa selecionada</div>
-
-              <h2 class="company-identity__title">
-                Especialistas em soluções corporativas para operação, talentos e crescimento.
-              </h2>
-
-              <p class="company-identity__subtitle">
-                Uma vitrine institucional para apresentar a essência da empresa, seu posicionamento,
-                sua proposta de valor e os principais destaques da operação.
-              </p>
-
-              <div class="company-identity__actions">
-                <button class="company-identity__button">
-                  Acessar identidade
-                </button>
-              </div>
-            </div>
-
-            <div class="company-identity__floating-card">
-              <div class="company-identity__floating-label">Destaque</div>
-              <div class="company-identity__floating-text">
-                Sua empresa pode apresentar missão, visão, diferenciais, estrutura de atuação
-                e elementos que reforçam confiança e autoridade da marca.
-              </div>
-            </div>
-          </div>
-
-<div class="company-identity__bottom">
-  <div class="company-identity__bottom-header">
-    <div class="company-identity__bottom-title">Nosso ecossistema institucional</div>
-    <div class="company-identity__bottom-subtitle">
-      Estrutura visual da presença e da comunicação da empresa
-    </div>
-  </div>
-
-  <div class="company-identity__cards">
-    <div class="company-identity__mini-card" *ngFor="let item of [1,2,3,4]">
-      <div class="company-identity__mini-icon-wrap">
-        <div class="company-identity__mini-icon"></div>
-      </div>
-
-      <div class="company-identity__mini-title">
-        Apresentação da operação
-      </div>
-
-      <div class="company-identity__mini-text">
-        Pequeno bloco descritivo com resumo da frente institucional apresentada.
-      </div>
-
-      <div class="company-identity__mini-footer">
-        <span class="company-identity__mini-link">Explorar</span>
-        <span class="company-identity__mini-separator"></span>
-        <span class="company-identity__mini-link">Detalhes</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="company-identity__bottom-meta">
-    <div class="company-identity__bottom-meta-item">Presença institucional organizada</div>
-    <div class="company-identity__bottom-meta-item">Experiência visual mais limpa</div>
-    <div class="company-identity__bottom-meta-item">Navegação pensada para clareza</div>
+    <span class="material-symbols-rounded empresa-filter__arrow">expand_more</span>
   </div>
 </div>
- 
 
+      </div>
+    </div>
+
+
+
+    <!-- CENTER  -->
+    <div class="empresa-page__column empresa-page__column--center" *ngIf="centerView === 'identity'">
+
+      <div class="company-identity">
+
+        <div class="company-identity__hero">
+          <div class="company-identity__hero-content">
+            <div class="company-identity__eyebrow">Empresa selecionada</div>
+
+            <h2 class="company-identity__title">
+              Especialistas em soluções corporativas para operação, talentos e crescimento.
+            </h2>
+
+            <p class="company-identity__subtitle">
+              Uma vitrine institucional para apresentar a essência da empresa, seu posicionamento,
+              sua proposta de valor e os principais destaques da operação.
+            </p>
+
+            <div class="company-identity__actions">
+              <button class="company-identity__button" (click)="showJobCenter()">
+                Acessar identidade
+              </button>
+
+            </div>
+          </div>
+
+          <div class="company-identity__floating-card">
+            <div class="company-identity__floating-label">Destaque</div>
+            <div class="company-identity__floating-text">
+              Sua empresa pode apresentar missão, visão, diferenciais, estrutura de atuação
+              e elementos que reforçam confiança e autoridade da marca.
+            </div>
+          </div>
         </div>
 
+        <div class="company-identity__bottom">
+          <div class="company-identity__bottom-header">
+            <div class="company-identity__bottom-title">Recrutadores</div>
+            <div class="company-identity__bottom-subtitle">
+              Estrutura visual da presença e da comunicação da empresa
+            </div>
+          </div>
+
+          <div class="company-identity__cards">
+            <div class="company-identity__mini-card" *ngFor="let item of [1,2,3,4]">
+
+              <div class="company-identity__mini-media">
+                <div class="company-identity__mini-icon-wrap">
+                  <img class="company-identity__mini-logo" src="assets/images/logo-tail.png" alt="TailWorks" />
+                </div>
+              </div>
+
+              <div class="company-identity__mini-content">
+                <div class="company-identity__mini-title">
+                  Jonh Doe
+                </div>
+
+                <div class="company-identity__mini-text">
+                  Recrutador Sr.
+                </div>
+
+                    <div class="company-card__contact">
+                      <div class="company-card__contact-item">
+                        <div class="company-card__icon-box">
+                          <span class="material-symbols-rounded icon">call</span>
+                        </div>
+                        <span>00 123 456 789</span>
+                      </div>
+
+                      <div class="company-card__contact-item">
+                        <div class="company-card__icon-box">
+                          <span class="material-symbols-rounded icon">mail</span>
+                        </div>
+                        <span>julio@tailworks.com</span>
+                      </div> 
+ 
+                    </div>                    
+                    
+              </div>
+
+              <div class="company-identity__mini-footer">
+                <span class="company-identity__mini-link">Explorar</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
 
     </div>
 
+    <!-- VAGA CENTER  -->
+    <div class="empresa-page__column empresa-page__column__vaga--center" *ngIf="centerView === 'job'">
+      <div class="empresa-vaga-shell">
+
+        <div class="ecosystem-desktop__panel-resorces">
+          <div class="menu-feature-header">
+            <div class="menu-feature-header__content">
+              <h4>Conheça a vaga em detalhes</h4>
+
+              <p class="ecosystem-desktop__page-copy">
+                {{ resourcePanelSummary }}
+              </p>
+            </div>
+
+            <div class="job-side-bottom">
+              <div class="job-side-people" *ngIf="resourcePanelAvatarBadges.length">
+                <div class="job-side-avatars">
+                  <img *ngFor="let avatar of resourcePanelAvatarBadges" [src]="avatar.src"
+                    [alt]="'Avatar ' + avatar.label" />
+                </div>
+                <span *ngIf="resourcePanelAvatarExtraCount > 0">+{{ resourcePanelAvatarExtraCount }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-feature-card">
+            <div class="menu-feature-video">
+              <img *ngIf="resourcePanelHasVideoPreview; else pendingVideoPreview" [src]="resourcePanelVideoThumbnailUrl"
+                [alt]="'Prévia da vaga ' + resourcePanelJob.title" />
+
+              <ng-template #pendingVideoPreview>
+                <div class="menu-feature-video__placeholder">
+                  <div class="menu-feature-video__placeholder-chip">Preview da vaga</div>
+
+                  <div class="menu-feature-video__placeholder-center">
+                    <div class="menu-feature-video__placeholder-play" aria-hidden="true">
+                      <mat-icon>play_arrow</mat-icon>
+                    </div>
+
+                    <strong>Vídeo em preparação</strong>
+                    <span>Estrutura pronta para receber a apresentação desta vaga.</span>
+                  </div>
+
+                  <div class="menu-feature-video__placeholder-bottom">
+                    <b>{{ resourcePanelJob.title }}</b>
+                    <small>{{ resourcePanelJob.company }}</small>
+                  </div>
+                </div>
+              </ng-template>
+
+              <div class="menu-feature-overlay">
+                <button type="button" class="menu-play-btn" disabled aria-label="Vídeo disponível em breve">
+                  <mat-icon>play_arrow</mat-icon>
+                </button>
+
+                <div class="menu-video-meta">
+                  <span>{{ resourcePanelHasVideoPreview ? 'Preview' : 'Em breve' }}</span>
+                  <div class="menu-video-bar">
+                    <div class="menu-video-bar-fill"
+                      [class.menu-video-bar-fill--pending]="!resourcePanelHasVideoPreview"></div>
+                  </div>
+                  <span>{{ resourcePanelHasVideoPreview ? 'Mídia pronta' : 'Sem vídeo' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-mega-content">
+            <div class="job-side-content">
+              <div class="job-side-top">
+                <div class="job-side-brand-row">
+                  <div class="job-side-logo">
+                    <img *ngIf="jobCompanyLogoUrl(resourcePanelJob); else resourcePanelLogoFallback"
+                      class="job-side-logo__image" [src]="jobCompanyLogoUrl(resourcePanelJob)"
+                      [alt]="resourcePanelJob.company" />
+                    <ng-template #resourcePanelLogoFallback>
+                      {{ jobCompanyLogoLabel(resourcePanelJob) }}
+                    </ng-template>
+                  </div>
+
+                  <div class="job-side-title-wrap">
+                    <h3>{{ resourcePanelJob.title }}</h3>
+                    <strong>{{ resourcePanelJob.company }}</strong>
+                  </div>
+
+                  <div class="job-side-info-wrap">
+                    <div class="job-side-meta">
+                      <span class="job-side-location">{{ jobCardLocation(resourcePanelJob) }}</span>
+                      <span class="job-side-chip">{{ jobCardWorkModel(resourcePanelJob) }}</span>
+                      <span class="job-side-chip">{{ resourcePanelJob.contractType }}</span>
+                    </div>
+
+                    <div class="job-side-salary">{{ resourcePanelSalary }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="job-side-dashed-line"></div>
+
+              <div class="job-side-bottom-grid">
+                <div class="job-side-stacks">
+                  <span class="job-side-stacks__title">Stacks mais específicas</span>
+
+                  <div class="job-stack-item" *ngFor="let stack of resourcePanelStacks">
+                    <span class="job-stack-item__name">{{ stack.name }}</span>
+                    <div class="job-stack-item__track">
+                      <div class="job-stack-item__fill" [style.width.%]="stack.match"></div>
+                    </div>
+                    <span class="job-stack-item__value">{{ stack.match }}%</span>
+                  </div>
+                </div>
+
+                <div class="job-side-match">
+                  <div class="job-side-match__value">{{ resourcePanelAdherence }}%</div>
+                  <div class="job-side-match__label">Aderência</div>
+                  <p class="job-side-match__desc">
+                    Score atual da vaga com base no matching e no contexto do ecossistema.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empresa-vaga-talents">
+          <div class="empresa-vaga-talents__grid">
+            <div class="empresa-vaga-talent-card" *ngFor="let item of [1,2,3,4,5,6,7,8]">
+              <div class="empresa-vaga-talent-card__top">
+                <div class="empresa-vaga-talent-card__avatar"></div>
+
+                <div class="empresa-vaga-talent-card__identity">
+                  <strong>Caua Torres</strong>
+                  <span>Software Engineer • Accenture</span>
+                </div>
+
+                <button type="button" class="empresa-vaga-talent-card__action" aria-label="Abrir perfil">
+                  <mat-icon>badge</mat-icon>
+                </button>
+              </div>
+
+              <div class="empresa-vaga-talent-card__location">Belo Horizonte - MG. Disponibilidade imediata.</div>
+
+              <div class="empresa-vaga-talent-card__stacks">
+                <div class="empresa-vaga-talent-card__stack">
+                  <span>.NET / C#</span>
+                  <div class="empresa-vaga-talent-card__track">
+                    <div class="empresa-vaga-talent-card__fill" style="width: 100%"></div>
+                  </div>
+                  <strong>100%</strong>
+                </div>
+
+                <div class="empresa-vaga-talent-card__stack">
+                  <span>Docker</span>
+                  <div class="empresa-vaga-talent-card__track">
+                    <div class="empresa-vaga-talent-card__fill" style="width: 100%"></div>
+                  </div>
+                  <strong>100%</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empresa-vaga-shell__topbar">
+          <button class="company-identity__button company-identity__button--ghost" type="button"
+            (click)="showIdentityCenter()">
+            Voltar para empresa
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- LEFT -->
+    <div class="empresa-page__column empresa-page__column--left">
+      <div class="company-context" *ngIf="selectedCompany as selected">
+
+ 
+      </div>
+    </div>
+
+
     <div class="empresa-page__column empresa-page__column--right">
-      <div class="company-panel">
+      <div class="company-context" *ngIf="selectedCompany as selected">
 
-        <div class="company-panel__header">
-          <div class="company-panel__title-block">
-            <div class="company-panel__title">Empresas</div>
-            <div class="company-panel__description">
-              Acompanhe e gerencie todas as empresas cadastradas.
+        <div class="company-card__top">
+          <div class="company-card__logo"></div>
+
+          <div class="company-card__info">
+            <div class="company-card__header">
+              <div class="company-card__title">
+                <div class="company-card__name">Empresa Nome</div>
+                <div class="company-card__location">São Paulo - SP</div>
+              </div>
+
+              <div class="company-card__type-chip company-card__type-chip--consultoria">
+                Consultoria
+              </div>
+            </div>
+ 
+          </div>
+
+        </div>
+
+        <!-- NOVA LINHA + INFOS -->
+        <div class="company-card__extra"> 
+
+          <div class="company-card__contact">
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-box">
+                <span class="material-symbols-rounded icon">call</span>
+              </div>
+              <span>00 123 456 789</span>
+            </div>
+
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-box">
+                <span class="material-symbols-rounded icon">mail</span>
+              </div>
+              <span>julio@tailworks.com</span>
+            </div>
+
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-box">
+                <span class="material-symbols-rounded icon">language</span>
+              </div>
+              <span>www.tailworks.com</span>
+            </div>
+
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-circle">
+                <span class="material-symbols-rounded icon">location_on</span>
+              </div>
+              <span>Rua : Visconde de Duprat 55 Sala 888</span>
             </div>
           </div>
 
-          <div class="company-panel__count">24 Empresas</div>
         </div>
 
-        <div class="company-panel__search">
-          <input type="text" placeholder="Pesquisar empresa..." />
-        </div>
+        <div class="company-card__divider"></div>        
+        
+          <div class="empresa-vaga-card">
+            <div class="empresa-vaga-card__header">
+              <div class="empresa-vaga-card__title">Vagas ativas</div>
+              <div class="empresa-vaga-card__count">3 vagas</div> 
+            </div>
 
-        <div class="company-list">
-          <div class="company-card" *ngFor="let item of [1,2,3,4]">
+            <div class="empresa-vaga-card__body"> 
+              <div class="empresa-vaga-card__item" *ngFor="let vaga of [1,2,3]">
+                <div class="empresa-vaga-card__item-header">
+                  <div class="empresa-vaga-card__item-brand">a</div>
 
-            <div class="company-card__top">
-              <div class="company-card__logo"></div>
-
-              <div class="company-card__info">
-                <div class="company-card__header">
-                  <div class="company-card__title">
-                    <div class="company-card__name">Empresa Nome</div>
-                    <div class="company-card__location">São Paulo - SP</div>
-                  </div>
-
-                  <div class="company-card__type-chip company-card__type-chip--consultoria">
-                    Consultoria
+                  <div class="empresa-vaga-card__item-copy">
+                    <div class="empresa-vaga-card__item-title">Fullstack .NET + React</div>
+                     <span class="empresa-vaga-card__item-location">São Paulo - SP</span>
                   </div>
                 </div>
 
-                <div class="company-card__description">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non justo vitae massa fermentum aliquam.
+                <div class="empresa-vaga-card__item-meta">
+                  <span class="empresa-vaga-card__item-location">Lorem ipsum estoire dstare</span>
+                </div>
+
+                <div class="empresa-vaga-card__item-footer">
+                  <div class="empresa-vaga-card__item-salary">R$ 12.500</div>
+
+                  <div class="empresa-vaga-card__item-tags">
+                    <span class="empresa-vaga-card__item-chip">Híbrido</span>
+                    <span class="empresa-vaga-card__item-chip empresa-vaga-card__item-chip--neutral">CLT</span>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="company-card__footer">
-              <div class="company-card__footer-item">
-                <span class="company-card__footer-label">Vagas em aberto</span>
-                <strong class="company-card__footer-value">12</strong>
-              </div>
-
-              <div class="company-card__footer-divider" aria-hidden="true"></div>
-
-              <div class="company-card__footer-item">
-                <span class="company-card__footer-label">Vagas em finalização</span>
-                <strong class="company-card__footer-value">05</strong>
-              </div>
-            </div>
-
+            </div> 
           </div>
-        </div>
 
-        <div class="company-panel__footer">
-          <button class="company-panel__button">+ Nova Empresa</button>
-        </div>
+      </div>
 
+      <div class="company-context__actions">
+        <button class="empresa-vaga-card__button empresa-vaga-card__button--secondary" type="button">
+          + Criar Vaga
+        </button>
       </div>
     </div>
 
