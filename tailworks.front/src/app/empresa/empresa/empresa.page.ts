@@ -234,10 +234,21 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get companyResourceAvatarBadges(): Array<{ src: string; label: string }> {
-    return this.selectedCompanyRecruiters
-      .filter((recruiter) => !!recruiter.avatarUrl)
-      .slice(0, 4)
-      .map((recruiter) => ({ src: recruiter.avatarUrl as string, label: recruiter.name }));
+    const badges = this.selectedCompanyRecruiters
+      .slice(0, 3)
+      .map((recruiter) => ({
+        src: recruiter.avatarUrl?.trim() || 'assets/images/logo-tail.png',
+        label: recruiter.name,
+      }));
+
+    while (badges.length < 3) {
+      badges.push({
+        src: 'assets/images/logo-tail.png',
+        label: 'TailWorks',
+      });
+    }
+
+    return badges;
   }
 
   get companyResourceAvatarExtraCount(): number {
