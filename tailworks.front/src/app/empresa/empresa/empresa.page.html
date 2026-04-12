@@ -14,28 +14,28 @@
 
       <div class="empresa-page__topbar-right">
 
-<div class="empresa-filter-block">
-  <label class="empresa-filter__label">Filtrar empresas</label>
+        <div class="empresa-filter-block">
+          <label class="empresa-filter__label">Filtrar empresas</label>
 
-  <div class="empresa-filter">
-    <span class="material-symbols-rounded empresa-filter__icon">tune</span>
+          <div class="empresa-filter">
+            <span class="material-symbols-rounded empresa-filter__icon">tune</span>
 
-    <select class="empresa-filter__select">
-      <option>Todas as empresas</option>
-      <option>Ativas</option>
-      <option>Inativas</option>
-      <option>Em onboarding</option>
-      <option>Com vagas abertas</option>
-      <option>Sem vagas</option>
-      <option>Com vínculo ativo</option>
-      <option>Sem vínculo</option>
-      <option>Recentemente adicionadas</option>
-      <option>Maior volume de vagas</option>
-    </select>
+            <select class="empresa-filter__select">
+              <option>Todas as empresas</option>
+              <option>Ativas</option>
+              <option>Inativas</option>
+              <option>Em onboarding</option>
+              <option>Com vagas abertas</option>
+              <option>Sem vagas</option>
+              <option>Com vínculo ativo</option>
+              <option>Sem vínculo</option>
+              <option>Recentemente adicionadas</option>
+              <option>Maior volume de vagas</option>
+            </select>
 
-    <span class="material-symbols-rounded empresa-filter__arrow">expand_more</span>
-  </div>
-</div>
+            <span class="material-symbols-rounded empresa-filter__arrow">expand_more</span>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -48,32 +48,75 @@
       <div class="company-identity">
 
         <div class="company-identity__hero">
-          <div class="company-identity__hero-content">
-            <div class="company-identity__eyebrow">Empresa selecionada</div>
 
-            <h2 class="company-identity__title">
-              Especialistas em soluções corporativas para operação, talentos e crescimento.
-            </h2>
+                  <div class="company-card__top">
+          <div class="company-card__logo"></div>
 
-            <p class="company-identity__subtitle">
-              Uma vitrine institucional para apresentar a essência da empresa, seu posicionamento,
-              sua proposta de valor e os principais destaques da operação.
-            </p>
+          <div class="company-card__info">
+            <div class="company-card__header">
+              <div class="company-card__title">
+                <div class="company-card__name">Empresa Nome</div>
+                <div class="company-card__location">São Paulo - SP</div>
+              </div>
 
-            <div class="company-identity__actions">
+              <div class="company-card__type-chip company-card__type-chip--consultoria">
+                Consultoria
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- NOVA LINHA + INFOS -->
+        <div class="company-card__extra">
+
+          <div class="company-card__contact">
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-box">
+                <span class="material-symbols-rounded icon">call</span>
+              </div>
+              <span>00 123 456 789</span>
+            </div>
+
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-box">
+                <span class="material-symbols-rounded icon">mail</span>
+              </div>
+              <span>julio@tailworks.com</span>
+            </div>
+
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-box">
+                <span class="material-symbols-rounded icon">language</span>
+              </div>
+              <span>www.tailworks.com</span>
+            </div>
+
+            <div class="company-card__contact-item">
+              <div class="company-card__icon-circle">
+                <span class="material-symbols-rounded icon">location_on</span>
+              </div>
+              <span>Rua : Visconde de Duprat 55 Sala 888</span>
+            </div>
+          </div>
+
+        </div>
+
+
+          <div class="company-identity__floating-card">
+            <div class="company-identity__floating-media">
+              <img src="assets/images/logo-tail.png" alt="TailWorks" />
+            </div>
+
+                        <div class="company-identity__actions">
               <button class="company-identity__button" (click)="showJobCenter()">
                 Acessar identidade
               </button>
 
             </div>
-          </div>
 
-          <div class="company-identity__floating-card">
-            <div class="company-identity__floating-label">Destaque</div>
-            <div class="company-identity__floating-text">
-              Sua empresa pode apresentar missão, visão, diferenciais, estrutura de atuação
-              e elementos que reforçam confiança e autoridade da marca.
-            </div>
+
           </div>
         </div>
 
@@ -103,23 +146,23 @@
                   Recrutador Sr.
                 </div>
 
-                    <div class="company-card__contact">
-                      <div class="company-card__contact-item">
-                        <div class="company-card__icon-box">
-                          <span class="material-symbols-rounded icon">call</span>
-                        </div>
-                        <span>00 123 456 789</span>
-                      </div>
+                <div class="company-card__contact">
+                  <div class="company-card__contact-item">
+                    <div class="company-card__icon-box">
+                      <span class="material-symbols-rounded icon">call</span>
+                    </div>
+                    <span>00 123 456 789</span>
+                  </div>
 
-                      <div class="company-card__contact-item">
-                        <div class="company-card__icon-box">
-                          <span class="material-symbols-rounded icon">mail</span>
-                        </div>
-                        <span>julio@tailworks.com</span>
-                      </div> 
- 
-                    </div>                    
-                    
+                  <div class="company-card__contact-item">
+                    <div class="company-card__icon-box">
+                      <span class="material-symbols-rounded icon">mail</span>
+                    </div>
+                    <span>julio@tailworks.com</span>
+                  </div>
+
+                </div>
+
               </div>
 
               <div class="company-identity__mini-footer">
@@ -140,11 +183,11 @@
 
         <div class="ecosystem-desktop__panel-resorces">
           <div class="menu-feature-header">
-            <div class="menu-feature-header__content">
-              <h4>Conheça a vaga em detalhes</h4>
 
+            <div class="menu-feature-header__content">
+              <h4>VG-0001</h4>
               <p class="ecosystem-desktop__page-copy">
-                {{ resourcePanelSummary }}
+                Vaga em detalhes 
               </p>
             </div>
 
@@ -258,7 +301,15 @@
           </div>
         </div>
 
-        <div class="empresa-vaga-talents">
+        <!-- CARDS CANDIDATOS -->
+        <div class="menu-feature-header__content">
+          <div class="empresa-candidate-card__title">Camdidatos Aderentes</div> 
+          <p class="ecosystem-desktop__page-copy">
+            Lorem ipsun estoire dstare desri 
+          </p>
+        </div>
+
+        <div class="empresa-candidatos-talents">
           <div class="empresa-vaga-talents__grid">
             <div class="empresa-vaga-talent-card" *ngFor="let item of [1,2,3,4,5,6,7,8]">
               <div class="empresa-vaga-talent-card__top">
@@ -266,7 +317,7 @@
 
                 <div class="empresa-vaga-talent-card__identity">
                   <strong>Caua Torres</strong>
-                  <span>Software Engineer • Accenture</span>
+                  <span>Software Engineer</span>
                 </div>
 
                 <button type="button" class="empresa-vaga-talent-card__action" aria-label="Abrir perfil">
@@ -274,7 +325,7 @@
                 </button>
               </div>
 
-              <div class="empresa-vaga-talent-card__location">Belo Horizonte - MG. Disponibilidade imediata.</div>
+              <div class="empresa-vaga-talent-card__location">Belo Horizonte - MG.</div>
 
               <div class="empresa-vaga-talent-card__stacks">
                 <div class="empresa-vaga-talent-card__stack">
@@ -296,14 +347,7 @@
             </div>
           </div>
         </div>
-
-        <div class="empresa-vaga-shell__topbar">
-          <button class="company-identity__button company-identity__button--ghost" type="button"
-            (click)="showIdentityCenter()">
-            Voltar para empresa
-          </button>
-        </div>
-
+ 
       </div>
     </div>
 
@@ -311,7 +355,7 @@
     <div class="empresa-page__column empresa-page__column--left">
       <div class="company-context" *ngIf="selectedCompany as selected">
 
- 
+
       </div>
     </div>
 
@@ -319,94 +363,43 @@
     <div class="empresa-page__column empresa-page__column--right">
       <div class="company-context" *ngIf="selectedCompany as selected">
 
-        <div class="company-card__top">
-          <div class="company-card__logo"></div>
 
-          <div class="company-card__info">
-            <div class="company-card__header">
-              <div class="company-card__title">
-                <div class="company-card__name">Empresa Nome</div>
-                <div class="company-card__location">São Paulo - SP</div>
-              </div>
+        <div class="empresa-vaga-card">
 
-              <div class="company-card__type-chip company-card__type-chip--consultoria">
-                Consultoria
-              </div>
-            </div>
- 
+          <div class="empresa-vaga-card__header">
+            <div class="empresa-vaga-card__title">Vagas ativas</div>
+            <div class="empresa-vaga-card__count">3 vagas</div>
           </div>
 
+          <div class="empresa-vaga-card__body">
+
+            <div class="empresa-vaga-card__item" *ngFor="let vaga of [1,2,3]"  (click)="showIdentityCenter()">
+              <div class="empresa-vaga-card__item-header">
+                <div class="empresa-vaga-card__item-brand">a</div>
+
+                <div class="empresa-vaga-card__item-copy">
+                  <div class="empresa-vaga-card__item-title">Fullstack .NET + React</div>
+                  <span class="empresa-vaga-card__item-location">São Paulo - SP</span>
+                </div>
+              </div>
+
+              <div class="empresa-vaga-card__item-meta">
+                <span class="empresa-vaga-card__item-location">Lorem ipsum estoire dstare</span>
+              </div>
+
+              <div class="empresa-vaga-card__item-footer">
+                <div class="empresa-vaga-card__item-salary">R$ 12.500</div>
+
+                <div class="empresa-vaga-card__item-tags">
+                  <span class="empresa-vaga-card__item-chip">Híbrido</span>
+                  <span class="empresa-vaga-card__item-chip empresa-vaga-card__item-chip--neutral">CLT</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          
         </div>
-
-        <!-- NOVA LINHA + INFOS -->
-        <div class="company-card__extra"> 
-
-          <div class="company-card__contact">
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-box">
-                <span class="material-symbols-rounded icon">call</span>
-              </div>
-              <span>00 123 456 789</span>
-            </div>
-
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-box">
-                <span class="material-symbols-rounded icon">mail</span>
-              </div>
-              <span>julio@tailworks.com</span>
-            </div>
-
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-box">
-                <span class="material-symbols-rounded icon">language</span>
-              </div>
-              <span>www.tailworks.com</span>
-            </div>
-
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-circle">
-                <span class="material-symbols-rounded icon">location_on</span>
-              </div>
-              <span>Rua : Visconde de Duprat 55 Sala 888</span>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="company-card__divider"></div>        
-        
-          <div class="empresa-vaga-card">
-            <div class="empresa-vaga-card__header">
-              <div class="empresa-vaga-card__title">Vagas ativas</div>
-              <div class="empresa-vaga-card__count">3 vagas</div> 
-            </div>
-
-            <div class="empresa-vaga-card__body"> 
-              <div class="empresa-vaga-card__item" *ngFor="let vaga of [1,2,3]">
-                <div class="empresa-vaga-card__item-header">
-                  <div class="empresa-vaga-card__item-brand">a</div>
-
-                  <div class="empresa-vaga-card__item-copy">
-                    <div class="empresa-vaga-card__item-title">Fullstack .NET + React</div>
-                     <span class="empresa-vaga-card__item-location">São Paulo - SP</span>
-                  </div>
-                </div>
-
-                <div class="empresa-vaga-card__item-meta">
-                  <span class="empresa-vaga-card__item-location">Lorem ipsum estoire dstare</span>
-                </div>
-
-                <div class="empresa-vaga-card__item-footer">
-                  <div class="empresa-vaga-card__item-salary">R$ 12.500</div>
-
-                  <div class="empresa-vaga-card__item-tags">
-                    <span class="empresa-vaga-card__item-chip">Híbrido</span>
-                    <span class="empresa-vaga-card__item-chip empresa-vaga-card__item-chip--neutral">CLT</span>
-                  </div>
-                </div>
-              </div>
-            </div> 
-          </div>
 
       </div>
 
