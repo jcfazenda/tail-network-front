@@ -3,6 +3,7 @@
 
     <!-- TOPBAR -->
     <div class="empresa-page__topbar">
+
       <div class="empresa-page__topbar-left">
         <div class="topbar-header">
           <div class="topbar-header__title">Empresas</div>
@@ -40,83 +41,75 @@
       </div>
     </div>
 
-
-
     <!-- CENTER  -->
-    <div class="empresa-page__column empresa-page__column--center" *ngIf="centerView === 'identity'">
+    <div class="empresa-page__column empresa-page__column--workspace" *ngIf="centerView === 'identity'">
 
       <div class="company-identity">
 
         <div class="company-identity__hero">
 
-                  <div class="company-card__top">
-          <div class="company-card__logo"></div>
+          <div class="company-card__top">
+            <div class="company-card__logo"></div>
 
-          <div class="company-card__info">
-            <div class="company-card__header">
-              <div class="company-card__title">
-                <div class="company-card__name">Empresa Nome</div>
-                <div class="company-card__location">São Paulo - SP</div>
-              </div>
+            <div class="company-card__info">
+              <div class="company-card__header">
+                <div class="company-card__title">
+                  <div class="company-card__name">Empresa Nome</div>
+                  <div class="company-card__location">São Paulo - SP</div>
+                </div>
 
-              <div class="company-card__type-chip company-card__type-chip--consultoria">
-                Consultoria
+                <div class="company-card__type-chip company-card__type-chip--consultoria">
+                  <div class="company-identity__actions">
+                    <button class="company-identity__button" (click)="showJobCenter()">
+                      Acessar Candidatos
+                    </button>
+
+                  </div>
+                </div>
               </div>
             </div>
 
           </div>
 
-        </div>
+          <!-- NOVA LINHA + INFOS -->
+          <div class="company-card__extra">
 
-        <!-- NOVA LINHA + INFOS -->
-        <div class="company-card__extra">
-
-          <div class="company-card__contact">
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-box">
-                <span class="material-symbols-rounded icon">call</span>
+            <div class="company-card__contact">
+              <div class="company-card__contact-item">
+                <div class="company-card__icon-box">
+                  <span class="material-symbols-rounded icon">call</span>
+                </div>
+                <span>00 123 456 789</span>
               </div>
-              <span>00 123 456 789</span>
+
+              <div class="company-card__contact-item">
+                <div class="company-card__icon-box">
+                  <span class="material-symbols-rounded icon">mail</span>
+                </div>
+                <span>julio@tailworks.com</span>
+              </div>
+
+              <div class="company-card__contact-item">
+                <div class="company-card__icon-box">
+                  <span class="material-symbols-rounded icon">language</span>
+                </div>
+                <span>www.tailworks.com</span>
+              </div>
+
+              <div class="company-card__contact-item">
+                <div class="company-card__icon-circle">
+                  <span class="material-symbols-rounded icon">location_on</span>
+                </div>
+                <span>Rua : Visconde de Duprat 55 Sala 888</span>
+              </div>
             </div>
 
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-box">
-                <span class="material-symbols-rounded icon">mail</span>
-              </div>
-              <span>julio@tailworks.com</span>
-            </div>
-
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-box">
-                <span class="material-symbols-rounded icon">language</span>
-              </div>
-              <span>www.tailworks.com</span>
-            </div>
-
-            <div class="company-card__contact-item">
-              <div class="company-card__icon-circle">
-                <span class="material-symbols-rounded icon">location_on</span>
-              </div>
-              <span>Rua : Visconde de Duprat 55 Sala 888</span>
-            </div>
           </div>
-
-        </div>
-
 
           <div class="company-identity__floating-card">
             <div class="company-identity__floating-media">
               <img src="assets/images/logo-tail.png" alt="TailWorks" />
             </div>
-
-                        <div class="company-identity__actions">
-              <button class="company-identity__button" (click)="showJobCenter()">
-                Acessar identidade
-              </button>
-
-            </div>
-
-
           </div>
         </div>
 
@@ -178,7 +171,7 @@
     </div>
 
     <!-- VAGA CENTER  -->
-    <div class="empresa-page__column empresa-page__column__vaga--center" *ngIf="centerView === 'job'">
+    <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job" *ngIf="centerView === 'job'">
       <div class="empresa-vaga-shell">
 
         <div class="ecosystem-desktop__panel-resorces">
@@ -187,7 +180,7 @@
             <div class="menu-feature-header__content">
               <h4>VG-0001</h4>
               <p class="ecosystem-desktop__page-copy">
-                Vaga em detalhes 
+                Vaga em detalhes
               </p>
             </div>
 
@@ -303,9 +296,9 @@
 
         <!-- CARDS CANDIDATOS -->
         <div class="menu-feature-header__content">
-          <div class="empresa-candidate-card__title">Camdidatos Aderentes</div> 
+          <div class="empresa-candidate-card__title">Camdidatos Aderentes</div>
           <p class="ecosystem-desktop__page-copy">
-            Lorem ipsun estoire dstare desri 
+            Lorem ipsun estoire dstare desri
           </p>
         </div>
 
@@ -347,20 +340,21 @@
             </div>
           </div>
         </div>
- 
+
       </div>
     </div>
 
     <!-- LEFT -->
-    <div class="empresa-page__column empresa-page__column--left">
+    <div class="empresa-page__column empresa-page__column--company">
       <div class="company-context" *ngIf="selectedCompany as selected">
 
 
       </div>
     </div>
 
+    <!-- rigjt -->
+    <div class="empresa-page__column empresa-page__column--jobs">
 
-    <div class="empresa-page__column empresa-page__column--right">
       <div class="company-context" *ngIf="selectedCompany as selected">
 
 
@@ -373,7 +367,7 @@
 
           <div class="empresa-vaga-card__body">
 
-            <div class="empresa-vaga-card__item" *ngFor="let vaga of [1,2,3]"  (click)="showIdentityCenter()">
+            <div class="empresa-vaga-card__item" *ngFor="let vaga of [1,2,3]" (click)="showIdentityCenter()">
               <div class="empresa-vaga-card__item-header">
                 <div class="empresa-vaga-card__item-brand">a</div>
 
@@ -398,7 +392,7 @@
             </div>
 
           </div>
-          
+
         </div>
 
       </div>
@@ -408,7 +402,17 @@
           + Criar Vaga
         </button>
       </div>
+
+
+    </div>
+
+
+    <div class="empresa-page__column empresa-page__column--bottom">
+      <div class="company-context" *ngIf="selectedCompany as selected">
+      </div>
     </div>
 
   </div>
+
+
 </div>
