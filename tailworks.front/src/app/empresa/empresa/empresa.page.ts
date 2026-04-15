@@ -138,7 +138,7 @@ export class EmpresaPage implements OnDestroy {
   centerView: EmpresaCenterView = 'identity';
 
   readonly sideJobCards: SideJobCardVm[] = [
-    { id: 'vaga-001', title: 'Fullstack .NET + React', location: 'São Paulo - SP', summary: 'Pipeline principal da empresa para squad core.', salary: 'R$ 12.500', workModel: 'Híbrido', contractType: 'CLT' },
+    { id: 'vaga-001', title: 'Full Stack Developer', location: 'São Paulo - SP', summary: 'Pipeline principal da empresa para squad core.', salary: 'R$ 12.500', workModel: 'Híbrido', contractType: 'CLT' },
     { id: 'vaga-002', title: 'Tech Lead Java', location: 'Campinas - SP', summary: 'Liderança técnica para frente de integração.', salary: 'R$ 15.800', workModel: 'Remoto', contractType: 'CLT' },
     { id: 'vaga-003', title: 'Product Designer', location: 'Belo Horizonte - MG', summary: 'Atuação em produto e design system.', salary: 'R$ 10.200', workModel: 'Híbrido', contractType: 'PJ' },
     { id: 'vaga-004', title: 'Analista de Dados', location: 'Curitiba - PR', summary: 'Operação analítica com foco em BI e métricas.', salary: 'R$ 9.400', workModel: 'Presencial', contractType: 'CLT' },
@@ -151,7 +151,7 @@ export class EmpresaPage implements OnDestroy {
   private readonly fallbackResourcePanelJob: ResourcePanelJobVm = {
     id: 'vaga-demo',
     title: 'Analista de Sistemas',
-    company: 'TailWorks',
+    company: 'Tail Works',
     location: 'Sao Paulo - SP',
     workModel: 'Hibrido',
     contractType: 'CLT',

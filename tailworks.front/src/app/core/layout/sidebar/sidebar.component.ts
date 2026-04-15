@@ -167,29 +167,23 @@ export class SidebarComponent {
     const canManageDirectory = recruiter.isMaster;
     const canCreateRecruiter = recruiter.isMaster;
 
-    return [
-      {
-        label: '',
-        items: [
-          { label: 'Novo Card', icon: 'add_box', route: '/vagas/cadastro' },
-          { label: 'Minhas Vagas', icon: 'work', route: '/home/ecossistema', badge: this.recruiterJobsCount },
-        ],
-      },
-      {
-        label: '',
-        items: [
-          { label: 'Treinamento IA', icon: 'psychology', route: '/recruiter/core-algoritimo' },
-          ...(canManageDirectory ? [{ label: 'Recruiters', icon: 'badge', route: '/recruiter/panel', badge: this.recruitersCount }] : []),
-          ...(canCreateRecruiter ? [{ label: 'Novo Recruiter', icon: 'person_add', route: '/recruiter/cadastro' }] : []),
-        ],
-      },
-      ...(canManageDirectory
-        ? [{
-            label: '',
-            items: [{ label: 'Empresas', icon: 'apartment', route: '/empresa', badge: this.companiesCount }],
-          } satisfies CandidateTreeGroup]
-        : []),
-    ];
+return [
+  {
+    label: '',
+    items: [
+      { label: 'Ecossistema', icon: 'work', route: '/home/ecossistema', badge: this.recruiterJobsCount },
+      ...(canManageDirectory ? [{ label: 'Empresas e Vagas', icon: 'apartment', route: '/empresa', badge: this.companiesCount }] : []),
+      ...(canManageDirectory ? [{ label: 'Recrutadores', icon: 'badge', route: '/recruiter/panel', badge: this.recruitersCount }] : []),
+      
+    ],
+  },
+  {
+    label: '',
+    items: [
+      { label: 'Treinamento do Algorítimo', icon: 'psychology', route: '/recruiter/core-algoritimo' },
+    ],
+  },
+];
   }
 
   get recruiterJobsCount(): number {

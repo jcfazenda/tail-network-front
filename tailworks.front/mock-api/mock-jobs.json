@@ -2,71 +2,81 @@
   {
     "id": "lab-job-01",
     "code": "VG-0001",
-    "title": "Backend .NET Senior",
-    "company": "Itaú Unibanco",
-    "companyLogoUrl": "/assets/images/logo-itau.png",
-    "homeAnnouncementImageUrl": "",
-    "location": "Rio de Janeiro - RJ",
-    "workModel": "Hibrido",
-    "seniority": "Senior",
-    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time de produtos e plataforma.",
-    "contractType": "CLT",
-    "statusReason": "",
-    "salaryRange": "R$ 14.000",
-    "radarAdherenceThreshold": 85,
-    "showSalaryRangeInCard": true,
-    "allowCandidateSalarySuggestion": false,
-    "hybridOnsiteDaysDescription": "",
-    "benefits": [],
-    "hiringDocuments": [],
-    "techStack": [
-      {
-        "name": ".NET / C#",
-        "match": 94
-      },
-      {
-        "name": "Azure",
-        "match": 78
-      },
-      {
-        "name": "Docker",
-        "match": 72
-      },
-      {
-        "name": "Kubernetes",
-        "match": 54
-      },
-      {
-        "name": "SQL / Dados",
-        "match": 32
-      }
-    ],
-    "differentials": [],
-    "responsibilitySections": [],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
     "recruiterWatcherIds": [
       "julio-fazenda-recruiter"
     ],
-    "priority": "Carga local",
-    "match": 97,
-    "talents": 9,
-    "radarCount": 9,
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 62,
+    "talents": 22,
+    "radarCount": 22,
     "ageLabel": "Agora",
-    "postedLabel": "Carga local",
+    "postedLabel": "",
     "avatars": [
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 6,
+    "extraCount": 19,
     "status": "ativas",
-    "candidates": [],
-    "createdAt": "2026-04-09T11:39:50.578Z",
-    "updatedAt": "2026-04-09T11:39:50.578Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-14T20:18:37.645Z",
+    "updatedAt": "2026-04-15T02:31:38.480Z",
+    "title": "Backend .NET Senior",
+    "company": "Itaú Unibanco",
+    "companyLogoUrl": "/assets/images/logo-itau.png",
+    "homeAnnouncementImageUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuída e acelerar entregas críticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "R$ 14.000",
+    "radarAdherenceThreshold": 66,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 77
+      },
+      {
+        "name": "Azure",
+        "match": 55
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:dotnet",
+        "name": ".NET / C#",
+        "knowledge": 77,
+        "description": ""
+      },
+      {
+        "repoId": "repo:azure",
+        "name": "Azure",
+        "knowledge": 55,
+        "description": ""
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "recruiterBoardStatusId": "radar"
   },
   {
@@ -112,7 +122,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -121,8 +141,8 @@
     ],
     "priority": "Carga local",
     "match": 91,
-    "talents": 11,
-    "radarCount": 11,
+    "talents": 8,
+    "radarCount": 8,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -130,14 +150,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 8,
+    "extraCount": 5,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:38:50.578Z",
-    "updatedAt": "2026-04-09T11:38:50.578Z",
+    "createdAt": "2026-04-14T20:17:37.646Z",
+    "updatedAt": "2026-04-14T20:17:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-03",
@@ -182,7 +203,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -203,11 +234,12 @@
     "extraCount": 3,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:37:50.578Z",
-    "updatedAt": "2026-04-09T11:37:50.578Z",
+    "createdAt": "2026-04-14T20:16:37.646Z",
+    "updatedAt": "2026-04-14T20:16:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-04",
@@ -252,7 +284,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -261,8 +303,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 7,
-    "radarCount": 7,
+    "talents": 13,
+    "radarCount": 13,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -270,21 +312,22 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 4,
+    "extraCount": 10,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:36:50.578Z",
-    "updatedAt": "2026-04-09T11:36:50.578Z",
+    "createdAt": "2026-04-14T20:15:37.646Z",
+    "updatedAt": "2026-04-14T20:15:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-05",
     "code": "VG-0005",
-    "title": "Fullstack .NET + React",
-    "company": "Accenture",
-    "companyLogoUrl": "",
+    "title": "Full Stack Developer",
+    "company": "Itaú",
+    "companyLogoUrl": "/assets/images/logo-itau.png",
     "homeAnnouncementImageUrl": "",
     "location": "Belo Horizonte - MG",
     "workModel": "Hibrido",
@@ -322,7 +365,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -331,8 +384,8 @@
     ],
     "priority": "Carga local",
     "match": 100,
-    "talents": 6,
-    "radarCount": 6,
+    "talents": 10,
+    "radarCount": 10,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -340,14 +393,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 3,
+    "extraCount": 7,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:35:50.579Z",
-    "updatedAt": "2026-04-09T11:35:50.579Z",
+    "createdAt": "2026-04-14T20:14:37.646Z",
+    "updatedAt": "2026-04-14T20:14:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-06",
@@ -392,7 +446,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -409,11 +473,12 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:34:50.579Z",
-    "updatedAt": "2026-04-09T11:34:50.579Z",
+    "createdAt": "2026-04-14T20:13:37.646Z",
+    "updatedAt": "2026-04-14T20:13:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-07",
@@ -458,7 +523,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -475,11 +550,12 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:33:50.579Z",
-    "updatedAt": "2026-04-09T11:33:50.579Z",
+    "createdAt": "2026-04-14T20:12:37.646Z",
+    "updatedAt": "2026-04-14T20:12:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-08",
@@ -524,7 +600,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -541,11 +627,12 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:32:50.579Z",
-    "updatedAt": "2026-04-09T11:32:50.579Z",
+    "createdAt": "2026-04-14T20:11:37.646Z",
+    "updatedAt": "2026-04-14T20:11:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-09",
@@ -590,7 +677,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -599,8 +696,8 @@
     ],
     "priority": "Carga local",
     "match": 91,
-    "talents": 7,
-    "radarCount": 7,
+    "talents": 5,
+    "radarCount": 5,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -608,14 +705,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 4,
+    "extraCount": 2,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:31:50.579Z",
-    "updatedAt": "2026-04-09T11:31:50.579Z",
+    "createdAt": "2026-04-14T20:10:37.646Z",
+    "updatedAt": "2026-04-14T20:10:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-10",
@@ -660,7 +758,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -668,9 +776,9 @@
       "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 86,
-    "talents": 3,
-    "radarCount": 3,
+    "match": 88,
+    "talents": 4,
+    "radarCount": 4,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -678,14 +786,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 0,
+    "extraCount": 1,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:30:50.579Z",
-    "updatedAt": "2026-04-09T11:30:50.579Z",
+    "createdAt": "2026-04-14T20:09:37.646Z",
+    "updatedAt": "2026-04-14T20:09:37.646Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-11",
@@ -730,7 +839,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -738,9 +857,9 @@
       "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 86,
-    "talents": 3,
-    "radarCount": 3,
+    "match": 88,
+    "talents": 4,
+    "radarCount": 4,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -748,14 +867,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 0,
+    "extraCount": 1,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:29:50.579Z",
-    "updatedAt": "2026-04-09T11:29:50.579Z",
+    "createdAt": "2026-04-14T20:08:37.647Z",
+    "updatedAt": "2026-04-14T20:08:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-12",
@@ -800,7 +920,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -809,8 +939,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 29,
-    "radarCount": 29,
+    "talents": 32,
+    "radarCount": 32,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -818,14 +948,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 26,
+    "extraCount": 29,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:28:50.579Z",
-    "updatedAt": "2026-04-09T11:28:50.579Z",
+    "createdAt": "2026-04-14T20:07:37.647Z",
+    "updatedAt": "2026-04-14T20:07:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-13",
@@ -870,7 +1001,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -879,8 +1020,8 @@
     ],
     "priority": "Carga local",
     "match": 99,
-    "talents": 8,
-    "radarCount": 8,
+    "talents": 4,
+    "radarCount": 4,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -888,14 +1029,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 5,
+    "extraCount": 1,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:27:50.579Z",
-    "updatedAt": "2026-04-09T11:27:50.579Z",
+    "createdAt": "2026-04-14T20:06:37.647Z",
+    "updatedAt": "2026-04-14T20:06:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-14",
@@ -940,7 +1082,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -948,9 +1100,9 @@
       "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 90,
-    "talents": 11,
-    "radarCount": 11,
+    "match": 89,
+    "talents": 8,
+    "radarCount": 8,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -958,14 +1110,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 8,
+    "extraCount": 5,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:26:50.579Z",
-    "updatedAt": "2026-04-09T11:26:50.579Z",
+    "createdAt": "2026-04-14T20:05:37.647Z",
+    "updatedAt": "2026-04-14T20:05:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-15",
@@ -1010,7 +1163,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1018,7 +1181,7 @@
       "julio-fazenda-recruiter"
     ],
     "priority": "Carga local",
-    "match": 70,
+    "match": 71,
     "talents": 0,
     "radarCount": 0,
     "ageLabel": "Agora",
@@ -1027,11 +1190,12 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:25:50.580Z",
-    "updatedAt": "2026-04-09T11:25:50.580Z",
+    "createdAt": "2026-04-14T20:04:37.647Z",
+    "updatedAt": "2026-04-14T20:04:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-16",
@@ -1076,7 +1240,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1085,8 +1259,8 @@
     ],
     "priority": "Carga local",
     "match": 91,
-    "talents": 6,
-    "radarCount": 6,
+    "talents": 5,
+    "radarCount": 5,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1094,14 +1268,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 3,
+    "extraCount": 2,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:24:50.580Z",
-    "updatedAt": "2026-04-09T11:24:50.580Z",
+    "createdAt": "2026-04-14T20:03:37.647Z",
+    "updatedAt": "2026-04-14T20:03:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-17",
@@ -1146,7 +1321,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1155,8 +1340,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 28,
-    "radarCount": 28,
+    "talents": 26,
+    "radarCount": 26,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1164,14 +1349,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 25,
+    "extraCount": 23,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:23:50.580Z",
-    "updatedAt": "2026-04-09T11:23:50.580Z",
+    "createdAt": "2026-04-14T20:02:37.647Z",
+    "updatedAt": "2026-04-14T20:02:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-18",
@@ -1216,7 +1402,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1225,8 +1421,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 8,
-    "radarCount": 8,
+    "talents": 11,
+    "radarCount": 11,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1234,14 +1430,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 5,
+    "extraCount": 8,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:22:50.580Z",
-    "updatedAt": "2026-04-09T11:22:50.580Z",
+    "createdAt": "2026-04-14T20:01:37.647Z",
+    "updatedAt": "2026-04-14T20:01:37.647Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-19",
@@ -1286,7 +1483,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1295,8 +1502,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 14,
-    "radarCount": 14,
+    "talents": 8,
+    "radarCount": 8,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1304,14 +1511,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 11,
+    "extraCount": 5,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:21:50.580Z",
-    "updatedAt": "2026-04-09T11:21:50.580Z",
+    "createdAt": "2026-04-14T20:00:37.648Z",
+    "updatedAt": "2026-04-14T20:00:37.648Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-20",
@@ -1356,7 +1564,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1373,10 +1591,11 @@
     "extraCount": 0,
     "status": "ativas",
     "candidates": [],
-    "createdAt": "2026-04-09T11:20:50.580Z",
-    "updatedAt": "2026-04-09T11:20:50.580Z",
+    "createdAt": "2026-04-14T19:59:37.648Z",
+    "updatedAt": "2026-04-14T19:59:37.648Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   }
 ]

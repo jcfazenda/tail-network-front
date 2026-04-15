@@ -69,8 +69,18 @@
   display: block;
 }
   
+.empresa-page__column-down {
+  background: linear-gradient(180deg, #ffffff, #f1f1f1);
+  border-radius: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+
+
 .empresa-page__column {
-  background: linear-gradient(180deg, #e9e9e9, #fdfdfd);
+  background: linear-gradient(180deg, #e0e0e0, #ffffff);
   border-radius: 14px;
   box-sizing: border-box;
   overflow: hidden;
@@ -105,7 +115,7 @@
 }
 
 .topbar-header__description {
-  max-width: 660px;
+  max-width: 960px;
   font-size: 23px;
   line-height: 1.45;
   color: var(--muted);
@@ -480,11 +490,35 @@
   position: relative;
   display: grid;
   gap: 18px;
-  padding: 22px 18px 18px;
+  padding: 32px 28px 18px;
   border-radius: 24px;
-  background: #ffffff;
-  border: 1px solid rgba(47, 50, 50, 0.08);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+  //background: #ffffff;
+  //border: 1px solid rgba(47, 50, 50, 0.08);
+  //box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+}
+
+.company-context__edit-btn-top {
+  position: absolute;
+  transform: translateX(-45px);
+  top: 78px;
+  right: 16px;
+  width: 212px;
+  height: 52px;
+  border: none;
+  border-radius: 0%;
+  background: #ecab15;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 14px 28px rgba(255, 122, 33, 0.26);
+  cursor: pointer;
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
 }
 
 .company-context__edit-btn {
@@ -537,13 +571,23 @@
   color: #2f3232;
   text-align: center;
 }
-
-.company-context__info-grid {
+.company-context__company-media {
   width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 14px;
+  height: 455px;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-top: 6px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: contrast(1.02) saturate(1.02);
+  }
 }
+ 
+
 
 .company-context__info-item {
   display: grid;
@@ -560,7 +604,7 @@
     width: 20px;
     height: 20px;
     font-size: 20px;
-    color: #7a8080;
+    color: #2a2a2a;
     margin-top: 1px;
   }
 }
@@ -601,10 +645,28 @@
 
 .company-context__quick-actions {
   width: 100%;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
-  padding-top: 10px;
+  padding-top: 250px;
+}
+
+.company-context__quick-actions-front {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding-top: 40px;
+}
+
+.company-context__info-grid-front {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 250px;
 }
 
 .company-context__quick-action {
@@ -1028,7 +1090,7 @@
 
 .company-identity__hero {
   position: relative;
-  padding: 40px 42px 92px; 
+  padding: 30px 32px 82px; 
   overflow: visible;
   height: 70%;
 }
@@ -1073,12 +1135,28 @@
   padding-top: 6px;
 }
 
+.company-identity__button-new {
+  transform: translateX(-25px);
+  margin-top: 32px;
+  height: 50px;
+  padding: 0 48px;
+  border: none;
+  border-radius: 20px;
+  background: #ef940b;
+  color: #2f3232;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 .company-identity__button {
-  height: 40px;
-  padding: 0 18px;
+  margin-top: 32px;
+  height: 50px;
+  padding: 0 48px;
   border: none;
   border-radius: 10px;
-  background: #ffffff;
+  background: #e0931f;
   color: #2f3232;
   font-size: 13px;
   font-weight: 700;
@@ -1134,12 +1212,12 @@
 }
 
 .company-identity__bottom {
-  padding: 54px 20px 18px;
+  padding: 44px 40px 18px;
   background: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  margin-top: 40px; 
+  margin-top: 60px; 
 }
 
 .company-identity__bottom-jobs {
@@ -1213,17 +1291,17 @@
   align-items: flex-start;
   text-align: left;
   margin: 0;
-  padding: 0 0 10px;
+  padding: 0 0 1px;
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side {
+.company-identity__bottom .company-identity__bottom-header--side {
   width: 100%;
   max-width: 100%;
   align-items: center;
   gap: 20px;
   padding: 0 4px 6px;
   box-sizing: border-box;
-  margin-top: 2px;
+  margin-top: 42px;
 }
 
 .company-identity__bottom > .company-identity__bottom-header--side .company-identity__bottom-header-main {
@@ -1270,6 +1348,7 @@
   min-width: 0;
   display: grid;
   gap: 4px;
+  margin: 12px;
 }
 
 .company-identity__bottom-title {
@@ -1429,7 +1508,14 @@
       'opsz' 20;
   }
 }
-
+.company-context__quick-action .material-symbols-rounded {
+  font-size: 34px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 600,
+    'GRAD' 0,
+    'opsz' 24;
+}
 .company-identity__bottom-meta {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1487,7 +1573,7 @@
 }
 
 .empresa-vaga-talent-card {
-  padding: 16px;
+  padding: 26px;
   border-radius: 22px;
   background: #ffffff;
   border: 1px solid rgba(47, 50, 50, 0.08);
@@ -1740,19 +1826,23 @@
   height: 380px;
   overflow: hidden;
   border-radius: 16px;
+
   background:
     radial-gradient(circle at top left, rgba(223, 223, 223, 0.3), transparent 46%),
     linear-gradient(135deg, #8b8b8b 0%, #7f7f7f 42%, #8b8989 100%);
+
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
 
   img {
+    position: absolute; // 🔥 chave
+    inset: 0;           // 🔥 ocupa toda a div
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center; // 👈 controla foco
     display: block;
   }
 }
-
 .menu-feature-video__placeholder {
   width: 100%;
   height: 100%;
@@ -1928,7 +2018,7 @@
   height: 60px;
   overflow: hidden;
   border-radius: 18px;
-  background: linear-gradient(135deg, #ff7b1f 0%, #ff5a00 100%);
+  background: linear-gradient(135deg, #e7e7e7 0%, #c2c2c2 100%);
   color: #fff;
   font-size: 20px;
   font-weight: 800;
@@ -2010,7 +2100,7 @@
 
 .job-side-dashed-line {
   width: 100%;
-  margin: 26px 0 22px; 
+  margin: 46px 0 22px; 
 }
 
 .job-side-bottom-grid {
@@ -2032,7 +2122,7 @@
 
 .job-side-stacks__title {
   width: 100%;
-  margin: 0 0 18px;
+  margin: 0 0 33px;
   text-align: left;
   font-size: 22px;
   font-weight: 700;
@@ -2046,7 +2136,7 @@
   display: grid;
   grid-template-columns: minmax(128px, 168px) minmax(0, 1fr) 52px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .job-stack-item__name {
@@ -2285,7 +2375,7 @@
  
 
 .empresa-candidatos-talents {
-  margin-top: 24px;
+  margin-top: 8px;
   width: 100%;
 }
 
@@ -2464,7 +2554,7 @@
 }
 
 .empresa-vaga-card__button--secondary {
-  width: 72%;
+  width: 112%;
   margin-top: 0;
   background: linear-gradient(180deg, #ff8a3d, #ec662d);
   color: #ffffff;
@@ -2510,9 +2600,9 @@
 
 /* VAGAS DA EMPRESA */
 .company-identity__bottom {  
- margin-top: -288px;
- height: 1080px;
- background: linear-gradient(180deg, #f3f3f3, #ffffff);
+ margin-top: -298px;
+ height: 1089px;
+ background: linear-gradient(180deg, #f3f3f3, #ffffff); 
 }
 .company-identity {
   background: #efefef !important;
@@ -2863,10 +2953,20 @@
 .company-context__company-panel {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 10px;
   width: 100%;
   height: 100%;
   min-width: 0;
+}
+
+.company-context__company-top-left {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  gap: 19px;
+  padding: 6px 0 8px;
+  min-width: 0;
+  margin-top: -20px;
 }
 
 .company-context__company-top {
@@ -2874,8 +2974,9 @@
   grid-template-columns: 88px minmax(0, 1fr);
   align-items: center;
   gap: 18px;
-  padding: 6px 0 2px;
+  padding: 6px 0 28px;
   min-width: 0;
+  margin-top: 0px;
 }
 
 .company-context__company-logo-box {
@@ -2906,6 +3007,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-top: 12px;
 }
 
 .company-context__company-name {
@@ -3152,13 +3254,11 @@
 /* ------------------------------  BOTÃO CENTRALIZADO */
 .company-identity__floating-card {
   position: absolute;
-  left: 88%;
-  bottom: -100px;
+  left: 92%;
+  bottom: -180px;
   transform: translateX(-50%);
-
-  width: 320px;
-  height: 140px;
-
+  width: 250px;
+  height: 80px;
   border-radius: 20px;
 
   /* 🔥 FUNDO LARANJA PREMIUM */
