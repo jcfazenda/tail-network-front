@@ -40,6 +40,7 @@ type ResourcePanelJobVm = {
   companyLogoUrl?: string;
   homeAnnouncementImageUrl?: string;
   recruiterVideoUrl?: string;
+  recruiterVideoPosterUrl?: string;
   location: string;
   workModel: string;
   contractType: string;
@@ -71,6 +72,7 @@ type CompanyCandidateVm = {
   educationLabel?: string;
   educationStatus?: string;
   videoUrl?: string;
+  videoPosterUrl?: string;
   topStacks: Array<{ label: string; match: number; isAdherence: boolean }>;
 };
 
@@ -201,6 +203,10 @@ export class EmpresaPage implements OnDestroy {
   private recruiterVideoResolveToken = 0;
   private selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
   private candidateVideoResolveToken = 0;
+  private selectedCompanyRecruiterPosterResolvedUrl = 'assets/images/image-video.png';
+  private recruiterPosterResolveToken = 0;
+  private selectedCompanyCandidatePosterResolvedUrl = 'assets/images/image-video.png';
+  private candidatePosterResolveToken = 0;
 
   searchTerm = '';
   statusFilter: CompanyStatusFilter = 'all';
@@ -255,6 +261,8 @@ export class EmpresaPage implements OnDestroy {
   ngOnDestroy(): void {
     this.revokeSelectedCompanyRecruiterVideoResolvedUrl();
     this.revokeSelectedCompanyCandidateVideoResolvedUrl();
+    this.revokeSelectedCompanyRecruiterPosterResolvedUrl();
+    this.revokeSelectedCompanyCandidatePosterResolvedUrl();
     this.subscriptions.unsubscribe();
   }
 
@@ -420,8 +428,16 @@ export class EmpresaPage implements OnDestroy {
     return this.selectedCompanyCandidateVideoResolvedUrl;
   }
 
+  get selectedCompanyCandidatePosterUrl(): string {
+    return this.selectedCompanyCandidatePosterResolvedUrl;
+  }
+
   get selectedCompanyRecruiterVideoUrl(): string {
     return this.selectedCompanyRecruiterVideoResolvedUrl;
+  }
+
+  get selectedCompanyRecruiterPosterUrl(): string {
+    return this.selectedCompanyRecruiterPosterResolvedUrl;
   }
 
   get candidateTotalPages(): number {
@@ -1426,6 +1442,7 @@ export class EmpresaPage implements OnDestroy {
           companyLogoUrl: primaryJob.companyLogoUrl,
           homeAnnouncementImageUrl: primaryJob.homeAnnouncementImageUrl,
           recruiterVideoUrl: primaryJob.recruiterVideoUrl,
+          recruiterVideoPosterUrl: primaryJob.recruiterVideoPosterUrl,
           location: primaryJob.location,
           workModel: primaryJob.workModel,
           contractType: primaryJob.contractType,
@@ -1440,6 +1457,7 @@ export class EmpresaPage implements OnDestroy {
     this.resourcePanelAdherenceSnapshot = this.companyResourceAdherenceSnapshot || 91;
     this.resourcePanelSalarySnapshot = this.resourcePanelJobSnapshot.salaryRange?.trim() || 'R$ 9.500 - R$ 12.000';
     void this.refreshSelectedCompanyRecruiterVideoUrl();
+    void this.refreshSelectedCompanyRecruiterPosterUrl();
 
     this.selectedCompanyCandidatesSnapshot = primaryJob
       ? this.companyJobCandidates(primaryJob)
@@ -1457,6 +1475,7 @@ export class EmpresaPage implements OnDestroy {
               educationLabel: this.buildCandidateEducationLabel(candidateProfile),
               educationStatus: this.buildCandidateEducationStatus(candidateProfile),
               videoUrl: candidateProfile?.basicDraft.candidateVideoUrl?.trim() || undefined,
+              videoPosterUrl: candidateProfile?.basicDraft.candidateVideoPosterUrl?.trim() || undefined,
               topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 3),
             };
           })
@@ -1467,6 +1486,7 @@ export class EmpresaPage implements OnDestroy {
     }
     this.selectedCompanyCandidateSnapshot = this.selectedCompanyCandidatesSnapshot.find((candidate) => candidate.id === this.selectedCandidateId);
     void this.refreshSelectedCompanyCandidateVideoUrl();
+    void this.refreshSelectedCompanyCandidatePosterUrl();
 
     this.candidateTotalPagesSnapshot = Math.max(1, Math.ceil(this.selectedCompanyCandidatesSnapshot.length / this.candidatePageSize));
     if (this.candidateCurrentPage > this.candidateTotalPagesSnapshot) {
@@ -1634,6 +1654,59 @@ export class EmpresaPage implements OnDestroy {
     this.selectedCompanyRecruiterVideoResolvedUrl = 'assets/videos/VG-0001-Recruiter.mp4';
   }
 
+  private async refreshSelectedCompanyRecruiterPosterUrl(): Promise<void> {
+    const recruiterPosterRef = this.resourcePanelJobSnapshot.recruiterVideoPosterUrl?.trim() || '';
+    const resolveToken = ++this.recruiterPosterResolveToken;
+    this.revokeSelectedCompanyRecruiterPosterResolvedUrl();
+
+    if (!recruiterPosterRef) {
+      if (resolveToken !== this.recruiterPosterResolveToken) {
+        return;
+      }
+      this.selectedCompanyRecruiterPosterResolvedUrl = this.resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(recruiterPosterRef)) {
+      if (resolveToken !== this.recruiterPosterResolveToken) {
+        return;
+      }
+      this.selectedCompanyRecruiterPosterResolvedUrl = recruiterPosterRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(recruiterPosterRef);
+      if (
+        resolveToken !== this.recruiterPosterResolveToken
+        || recruiterPosterRef !== (this.resourcePanelJobSnapshot.recruiterVideoPosterUrl?.trim() || '')
+      ) {
+        return;
+      }
+      this.selectedCompanyRecruiterPosterResolvedUrl = blob
+        ? URL.createObjectURL(blob)
+        : (this.resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png');
+    } catch {
+      if (resolveToken !== this.recruiterPosterResolveToken) {
+        return;
+      }
+      this.selectedCompanyRecruiterPosterResolvedUrl = this.resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png';
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private revokeSelectedCompanyRecruiterPosterResolvedUrl(): void {
+    if (!this.selectedCompanyRecruiterPosterResolvedUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.selectedCompanyRecruiterPosterResolvedUrl);
+    this.selectedCompanyRecruiterPosterResolvedUrl = 'assets/images/image-video.png';
+  }
+
   private async refreshSelectedCompanyCandidateVideoUrl(): Promise<void> {
     const candidateVideoRef = this.selectedCompanyCandidateSnapshot?.videoUrl?.trim() || '';
     const resolveToken = ++this.candidateVideoResolveToken;
@@ -1685,5 +1758,58 @@ export class EmpresaPage implements OnDestroy {
 
     URL.revokeObjectURL(this.selectedCompanyCandidateVideoResolvedUrl);
     this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+  }
+
+  private async refreshSelectedCompanyCandidatePosterUrl(): Promise<void> {
+    const candidatePosterRef = this.selectedCompanyCandidateSnapshot?.videoPosterUrl?.trim() || '';
+    const resolveToken = ++this.candidatePosterResolveToken;
+    this.revokeSelectedCompanyCandidatePosterResolvedUrl();
+
+    if (!candidatePosterRef) {
+      if (resolveToken !== this.candidatePosterResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidatePosterResolvedUrl = this.selectedCompanyCandidateSnapshot?.avatarUrl || this.resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(candidatePosterRef)) {
+      if (resolveToken !== this.candidatePosterResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidatePosterResolvedUrl = candidatePosterRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(candidatePosterRef);
+      if (
+        resolveToken !== this.candidatePosterResolveToken
+        || candidatePosterRef !== (this.selectedCompanyCandidateSnapshot?.videoPosterUrl?.trim() || '')
+      ) {
+        return;
+      }
+      this.selectedCompanyCandidatePosterResolvedUrl = blob
+        ? URL.createObjectURL(blob)
+        : (this.selectedCompanyCandidateSnapshot?.avatarUrl || this.resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png');
+    } catch {
+      if (resolveToken !== this.candidatePosterResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidatePosterResolvedUrl = this.selectedCompanyCandidateSnapshot?.avatarUrl || this.resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png';
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private revokeSelectedCompanyCandidatePosterResolvedUrl(): void {
+    if (!this.selectedCompanyCandidatePosterResolvedUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.selectedCompanyCandidatePosterResolvedUrl);
+    this.selectedCompanyCandidatePosterResolvedUrl = 'assets/images/image-video.png';
   }
 }

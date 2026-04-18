@@ -13422,7 +13422,9 @@
       "photoPreviewUrl": "",
       "photoFileName": "",
       "candidateVideoUrl": "local-media://local-media-1776541352795-43xbvqd3",
-      "candidateVideoFileName": "12.mp4"
+      "candidateVideoFileName": "12.mp4",
+      "candidateVideoPosterUrl": "local-media://local-media-1776542839191-bzm6cqwt",
+      "candidateVideoPosterFileName": "mulher.png_202604181705.jpeg"
     },
     "formationCopy": {
       "graduation": "Pós-graduação em Engenharia de Software",

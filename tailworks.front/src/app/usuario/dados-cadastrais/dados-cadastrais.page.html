@@ -179,6 +179,13 @@
               accept=".mp4,.webm,.ogv,.mov,video/mp4,video/webm,video/ogg,video/quicktime"
               (change)="onCandidateVideoSelected($event)"
             />
+            <input
+              #candidateVideoPosterInput
+              class="candidate-profile__media-input"
+              type="file"
+              accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/webp,image/gif"
+              (change)="onCandidateVideoPosterSelected($event)"
+            />
 
             <label class="candidate-profile__field candidate-profile__field--full">
               <span>Caminho ou URL do vídeo</span>
@@ -194,9 +201,26 @@
               </div>
             </label>
 
+            <label class="candidate-profile__field candidate-profile__field--full">
+              <span>Caminho ou URL da thumb</span>
+              <div class="candidate-profile__input-shell">
+                <span class="material-symbols-rounded" aria-hidden="true">image</span>
+                <input
+                  type="text"
+                  [ngModel]="candidateVideoPosterUrl"
+                  name="candidateVideoPosterUrl"
+                  placeholder="assets/images/thumb-candidato.png"
+                  (ngModelChange)="onCandidateVideoPosterUrlChange($event)"
+                />
+              </div>
+            </label>
+
             <div class="candidate-profile__media-actions">
               <button class="candidate-profile__button candidate-profile__button--primary" type="button" (click)="candidateVideoInput.click()">
                 Upload de vídeo
+              </button>
+              <button class="candidate-profile__button candidate-profile__button--ghost" type="button" (click)="candidateVideoPosterInput.click()">
+                Upload de thumb
               </button>
               <button
                 *ngIf="hasCandidateVideo || candidateVideoUrl"
@@ -205,13 +229,28 @@
                 (click)="clearCandidateVideo()">
                 Remover
               </button>
+              <button
+                *ngIf="candidateVideoPosterUrl"
+                class="candidate-profile__button candidate-profile__button--ghost"
+                type="button"
+                (click)="clearCandidateVideoPoster()">
+                Remover thumb
+              </button>
             </div>
 
             <span class="candidate-profile__media-helper" *ngIf="candidateVideoFileName">Arquivo local: {{ candidateVideoFileName }}</span>
             <span class="candidate-profile__media-error" *ngIf="candidateVideoError">{{ candidateVideoError }}</span>
+            <span class="candidate-profile__media-helper" *ngIf="candidateVideoPosterFileName">Thumb local: {{ candidateVideoPosterFileName }}</span>
+            <span class="candidate-profile__media-error" *ngIf="candidateVideoPosterError">{{ candidateVideoPosterError }}</span>
 
             <div class="candidate-profile__media-preview" *ngIf="hasCandidateVideo">
-              <video class="candidate-profile__media-player" [src]="candidateVideoPreviewUrl" controls playsinline preload="metadata"></video>
+              <video
+                class="candidate-profile__media-player"
+                [src]="candidateVideoPreviewUrl"
+                [poster]="currentCandidateVideoPosterUrl"
+                controls
+                playsinline
+                preload="metadata"></video>
             </div>
           </div>
         </section>

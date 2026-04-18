@@ -432,6 +432,13 @@
           accept=".mp4,.webm,.ogv,.mov,video/mp4,video/webm,video/ogg,video/quicktime"
           (change)="onRecruiterVideoSelected($event)"
         />
+        <input
+          #recruiterVideoPosterInput
+          class="summary-card__company-logo-input"
+          type="file"
+          accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/webp,image/gif"
+          (change)="onRecruiterVideoPosterSelected($event)"
+        />
 
         <div class="job-create__side-note-head">
           <span class="material-symbols-rounded" aria-hidden="true">videocam</span>
@@ -455,6 +462,20 @@
           </div>
         </label>
 
+        <label class="job-create__side-field">
+          <span class="job-create__side-label">Caminho ou URL da thumb</span>
+          <div class="job-create__side-control">
+            <span class="material-symbols-rounded" aria-hidden="true">image</span>
+            <input
+              type="text"
+              name="sideRecruiterVideoPoster"
+              placeholder="assets/images/thumb-vaga.png"
+              [ngModel]="jobDraft.recruiterVideoPosterUrl"
+              (ngModelChange)="onRecruiterVideoPosterUrlChange($event)"
+            />
+          </div>
+        </label>
+
         <div class="job-create__side-upload-actions">
           <button
             class="job-create__side-upload-button"
@@ -464,12 +485,27 @@
             Upload de vídeo
           </button>
           <button
+            class="job-create__side-upload-button job-create__side-upload-button--ghost"
+            type="button"
+            (click)="openRecruiterVideoPosterPicker(recruiterVideoPosterInput)"
+          >
+            Upload de thumb
+          </button>
+          <button
             *ngIf="hasRecruiterVideoUrl"
             class="job-create__side-upload-button job-create__side-upload-button--ghost"
             type="button"
             (click)="clearRecruiterVideo()"
           >
             Remover
+          </button>
+          <button
+            *ngIf="jobDraft.recruiterVideoPosterUrl"
+            class="job-create__side-upload-button job-create__side-upload-button--ghost"
+            type="button"
+            (click)="clearRecruiterVideoPoster()"
+          >
+            Remover thumb
           </button>
         </div>
 
@@ -480,9 +516,19 @@
           Formatos aceitos: {{ recruiterVideoGuide }}
         </span>
         <span class="job-create__side-error" *ngIf="recruiterVideoError">{{ recruiterVideoError }}</span>
+        <span class="job-create__side-helper" *ngIf="recruiterVideoPosterFileName">
+          Thumb local: {{ recruiterVideoPosterFileName }}
+        </span>
+        <span class="job-create__side-error" *ngIf="recruiterVideoPosterError">{{ recruiterVideoPosterError }}</span>
 
         <div class="job-create__side-video-preview" *ngIf="hasRecruiterVideoUrl">
-          <video class="job-create__side-video-player" [src]="currentRecruiterVideoUrl" controls playsinline preload="metadata"></video>
+          <video
+            class="job-create__side-video-player"
+            [src]="currentRecruiterVideoUrl"
+            [poster]="currentRecruiterVideoPosterUrl"
+            controls
+            playsinline
+            preload="metadata"></video>
         </div>
       </section>
 

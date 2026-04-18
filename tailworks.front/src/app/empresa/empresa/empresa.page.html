@@ -132,7 +132,7 @@
                   class="menu-feature-video__player"
                   [attr.data-job-id]="resourcePanelJob.id"
                   [src]="selectedCompanyRecruiterVideoUrl"
-                  [poster]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
+                  [poster]="selectedCompanyRecruiterPosterUrl"
                   controls
                   playsinline
                   preload="metadata"></video>
@@ -465,7 +465,7 @@
                   class="menu-feature-video__player"
                   [attr.data-job-id]="resourcePanelJob.id"
                   [src]="selectedCompanyRecruiterVideoUrl"
-                  [poster]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
+                  [poster]="selectedCompanyRecruiterPosterUrl"
                   controls
                   playsinline
                   preload="metadata"></video>
@@ -775,7 +775,7 @@
                 <video
                   class="menu-feature-video__player"
                   [src]="selectedCompanyCandidateVideoUrl"
-                  [poster]="selectedCompanyCandidate?.avatarUrl || resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
+                  [poster]="selectedCompanyCandidatePosterUrl"
                   controls
                   playsinline
                   preload="metadata"></video>

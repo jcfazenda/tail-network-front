@@ -296,6 +296,7 @@ export class CadastroPage implements OnDestroy {
 
   ngOnDestroy(): void {
     this.revokeRecruiterVideoPreviewUrl();
+    this.revokeRecruiterVideoPosterPreviewUrl();
     this.subscriptions.unsubscribe();
   }
 
@@ -1384,6 +1385,7 @@ private getRichContentPlainText(value: string): string {
     companyLogoUrl: '',
     homeAnnouncementImageUrl: '',
     recruiterVideoUrl: '',
+    recruiterVideoPosterUrl: '',
     location: 'Rio de Janeiro - RJ',
     workModel: 'Remoto',
     seniority: 'Senior',
@@ -1423,6 +1425,9 @@ private getRichContentPlainText(value: string): string {
   recruiterVideoError = '';
   recruiterVideoFileName = '';
   recruiterVideoPreviewUrl = '';
+  recruiterVideoPosterError = '';
+  recruiterVideoPosterFileName = '';
+  recruiterVideoPosterPreviewUrl = '';
   editingResponsibilitySectionId: string | null = null;
   jobActionsStatusDraft: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
   jobActionsStatusReasonDraft = '';
@@ -1661,6 +1666,10 @@ private getRichContentPlainText(value: string): string {
     return this.recruiterVideoPreviewUrl?.trim() || '';
   }
 
+  get currentRecruiterVideoPosterUrl(): string {
+    return this.recruiterVideoPosterPreviewUrl?.trim() || this.currentAnnouncementCardImageUrl || 'assets/images/image-video.png';
+  }
+
   get hasRecruiterVideoUrl(): boolean {
     return !!this.currentRecruiterVideoUrl;
   }
@@ -1711,6 +1720,10 @@ private getRichContentPlainText(value: string): string {
   }
 
   openRecruiterVideoPicker(input: HTMLInputElement): void {
+    input.click();
+  }
+
+  openRecruiterVideoPosterPicker(input: HTMLInputElement): void {
     input.click();
   }
 
@@ -1766,11 +1779,35 @@ private getRichContentPlainText(value: string): string {
     void this.refreshRecruiterVideoPreview();
   }
 
+  onRecruiterVideoPosterUrlChange(value: string): void {
+    this.jobDraft.recruiterVideoPosterUrl = value;
+    this.recruiterVideoPosterFileName = '';
+    this.recruiterVideoPosterError = '';
+    void this.refreshRecruiterVideoPosterPreview();
+  }
+
+  onRecruiterVideoPosterSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    void this.handleRecruiterVideoPosterFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
   clearRecruiterVideo(): void {
     this.revokeRecruiterVideoPreviewUrl();
     this.jobDraft.recruiterVideoUrl = '';
     this.recruiterVideoFileName = '';
     this.recruiterVideoError = '';
+    this.cdr.markForCheck();
+  }
+
+  clearRecruiterVideoPoster(): void {
+    this.revokeRecruiterVideoPosterPreviewUrl();
+    this.jobDraft.recruiterVideoPosterUrl = '';
+    this.recruiterVideoPosterFileName = '';
+    this.recruiterVideoPosterError = '';
     this.cdr.markForCheck();
   }
 
@@ -2258,6 +2295,7 @@ private getRichContentPlainText(value: string): string {
       companyLogoUrl: job.companyLogoUrl ?? '',
       homeAnnouncementImageUrl: job.homeAnnouncementImageUrl ?? '',
       recruiterVideoUrl: job.recruiterVideoUrl ?? '',
+      recruiterVideoPosterUrl: job.recruiterVideoPosterUrl ?? '',
       location: job.location,
       workModel: job.workModel,
       seniority: job.seniority,
@@ -2265,7 +2303,10 @@ private getRichContentPlainText(value: string): string {
     });
     this.recruiterVideoFileName = '';
     this.recruiterVideoError = '';
+    this.recruiterVideoPosterFileName = '';
+    this.recruiterVideoPosterError = '';
     void this.refreshRecruiterVideoPreview();
+    void this.refreshRecruiterVideoPosterPreview();
 
     this.contractType = job.contractType;
     this.salaryRange = job.salaryRange ?? '';
@@ -2562,6 +2603,38 @@ private getRichContentPlainText(value: string): string {
     }
   }
 
+  private async handleRecruiterVideoPosterFile(file: File | null): Promise<void> {
+    this.recruiterVideoPosterError = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.isAcceptedCompanyLogoFile(file)) {
+      this.recruiterVideoPosterError = 'Use JPG, PNG, GIF ou WEBP.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (file.size > this.maxCompanyLogoSizeBytes) {
+      this.recruiterVideoPosterError = 'A imagem deve ter no máximo 5MB.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const mediaRef = await this.localMediaStorage.saveFile(file);
+      this.jobDraft.recruiterVideoPosterUrl = mediaRef;
+      this.recruiterVideoPosterFileName = file.name;
+      this.recruiterVideoPosterError = '';
+      await this.refreshRecruiterVideoPosterPreview();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Nao foi possivel salvar a thumb localmente.';
+      this.recruiterVideoPosterError = message;
+      this.cdr.markForCheck();
+    }
+  }
+
   private isAcceptedCompanyLogoFile(file: File): boolean {
     if (this.acceptedCompanyLogoMimeTypes.includes(file.type)) {
       return true;
@@ -2596,6 +2669,15 @@ private getRichContentPlainText(value: string): string {
     this.recruiterVideoPreviewUrl = '';
   }
 
+  private revokeRecruiterVideoPosterPreviewUrl(): void {
+    if (!this.recruiterVideoPosterPreviewUrl || !this.recruiterVideoPosterPreviewUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.recruiterVideoPosterPreviewUrl);
+    this.recruiterVideoPosterPreviewUrl = '';
+  }
+
   private async refreshRecruiterVideoPreview(): Promise<void> {
     const recruiterVideoRef = this.jobDraft.recruiterVideoUrl?.trim() || '';
     this.revokeRecruiterVideoPreviewUrl();
@@ -2621,6 +2703,36 @@ private getRichContentPlainText(value: string): string {
     } catch {
       this.recruiterVideoPreviewUrl = '';
       this.recruiterVideoError = 'Nao foi possivel abrir o video salvo localmente.';
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private async refreshRecruiterVideoPosterPreview(): Promise<void> {
+    const recruiterVideoPosterRef = this.jobDraft.recruiterVideoPosterUrl?.trim() || '';
+    this.revokeRecruiterVideoPosterPreviewUrl();
+
+    if (!recruiterVideoPosterRef) {
+      this.recruiterVideoPosterPreviewUrl = '';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(recruiterVideoPosterRef)) {
+      this.recruiterVideoPosterPreviewUrl = recruiterVideoPosterRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(recruiterVideoPosterRef);
+      this.recruiterVideoPosterPreviewUrl = blob ? URL.createObjectURL(blob) : '';
+      if (!blob) {
+        this.recruiterVideoPosterError = 'Nao foi possivel localizar a thumb salva localmente.';
+      }
+    } catch {
+      this.recruiterVideoPosterPreviewUrl = '';
+      this.recruiterVideoPosterError = 'Nao foi possivel abrir a thumb salva localmente.';
     }
 
     this.cdr.markForCheck();

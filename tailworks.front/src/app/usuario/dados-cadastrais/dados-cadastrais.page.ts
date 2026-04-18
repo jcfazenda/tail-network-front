@@ -24,6 +24,8 @@ type CandidateBasicDraft = {
   photoFileName?: string;
   candidateVideoUrl?: string;
   candidateVideoFileName?: string;
+  candidateVideoPosterUrl?: string;
+  candidateVideoPosterFileName?: string;
 };
 
 type FormationCopyDraft = {
@@ -89,6 +91,10 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   candidateVideoFileName = '';
   candidateVideoPreviewUrl = '';
   candidateVideoError = '';
+  candidateVideoPosterUrl = '';
+  candidateVideoPosterFileName = '';
+  candidateVideoPosterPreviewUrl = '';
+  candidateVideoPosterError = '';
   formationLogoUrl = '/assets/images/formacao-default.png';
   formationCopy: FormationCopyDraft = {
     graduation: 'Bacharelado em Sistemas de Informação',
@@ -125,6 +131,10 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     return !!this.candidateVideoPreviewUrl.trim();
   }
 
+  get currentCandidateVideoPosterUrl(): string {
+    return this.candidateVideoPosterPreviewUrl.trim() || this.photoPreviewUrl || 'assets/images/image-video.png';
+  }
+
   ngOnInit(): void {
     this.restoreDraft();
     this.restoreFormationLogo();
@@ -136,6 +146,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     window.removeEventListener(DadosCadastraisPage.photoUpdatedEventName, this.photoUpdatedListener as EventListener);
     this.revokePhotoPreviewUrl();
     this.revokeCandidateVideoPreviewUrl();
+    this.revokeCandidateVideoPosterPreviewUrl();
   }
 
   submitBasicData(form: NgForm): void {
@@ -185,11 +196,36 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     void this.refreshCandidateVideoPreview();
   }
 
+  onCandidateVideoPosterUrlChange(value: string): void {
+    this.candidateVideoPosterUrl = value.trim();
+    this.candidateVideoPosterFileName = '';
+    this.candidateVideoPosterError = '';
+    void this.refreshCandidateVideoPosterPreview();
+  }
+
+  async onCandidateVideoPosterSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement | null;
+    await this.handleCandidateVideoPosterFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
   clearCandidateVideo(): void {
     this.revokeCandidateVideoPreviewUrl();
     this.candidateVideoUrl = '';
     this.candidateVideoFileName = '';
     this.candidateVideoError = '';
+    this.persistDraft();
+    this.cdr.markForCheck();
+  }
+
+  clearCandidateVideoPoster(): void {
+    this.revokeCandidateVideoPosterPreviewUrl();
+    this.candidateVideoPosterUrl = '';
+    this.candidateVideoPosterFileName = '';
+    this.candidateVideoPosterError = '';
     this.persistDraft();
     this.cdr.markForCheck();
   }
@@ -248,7 +284,10 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
       this.photoFileName = draft.photoFileName ?? '';
       this.candidateVideoUrl = draft.candidateVideoUrl?.trim() ?? '';
       this.candidateVideoFileName = draft.candidateVideoFileName ?? '';
+      this.candidateVideoPosterUrl = draft.candidateVideoPosterUrl?.trim() ?? '';
+      this.candidateVideoPosterFileName = draft.candidateVideoPosterFileName ?? '';
       void this.refreshCandidateVideoPreview();
+      void this.refreshCandidateVideoPosterPreview();
     } catch {
       localStorage.removeItem(DadosCadastraisPage.draftStorageKey);
     }
@@ -297,6 +336,8 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
         photoFileName: this.photoFileName,
         candidateVideoUrl: this.candidateVideoUrl,
         candidateVideoFileName: this.candidateVideoFileName,
+        candidateVideoPosterUrl: this.candidateVideoPosterUrl,
+        candidateVideoPosterFileName: this.candidateVideoPosterFileName,
       }),
     );
     void this.syncSeededTalentProfile();
@@ -326,6 +367,15 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
 
     URL.revokeObjectURL(this.candidateVideoPreviewUrl);
     this.candidateVideoPreviewUrl = '';
+  }
+
+  private revokeCandidateVideoPosterPreviewUrl(): void {
+    if (!this.candidateVideoPosterPreviewUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.candidateVideoPosterPreviewUrl);
+    this.candidateVideoPosterPreviewUrl = '';
   }
 
   private async handleCandidateVideoFile(file: File | null): Promise<void> {
@@ -364,6 +414,45 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     }
   }
 
+  private async handleCandidateVideoPosterFile(file: File | null): Promise<void> {
+    this.candidateVideoPosterError = '';
+
+    if (!file) {
+      return;
+    }
+
+    const fileName = file.name.toLowerCase();
+    const isAccepted = fileName.endsWith('.jpg')
+      || fileName.endsWith('.jpeg')
+      || fileName.endsWith('.png')
+      || fileName.endsWith('.gif')
+      || fileName.endsWith('.webp')
+      || ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type);
+
+    if (!isAccepted) {
+      this.candidateVideoPosterError = 'Use JPG, PNG, GIF ou WEBP.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.candidateVideoPosterError = 'A imagem deve ter no máximo 5MB.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      this.candidateVideoPosterUrl = await this.localMediaStorage.saveFile(file);
+      this.candidateVideoPosterFileName = file.name;
+      await this.refreshCandidateVideoPosterPreview();
+      this.persistDraft();
+      await this.syncSeededTalentProfile();
+    } catch (error) {
+      this.candidateVideoPosterError = error instanceof Error ? error.message : 'Não foi possível salvar a thumb localmente.';
+      this.cdr.markForCheck();
+    }
+  }
+
   private async refreshCandidateVideoPreview(): Promise<void> {
     const candidateVideoRef = this.candidateVideoUrl.trim();
     this.revokeCandidateVideoPreviewUrl();
@@ -389,6 +478,36 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     } catch (error) {
       this.candidateVideoPreviewUrl = '';
       this.candidateVideoError = error instanceof Error ? error.message : 'Não foi possível abrir o vídeo salvo.';
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private async refreshCandidateVideoPosterPreview(): Promise<void> {
+    const candidateVideoPosterRef = this.candidateVideoPosterUrl.trim();
+    this.revokeCandidateVideoPosterPreviewUrl();
+
+    if (!candidateVideoPosterRef) {
+      this.candidateVideoPosterPreviewUrl = '';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(candidateVideoPosterRef)) {
+      this.candidateVideoPosterPreviewUrl = candidateVideoPosterRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(candidateVideoPosterRef);
+      this.candidateVideoPosterPreviewUrl = blob ? URL.createObjectURL(blob) : '';
+      if (!blob) {
+        this.candidateVideoPosterError = 'Não foi possível localizar a thumb salva localmente.';
+      }
+    } catch (error) {
+      this.candidateVideoPosterPreviewUrl = '';
+      this.candidateVideoPosterError = error instanceof Error ? error.message : 'Não foi possível abrir a thumb salva.';
     }
 
     this.cdr.markForCheck();
