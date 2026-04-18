@@ -233,6 +233,54 @@
   word-break: break-word;
 }
 
+.candidate-profile__media-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card-strong);
+}
+
+.candidate-profile__media-input {
+  display: none;
+}
+
+.candidate-profile__media-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.candidate-profile__media-helper,
+.candidate-profile__media-error {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.candidate-profile__media-helper {
+  color: var(--candidate-profile-text-muted);
+}
+
+.candidate-profile__media-error {
+  color: #c2410c;
+  font-weight: 700;
+}
+
+.candidate-profile__media-preview {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #111827;
+}
+
+.candidate-profile__media-player {
+  width: 100%;
+  min-height: 220px;
+  max-height: 340px;
+  display: block;
+  background: #111827;
+}
+
 .candidate-profile__steps {
   display: flex;
   align-items: center;

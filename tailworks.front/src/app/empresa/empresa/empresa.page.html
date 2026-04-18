@@ -130,12 +130,12 @@
               <div class="menu-feature-video">
                 <video
                   class="menu-feature-video__player"
+                  [attr.data-job-id]="resourcePanelJob.id"
+                  [src]="selectedCompanyRecruiterVideoUrl"
                   [poster]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
                   controls
                   playsinline
-                  preload="metadata">
-                  <source [src]="selectedCompanyRecruiterVideoUrl" type="video/mp4" />
-                </video>
+                  preload="metadata"></video>
 
                 <ng-template #pendingVideoPreviewHero>
                   <div class="menu-feature-video__placeholder">
@@ -461,7 +461,14 @@
 
             <div class="menu-feature-card">
               <div class="menu-feature-video">
-                <img [src]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'" alt="Preview da vaga" />
+                <video
+                  class="menu-feature-video__player"
+                  [attr.data-job-id]="resourcePanelJob.id"
+                  [src]="selectedCompanyRecruiterVideoUrl"
+                  [poster]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
+                  controls
+                  playsinline
+                  preload="metadata"></video>
 
                 <ng-template #pendingVideoPreviewHero>
                   <div class="menu-feature-video__placeholder">
@@ -755,15 +762,23 @@
 
             <!-- VIDEO DO CANDIDATO -->
             <div class="menu-feature-card-candidate">
+  
+                <div class="title-candidate-video">
+                    <h3>Sobre mim</h3>
+                    <p class="job-side-match__desc">
+                      Saiba um pouco sobre mim e minhas habilidades ditas de forma mais informal.
+                    </p> 
+                </div>
+
+
               <div class="menu-feature-video-candidate">
                 <video
                   class="menu-feature-video__player"
+                  [src]="selectedCompanyCandidateVideoUrl"
                   [poster]="selectedCompanyCandidate?.avatarUrl || resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
                   controls
                   playsinline
-                  preload="metadata">
-                  <source [src]="selectedCompanyCandidateVideoUrl" type="video/mp4" />
-                </video>
+                  preload="metadata"></video>
               </div>
             </div>
 

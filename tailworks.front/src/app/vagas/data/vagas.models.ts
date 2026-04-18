@@ -62,6 +62,7 @@ export interface VagaPanelDraft {
   company: string;
   companyLogoUrl?: string;
   homeAnnouncementImageUrl?: string;
+  recruiterVideoUrl?: string;
   location: string;
   workModel: WorkModel;
   seniority: string;

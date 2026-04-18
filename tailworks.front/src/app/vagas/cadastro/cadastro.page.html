@@ -424,6 +424,68 @@
         </div>
       </label>
 
+      <section class="job-create__side-note job-create__side-note--video">
+        <input
+          #recruiterVideoInput
+          class="summary-card__company-logo-input"
+          type="file"
+          accept=".mp4,.webm,.ogv,.mov,video/mp4,video/webm,video/ogg,video/quicktime"
+          (change)="onRecruiterVideoSelected($event)"
+        />
+
+        <div class="job-create__side-note-head">
+          <span class="material-symbols-rounded" aria-hidden="true">videocam</span>
+          <div class="job-create__side-note-copy">
+            <strong>Vídeo da vaga</strong>
+            <p>Você pode colar um caminho/URL ou subir um arquivo local para o card do recruiter.</p>
+          </div>
+        </div>
+
+        <label class="job-create__side-field">
+          <span class="job-create__side-label">Caminho ou URL do vídeo</span>
+          <div class="job-create__side-control">
+            <span class="material-symbols-rounded" aria-hidden="true">link</span>
+            <input
+              type="text"
+              name="sideRecruiterVideo"
+              placeholder="assets/videos/VG-0001-Recruiter.mp4"
+              [ngModel]="jobDraft.recruiterVideoUrl"
+              (ngModelChange)="onRecruiterVideoUrlChange($event)"
+            />
+          </div>
+        </label>
+
+        <div class="job-create__side-upload-actions">
+          <button
+            class="job-create__side-upload-button"
+            type="button"
+            (click)="openRecruiterVideoPicker(recruiterVideoInput)"
+          >
+            Upload de vídeo
+          </button>
+          <button
+            *ngIf="hasRecruiterVideoUrl"
+            class="job-create__side-upload-button job-create__side-upload-button--ghost"
+            type="button"
+            (click)="clearRecruiterVideo()"
+          >
+            Remover
+          </button>
+        </div>
+
+        <span class="job-create__side-helper" *ngIf="recruiterVideoFileName">
+          Arquivo local: {{ recruiterVideoFileName }}
+        </span>
+        <span class="job-create__side-helper" *ngIf="!recruiterVideoFileName">
+          Formatos aceitos: {{ recruiterVideoGuide }}
+        </span>
+        <span class="job-create__side-error" *ngIf="recruiterVideoError">{{ recruiterVideoError }}</span>
+
+        <div class="job-create__side-video-preview" *ngIf="hasRecruiterVideoUrl">
+          <video class="job-create__side-video-player" [src]="currentRecruiterVideoUrl" controls playsinline preload="metadata"></video>
+        </div>
+      </section>
+
       <section class="job-create__side-note">
         <div class="job-create__side-note-head">
           <span class="material-symbols-rounded" aria-hidden="true">payments</span>

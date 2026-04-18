@@ -922,6 +922,10 @@
   margin-top: 18px;
 }
 
+.job-create__side-note--video{
+  gap: 12px;
+}
+
 .job-create__side-note-head{
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -953,6 +957,62 @@
   color: var(--job-text-muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.job-create__side-upload-actions{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.job-create__side-upload-button{
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--job-accent, #ca7a23) 82%, white 18%);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.job-create__side-upload-button--ghost{
+  background: color-mix(in srgb, var(--job-text) 8%, transparent);
+  color: var(--job-text);
+}
+
+.job-create__side-helper,
+.job-create__side-error{
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.job-create__side-helper{
+  color: var(--job-text-muted);
+}
+
+.job-create__side-error{
+  color: #c2410c;
+  font-weight: 600;
+}
+
+.job-create__side-video-preview{
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #111827;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.job-create__side-video-player{
+  width: 100%;
+  min-height: 180px;
+  max-height: 260px;
+  display: block;
+  background: #111827;
 }
 
 .job-create__side-control{

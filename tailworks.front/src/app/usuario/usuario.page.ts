@@ -17,6 +17,7 @@ type CandidateBasicProfile = {
 type CandidateBasicDraft = {
   profile?: Partial<CandidateBasicProfile>;
   photoPreviewUrl?: string;
+  candidateVideoUrl?: string;
 };
 
 type FormationCopyDraft = {
@@ -32,7 +33,7 @@ type ProfileWorkspaceCard = {
   title: string;
   description: string;
   route?: string;
-  action?: 'basic' | 'formation';
+  action?: 'basic' | 'formation' | 'media';
 };
 
 @Component({
@@ -66,6 +67,7 @@ export class UsuarioPage implements OnInit, AfterViewInit, OnDestroy {
   isVisibleInEcosystem = true;
   isAvailableForApplications = true;
   private shouldOpenFormationModalFromRoute = false;
+  private pendingBasicSection: 'media' | null = null;
 
   readonly workspaceCards: ProfileWorkspaceCard[] = [
     {
@@ -98,9 +100,16 @@ export class UsuarioPage implements OnInit, AfterViewInit, OnDestroy {
       description: 'Revise graduação, especialização e a identidade acadêmica exibida no perfil.',
       action: 'formation',
     },
+    {
+      icon: 'videocam',
+      title: 'Mídia',
+      description: 'Envie seu vídeo de apresentação e mantenha esse material disponível no perfil.',
+      action: 'media',
+    },
   ];
 
   @ViewChild(FormacaoPage) private formacaoPage?: FormacaoPage;
+  @ViewChild(DadosCadastraisPage) private dadosCadastraisPage?: DadosCadastraisPage;
 
   ngOnInit(): void {
     this.restoreHeaderData();
@@ -143,6 +152,7 @@ export class UsuarioPage implements OnInit, AfterViewInit, OnDestroy {
 
   openBasicDataModal(): void {
     this.isBasicDataModalOpen = true;
+    this.tryOpenPendingBasicSection();
   }
 
   closeBasicDataModal(): void {
@@ -171,6 +181,12 @@ export class UsuarioPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (card.action === 'formation') {
       this.openFormationEditor();
+      return;
+    }
+
+    if (card.action === 'media') {
+      this.pendingBasicSection = 'media';
+      this.openBasicDataModal();
     }
   }
 
@@ -183,6 +199,17 @@ export class UsuarioPage implements OnInit, AfterViewInit, OnDestroy {
     this.restoreFormationCopy();
     this.restoreFormationLogo();
     this.restoreAvailabilityControls();
+  }
+
+  private tryOpenPendingBasicSection(): void {
+    if (this.pendingBasicSection !== 'media') {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      this.dadosCadastraisPage?.scrollToMediaSection();
+      this.pendingBasicSection = null;
+    });
   }
 
   private restoreBasicDraft(): void {

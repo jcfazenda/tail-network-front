@@ -7,6 +7,7 @@ import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
+import { LocalMediaStorageService } from '../../core/storage/local-media-storage.service';
 import { CompanyRecord } from '../empresa.models';
 import { RecruiterRecord } from '../../recruiter/recruiter.models';
 import { MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
@@ -38,6 +39,7 @@ type ResourcePanelJobVm = {
   company: string;
   companyLogoUrl?: string;
   homeAnnouncementImageUrl?: string;
+  recruiterVideoUrl?: string;
   location: string;
   workModel: string;
   contractType: string;
@@ -68,6 +70,7 @@ type CompanyCandidateVm = {
   avatarUrl: string;
   educationLabel?: string;
   educationStatus?: string;
+  videoUrl?: string;
   topStacks: Array<{ label: string; match: number; isAdherence: boolean }>;
 };
 
@@ -134,6 +137,7 @@ export class EmpresaPage implements OnDestroy {
   private readonly jobsFacade = inject(JobsFacade);
   private readonly matchDomainService = inject(MatchDomainService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private readonly localMediaStorage = inject(LocalMediaStorageService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
@@ -193,6 +197,10 @@ export class EmpresaPage implements OnDestroy {
   ];
   private resourcePanelAdherenceSnapshot = 91;
   private resourcePanelSalarySnapshot = 'R$ 9.500 - R$ 12.000';
+  private selectedCompanyRecruiterVideoResolvedUrl = 'assets/videos/VG-0001-Recruiter.mp4';
+  private recruiterVideoResolveToken = 0;
+  private selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+  private candidateVideoResolveToken = 0;
 
   searchTerm = '';
   statusFilter: CompanyStatusFilter = 'all';
@@ -245,6 +253,8 @@ export class EmpresaPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.revokeSelectedCompanyRecruiterVideoResolvedUrl();
+    this.revokeSelectedCompanyCandidateVideoResolvedUrl();
     this.subscriptions.unsubscribe();
   }
 
@@ -407,11 +417,11 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get selectedCompanyCandidateVideoUrl(): string {
-    return 'assets/videos/VG-0001.mp4';
+    return this.selectedCompanyCandidateVideoResolvedUrl;
   }
 
   get selectedCompanyRecruiterVideoUrl(): string {
-    return 'assets/videos/VG-0001-Recruiter.mp4';
+    return this.selectedCompanyRecruiterVideoResolvedUrl;
   }
 
   get candidateTotalPages(): number {
@@ -1415,6 +1425,7 @@ export class EmpresaPage implements OnDestroy {
           company: primaryJob.company,
           companyLogoUrl: primaryJob.companyLogoUrl,
           homeAnnouncementImageUrl: primaryJob.homeAnnouncementImageUrl,
+          recruiterVideoUrl: primaryJob.recruiterVideoUrl,
           location: primaryJob.location,
           workModel: primaryJob.workModel,
           contractType: primaryJob.contractType,
@@ -1428,6 +1439,7 @@ export class EmpresaPage implements OnDestroy {
       : this.buildPrimaryJobStacks(this.companyResourcePrimaryJobSnapshot);
     this.resourcePanelAdherenceSnapshot = this.companyResourceAdherenceSnapshot || 91;
     this.resourcePanelSalarySnapshot = this.resourcePanelJobSnapshot.salaryRange?.trim() || 'R$ 9.500 - R$ 12.000';
+    void this.refreshSelectedCompanyRecruiterVideoUrl();
 
     this.selectedCompanyCandidatesSnapshot = primaryJob
       ? this.companyJobCandidates(primaryJob)
@@ -1444,6 +1456,7 @@ export class EmpresaPage implements OnDestroy {
               avatarUrl: this.resolveAvatar(candidate.avatar),
               educationLabel: this.buildCandidateEducationLabel(candidateProfile),
               educationStatus: this.buildCandidateEducationStatus(candidateProfile),
+              videoUrl: candidateProfile?.basicDraft.candidateVideoUrl?.trim() || undefined,
               topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 3),
             };
           })
@@ -1453,6 +1466,7 @@ export class EmpresaPage implements OnDestroy {
       this.selectedCandidateId = this.selectedCompanyCandidatesSnapshot[0]?.id ?? '';
     }
     this.selectedCompanyCandidateSnapshot = this.selectedCompanyCandidatesSnapshot.find((candidate) => candidate.id === this.selectedCandidateId);
+    void this.refreshSelectedCompanyCandidateVideoUrl();
 
     this.candidateTotalPagesSnapshot = Math.max(1, Math.ceil(this.selectedCompanyCandidatesSnapshot.length / this.candidatePageSize));
     if (this.candidateCurrentPage > this.candidateTotalPagesSnapshot) {
@@ -1565,5 +1579,111 @@ export class EmpresaPage implements OnDestroy {
       createdAt: now,
       updatedAt: now,
     };
+  }
+
+  private async refreshSelectedCompanyRecruiterVideoUrl(): Promise<void> {
+    const recruiterVideoRef = this.resourcePanelJobSnapshot.recruiterVideoUrl?.trim() || '';
+    const resolveToken = ++this.recruiterVideoResolveToken;
+    this.revokeSelectedCompanyRecruiterVideoResolvedUrl();
+
+    if (!recruiterVideoRef) {
+      if (resolveToken !== this.recruiterVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyRecruiterVideoResolvedUrl = 'assets/videos/VG-0001-Recruiter.mp4';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(recruiterVideoRef)) {
+      if (resolveToken !== this.recruiterVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyRecruiterVideoResolvedUrl = recruiterVideoRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(recruiterVideoRef);
+      if (
+        resolveToken !== this.recruiterVideoResolveToken
+        || recruiterVideoRef !== (this.resourcePanelJobSnapshot.recruiterVideoUrl?.trim() || '')
+      ) {
+        return;
+      }
+      this.selectedCompanyRecruiterVideoResolvedUrl = blob
+        ? URL.createObjectURL(blob)
+        : 'assets/videos/VG-0001-Recruiter.mp4';
+    } catch {
+      if (resolveToken !== this.recruiterVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyRecruiterVideoResolvedUrl = 'assets/videos/VG-0001-Recruiter.mp4';
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private revokeSelectedCompanyRecruiterVideoResolvedUrl(): void {
+    if (!this.selectedCompanyRecruiterVideoResolvedUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.selectedCompanyRecruiterVideoResolvedUrl);
+    this.selectedCompanyRecruiterVideoResolvedUrl = 'assets/videos/VG-0001-Recruiter.mp4';
+  }
+
+  private async refreshSelectedCompanyCandidateVideoUrl(): Promise<void> {
+    const candidateVideoRef = this.selectedCompanyCandidateSnapshot?.videoUrl?.trim() || '';
+    const resolveToken = ++this.candidateVideoResolveToken;
+    this.revokeSelectedCompanyCandidateVideoResolvedUrl();
+
+    if (!candidateVideoRef) {
+      if (resolveToken !== this.candidateVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(candidateVideoRef)) {
+      if (resolveToken !== this.candidateVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidateVideoResolvedUrl = candidateVideoRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(candidateVideoRef);
+      if (
+        resolveToken !== this.candidateVideoResolveToken
+        || candidateVideoRef !== (this.selectedCompanyCandidateSnapshot?.videoUrl?.trim() || '')
+      ) {
+        return;
+      }
+      this.selectedCompanyCandidateVideoResolvedUrl = blob
+        ? URL.createObjectURL(blob)
+        : 'assets/videos/VG-0001.mp4';
+    } catch {
+      if (resolveToken !== this.candidateVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private revokeSelectedCompanyCandidateVideoResolvedUrl(): void {
+    if (!this.selectedCompanyCandidateVideoResolvedUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.selectedCompanyCandidateVideoResolvedUrl);
+    this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
   }
 }

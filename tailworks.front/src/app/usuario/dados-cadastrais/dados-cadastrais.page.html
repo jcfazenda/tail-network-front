@@ -163,6 +163,59 @@
           </div>
         </section>
 
+        <section class="candidate-profile__group" id="candidate-profile-media">
+          <div class="candidate-profile__divider"></div>
+
+          <header class="candidate-profile__group-head">
+            <h2>Mídia</h2>
+            <p>Adicione um vídeo de apresentação para reforçar sua identidade no perfil.</p>
+          </header>
+
+          <div class="candidate-profile__media-card">
+            <input
+              #candidateVideoInput
+              class="candidate-profile__media-input"
+              type="file"
+              accept=".mp4,.webm,.ogv,.mov,video/mp4,video/webm,video/ogg,video/quicktime"
+              (change)="onCandidateVideoSelected($event)"
+            />
+
+            <label class="candidate-profile__field candidate-profile__field--full">
+              <span>Caminho ou URL do vídeo</span>
+              <div class="candidate-profile__input-shell">
+                <span class="material-symbols-rounded" aria-hidden="true">videocam</span>
+                <input
+                  type="text"
+                  [ngModel]="candidateVideoUrl"
+                  name="candidateVideoUrl"
+                  placeholder="assets/videos/candidato.mp4"
+                  (ngModelChange)="onCandidateVideoUrlChange($event)"
+                />
+              </div>
+            </label>
+
+            <div class="candidate-profile__media-actions">
+              <button class="candidate-profile__button candidate-profile__button--primary" type="button" (click)="candidateVideoInput.click()">
+                Upload de vídeo
+              </button>
+              <button
+                *ngIf="hasCandidateVideo || candidateVideoUrl"
+                class="candidate-profile__button candidate-profile__button--ghost"
+                type="button"
+                (click)="clearCandidateVideo()">
+                Remover
+              </button>
+            </div>
+
+            <span class="candidate-profile__media-helper" *ngIf="candidateVideoFileName">Arquivo local: {{ candidateVideoFileName }}</span>
+            <span class="candidate-profile__media-error" *ngIf="candidateVideoError">{{ candidateVideoError }}</span>
+
+            <div class="candidate-profile__media-preview" *ngIf="hasCandidateVideo">
+              <video class="candidate-profile__media-player" [src]="candidateVideoPreviewUrl" controls playsinline preload="metadata"></video>
+            </div>
+          </div>
+        </section>
+
       </div>
 
 <footer class="candidate-profile__footer">

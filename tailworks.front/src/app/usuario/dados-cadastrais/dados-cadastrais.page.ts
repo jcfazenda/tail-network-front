@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthFacade } from '../../core/facades/auth.facade';
+import { LocalMediaStorageService } from '../../core/storage/local-media-storage.service';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type CandidateBasicProfile = {
@@ -21,6 +22,8 @@ type CandidateBasicDraft = {
   profile?: Partial<CandidateBasicProfile>;
   photoPreviewUrl?: string;
   photoFileName?: string;
+  candidateVideoUrl?: string;
+  candidateVideoFileName?: string;
 };
 
 type FormationCopyDraft = {
@@ -47,6 +50,8 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
   private readonly authFacade = inject(AuthFacade);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly localMediaStorage = inject(LocalMediaStorageService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly photoUpdatedListener = (event: Event) => {
     const customEvent = event as CustomEvent<{ photoPreviewUrl?: string; photoFileName?: string }>;
@@ -80,6 +85,10 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   photoPreviewUrl = '';
   photoFileName = '';
   photoError = '';
+  candidateVideoUrl = '';
+  candidateVideoFileName = '';
+  candidateVideoPreviewUrl = '';
+  candidateVideoError = '';
   formationLogoUrl = '/assets/images/formacao-default.png';
   formationCopy: FormationCopyDraft = {
     graduation: 'Bacharelado em Sistemas de Informação',
@@ -112,6 +121,10 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     return this.formationCopy.educationStatus;
   }
 
+  get hasCandidateVideo(): boolean {
+    return !!this.candidateVideoPreviewUrl.trim();
+  }
+
   ngOnInit(): void {
     this.restoreDraft();
     this.restoreFormationLogo();
@@ -122,6 +135,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener(DadosCadastraisPage.photoUpdatedEventName, this.photoUpdatedListener as EventListener);
     this.revokePhotoPreviewUrl();
+    this.revokeCandidateVideoPreviewUrl();
   }
 
   submitBasicData(form: NgForm): void {
@@ -153,6 +167,35 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     void this.router.navigate(['/usuario/dados-cadastrais'], {
       queryParams: { modal: 'formacao' },
     });
+  }
+
+  async onCandidateVideoSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement | null;
+    await this.handleCandidateVideoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  onCandidateVideoUrlChange(value: string): void {
+    this.candidateVideoUrl = value.trim();
+    this.candidateVideoFileName = '';
+    this.candidateVideoError = '';
+    void this.refreshCandidateVideoPreview();
+  }
+
+  clearCandidateVideo(): void {
+    this.revokeCandidateVideoPreviewUrl();
+    this.candidateVideoUrl = '';
+    this.candidateVideoFileName = '';
+    this.candidateVideoError = '';
+    this.persistDraft();
+    this.cdr.markForCheck();
+  }
+
+  scrollToMediaSection(): void {
+    document.getElementById('candidate-profile-media')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   private formatPhone(digits: string): string {
@@ -203,6 +246,9 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
       this.restoreLocationParts();
       this.photoPreviewUrl = draft.photoPreviewUrl ?? '';
       this.photoFileName = draft.photoFileName ?? '';
+      this.candidateVideoUrl = draft.candidateVideoUrl?.trim() ?? '';
+      this.candidateVideoFileName = draft.candidateVideoFileName ?? '';
+      void this.refreshCandidateVideoPreview();
     } catch {
       localStorage.removeItem(DadosCadastraisPage.draftStorageKey);
     }
@@ -249,18 +295,20 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
         profile: this.profile,
         photoPreviewUrl: this.photoPreviewUrl,
         photoFileName: this.photoFileName,
+        candidateVideoUrl: this.candidateVideoUrl,
+        candidateVideoFileName: this.candidateVideoFileName,
       }),
     );
-    this.syncSeededTalentProfile();
+    void this.syncSeededTalentProfile();
   }
 
-  private syncSeededTalentProfile(): void {
+  private async syncSeededTalentProfile(): Promise<void> {
     const email = this.authFacade.getSession()?.email?.trim();
     if (!email) {
       return;
     }
 
-    void this.talentProfileStore.syncCurrentWorkspace(email);
+    await this.talentProfileStore.syncCurrentWorkspace(email);
   }
 
   private revokePhotoPreviewUrl(): void {
@@ -269,6 +317,81 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     }
 
     URL.revokeObjectURL(this.photoPreviewUrl);
+  }
+
+  private revokeCandidateVideoPreviewUrl(): void {
+    if (!this.candidateVideoPreviewUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.candidateVideoPreviewUrl);
+    this.candidateVideoPreviewUrl = '';
+  }
+
+  private async handleCandidateVideoFile(file: File | null): Promise<void> {
+    this.candidateVideoError = '';
+
+    if (!file) {
+      return;
+    }
+
+    const fileName = file.name.toLowerCase();
+    const isAccepted = fileName.endsWith('.mp4')
+      || fileName.endsWith('.webm')
+      || fileName.endsWith('.ogv')
+      || fileName.endsWith('.mov')
+      || ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'].includes(file.type);
+
+    if (!isAccepted) {
+      this.candidateVideoError = 'Use MP4, WEBM, OGV ou MOV.';
+      return;
+    }
+
+    if (file.size > 200 * 1024 * 1024) {
+      this.candidateVideoError = 'O vídeo deve ter no máximo 200MB.';
+      return;
+    }
+
+    try {
+      this.candidateVideoUrl = await this.localMediaStorage.saveFile(file);
+      this.candidateVideoFileName = file.name;
+      await this.refreshCandidateVideoPreview();
+      this.persistDraft();
+      await this.syncSeededTalentProfile();
+    } catch (error) {
+      this.candidateVideoError = error instanceof Error ? error.message : 'Não foi possível salvar o vídeo localmente.';
+      this.cdr.markForCheck();
+    }
+  }
+
+  private async refreshCandidateVideoPreview(): Promise<void> {
+    const candidateVideoRef = this.candidateVideoUrl.trim();
+    this.revokeCandidateVideoPreviewUrl();
+
+    if (!candidateVideoRef) {
+      this.candidateVideoPreviewUrl = '';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(candidateVideoRef)) {
+      this.candidateVideoPreviewUrl = candidateVideoRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(candidateVideoRef);
+      this.candidateVideoPreviewUrl = blob ? URL.createObjectURL(blob) : '';
+      if (!blob) {
+        this.candidateVideoError = 'Não foi possível localizar o vídeo salvo localmente.';
+      }
+    } catch (error) {
+      this.candidateVideoPreviewUrl = '';
+      this.candidateVideoError = error instanceof Error ? error.message : 'Não foi possível abrir o vídeo salvo.';
+    }
+
+    this.cdr.markForCheck();
   }
 
   private scrollToSection(sectionId: string, fallbackRoute: string): void {

@@ -18,6 +18,8 @@ export type SeededCandidateBasicDraft = {
   };
   photoPreviewUrl?: string;
   photoFileName?: string;
+  candidateVideoUrl?: string;
+  candidateVideoFileName?: string;
 };
 
 export type SeededStackChip = {

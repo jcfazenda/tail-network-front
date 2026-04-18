@@ -6,6 +6,7 @@ import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
+import { LocalMediaStorageService } from '../../core/storage/local-media-storage.service';
 import { ProfitLossCardComponent } from '../../grafics/profit-loss-card/profit-loss-card.component';
 import { TalentDirectoryService } from '../../talent/talent-directory.service';
 import { TalentProfileStoreService } from '../../talent/talent-profile-store.service';
@@ -171,6 +172,7 @@ export class CadastroPage implements OnDestroy {
   private readonly matchDomainService = inject(MatchDomainService);
   private readonly talentDirectoryService = inject(TalentDirectoryService);
   private readonly talentProfileStore = inject(TalentProfileStoreService);
+  private readonly localMediaStorage = inject(LocalMediaStorageService);
   private readonly subscriptions = new Subscription();
   private summaryPanelDragState: {
     pointerId: number;
@@ -223,8 +225,11 @@ export class CadastroPage implements OnDestroy {
   ];
   readonly companyLogoGuide = '512 x 512 px';
   readonly homeAnnouncementImageGuide = '1200 x 675 px';
+  readonly recruiterVideoGuide = 'MP4, WEBM, OGV ou MOV';
   readonly acceptedCompanyLogoMimeTypes = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp'];
+  readonly acceptedRecruiterVideoMimeTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
   readonly maxCompanyLogoSizeBytes = 5 * 1024 * 1024;
+  readonly maxRecruiterVideoSizeBytes = 200 * 1024 * 1024;
   sideCompanyLogoFailed = false;
   readonly workModels: WorkModel[] = ['Remoto', 'Hibrido', 'Presencial'];
   readonly contractTypes: ContractType[] = ['CLT', 'PJ', 'Freelancer'];
@@ -290,6 +295,7 @@ export class CadastroPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.revokeRecruiterVideoPreviewUrl();
     this.subscriptions.unsubscribe();
   }
 
@@ -1377,6 +1383,7 @@ private getRichContentPlainText(value: string): string {
     company: 'Banco Itaú',
     companyLogoUrl: '',
     homeAnnouncementImageUrl: '',
+    recruiterVideoUrl: '',
     location: 'Rio de Janeiro - RJ',
     workModel: 'Remoto',
     seniority: 'Senior',
@@ -1413,6 +1420,9 @@ private getRichContentPlainText(value: string): string {
   isJobActionsModalOpen = false;
   companyLogoError = '';
   homeAnnouncementImageError = '';
+  recruiterVideoError = '';
+  recruiterVideoFileName = '';
+  recruiterVideoPreviewUrl = '';
   editingResponsibilitySectionId: string | null = null;
   jobActionsStatusDraft: 'ativas' | 'rascunhos' | 'pausadas' | 'encerradas' = 'ativas';
   jobActionsStatusReasonDraft = '';
@@ -1647,6 +1657,14 @@ private getRichContentPlainText(value: string): string {
     return this.jobDraft.homeAnnouncementImageUrl?.trim() || this.currentCompanyProfile.logoUrl?.trim() || '';
   }
 
+  get currentRecruiterVideoUrl(): string {
+    return this.recruiterVideoPreviewUrl?.trim() || '';
+  }
+
+  get hasRecruiterVideoUrl(): boolean {
+    return !!this.currentRecruiterVideoUrl;
+  }
+
   get currentAnnouncementCardHiringCount(): number {
     return this.currentCompanyProfile.monthlyHiringCount ?? 18;
   }
@@ -1692,6 +1710,10 @@ private getRichContentPlainText(value: string): string {
     input.click();
   }
 
+  openRecruiterVideoPicker(input: HTMLInputElement): void {
+    input.click();
+  }
+
   onCompanyLogoSelected(event: Event): void {
     const input = event.target as HTMLInputElement | null;
     this.handleCompanyLogoFile(input?.files?.[0] ?? null);
@@ -1726,6 +1748,30 @@ private getRichContentPlainText(value: string): string {
 
     event.preventDefault();
     this.openHomeAnnouncementImagePicker(input);
+  }
+
+  onRecruiterVideoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    void this.handleRecruiterVideoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  onRecruiterVideoUrlChange(value: string): void {
+    this.jobDraft.recruiterVideoUrl = value;
+    this.recruiterVideoFileName = '';
+    this.recruiterVideoError = '';
+    void this.refreshRecruiterVideoPreview();
+  }
+
+  clearRecruiterVideo(): void {
+    this.revokeRecruiterVideoPreviewUrl();
+    this.jobDraft.recruiterVideoUrl = '';
+    this.recruiterVideoFileName = '';
+    this.recruiterVideoError = '';
+    this.cdr.markForCheck();
   }
 
   selectWorkModel(workModel: WorkModel): void {
@@ -2204,17 +2250,22 @@ private getRichContentPlainText(value: string): string {
     this.editingJobId = job.id;
     this.editingJobStatus = job.status;
     this.editingJobStatusReason = job.statusReason?.trim() || '';
+    this.revokeRecruiterVideoPreviewUrl();
 
     Object.assign(this.jobDraft, {
       title: job.title,
       company: job.company,
       companyLogoUrl: job.companyLogoUrl ?? '',
       homeAnnouncementImageUrl: job.homeAnnouncementImageUrl ?? '',
+      recruiterVideoUrl: job.recruiterVideoUrl ?? '',
       location: job.location,
       workModel: job.workModel,
       seniority: job.seniority,
       summary: job.summary,
     });
+    this.recruiterVideoFileName = '';
+    this.recruiterVideoError = '';
+    void this.refreshRecruiterVideoPreview();
 
     this.contractType = job.contractType;
     this.salaryRange = job.salaryRange ?? '';
@@ -2479,6 +2530,38 @@ private getRichContentPlainText(value: string): string {
     reader.readAsDataURL(file);
   }
 
+  private async handleRecruiterVideoFile(file: File | null): Promise<void> {
+    this.recruiterVideoError = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.isAcceptedRecruiterVideoFile(file)) {
+      this.recruiterVideoError = 'Use MP4, WEBM, OGV ou MOV.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (file.size > this.maxRecruiterVideoSizeBytes) {
+      this.recruiterVideoError = 'O video deve ter no maximo 200MB.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const mediaRef = await this.localMediaStorage.saveFile(file);
+      this.jobDraft.recruiterVideoUrl = mediaRef;
+      this.recruiterVideoFileName = file.name;
+      this.recruiterVideoError = '';
+      await this.refreshRecruiterVideoPreview();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Nao foi possivel salvar o video localmente.';
+      this.recruiterVideoError = message;
+      this.cdr.markForCheck();
+    }
+  }
+
   private isAcceptedCompanyLogoFile(file: File): boolean {
     if (this.acceptedCompanyLogoMimeTypes.includes(file.type)) {
       return true;
@@ -2490,6 +2573,57 @@ private getRichContentPlainText(value: string): string {
       || fileName.endsWith('.png')
       || fileName.endsWith('.gif')
       || fileName.endsWith('.webp');
+  }
+
+  private isAcceptedRecruiterVideoFile(file: File): boolean {
+    if (this.acceptedRecruiterVideoMimeTypes.includes(file.type)) {
+      return true;
+    }
+
+    const fileName = file.name.toLowerCase();
+    return fileName.endsWith('.mp4')
+      || fileName.endsWith('.webm')
+      || fileName.endsWith('.ogv')
+      || fileName.endsWith('.mov');
+  }
+
+  private revokeRecruiterVideoPreviewUrl(): void {
+    if (!this.recruiterVideoPreviewUrl || !this.recruiterVideoPreviewUrl.startsWith('blob:')) {
+      return;
+    }
+
+    URL.revokeObjectURL(this.recruiterVideoPreviewUrl);
+    this.recruiterVideoPreviewUrl = '';
+  }
+
+  private async refreshRecruiterVideoPreview(): Promise<void> {
+    const recruiterVideoRef = this.jobDraft.recruiterVideoUrl?.trim() || '';
+    this.revokeRecruiterVideoPreviewUrl();
+
+    if (!recruiterVideoRef) {
+      this.recruiterVideoPreviewUrl = '';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this.localMediaStorage.isLocalMediaRef(recruiterVideoRef)) {
+      this.recruiterVideoPreviewUrl = recruiterVideoRef;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    try {
+      const blob = await this.localMediaStorage.readBlob(recruiterVideoRef);
+      this.recruiterVideoPreviewUrl = blob ? URL.createObjectURL(blob) : '';
+      if (!blob) {
+        this.recruiterVideoError = 'Nao foi possivel localizar o video salvo localmente.';
+      }
+    } catch {
+      this.recruiterVideoPreviewUrl = '';
+      this.recruiterVideoError = 'Nao foi possivel abrir o video salvo localmente.';
+    }
+
+    this.cdr.markForCheck();
   }
 
   private formatSalaryRange(value: string): string {
