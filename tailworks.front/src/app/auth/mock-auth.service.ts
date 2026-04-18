@@ -140,6 +140,16 @@ export class MockAuthService {
     return this.syncRecruiterWorkspace(this.getSession());
   }
 
+  async activateTalentWorkspace(): Promise<boolean> {
+    const session = this.getSession();
+    if (!session?.email || session.canUseTalent !== true) {
+      return false;
+    }
+
+    await this.syncTalentWorkspace(session);
+    return true;
+  }
+
   async login(email: string, password?: string): Promise<AuthSession | null> {
     const normalizedEmail = email.trim().toLocaleLowerCase('pt-BR');
     const normalizedPassword = password?.trim() ?? '';

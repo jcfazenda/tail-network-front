@@ -6,9 +6,11 @@ import { Subscription } from 'rxjs';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
+import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { CompanyRecord } from '../empresa.models';
 import { RecruiterRecord } from '../../recruiter/recruiter.models';
 import { MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
+import { SeededTalentProfile, TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type RecruiterFilter = 'all' | 'withRecruiters' | 'withoutRecruiters';
@@ -64,7 +66,9 @@ type CompanyCandidateVm = {
   role: string;
   location: string;
   avatarUrl: string;
-  topStacks: Array<{ label: string; match: number }>;
+  educationLabel?: string;
+  educationStatus?: string;
+  topStacks: Array<{ label: string; match: number; isAdherence: boolean }>;
 };
 
 type CompanyViewModel = {
@@ -128,6 +132,8 @@ export class EmpresaPage implements OnDestroy {
   private readonly companiesFacade = inject(CompaniesFacade);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly matchDomainService = inject(MatchDomainService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
@@ -149,6 +155,7 @@ export class EmpresaPage implements OnDestroy {
   private selectedCompanyRecruitersSnapshot: RecruiterRecord[] = [];
   private selectedCompanySideJobCardsSnapshot: SideJobCardVm[] = [];
   private selectedCompanyCandidatesSnapshot: CompanyCandidateVm[] = [];
+  private selectedCompanyCandidateSnapshot?: CompanyCandidateVm;
   private pagedSelectedCompanyCandidatesSnapshot: CompanyCandidateVm[] = [];
   private candidateTotalPagesSnapshot = 1;
   private candidateVisiblePagesSnapshot: number[] = [1];
@@ -204,10 +211,12 @@ export class EmpresaPage implements OnDestroy {
   modalError = '';
 
   isFilterModalOpen = false;
+  isCompanyFilterOpen = false;
 
   companyForm: CompanyFormModel = this.createEmptyForm();
   selectedCompanyId = '';
   selectedCompanyJobId = '';
+  selectedCandidateId = '';
   activeDetailTab: CompanyDetailTab = 'recruiters';
   centerView: EmpresaCenterView = 'identity';
 
@@ -299,6 +308,11 @@ export class EmpresaPage implements OnDestroy {
     return this.companySelectionOptionsSnapshot;
   }
 
+  get selectedCompanySelectionOption(): CompanyViewModel | undefined {
+    return this.companySelectionOptions.find((option) => option.company.id === this.selectedCompanyId)
+      ?? this.selectedCompany;
+  }
+
   get selectedCompanyRecord(): CompanyRecord | null {
     return this.selectedCompany?.company ?? null;
   }
@@ -378,6 +392,26 @@ export class EmpresaPage implements OnDestroy {
 
   get pagedSelectedCompanyCandidates(): CompanyCandidateVm[] {
     return this.pagedSelectedCompanyCandidatesSnapshot;
+  }
+
+  get selectedCompanyCandidate(): CompanyCandidateVm | undefined {
+    return this.selectedCompanyCandidateSnapshot;
+  }
+
+  get selectedCompanyCandidateEducationLabel(): string {
+    return this.selectedCompanyCandidate?.educationLabel?.trim() || 'Formação não informada';
+  }
+
+  get selectedCompanyCandidateEducationStatus(): string {
+    return this.selectedCompanyCandidate?.educationStatus?.trim() || 'Não informado';
+  }
+
+  get selectedCompanyCandidateVideoUrl(): string {
+    return 'assets/videos/VG-0001.mp4';
+  }
+
+  get selectedCompanyRecruiterVideoUrl(): string {
+    return 'assets/videos/VG-0001-Recruiter.mp4';
   }
 
   get candidateTotalPages(): number {
@@ -799,8 +833,27 @@ export class EmpresaPage implements OnDestroy {
     return page;
   }
 
+  trackCompanyOption(_index: number, option: CompanyViewModel): string {
+    return option.company.id;
+  }
+
+  toggleCompanyFilter(): void {
+    this.isCompanyFilterOpen = !this.isCompanyFilterOpen;
+    this.cdr.markForCheck();
+  }
+
+  closeCompanyFilter(): void {
+    if (!this.isCompanyFilterOpen) {
+      return;
+    }
+
+    this.isCompanyFilterOpen = false;
+    this.cdr.markForCheck();
+  }
+
   selectCompany(companyId: string): void {
     if (this.selectedCompanyId === companyId) {
+      this.closeCompanyFilter();
       return;
     }
 
@@ -808,6 +861,7 @@ export class EmpresaPage implements OnDestroy {
     this.selectedCompanyJobId = '';
     this.candidateCurrentPage = 1;
     this.activeDetailTab = 'recruiters';
+    this.isCompanyFilterOpen = false;
     this.rebuildSelectedCompanySnapshot();
     this.cdr.markForCheck();
   }
@@ -824,6 +878,16 @@ export class EmpresaPage implements OnDestroy {
 
     this.selectedCompanyJobId = jobId;
     this.candidateCurrentPage = 1;
+    this.rebuildSelectedCompanyJobSnapshot();
+    this.cdr.markForCheck();
+  }
+
+  selectCandidate(candidateId: string): void {
+    if (!candidateId.trim() || this.selectedCandidateId === candidateId) {
+      return;
+    }
+
+    this.selectedCandidateId = candidateId;
     this.rebuildSelectedCompanyJobSnapshot();
     this.cdr.markForCheck();
   }
@@ -978,24 +1042,129 @@ export class EmpresaPage implements OnDestroy {
   }
 
   private buildCandidateTopStacks(
-    candidate: Pick<CompanyCandidateVm, 'role'>,
+    candidate: Pick<MockJobCandidate, 'name' | 'match'>,
     job: Pick<ResourcePanelJobVm, 'techStack'>,
-  ): Array<{ label: string; match: number }> {
-    const roleStacks = candidate.role
-      .split('/')
-      .map((item) => item.trim())
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((label) => ({ label, match: 100 }));
+  ): Array<{ label: string; match: number; isAdherence: boolean }> {
+    const candidateProfile = this.findTalentProfileByName(candidate.name);
+    const fallbackStacks = [...job.techStack]
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .slice(0, 3)
+      .map((stack) => ({
+        label: stack.name,
+        match: this.matchDomainService.clampScore(candidate.match || stack.match),
+        isAdherence: true,
+      }));
 
-    if (roleStacks.length) {
-      return roleStacks;
+    if (!candidateProfile) {
+      return fallbackStacks;
     }
 
-    return [...job.techStack]
-      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-      .slice(0, 2)
-      .map((stack) => ({ label: stack.name, match: stack.match }));
+    const stackScores = this.buildTalentProfileStackScores(candidateProfile);
+    const jobRepoIds = this.matchDomainService.mapTechLabelsToRepoIds(job.techStack.map((stack) => stack.name));
+    const adherenceSignals = job.techStack
+      .map((stack, index) => {
+        const repoId = jobRepoIds[index];
+        const candidateKnowledge = repoId ? (stackScores[repoId] ?? 0) : 0;
+        const requiredKnowledge = Math.max(1, stack.match || 0);
+        const match = candidateKnowledge > 0
+          ? this.matchDomainService.clampScore(
+              Math.round((Math.min(candidateKnowledge, requiredKnowledge) / requiredKnowledge) * 100),
+            )
+          : 0;
+
+        return {
+          label: stack.name.trim(),
+          match,
+          weight: stack.match || 0,
+          candidateKnowledge,
+          repoId,
+          isAdherence: true,
+        };
+      })
+      .filter((stack) => stack.label && stack.match > 0)
+      .sort((left, right) =>
+        right.weight - left.weight
+        || right.match - left.match
+        || right.candidateKnowledge - left.candidateKnowledge
+        || left.label.localeCompare(right.label, 'pt-BR'),
+      )
+      .slice(0, 3);
+
+    if (adherenceSignals.length >= 3) {
+      return adherenceSignals.map(({ label, match, isAdherence }) => ({ label, match, isAdherence }));
+    }
+
+    const usedRepoIds = new Set(adherenceSignals.map((stack) => stack.repoId).filter((repoId): repoId is string => Boolean(repoId)));
+    const extraSignals = [...(candidateProfile.stacksDraft.primary ?? []), ...(candidateProfile.stacksDraft.extra ?? [])]
+      .map((stack) => {
+        const repoId = stack.id?.trim() || this.matchDomainService.mapTechLabelsToRepoIds([stack.name])[0];
+        const label = stack.name?.trim() || '';
+        const knowledge = Math.max(0, Math.min(100, Math.round(Number(stack.knowledge ?? 0))));
+
+        return {
+          label,
+          match: this.matchDomainService.clampScore(knowledge),
+          repoId,
+          isAdherence: false,
+        };
+      })
+      .filter((stack) => stack.label && stack.match > 0 && (!stack.repoId || !usedRepoIds.has(stack.repoId)))
+      .sort((left, right) =>
+        right.match - left.match
+        || left.label.localeCompare(right.label, 'pt-BR'),
+      );
+
+    const combinedStacks = [
+      ...adherenceSignals.map(({ label, match, isAdherence }) => ({ label, match, isAdherence })),
+      ...extraSignals,
+    ].slice(0, 3);
+
+    return combinedStacks.length ? combinedStacks : fallbackStacks;
+  }
+
+  private findTalentProfileByName(name: string): SeededTalentProfile | undefined {
+    const normalizedName = this.normalizeCompanyKey(name);
+    return this.talentProfileStore.listProfiles().find((profile) => {
+      const profileName = profile.basicDraft.profile?.name?.trim() || profile.email;
+      return this.normalizeCompanyKey(profileName) === normalizedName;
+    });
+  }
+
+  private buildCandidateEducationLabel(profile: SeededTalentProfile | undefined): string | undefined {
+    if (!profile) {
+      return undefined;
+    }
+
+    return profile.formationCopy?.graduation?.trim()
+      || profile.formationCopy?.specialization?.trim()
+      || profile.basicDraft.profile?.formation?.trim()
+      || undefined;
+  }
+
+  private buildCandidateEducationStatus(profile: SeededTalentProfile | undefined): string | undefined {
+    if (!profile) {
+      return undefined;
+    }
+
+    return profile.formationCopy?.educationStatus?.trim()
+      || (profile.formationCopy?.graduated === false ? 'Em andamento' : undefined)
+      || (this.buildCandidateEducationLabel(profile) ? 'Concluído' : undefined);
+  }
+
+  private buildTalentProfileStackScores(profile: SeededTalentProfile): Record<string, number> {
+    const stackScores: Record<string, number> = {};
+
+    for (const stack of [...(profile.stacksDraft.primary ?? []), ...(profile.stacksDraft.extra ?? [])]) {
+      const repoId = stack.id?.trim() || this.matchDomainService.mapTechLabelsToRepoIds([stack.name])[0];
+      if (!repoId) {
+        continue;
+      }
+
+      const knowledge = Math.max(0, Math.min(100, Math.round(Number(stack.knowledge ?? 0))));
+      stackScores[repoId] = Math.max(stackScores[repoId] ?? 0, knowledge);
+    }
+
+    return stackScores;
   }
 
   private companyJobCandidates(job: MockJobRecord) {
@@ -1110,6 +1279,7 @@ export class EmpresaPage implements OnDestroy {
       this.selectedCompanyId = this.resolveDefaultSelectedCompanyId();
       this.selectedCompanyJobId = '';
       this.candidateCurrentPage = 1;
+      this.selectedCandidateId = '';
     }
 
     this.rebuildSelectedCompanySnapshot();
@@ -1184,6 +1354,7 @@ export class EmpresaPage implements OnDestroy {
     if (!companyName) {
       this.selectedCompanyJobsSnapshot = [];
       this.selectedCompanySideJobCardsSnapshot = [];
+      this.selectedCandidateId = '';
       this.rebuildSelectedCompanyJobSnapshot();
       return;
     }
@@ -1262,15 +1433,26 @@ export class EmpresaPage implements OnDestroy {
       ? this.companyJobCandidates(primaryJob)
           .slice()
           .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
-          .map((candidate, index) => ({
-            id: candidate.id?.trim() || `${primaryJob.id}:${candidate.name}:${index}`,
-            name: candidate.name,
-            role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
-            location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
-            avatarUrl: this.resolveAvatar(candidate.avatar),
-            topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 2),
-          }))
+          .map((candidate, index) => {
+            const candidateProfile = this.findTalentProfileByName(candidate.name);
+
+            return {
+              id: candidate.id?.trim() || `${primaryJob.id}:${candidate.name}:${index}`,
+              name: candidate.name,
+              role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
+              location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
+              avatarUrl: this.resolveAvatar(candidate.avatar),
+              educationLabel: this.buildCandidateEducationLabel(candidateProfile),
+              educationStatus: this.buildCandidateEducationStatus(candidateProfile),
+              topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 3),
+            };
+          })
       : [];
+
+    if (!this.selectedCompanyCandidatesSnapshot.some((candidate) => candidate.id === this.selectedCandidateId)) {
+      this.selectedCandidateId = this.selectedCompanyCandidatesSnapshot[0]?.id ?? '';
+    }
+    this.selectedCompanyCandidateSnapshot = this.selectedCompanyCandidatesSnapshot.find((candidate) => candidate.id === this.selectedCandidateId);
 
     this.candidateTotalPagesSnapshot = Math.max(1, Math.ceil(this.selectedCompanyCandidatesSnapshot.length / this.candidatePageSize));
     if (this.candidateCurrentPage > this.candidateTotalPagesSnapshot) {

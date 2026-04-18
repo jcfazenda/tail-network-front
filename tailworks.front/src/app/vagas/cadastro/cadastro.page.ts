@@ -2107,7 +2107,7 @@ private getRichContentPlainText(value: string): string {
   publishJob(): void {
     this.persistJob(this.isEditingJob ? this.editingJobStatus : 'ativas');
 
-    void this.router.navigate(['/home/ecossistema']);
+    void this.router.navigate(['/empresa']);
   }
 
   openJobActionsModal(): void {

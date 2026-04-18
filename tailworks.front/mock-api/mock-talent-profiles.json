@@ -13437,61 +13437,50 @@
           "tone": "gold",
           "category": "backend",
           "knowledge": 93,
-          "description": "Dominio declarado em .NET / C# com foco em compatibilidade de radar."
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
-          "id": "repo:azure",
-          "name": "Azure",
-          "short": "Azure",
-          "tone": "azure",
-          "category": "cloud",
-          "knowledge": 78,
-          "description": "Dominio declarado em Azure com foco em compatibilidade de radar."
-        },
-        {
-          "id": "repo:docker",
-          "name": "Docker",
-          "short": "Docker",
+          "id": "repo:microservices",
+          "name": "Microservices",
+          "short": "Microservices",
           "tone": "neutral",
-          "category": "devops",
-          "knowledge": 71,
-          "description": "Dominio declarado em Docker com foco em compatibilidade de radar."
+          "category": "other",
+          "knowledge": 93,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:rest-api",
+          "name": ".NET / C#",
+          "short": ".NET / C#",
+          "tone": "neutral",
+          "category": "other",
+          "knowledge": 91,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:redis",
+          "name": "SQL",
+          "short": "SQL",
+          "tone": "gold",
+          "category": "database",
+          "knowledge": 70,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:mysql",
+          "name": "SQL",
+          "short": "SQL",
+          "tone": "gold",
+          "category": "database",
+          "knowledge": 70,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         }
       ],
-      "extra": [
-        {
-          "id": "repo:kubernetes",
-          "name": "Kubernetes",
-          "short": "Kubernetes",
-          "tone": "neutral",
-          "category": "devops",
-          "knowledge": 47,
-          "description": "Dominio declarado em Kubernetes com foco em compatibilidade de radar."
-        },
-        {
-          "id": "repo:sql-server",
-          "name": "SQL / Dados",
-          "short": "SQL / Dados",
-          "tone": "neutral",
-          "category": "database",
-          "knowledge": 43,
-          "description": "Dominio declarado em SQL / Dados com foco em compatibilidade de radar."
-        },
-        {
-          "id": "repo:java",
-          "name": "Java / Spring",
-          "short": "Java / Spring",
-          "tone": "gold",
-          "category": "backend",
-          "knowledge": 13,
-          "description": "Dominio declarado em Java / Spring com foco em compatibilidade de radar."
-        }
-      ]
+      "extra": []
     },
     "experiencesDraft": [
       {
         "id": "backend-dotnet-exp-60-0",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Remoto",
@@ -13514,22 +13503,22 @@
             "description": "Uso prático de .NET / C# em contexto real."
           },
           {
-            "repoId": "repo:azure",
-            "name": "Azure",
-            "knowledge": 78,
-            "description": "Uso prático de Azure em contexto real."
+            "repoId": "repo:rest-api",
+            "name": "REST API",
+            "knowledge": 91,
+            "description": ""
           },
           {
-            "repoId": "repo:docker",
-            "name": "Docker",
-            "knowledge": 71,
-            "description": "Uso prático de Docker em contexto real."
+            "repoId": "repo:microservices",
+            "name": "Microservices",
+            "knowledge": 93,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       },
       {
         "id": "backend-dotnet-exp-60-1",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Presencial",
@@ -13552,28 +13541,28 @@
             "description": "Uso prático de .NET / C# em contexto real."
           },
           {
-            "repoId": "repo:azure",
-            "name": "Azure",
-            "knowledge": 78,
-            "description": "Uso prático de Azure em contexto real."
+            "repoId": "repo:microservices",
+            "name": "Microservices",
+            "knowledge": 91,
+            "description": ""
           },
           {
-            "repoId": "repo:docker",
-            "name": "Docker",
-            "knowledge": 71,
-            "description": "Uso prático de Docker em contexto real."
+            "repoId": "repo:rest-api",
+            "name": "REST API",
+            "knowledge": 89,
+            "description": ""
           },
           {
-            "repoId": "repo:java",
-            "name": "Java / Spring",
-            "knowledge": 13,
-            "description": "Uso prático de Java / Spring em contexto real."
+            "repoId": "repo:redis",
+            "name": "Redis",
+            "knowledge": 70,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       },
       {
         "id": "backend-dotnet-exp-60-2",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Híbrido",
@@ -13596,18 +13585,31 @@
             "description": "Uso prático de .NET / C# em contexto real."
           },
           {
-            "repoId": "repo:azure",
-            "name": "Azure",
-            "knowledge": 78,
-            "description": "Uso prático de Azure em contexto real."
+            "repoId": "repo:rest-api",
+            "name": "REST API",
+            "knowledge": 93,
+            "description": ""
           },
           {
-            "repoId": "repo:docker",
-            "name": "Docker",
-            "knowledge": 71,
-            "description": "Uso prático de Docker em contexto real."
+            "repoId": "repo:microservices",
+            "name": "Microservices",
+            "knowledge": 94,
+            "description": ""
+          },
+          {
+            "repoId": "repo:redis",
+            "name": "Redis",
+            "knowledge": 70,
+            "description": ""
+          },
+          {
+            "repoId": "repo:mysql",
+            "name": "MySQL",
+            "knowledge": 70,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       }
     ]
   },

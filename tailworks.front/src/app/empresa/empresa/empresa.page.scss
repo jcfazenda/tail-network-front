@@ -701,7 +701,78 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
-  margin-top: 250px;
+  margin-top: 42px;
+}
+
+.company-context__candidate-adherence {
+  margin-top: 22px;
+  padding: 22px 24px;
+  border-radius: 22px; 
+  border: 1px solid rgba(47, 50, 50, 0.08);
+  display: grid;
+  gap: 18px;
+}
+
+.company-context__candidate-adherence-header {
+  display: grid;
+  gap: 4px;
+
+  strong {
+    font-size: 18px;
+    font-weight: 800;
+    color: #2f3232;
+  }
+
+  span {
+    font-size: 12px;
+    color: #7a8080;
+  }
+}
+
+.company-context__candidate-adherence-list {
+  display: grid;
+  gap: 14px;
+}
+
+.company-context__candidate-adherence-item {
+  display: grid;
+  grid-template-columns: minmax(90px, 132px) minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 12px;
+}
+
+.company-context__candidate-adherence-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2f3232;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.company-context__candidate-adherence-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #dde2e7;
+  overflow: hidden;
+}
+
+.company-context__candidate-adherence-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff8a3d, #ec662d);
+}
+
+.company-context__candidate-adherence-fill--extra {
+  background: linear-gradient(90deg, #8fd7ff, #55bdf2);
+}
+
+.company-context__candidate-adherence-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: #2f3232;
+  text-align: right;
 }
 
 .company-context__quick-action {
@@ -1660,6 +1731,16 @@
   }
 }
 
+.empresa-vaga-talent-card--active {
+  border-color: rgba(236, 102, 45, 0.32);
+  box-shadow: 0 16px 30px rgba(236, 102, 45, 0.12);
+}
+
+.empresa-vaga-talent-card__avatar--side {
+  width: 88px;
+  height: 88px;
+}
+
 .empresa-vaga-talent-card__identity {
   min-width: 0;
   display: grid;
@@ -1675,6 +1756,24 @@
   span {
     font-size: 12px;
     line-height: 1.35;
+    color: #7a8080;
+  }
+}
+
+.empresa-vaga-talent-card__identity--side {
+  gap: 4px;
+
+  strong {
+    font-size: 24px;
+    line-height: 1.05;
+  }
+
+  span {
+    font-size: 16px;
+  }
+
+  small {
+    font-size: 13px;
     color: #7a8080;
   }
 }
@@ -1727,6 +1826,12 @@
   strong {
     font-weight: 800;
   }
+}
+
+.empresa-vaga-talent-card__stack-name {
+  min-width: 72px;
+  text-align: left;
+  justify-self: start;
 }
 
 .empresa-vaga-talent-card--pagination {
@@ -1813,6 +1918,10 @@
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, #c57a36 0%, #d39a52 100%);
+}
+
+.empresa-vaga-talent-card__fill--extra {
+  background: linear-gradient(90deg, #8fd7ff, #55bdf2);
 }
 
 .ecosystem-desktop__panel-resorces {
@@ -1936,7 +2045,41 @@
   letter-spacing: -0.02em;
 }
 
-.menu-feature-card {
+//
+.menu-feature-card-candidate {  
+  margin-top: 0;
+  width: 100%;
+  max-width: 720px;
+  align-self: center;
+  justify-self: center;
+}
+
+.menu-feature-video-candidate {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+  border-radius: 16px;
+
+  background:
+    radial-gradient(circle at top left, rgba(223, 223, 223, 0.3), transparent 46%),
+    linear-gradient(135deg, #8b8b8b 0%, #7f7f7f 42%, #8b8989 100%);
+
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+
+  img {
+    position: absolute; // 🔥 chave
+    inset: 0;           // 🔥 ocupa toda a div
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center; // 👈 controla foco
+    display: block;
+  }
+}
+
+/* VIDEO */
+.menu-feature-card {  
   grid-area: video;
   width: 100%;
   max-width: 480px;
@@ -1945,6 +2088,7 @@
 }
 
 .menu-feature-video {
+  padding: 22px 24px;
   position: relative;
   width: 130%;
   height: 380px;
@@ -1966,6 +2110,16 @@
     object-position: center; // 👈 controla foco
     display: block;
   }
+}
+
+.menu-feature-video__player {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #111827;
 }
 .menu-feature-video__placeholder {
   width: 100%;
@@ -2384,10 +2538,18 @@
    RIGHT TOP
 ========================================================= */
 .empresa-filter-block {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 260px;
+  min-width: 360px;
+}
+
+.empresa-filter-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: stretch;
 }
 
 .empresa-filter__label {
@@ -2401,54 +2563,196 @@
 
 .empresa-filter {
   position: relative;
-  display: flex;
+  z-index: 12;
+}
+
+.empresa-filter__backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.empresa-filter__trigger {
+  position: relative;
+  z-index: 12;
+  width: 100%;
+  min-height: 88px;
+  border: 1px solid rgba(47, 50, 50, 0.1);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top left, rgba(236, 102, 45, 0.12), transparent 42%),
+    linear-gradient(180deg, #ffffff, #fbfbfc);
+  padding: 16px 18px 16px 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  height: 44px;
-  padding: 0 14px 0 42px;
-  border-radius: 14px;
-  background: #ffffff;
-  border: 1px solid rgba(47, 50, 50, 0.12);
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.empresa-filter:hover {
+.empresa-filter__trigger:hover {
   border-color: #9ca3af;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-.empresa-filter:focus-within {
+.empresa-filter__trigger:focus-visible,
+.empresa-filter__trigger[aria-expanded='true'] {
   border-color: #2f3232;
   box-shadow: 0 0 0 2px rgba(47, 50, 50, 0.08);
+  outline: none;
 }
 
 .empresa-filter__icon {
   position: absolute;
-  left: 12px;
-  font-size: 20px;
-  color: #9ca3af;
+  left: 18px;
+  top: 18px;
+  font-size: 22px;
+  color: #ec662d;
 
   font-variation-settings:
     'FILL' 1,
     'wght' 500;
 }
 
-.empresa-filter__select {
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  appearance: none;
-  font-size: 14px;
-  font-weight: 600;
-  color: #2f3232;
-  cursor: pointer;
-  padding-right: 28px;
+.empresa-filter__trigger-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.empresa-filter__trigger-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.empresa-filter__trigger-meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.empresa-filter__outside-badge {
+  min-width: 98px;
+  padding: 10px 14px;
+  border-radius: 22px;
+  background: #111827;
+  color: #ffffff;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+
+  strong {
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  span {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.8);
+  }
 }
 
 .empresa-filter__arrow {
+  font-size: 20px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.empresa-filter__menu {
   position: absolute;
-  right: 10px;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(460px, 100%);
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid rgba(47, 50, 50, 0.1);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  z-index: 12;
+}
+
+.empresa-filter__option {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.empresa-filter__option:hover {
+  background: #f8fafc;
+  transform: translateX(2px);
+}
+
+.empresa-filter__option--active {
+  background: linear-gradient(180deg, rgba(236, 102, 45, 0.12), rgba(236, 102, 45, 0.06));
+}
+
+.empresa-filter__option-main {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+
+  strong {
+    font-size: 16px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.02em;
+  }
+
+  span {
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+.empresa-filter__option-side {
+  min-width: 94px;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+}
+
+.empresa-filter__option-count {
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 800;
+  color: #ec662d;
+}
+
+.empresa-filter__option-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+}
+
+.empresa-filter__select {
+  display: none;
+}
+
+.empresa-filter__arrow {
   font-size: 20px;
   color: #9ca3af;
   pointer-events: none;
@@ -3260,14 +3564,73 @@
   min-width: 0;
 }
 
+.company-context__company-panel--bottom {
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px 24px;
+  box-sizing: border-box;
+  gap: 22px;
+}
+
+.company-context__profile-card--bottom-candidate {
+  margin-top: 55px;
+  width: 100%;
+  max-width: 980px;
+  padding: 0;
+  gap: 18px;
+}
+
+.company-context__profile-card--bottom .company-context__quick-actions-front {
+  padding-top: 0;
+}
+
 .company-context__company-top-left {
   display: grid;
   grid-template-columns: 88px minmax(0, 1fr);
   align-items: center;
   gap: 19px;
-  padding: 6px 0 8px;
+  padding: 6px 0 18px;
   min-width: 0;
   margin-top: -20px;
+}
+
+.company-context__candidate-education {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  width: 100%;
+}
+
+.company-context__candidate-education-title {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #2f3232;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.company-context__candidate-education-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef4ff;
+  border: 1px solid rgba(72, 115, 181, 0.16);
+  color: #24436b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .company-context__company-top {

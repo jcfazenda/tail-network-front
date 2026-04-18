@@ -37,6 +37,10 @@ export class AuthFacade {
     return this.authService.activateRecruiterWorkspace();
   }
 
+  activateTalentWorkspace(): Promise<boolean> {
+    return this.authService.activateTalentWorkspace();
+  }
+
   login(email: string, password?: string): Promise<AuthSession | null> {
     return this.authService.login(email, password);
   }

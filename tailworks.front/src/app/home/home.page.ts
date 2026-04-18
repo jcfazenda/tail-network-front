@@ -44,10 +44,10 @@ export class HomePage {
     }
 
     this.ecosystemEntryService.setMode('recruiter');
-    void this.router.navigateByUrl('/home/ecossistema');
+    void this.router.navigateByUrl('/empresa');
   }
 
-  protected enterAsTalent(event: Event): void {
+  protected async enterAsTalent(event: Event): Promise<void> {
     event.preventDefault();
     this.statusMessage = '';
 
@@ -66,6 +66,11 @@ export class HomePage {
     }
 
     const session = this.authService.getSession();
+    if (!await this.authService.activateTalentWorkspace()) {
+      this.statusMessage = 'Nao foi possivel restaurar o cadastro deste talento no workspace atual.';
+      return;
+    }
+
     this.ecosystemEntryService.setMode('talent');
     this.jobsFacade.signInAsTalent(session?.name ?? 'Talento', session?.location);
     void this.router.navigateByUrl('/usuario/ecossistema');

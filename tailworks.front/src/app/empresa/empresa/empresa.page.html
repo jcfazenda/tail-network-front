@@ -16,23 +16,60 @@
       <div class="empresa-page__topbar-right">
 
         <div class="empresa-filter-block">
+          <button
+            *ngIf="isCompanyFilterOpen"
+            type="button"
+            class="empresa-filter__backdrop"
+            aria-label="Fechar lista de empresas"
+            (click)="closeCompanyFilter()">
+          </button>
+
           <span class="empresa-filter__label">Empresa selecionada</span>
 
-          <label class="empresa-filter">
-            <span class="material-symbols-rounded empresa-filter__icon" aria-hidden="true">apartment</span>
+          <div class="empresa-filter-row">
+            <div class="empresa-filter">
+              <button
+                type="button"
+                class="empresa-filter__trigger"
+                [attr.aria-expanded]="isCompanyFilterOpen"
+                (click)="toggleCompanyFilter()">
+                <span class="material-symbols-rounded empresa-filter__icon" aria-hidden="true">apartment</span>
 
-            <select
-              class="empresa-filter__select"
-              [ngModel]="selectedCompanyId"
-              (ngModelChange)="onSelectedCompanyChange($event)">
-              <option *ngFor="let option of companySelectionOptions" [ngValue]="option.company.id">
-                {{ option.company.name }} · {{ option.jobCount }} vagas
-              </option>
-            </select>
+                <div class="empresa-filter__trigger-copy" *ngIf="selectedCompanySelectionOption as option">
+                  <div class="empresa-filter__trigger-title">{{ option.company.name }}</div>
+                  <div class="empresa-filter__trigger-meta">{{ option.formattedLocation }}</div>
+                </div>
 
-            <span class="material-symbols-rounded empresa-filter__arrow" aria-hidden="true">expand_more</span>
-          </label>
+                <span class="material-symbols-rounded empresa-filter__arrow" aria-hidden="true">
+                  {{ isCompanyFilterOpen ? 'expand_less' : 'expand_more' }}
+                </span>
+              </button>
 
+              <div class="empresa-filter__menu" *ngIf="isCompanyFilterOpen">
+                <button
+                  *ngFor="let option of companySelectionOptions; trackBy: trackCompanyOption"
+                  type="button"
+                  class="empresa-filter__option"
+                  [class.empresa-filter__option--active]="option.company.id === selectedCompanyId"
+                  (click)="onSelectedCompanyChange(option.company.id)">
+                  <div class="empresa-filter__option-main">
+                    <strong>{{ option.company.name }}</strong>
+                    <span>{{ option.formattedLocation }}</span>
+                  </div>
+
+                  <div class="empresa-filter__option-side">
+                    <span class="empresa-filter__option-count">{{ option.jobCount }}</span>
+                    <span class="empresa-filter__option-label">vagas abertas</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div class="empresa-filter__outside-badge" *ngIf="selectedCompanySelectionOption as option">
+              <strong>{{ option.jobCount }}</strong>
+              <span>vagas abertas</span>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -91,7 +128,14 @@
             <div class="menu-feature-card">
 
               <div class="menu-feature-video">
-                <img [src]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'" alt="Preview da vaga" />
+                <video
+                  class="menu-feature-video__player"
+                  [poster]="resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
+                  controls
+                  playsinline
+                  preload="metadata">
+                  <source [src]="selectedCompanyRecruiterVideoUrl" type="video/mp4" />
+                </video>
 
                 <ng-template #pendingVideoPreviewHero>
                   <div class="menu-feature-video__placeholder">
@@ -346,7 +390,6 @@
             </div>
 
           </div>
-
           <div class="company-context__quick-actions-front">
             <button class="company-context__quick-action" type="button">
               <span class="material-symbols-rounded">record_voice_over</span>
@@ -529,7 +572,12 @@
           <div class="company-identity__bottom-jobs company-identity__bottom-jobs--workspace">
             <div class="empresa-candidatos-talents">
               <div class="empresa-vaga-talents__grid">
-                <div class="empresa-vaga-talent-card" *ngFor="let candidate of pagedSelectedCompanyCandidates; trackBy: trackCandidate">
+                <div
+                  class="empresa-vaga-talent-card"
+                  *ngFor="let candidate of pagedSelectedCompanyCandidates; trackBy: trackCandidate"
+                  [class.empresa-vaga-talent-card--active]="candidate.id === selectedCompanyCandidate?.id"
+                  (click)="selectCandidate(candidate.id)">
+
                   <div class="empresa-vaga-talent-card__top">
                     <div class="empresa-vaga-talent-card__avatar">
                       <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
@@ -540,7 +588,7 @@
                       <span>{{ candidate.role }}</span>
                     </div>
 
-                    <button type="button" class="empresa-vaga-talent-card__action" aria-label="Abrir perfil">
+                    <button type="button" class="empresa-vaga-talent-card__action" aria-label="Abrir perfil" (click)="selectCandidate(candidate.id); $event.stopPropagation()">
                       <span class="material-symbols-rounded">badge</span>
                     </button>
                   </div>
@@ -548,10 +596,13 @@
                   <div class="empresa-vaga-talent-card__location">{{ candidate.location }}</div>
 
                   <div class="empresa-vaga-talent-card__stacks">
-                    <div class="empresa-vaga-talent-card__stack" *ngFor="let stack of candidate.topStacks; trackBy: trackCandidateStack">
-                      <span>{{ stack.label }}</span>
+                    <div class="empresa-vaga-talent-card__stack" *ngFor="let stack of candidate.topStacks.slice(0, 2); trackBy: trackCandidateStack">
+                      <span class="empresa-vaga-talent-card__stack-name">{{ stack.label }}</span>
                       <div class="empresa-vaga-talent-card__track">
-                        <div class="empresa-vaga-talent-card__fill" [style.width.%]="stack.match"></div>
+                        <div
+                          class="empresa-vaga-talent-card__fill"
+                          [class.empresa-vaga-talent-card__fill--extra]="!stack.isAdherence"
+                          [style.width.%]="stack.match"></div>
                       </div>
                       <strong>{{ stack.match }}%</strong>
                     </div>
@@ -611,49 +662,25 @@
 
           <div class="company-context__company-panel">
 
-            <!-- HEADER DA EMPRESA -->
-            <div class="company-context__company-top-left">
-
-              <div class="company-context__company-logo-box" [class.company-context__company-logo-box--placeholder]="!hasSelectedCompanyLogo">
-                <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'" [alt]="'Logo da empresa ' + selectedCompanyName" />
+            <!-- HEADER DO CANDIDATO -->
+            <div class="company-context__company-top-left" *ngIf="selectedCompanyCandidate as candidate">
+              <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--side">
+                <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
               </div>
 
-              <div class="company-context__company-top-copy">
-                <div class="company-context__company-name">{{ selectedCompanyName }}</div>
-                <div class="company-context__company-location">{{ selectedCompanyLocation }}</div>
-              </div>
-
-              <button class="company-context__edit-btn" type="button" aria-label="Editar empresa"
-                *ngIf="selectedCompanyRecord as company"
-                (click)="openEditModal(company)">
-                <span class="material-symbols-rounded">edit</span>
-              </button>
+              <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side">
+                <strong>{{ candidate.name }}</strong>
+                <span>{{ candidate.location }}</span> 
+              </div> 
 
             </div>
 
-            <!-- THUMB / IMAGEM DA EMPRESA -->
-            <div class="company-context__company-media" (click)="companyPanelImageInputJob.click()">
-              <input
-                #companyPanelImageInputJob
-                class="company-context__company-media-input"
-                type="file"
-                accept="image/*"
-                (click)="$event.stopPropagation()"
-                (change)="onCompanyPanelImageSelected($event)" />
-              <img [src]="selectedCompanyPanelImageUrl" [alt]="selectedCompanyName" />
-            </div>
-
-          </div>
-
-
-        </div>
-      </div>
-
-    </div>
-
-    <div class="empresa-page__column-down empresa-page__column--bottom" *ngIf="centerView === 'job'">
-      <div class="company-context__company-panel">
-        <div class="company-context__profile-card">
+                          <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side" *ngIf="selectedCompanyCandidate as candidate"> 
+                <div class="company-context__candidate-education" *ngIf="candidate.educationLabel">
+                  <strong class="company-context__candidate-education-title">{{ selectedCompanyCandidateEducationLabel }}</strong>
+                  <small class="company-context__candidate-education-chip">{{ selectedCompanyCandidateEducationStatus }}</small>
+                </div>
+              </div>
 
 
           <div class="company-context__info-grid-front">
@@ -691,6 +718,57 @@
             </div>
 
           </div>
+
+            <!-- ADERENCIA CANDIDATO -->
+            <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
+              <div class="company-context__candidate-adherence-header">
+                <strong>Stacks de Aderência</strong>
+                <span>Top 3 do candidato selecionado</span>
+              </div>
+
+              <div class="company-context__candidate-adherence-list">
+                <div
+                  class="company-context__candidate-adherence-item"
+                  *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
+                  <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
+                  <div class="company-context__candidate-adherence-track">
+                    <div
+                      class="company-context__candidate-adherence-fill"
+                      [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
+                      [style.width.%]="stack.match"></div>
+                  </div>
+                  <strong class="company-context__candidate-adherence-value">{{ stack.match }}%</strong>
+                </div>
+              </div>
+            </div> 
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="empresa-page__column-down empresa-page__column--bottom" *ngIf="centerView === 'job'">
+      <div class="company-context__company-panel company-context__company-panel--bottom">
+
+
+            <!-- VIDEO DO CANDIDATO -->
+            <div class="menu-feature-card-candidate">
+              <div class="menu-feature-video-candidate">
+                <video
+                  class="menu-feature-video__player"
+                  [poster]="selectedCompanyCandidate?.avatarUrl || resourcePanelVideoThumbnailUrl || 'assets/images/image-video.png'"
+                  controls
+                  playsinline
+                  preload="metadata">
+                  <source [src]="selectedCompanyCandidateVideoUrl" type="video/mp4" />
+                </video>
+              </div>
+            </div>
+
+            
+        <div class="company-context__profile-card company-context__profile-card--bottom-candidate">  
 
           <div class="company-context__quick-actions-front">
             <button class="company-context__quick-action" type="button">
