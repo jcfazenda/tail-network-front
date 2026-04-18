@@ -1,116 +1,5 @@
 [
   {
-    "id": "lab-job-18",
-    "code": "VG-0018",
-    "createdByRecruiterId": "julio-fazenda-recruiter",
-    "createdByRecruiterName": "Julio Fazenda",
-    "createdByRecruiterRole": "Talent Acquisition Lead",
-    "recruiterWatcherIds": [
-      "julio-fazenda-recruiter"
-    ],
-    "priority": "SALVADOR - BA",
-    "match": 51,
-    "talents": 17,
-    "radarCount": 17,
-    "ageLabel": "Agora",
-    "postedLabel": "",
-    "avatars": [
-      "/assets/avatars/avatar-default.svg",
-      "/assets/avatars/avatar-default.svg",
-      "/assets/avatars/avatar-default.svg"
-    ],
-    "extraCount": 14,
-    "status": "ativas",
-    "talentSubmittedDocuments": [],
-    "talentDocumentsConsentAccepted": false,
-    "candidates": [],
-    "createdAt": "2026-04-18T12:23:54.328Z",
-    "updatedAt": "2026-04-18T19:27:03.124Z",
-    "title": "Frontend Angular Junior",
-    "company": "B3",
-    "companyLogoUrl": "",
-    "homeAnnouncementImageUrl": "",
-    "recruiterVideoUrl": "local-media://local-media-1776540421105-skoxqkia",
-    "location": "Salvador - BA",
-    "workModel": "Presencial",
-    "seniority": "Junior",
-    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time interno.",
-    "contractType": "CLT",
-    "salaryRange": "R$ 4.200",
-    "radarAdherenceThreshold": 61,
-    "showSalaryRangeInCard": true,
-    "allowCandidateSalarySuggestion": false,
-    "benefits": [],
-    "hiringDocuments": [],
-    "techStack": [
-      {
-        "name": "Angular",
-        "match": 88
-      },
-      {
-        "name": "TypeScript",
-        "match": 68
-      },
-      {
-        "name": "UX / UI",
-        "match": 28
-      },
-      {
-        "name": "Figma",
-        "match": 26
-      },
-      {
-        "name": "QA Automação",
-        "match": 25
-      }
-    ],
-    "experienceStacks": [
-      {
-        "repoId": "repo:angular",
-        "name": "Angular",
-        "knowledge": 88,
-        "description": ""
-      },
-      {
-        "repoId": "repo:typescript",
-        "name": "TypeScript",
-        "knowledge": 68,
-        "description": ""
-      },
-      {
-        "repoId": "repo:ux",
-        "name": "UX / UI",
-        "knowledge": 28,
-        "description": ""
-      },
-      {
-        "repoId": "repo:figma",
-        "name": "Figma",
-        "knowledge": 26,
-        "description": ""
-      },
-      {
-        "repoId": "repo:qa-automation",
-        "name": "QA Automação",
-        "knowledge": 25,
-        "description": ""
-      }
-    ],
-    "differentials": [],
-    "responsibilitySections": [
-      {
-        "id": "summary-section-1",
-        "pageId": "front",
-        "title": "Requisitos e habilidades que buscamos:",
-        "items": [
-          "Trabalho em Equipe",
-          "Teste Unitário e Integrado"
-        ]
-      }
-    ],
-    "recruiterBoardStatusId": "radar"
-  },
-  {
     "id": "vaga-1776517564360-88cd4cc3",
     "code": "VG-0022",
     "createdByRecruiterId": "julio-fazenda-recruiter",
@@ -149,12 +38,13 @@
       }
     ],
     "createdAt": "2026-04-18T13:06:04.359Z",
-    "updatedAt": "2026-04-18T19:26:46.512Z",
+    "updatedAt": "2026-04-18T20:30:56.514Z",
     "title": "Backend .NET Sênior",
     "company": "B3",
     "companyLogoUrl": "",
     "homeAnnouncementImageUrl": "",
     "recruiterVideoUrl": "local-media://local-media-1776540404516-q1y0vebt",
+    "recruiterVideoPosterUrl": "local-media://local-media-1776544244271-gavwwh5x",
     "location": "Rio de Janeiro - RJ",
     "workModel": "Remoto",
     "seniority": "Senior",
@@ -273,6 +163,117 @@
         "items": [
           "Pós-graduação em tecnologia ou gestão;",
           "Experiencia com Java com Quarkus."
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "lab-job-18",
+    "code": "VG-0018",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "SALVADOR - BA",
+    "match": 51,
+    "talents": 17,
+    "radarCount": 17,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 14,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-18T12:23:54.328Z",
+    "updatedAt": "2026-04-18T19:27:03.124Z",
+    "title": "Frontend Angular Junior",
+    "company": "B3",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "local-media://local-media-1776540421105-skoxqkia",
+    "location": "Salvador - BA",
+    "workModel": "Presencial",
+    "seniority": "Junior",
+    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "salaryRange": "R$ 4.200",
+    "radarAdherenceThreshold": 61,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Angular",
+        "match": 88
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "UX / UI",
+        "match": 28
+      },
+      {
+        "name": "Figma",
+        "match": 26
+      },
+      {
+        "name": "QA Automação",
+        "match": 25
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:angular",
+        "name": "Angular",
+        "knowledge": 88,
+        "description": ""
+      },
+      {
+        "repoId": "repo:typescript",
+        "name": "TypeScript",
+        "knowledge": 68,
+        "description": ""
+      },
+      {
+        "repoId": "repo:ux",
+        "name": "UX / UI",
+        "knowledge": 28,
+        "description": ""
+      },
+      {
+        "repoId": "repo:figma",
+        "name": "Figma",
+        "knowledge": 26,
+        "description": ""
+      },
+      {
+        "repoId": "repo:qa-automation",
+        "name": "QA Automação",
+        "knowledge": 25,
+        "description": ""
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
         ]
       }
     ],
