@@ -14,7 +14,7 @@
   --sidebar-avatar-ring: rgba(255, 255, 255, 0.98);
   --sidebar-avatar-shadow: 0 10px 18px rgba(23, 23, 23, 0.1);
   --sidebar-footer-text: rgba(82, 82, 82, 0.9);
-  --sidebar-footer-separator: rgba(115, 115, 115, 0.22);
+  --sidebar-footer-separator: rgba(115, 115, 115, 0.22); 
 }
 
 :host-context(body[data-theme='dark']) .sidebar{
@@ -63,12 +63,12 @@
 
 .sidebar{
   position: fixed;
-  top: 0;
+  top: 16px;
   left: 16px;
-  bottom: 0;
+  bottom: 16px;
   z-index: 350;
   width: 440px;
-  min-height: 100vh;
+  min-height: calc(100vh - 32px);
   //background: transparent !important;
   border: 0;
   padding: 16px 16px 22px;

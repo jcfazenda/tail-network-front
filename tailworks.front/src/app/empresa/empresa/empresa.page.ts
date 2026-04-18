@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
 import { CompanyRecord } from '../empresa.models';
 import { RecruiterRecord } from '../../recruiter/recruiter.models';
-import { MockJobRecord } from '../../vagas/data/vagas.models';
+import { MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type RecruiterFilter = 'all' | 'withRecruiters' | 'withoutRecruiters';
@@ -30,6 +31,7 @@ type EmpresaCenterView = 'identity' | 'job';
 
 type ResourcePanelJobVm = {
   id: string;
+  code?: string;
   title: string;
   company: string;
   companyLogoUrl?: string;
@@ -38,6 +40,7 @@ type ResourcePanelJobVm = {
   workModel: string;
   contractType: string;
   salaryRange?: string;
+  radarAdherenceThreshold?: number;
   techStack: Array<{ name: string; match: number }>;
 };
 
@@ -49,6 +52,19 @@ type SideJobCardVm = {
   salary: string;
   workModel: string;
   contractType: string;
+  companyLogoUrl?: string;
+  companyLogoLabel: string;
+  avatarBadges: Array<{ src: string; label: string }>;
+  avatarExtraCount: number;
+};
+
+type CompanyCandidateVm = {
+  id: string;
+  name: string;
+  role: string;
+  location: string;
+  avatarUrl: string;
+  topStacks: Array<{ label: string; match: number }>;
 };
 
 type CompanyViewModel = {
@@ -70,6 +86,8 @@ type CompanyViewModel = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaPage implements OnDestroy {
+  readonly fallbackAvatarUrl = 'assets/avatars/john-doe.png';
+
   readonly recruiterShowcasePhotos = [
     'assets/images/polaroid/daniela-costa.png',
     'assets/images/polaroid/lucas-pereira.png',
@@ -110,11 +128,64 @@ export class EmpresaPage implements OnDestroy {
   private readonly companiesFacade = inject(CompaniesFacade);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly jobsFacade = inject(JobsFacade);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
   private companyViewModels: CompanyViewModel[] = [];
+  private recruiterAccessibleActiveJobsSnapshot: MockJobRecord[] = [];
+  private companyJobCandidatesCache = new Map<string, MockJobCandidate[]>();
   private filteredCompaniesSnapshot: CompanyViewModel[] = [];
   private pagedCompaniesSnapshot: CompanyViewModel[] = [];
+  private totalPagesSnapshot = 1;
+  private visiblePagesSnapshot: number[] = [1];
+  private sectorOptionsSnapshot: string[] = [];
+  private locationOptionsSnapshot: string[] = [];
+  private activeCompaniesSnapshot = 0;
+  private inactiveCompaniesSnapshot = 0;
+  private linkedRecruitersSnapshot = 0;
+  private companySelectionOptionsSnapshot: CompanyViewModel[] = [];
+  private selectedCompanySnapshot?: CompanyViewModel;
+  private selectedCompanyJobsSnapshot: MockJobRecord[] = [];
+  private selectedCompanyRecruitersSnapshot: RecruiterRecord[] = [];
+  private selectedCompanySideJobCardsSnapshot: SideJobCardVm[] = [];
+  private selectedCompanyCandidatesSnapshot: CompanyCandidateVm[] = [];
+  private pagedSelectedCompanyCandidatesSnapshot: CompanyCandidateVm[] = [];
+  private candidateTotalPagesSnapshot = 1;
+  private candidateVisiblePagesSnapshot: number[] = [1];
+  private companyResourcePrimaryJobSnapshot?: MockJobRecord;
+  private companyResourceSummarySnapshot =
+    'Selecione uma empresa para visualizar contexto, recruiters e vagas vinculadas no ecossistema.';
+  private companyResourceAvatarBadgesSnapshot: Array<{ src: string; label: string }> = [];
+  private companyResourceAvatarExtraCountSnapshot = 0;
+  private companyResourceStacksSnapshot: Array<{ name: string; match: number }> = [];
+  private companyResourceAdherenceSnapshot = 0;
+  private companyResourceMetricLabelSnapshot = 'Sem operação ativa';
+  private resourcePanelJobSnapshot: ResourcePanelJobVm = {
+    id: 'vaga-demo',
+    title: 'Analista de Sistemas',
+    company: 'Tail Works',
+    location: 'Sao Paulo - SP',
+    workModel: 'Hibrido',
+    contractType: 'CLT',
+    salaryRange: 'R$ 9.500 - R$ 12.000',
+    radarAdherenceThreshold: 85,
+    techStack: [
+      { name: 'Angular', match: 94 },
+      { name: 'TypeScript', match: 91 },
+      { name: 'Node.js', match: 86 },
+      { name: 'Design System', match: 82 },
+      { name: 'UX Strategy', match: 78 },
+    ],
+  };
+  private resourcePanelStacksSnapshot: Array<{ name: string; match: number }> = [
+    { name: 'Angular', match: 94 },
+    { name: 'TypeScript', match: 91 },
+    { name: 'Node.js', match: 86 },
+    { name: 'Design System', match: 82 },
+    { name: 'UX Strategy', match: 78 },
+  ];
+  private resourcePanelAdherenceSnapshot = 91;
+  private resourcePanelSalarySnapshot = 'R$ 9.500 - R$ 12.000';
 
   searchTerm = '';
   statusFilter: CompanyStatusFilter = 'all';
@@ -125,6 +196,8 @@ export class EmpresaPage implements OnDestroy {
 
   currentPage = 1;
   readonly pageSize = 6;
+  candidateCurrentPage = 1;
+  readonly candidatePageSize = 8;
 
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
@@ -134,19 +207,9 @@ export class EmpresaPage implements OnDestroy {
 
   companyForm: CompanyFormModel = this.createEmptyForm();
   selectedCompanyId = '';
+  selectedCompanyJobId = '';
   activeDetailTab: CompanyDetailTab = 'recruiters';
   centerView: EmpresaCenterView = 'identity';
-
-  readonly sideJobCards: SideJobCardVm[] = [
-    { id: 'vaga-001', title: 'Full Stack Developer', location: 'São Paulo - SP', summary: 'Pipeline principal da empresa para squad core.', salary: 'R$ 12.500', workModel: 'Híbrido', contractType: 'CLT' },
-    { id: 'vaga-002', title: 'Tech Lead Java', location: 'Campinas - SP', summary: 'Liderança técnica para frente de integração.', salary: 'R$ 15.800', workModel: 'Remoto', contractType: 'CLT' },
-    { id: 'vaga-003', title: 'Product Designer', location: 'Belo Horizonte - MG', summary: 'Atuação em produto e design system.', salary: 'R$ 10.200', workModel: 'Híbrido', contractType: 'PJ' },
-    { id: 'vaga-004', title: 'Analista de Dados', location: 'Curitiba - PR', summary: 'Operação analítica com foco em BI e métricas.', salary: 'R$ 9.400', workModel: 'Presencial', contractType: 'CLT' },
-    { id: 'vaga-005', title: 'DevOps Engineer', location: 'Rio de Janeiro - RJ', summary: 'Infra, automação e observabilidade.', salary: 'R$ 13.700', workModel: 'Remoto', contractType: 'CLT' },
-    { id: 'vaga-006', title: 'QA Automation', location: 'Recife - PE', summary: 'Estruturação de testes e qualidade contínua.', salary: 'R$ 8.900', workModel: 'Híbrido', contractType: 'CLT' },
-    { id: 'vaga-007', title: 'Recruiter Tech', location: 'Porto Alegre - RS', summary: 'Atração e condução de vagas estratégicas.', salary: 'R$ 7.800', workModel: 'Remoto', contractType: 'PJ' },
-    { id: 'vaga-008', title: 'Frontend Angular', location: 'Florianópolis - SC', summary: 'Evolução do produto em Angular e Material.', salary: 'R$ 11.300', workModel: 'Híbrido', contractType: 'CLT' },
-  ];
 
   private readonly fallbackResourcePanelJob: ResourcePanelJobVm = {
     id: 'vaga-demo',
@@ -193,120 +256,130 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get activeCompanies(): number {
-    return this.companyViewModels.filter(({ company }) => company.active).length;
+    return this.activeCompaniesSnapshot;
   }
 
   get inactiveCompanies(): number {
-    return this.companyViewModels.filter(({ company }) => !company.active).length;
+    return this.inactiveCompaniesSnapshot;
   }
 
   get linkedRecruiters(): number {
-    return this.companyViewModels.reduce((total, entry) => total + entry.recruiters.filter((recruiter) => recruiter.active).length, 0);
+    return this.linkedRecruitersSnapshot;
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredCompanies.length / this.pageSize));
+    return this.totalPagesSnapshot;
   }
 
   get visiblePages(): number[] {
-    const total = this.totalPages;
-    const current = this.currentPage;
-
-    if (total <= 4) {
-      return Array.from({ length: total }, (_, index) => index + 1);
-    }
-
-    if (current <= 2) {
-      return [1, 2, 3, 4];
-    }
-
-    if (current >= total - 1) {
-      return [total - 3, total - 2, total - 1, total];
-    }
-
-    return [current - 1, current, current + 1, current + 2];
+    return this.visiblePagesSnapshot;
   }
 
   get sectorOptions(): string[] {
-    return [...new Set(this.companyViewModels.map(({ company }) => company.sector).filter(Boolean))]
-      .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+    return this.sectorOptionsSnapshot;
   }
 
   get locationOptions(): string[] {
-    return [...new Set(this.companyViewModels.map(({ formattedLocation }) => formattedLocation).filter(Boolean))]
-      .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+    return this.locationOptionsSnapshot;
   }
 
   get selectedCompany(): CompanyViewModel | undefined {
-    return this.companyViewModels.find((entry) => entry.company.id === this.selectedCompanyId)
-      ?? this.filteredCompaniesSnapshot[0]
-      ?? this.companyViewModels[0];
+    return this.selectedCompanySnapshot;
   }
 
   get selectedCompanyRecruiters(): RecruiterRecord[] {
-    return this.selectedCompany?.recruiters ?? [];
+    return this.selectedCompanyRecruitersSnapshot;
   }
 
   get selectedCompanyJobs(): MockJobRecord[] {
-    return this.selectedCompany?.jobs ?? [];
+    return this.selectedCompanyJobsSnapshot;
+  }
+
+  get companySelectionOptions(): CompanyViewModel[] {
+    return this.companySelectionOptionsSnapshot;
+  }
+
+  get selectedCompanyRecord(): CompanyRecord | null {
+    return this.selectedCompany?.company ?? null;
+  }
+
+  get selectedCompanyName(): string {
+    return this.selectedCompanyRecord?.name ?? 'Empresa';
+  }
+
+  get selectedCompanyLocation(): string {
+    return this.selectedCompany
+      ? this.selectedCompany.formattedLocation
+      : 'Brasil';
+  }
+
+  get selectedCompanyLogoUrl(): string {
+    return this.selectedCompanyRecord?.logoUrl?.trim() ?? '';
+  }
+
+  get selectedCompanyDescription(): string {
+    return this.selectedCompanyRecord?.description?.trim()
+      || 'Empresa em crescimento no ecossistema TailWorks.';
+  }
+
+  get selectedCompanyWebsite(): string {
+    return this.selectedCompanyRecord?.website?.trim() || 'Site não informado';
+  }
+
+  get selectedCompanyEmail(): string {
+    const company = this.selectedCompanyRecord;
+    return company ? this.companyContactEmail(company) : 'contato@empresa.com.br';
+  }
+
+  get selectedCompanyMonthlyHiringLabel(): string {
+    const monthlyHiringCount = this.selectedCompanyRecord?.monthlyHiringCount ?? 0;
+    return `${monthlyHiringCount} contratações/mês`;
+  }
+
+  get selectedCompanySideJobCards(): SideJobCardVm[] {
+    return this.selectedCompanySideJobCardsSnapshot;
+  }
+
+  get selectedCompanyCandidates(): CompanyCandidateVm[] {
+    return this.selectedCompanyCandidatesSnapshot;
+  }
+
+  get pagedSelectedCompanyCandidates(): CompanyCandidateVm[] {
+    return this.pagedSelectedCompanyCandidatesSnapshot;
+  }
+
+  get candidateTotalPages(): number {
+    return this.candidateTotalPagesSnapshot;
+  }
+
+  get candidateVisiblePages(): number[] {
+    return this.candidateVisiblePagesSnapshot;
   }
 
   get companyResourceSummary(): string {
-    const selected = this.selectedCompany;
-    if (!selected) {
-      return 'Selecione uma empresa para visualizar contexto, recruiters e vagas vinculadas no ecossistema.';
-    }
-
-    return selected.company.description?.trim()
-      || `${selected.company.name} opera em ${selected.company.sector} com ${selected.recruiterCount} recruiters e ${selected.jobCount} vagas ligadas ao ecossistema.`;
+    return this.companyResourceSummarySnapshot;
   }
 
   get companyResourceAvatarBadges(): Array<{ src: string; label: string }> {
-    const badges = this.selectedCompanyRecruiters
-      .slice(0, 3)
-      .map((recruiter) => ({
-        src: recruiter.avatarUrl?.trim() || 'assets/images/logo-tail.png',
-        label: recruiter.name,
-      }));
-
-    while (badges.length < 3) {
-      badges.push({
-        src: 'assets/images/logo-tail.png',
-        label: 'TailWorks',
-      });
-    }
-
-    return badges;
+    return this.companyResourceAvatarBadgesSnapshot;
   }
 
   get companyResourceAvatarExtraCount(): number {
-    return Math.max(0, this.selectedCompanyRecruiters.length - this.companyResourceAvatarBadges.length);
+    return this.companyResourceAvatarExtraCountSnapshot;
   }
 
   get companyHeaderAvatarBadges(): Array<{ src: string; label: string }> {
-    const badges = this.selectedCompanyRecruiters
-      .slice(0, 3)
-      .map((recruiter) => ({
-        src: recruiter.avatarUrl?.trim() || 'assets/images/logo-tail.png',
-        label: recruiter.name,
-      }));
-
-    while (badges.length < 3) {
-      badges.push({
-        src: 'assets/images/logo-tail.png',
-        label: 'TailWorks',
-      });
-    }
-
-    return badges;
+    const primaryJob = this.companyResourcePrimaryJob;
+    return primaryJob ? this.jobCandidateAvatarBadges(primaryJob) : [];
   }
 
   get companyHeaderAvatarExtraCount(): number {
-    return Math.max(0, this.selectedCompanyRecruiters.length - this.companyHeaderAvatarBadges.length);
+    const primaryJob = this.companyResourcePrimaryJob;
+    return primaryJob ? this.jobCandidateAvatarExtraCount(primaryJob) : 0;
   }
 
   get companyResourcePrimaryJob(): MockJobRecord | undefined {
-    return this.selectedCompanyJobs[0];
+    return this.companyResourcePrimaryJobSnapshot;
   }
 
   get companyResourceHasPreview(): boolean {
@@ -318,43 +391,15 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get companyResourceStacks(): Array<{ name: string; match: number }> {
-    const stackMap = new Map<string, { total: number; count: number }>();
-
-    this.selectedCompanyJobs.forEach((job) => {
-      job.techStack.forEach((stack) => {
-        const current = stackMap.get(stack.name) ?? { total: 0, count: 0 };
-        current.total += stack.match;
-        current.count += 1;
-        stackMap.set(stack.name, current);
-      });
-    });
-
-    return [...stackMap.entries()]
-      .map(([name, value]) => ({
-        name,
-        match: Math.round(value.total / value.count),
-      }))
-      .sort((left, right) => right.match - left.match)
-      .slice(0, 5);
+    return this.companyResourceStacksSnapshot;
   }
 
   get companyResourceAdherence(): number {
-    if (!this.selectedCompanyJobs.length) {
-      return 0;
-    }
-
-    const total = this.selectedCompanyJobs.reduce((sum, job) => sum + job.match, 0);
-    return Math.round(total / this.selectedCompanyJobs.length);
+    return this.companyResourceAdherenceSnapshot;
   }
 
   get companyResourceMetricLabel(): string {
-    const selected = this.selectedCompany;
-    if (!selected) {
-      return 'Sem operação ativa';
-    }
-
-    const activeJobs = selected.jobs.filter((job) => job.status === 'ativas').length;
-    return `${activeJobs} vagas ativas`;
+    return this.companyResourceMetricLabelSnapshot;
   }
 
   get resourcePanelSummary(): string {
@@ -370,24 +415,7 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get resourcePanelJob(): ResourcePanelJobVm {
-    const primaryJob = this.companyResourcePrimaryJob;
-
-    if (!primaryJob) {
-      return this.fallbackResourcePanelJob;
-    }
-
-    return {
-      id: primaryJob.id,
-      title: primaryJob.title,
-      company: primaryJob.company,
-      companyLogoUrl: primaryJob.companyLogoUrl,
-      homeAnnouncementImageUrl: primaryJob.homeAnnouncementImageUrl,
-      location: primaryJob.location,
-      workModel: primaryJob.workModel,
-      contractType: primaryJob.contractType,
-      salaryRange: primaryJob.salaryRange,
-      techStack: primaryJob.techStack,
-    };
+    return this.resourcePanelJobSnapshot;
   }
 
   get resourcePanelHasVideoPreview(): boolean {
@@ -399,15 +427,15 @@ export class EmpresaPage implements OnDestroy {
   }
 
   get resourcePanelStacks(): Array<{ name: string; match: number }> {
-    return this.companyResourceStacks.length ? this.companyResourceStacks : this.resourcePanelJob.techStack.slice(0, 5);
+    return this.resourcePanelStacksSnapshot;
   }
 
   get resourcePanelAdherence(): number {
-    return this.companyResourceAdherence || 91;
+    return this.resourcePanelJob.radarAdherenceThreshold ?? this.resourcePanelAdherenceSnapshot;
   }
 
   get resourcePanelSalary(): string {
-    return this.resourcePanelJob.salaryRange?.trim() || 'R$ 9.500 - R$ 12.000';
+    return this.resourcePanelSalarySnapshot;
   }
 
   get hasActiveFilters(): boolean {
@@ -475,17 +503,20 @@ export class EmpresaPage implements OnDestroy {
     }
 
     this.currentPage = page;
+    this.applyFilters();
   }
 
   goToPreviousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.applyFilters();
     }
   }
 
   goToNextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.applyFilters();
     }
   }
 
@@ -521,6 +552,7 @@ export class EmpresaPage implements OnDestroy {
     const existing = this.companyForm.id
       ? this.companiesFacade.getCompanyById(this.companyForm.id)
       : this.companiesFacade.getCompanyByName(this.companyForm.name);
+    const previousCompanyName = existing?.name?.trim() ?? '';
 
     const payload: CompanyFormModel = {
       ...this.companyForm,
@@ -555,6 +587,11 @@ export class EmpresaPage implements OnDestroy {
       monthlyHiringCount: existing?.monthlyHiringCount ?? 0,
       notes: existing?.notes,
     });
+
+    if (previousCompanyName && previousCompanyName !== savedCompany.name) {
+      this.recruitersFacade.replaceCompanyName(previousCompanyName, savedCompany.name);
+      this.jobsFacade.renameCompany(previousCompanyName, savedCompany.name);
+    }
 
     this.selectedCompanyId = savedCompany.id;
     this.activeDetailTab = 'recruiters';
@@ -625,14 +662,71 @@ export class EmpresaPage implements OnDestroy {
     return job.id;
   }
 
+  trackCandidate(_index: number, candidate: CompanyCandidateVm): string {
+    return candidate.id;
+  }
+
+  trackCandidateStack(_index: number, stack: { label: string; match: number }): string {
+    return `${stack.label}:${stack.match}`;
+  }
+
+  trackPage(_index: number, page: number): number {
+    return page;
+  }
+
   selectCompany(companyId: string): void {
     if (this.selectedCompanyId === companyId) {
       return;
     }
 
     this.selectedCompanyId = companyId;
+    this.selectedCompanyJobId = '';
+    this.candidateCurrentPage = 1;
     this.activeDetailTab = 'recruiters';
+    this.rebuildSelectedCompanySnapshot();
     this.cdr.markForCheck();
+  }
+
+  onSelectedCompanyChange(companyId: string): void {
+    this.selectCompany(companyId);
+    this.centerView = 'identity';
+  }
+
+  selectCompanyJob(jobId: string): void {
+    if (!jobId.trim() || this.selectedCompanyJobId === jobId) {
+      return;
+    }
+
+    this.selectedCompanyJobId = jobId;
+    this.candidateCurrentPage = 1;
+    this.rebuildSelectedCompanyJobSnapshot();
+    this.cdr.markForCheck();
+  }
+
+  goToCandidatePage(page: number): void {
+    if (page < 1 || page > this.candidateTotalPages || page === this.candidateCurrentPage) {
+      return;
+    }
+
+    this.candidateCurrentPage = page;
+    this.rebuildSelectedCompanyJobSnapshot();
+    this.cdr.markForCheck();
+  }
+
+  goToPreviousCandidatePage(): void {
+    if (this.candidateCurrentPage > 1) {
+      this.candidateCurrentPage -= 1;
+      this.rebuildSelectedCompanyJobSnapshot();
+      this.cdr.markForCheck();
+    }
+  }
+
+  goToNextCandidatePage(): void {
+    if (this.candidateCurrentPage < this.candidateTotalPages) {
+      this.candidateCurrentPage += 1;
+      this.rebuildSelectedCompanyJobSnapshot();
+      this.cdr.markForCheck();
+    }
   }
 
   showIdentityCenter(): void {
@@ -696,6 +790,101 @@ export class EmpresaPage implements OnDestroy {
     return job.workModel || 'Hibrido';
   }
 
+  private get recruiterAccessibleActiveJobs(): MockJobRecord[] {
+    return this.recruiterAccessibleActiveJobsSnapshot;
+  }
+
+  openEditJob(jobId: string, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    if (!jobId.trim()) {
+      void this.router.navigateByUrl('/vagas/cadastro');
+      return;
+    }
+
+    void this.router.navigate(['/vagas/cadastro'], {
+      queryParams: { edit: jobId },
+    });
+  }
+
+  openCreateJob(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    void this.router.navigateByUrl('/vagas/cadastro');
+  }
+
+  private resolveAvatar(avatar: string | undefined): string {
+    const value = avatar?.trim() ?? '';
+    return value && !value.endsWith('/assets/avatars/avatar-default.svg')
+      ? value
+      : this.fallbackAvatarUrl;
+  }
+
+  private jobCandidateAvatarBadges(job: MockJobRecord): Array<{ src: string; label: string }> {
+    const radarCandidates = this.companyJobCandidates(job);
+    const candidateBadges = radarCandidates
+      .slice(0, 4)
+      .map((candidate) => ({
+        src: this.resolveAvatar(candidate.avatar),
+        label: candidate.name,
+      }));
+
+    if (candidateBadges.length) {
+      return candidateBadges;
+    }
+
+    return (job.avatars ?? [])
+      .map((avatar) => this.resolveAvatar(avatar))
+      .slice(0, 4)
+      .map((src) => ({ src, label: 'TailWorks' }));
+  }
+
+  private jobCandidateAvatarExtraCount(job: MockJobRecord): number {
+    const radarCandidates = this.companyJobCandidates(job);
+
+    if (radarCandidates.length) {
+      return Math.max(0, radarCandidates.length - Math.min(radarCandidates.length, 4));
+    }
+
+    const fallbackCount = Math.min(job.avatars?.length ?? 0, 4);
+    const totalCandidates = Math.max(job.radarCount ?? 0, job.talents ?? 0, job.avatars?.length ?? 0);
+    return Math.max(0, totalCandidates - fallbackCount);
+  }
+
+  private buildCandidateTopStacks(
+    candidate: Pick<CompanyCandidateVm, 'role'>,
+    job: Pick<ResourcePanelJobVm, 'techStack'>,
+  ): Array<{ label: string; match: number }> {
+    const roleStacks = candidate.role
+      .split('/')
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((label) => ({ label, match: 100 }));
+
+    if (roleStacks.length) {
+      return roleStacks;
+    }
+
+    return [...job.techStack]
+      .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+      .slice(0, 2)
+      .map((stack) => ({ label: stack.name, match: stack.match }));
+  }
+
+  private companyJobCandidates(job: MockJobRecord) {
+    const cached = this.companyJobCandidatesCache.get(job.id);
+    if (cached) {
+      return cached;
+    }
+
+    const radarCandidates = this.jobsFacade.getRadarCandidates(job);
+    const resolvedCandidates = radarCandidates.length ? radarCandidates : [...(job.candidates ?? [])];
+    this.companyJobCandidatesCache.set(job.id, resolvedCandidates);
+    return resolvedCandidates;
+  }
+
   private ensureValidCurrentPage(): void {
     const adjustedTotalPages = Math.max(1, Math.ceil(this.filteredCompanies.length / this.pageSize));
     if (this.currentPage > adjustedTotalPages) {
@@ -704,7 +893,21 @@ export class EmpresaPage implements OnDestroy {
   }
 
   private refreshViewState(): void {
+    this.recruiterAccessibleActiveJobsSnapshot = this.jobsFacade.getJobs()
+      .filter((job) => job.status === 'ativas')
+      .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
+    this.companyJobCandidatesCache.clear();
     this.companyViewModels = this.buildCompanyViewModels();
+    this.activeCompaniesSnapshot = this.companyViewModels.filter(({ company }) => company.active).length;
+    this.inactiveCompaniesSnapshot = this.companyViewModels.length - this.activeCompaniesSnapshot;
+    this.linkedRecruitersSnapshot = this.companyViewModels.reduce(
+      (total, entry) => total + entry.recruiters.filter((recruiter) => recruiter.active).length,
+      0,
+    );
+    this.sectorOptionsSnapshot = [...new Set(this.companyViewModels.map(({ company }) => company.sector).filter(Boolean))]
+      .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+    this.locationOptionsSnapshot = [...new Set(this.companyViewModels.map(({ formattedLocation }) => formattedLocation).filter(Boolean))]
+      .sort((first, second) => first.localeCompare(second, 'pt-BR'));
     this.applyFilters(false);
   }
 
@@ -770,10 +973,21 @@ export class EmpresaPage implements OnDestroy {
 
     const start = (this.currentPage - 1) * this.pageSize;
     this.pagedCompaniesSnapshot = this.filteredCompaniesSnapshot.slice(start, start + this.pageSize);
+    this.totalPagesSnapshot = Math.max(1, Math.ceil(this.filteredCompaniesSnapshot.length / this.pageSize));
+    this.visiblePagesSnapshot = this.buildVisiblePages(this.totalPagesSnapshot, this.currentPage);
+    this.companySelectionOptionsSnapshot = [...this.filteredCompaniesSnapshot].sort((left, right) =>
+      right.jobCount - left.jobCount
+      || right.recruiterCount - left.recruiterCount
+      || left.company.name.localeCompare(right.company.name, 'pt-BR'),
+    );
 
     if (!this.selectedCompanyId || !this.filteredCompaniesSnapshot.some((entry) => entry.company.id === this.selectedCompanyId)) {
-      this.selectedCompanyId = this.filteredCompaniesSnapshot[0]?.company.id ?? this.companyViewModels[0]?.company.id ?? '';
+      this.selectedCompanyId = this.resolveDefaultSelectedCompanyId();
+      this.selectedCompanyJobId = '';
+      this.candidateCurrentPage = 1;
     }
+
+    this.rebuildSelectedCompanySnapshot();
 
     if (markForCheck) {
       this.cdr.markForCheck();
@@ -783,28 +997,40 @@ export class EmpresaPage implements OnDestroy {
   private buildCompanyViewModels(): CompanyViewModel[] {
     const companies = this.companiesFacade.listCompanies(true);
     const recruiters = this.recruitersFacade.listAllRecruiters();
-    const jobs = this.jobsFacade.getJobs();
+    const jobs = this.recruiterAccessibleActiveJobs;
 
     const recruitersByCompany = new Map<string, RecruiterRecord[]>();
     const jobsByCompany = new Map<string, MockJobRecord[]>();
+    const companyMap = new Map<string, CompanyRecord>();
+
+    companies.forEach((company) => {
+      companyMap.set(this.normalizeCompanyKey(company.name), company);
+    });
 
     recruiters.forEach((recruiter) => {
       recruiter.managedCompanies.forEach((companyName) => {
-        const bucket = recruitersByCompany.get(companyName) ?? [];
+        const companyKey = this.normalizeCompanyKey(companyName);
+        const bucket = recruitersByCompany.get(companyKey) ?? [];
         bucket.push(recruiter);
-        recruitersByCompany.set(companyName, bucket);
+        recruitersByCompany.set(companyKey, bucket);
       });
     });
 
     jobs.forEach((job) => {
-      const bucket = jobsByCompany.get(job.company) ?? [];
+      const companyKey = this.normalizeCompanyKey(job.company);
+      const bucket = jobsByCompany.get(companyKey) ?? [];
       bucket.push(job);
-      jobsByCompany.set(job.company, bucket);
+      jobsByCompany.set(companyKey, bucket);
+
+      if (!companyMap.has(companyKey)) {
+        companyMap.set(companyKey, this.createSyntheticCompanyFromJob(job));
+      }
     });
 
-    return companies.map((company) => {
-      const companyRecruiters = recruitersByCompany.get(company.name) ?? [];
-      const companyJobs = jobsByCompany.get(company.name) ?? [];
+    return [...companyMap.values()].map((company) => {
+      const companyKey = this.normalizeCompanyKey(company.name);
+      const companyRecruiters = recruitersByCompany.get(companyKey) ?? [];
+      const companyJobs = jobsByCompany.get(companyKey) ?? [];
 
       return {
         company,
@@ -820,6 +1046,165 @@ export class EmpresaPage implements OnDestroy {
 
   private findCompanyViewModelByName(companyName: string): CompanyViewModel | undefined {
     return this.companyViewModels.find((entry) => entry.company.name === companyName);
+  }
+
+  private rebuildSelectedCompanySnapshot(): void {
+    this.selectedCompanySnapshot = this.companyViewModels.find((entry) => entry.company.id === this.selectedCompanyId)
+      ?? this.filteredCompaniesSnapshot[0]
+      ?? this.companyViewModels[0];
+
+    this.selectedCompanyRecruitersSnapshot = this.selectedCompanySnapshot?.recruiters ?? [];
+
+    const companyName = this.selectedCompanySnapshot?.company.name?.trim();
+    if (!companyName) {
+      this.selectedCompanyJobsSnapshot = [];
+      this.selectedCompanySideJobCardsSnapshot = [];
+      this.rebuildSelectedCompanyJobSnapshot();
+      return;
+    }
+
+    const normalizedCompanyKey = this.normalizeCompanyKey(companyName);
+    this.selectedCompanyJobsSnapshot = this.recruiterAccessibleActiveJobsSnapshot
+      .filter((job) => this.normalizeCompanyKey(job.company) === normalizedCompanyKey)
+      .sort((left, right) => {
+        const rightTime = Date.parse(right.createdAt || right.updatedAt || '') || 0;
+        const leftTime = Date.parse(left.createdAt || left.updatedAt || '') || 0;
+        return rightTime - leftTime || (right.match ?? 0) - (left.match ?? 0);
+      });
+
+    const selectedCompanyLogoUrl = this.selectedCompanySnapshot?.company.logoUrl?.trim() ?? '';
+    this.selectedCompanySideJobCardsSnapshot = this.selectedCompanyJobsSnapshot.map((job) => ({
+      id: job.id,
+      title: job.title,
+      location: this.formatCompanyLocation(job.location),
+      summary: job.summary?.trim() || 'Vaga vinculada à empresa no ecossistema.',
+      salary: job.salaryRange?.trim() || 'Faixa sob consulta',
+      workModel: job.workModel,
+      contractType: job.contractType,
+      companyLogoUrl: job.companyLogoUrl?.trim() || selectedCompanyLogoUrl || undefined,
+      companyLogoLabel: this.buildLogoLabel(job.company),
+      avatarBadges: this.jobCandidateAvatarBadges(job),
+      avatarExtraCount: this.jobCandidateAvatarExtraCount(job),
+    }));
+
+    this.rebuildSelectedCompanyJobSnapshot();
+  }
+
+  private rebuildSelectedCompanyJobSnapshot(): void {
+    this.companyResourcePrimaryJobSnapshot = this.selectedCompanyJobsSnapshot.find((job) => job.id === this.selectedCompanyJobId)
+      ?? this.selectedCompanyJobsSnapshot[0];
+
+    const selectedCompany = this.selectedCompanySnapshot;
+    this.companyResourceSummarySnapshot = selectedCompany
+      ? selectedCompany.company.description?.trim()
+        || `${selectedCompany.company.name} opera em ${selectedCompany.company.sector} com ${selectedCompany.recruiterCount} recruiters e ${selectedCompany.jobCount} vagas ligadas ao ecossistema.`
+      : 'Selecione uma empresa para visualizar contexto, recruiters e vagas vinculadas no ecossistema.';
+    this.companyResourceMetricLabelSnapshot = selectedCompany
+      ? `${selectedCompany.jobCount} vagas ativas`
+      : 'Sem operação ativa';
+
+    const primaryJob = this.companyResourcePrimaryJobSnapshot;
+    this.companyResourceAvatarBadgesSnapshot = primaryJob ? this.jobCandidateAvatarBadges(primaryJob) : [];
+    this.companyResourceAvatarExtraCountSnapshot = primaryJob ? this.jobCandidateAvatarExtraCount(primaryJob) : 0;
+    this.companyResourceStacksSnapshot = this.buildCompanyResourceStacks(this.selectedCompanyJobsSnapshot);
+    this.companyResourceAdherenceSnapshot = this.selectedCompanyJobsSnapshot.length
+      ? Math.round(this.selectedCompanyJobsSnapshot.reduce((sum, job) => sum + job.match, 0) / this.selectedCompanyJobsSnapshot.length)
+      : 0;
+
+    this.resourcePanelJobSnapshot = primaryJob
+      ? {
+          id: primaryJob.id,
+          code: primaryJob.code,
+          title: primaryJob.title,
+          company: primaryJob.company,
+          companyLogoUrl: primaryJob.companyLogoUrl,
+          homeAnnouncementImageUrl: primaryJob.homeAnnouncementImageUrl,
+          location: primaryJob.location,
+          workModel: primaryJob.workModel,
+          contractType: primaryJob.contractType,
+          salaryRange: primaryJob.salaryRange,
+          radarAdherenceThreshold: primaryJob.radarAdherenceThreshold,
+          techStack: primaryJob.techStack,
+        }
+      : this.fallbackResourcePanelJob;
+    this.resourcePanelStacksSnapshot = this.companyResourceStacksSnapshot.length
+      ? this.companyResourceStacksSnapshot
+      : this.resourcePanelJobSnapshot.techStack.slice(0, 5);
+    this.resourcePanelAdherenceSnapshot = this.companyResourceAdherenceSnapshot || 91;
+    this.resourcePanelSalarySnapshot = this.resourcePanelJobSnapshot.salaryRange?.trim() || 'R$ 9.500 - R$ 12.000';
+
+    this.selectedCompanyCandidatesSnapshot = primaryJob
+      ? this.companyJobCandidates(primaryJob)
+          .slice()
+          .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
+          .map((candidate, index) => ({
+            id: candidate.id?.trim() || `${primaryJob.id}:${candidate.name}:${index}`,
+            name: candidate.name,
+            role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
+            location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
+            avatarUrl: this.resolveAvatar(candidate.avatar),
+            topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 2),
+          }))
+      : [];
+
+    this.candidateTotalPagesSnapshot = Math.max(1, Math.ceil(this.selectedCompanyCandidatesSnapshot.length / this.candidatePageSize));
+    if (this.candidateCurrentPage > this.candidateTotalPagesSnapshot) {
+      this.candidateCurrentPage = this.candidateTotalPagesSnapshot;
+    }
+    const start = (this.candidateCurrentPage - 1) * this.candidatePageSize;
+    this.pagedSelectedCompanyCandidatesSnapshot = this.selectedCompanyCandidatesSnapshot.slice(start, start + this.candidatePageSize);
+    this.candidateVisiblePagesSnapshot = this.buildVisiblePages(this.candidateTotalPagesSnapshot, this.candidateCurrentPage);
+  }
+
+  private buildCompanyResourceStacks(jobs: MockJobRecord[]): Array<{ name: string; match: number }> {
+    const stackMap = new Map<string, { total: number; count: number }>();
+
+    jobs.forEach((job) => {
+      job.techStack.forEach((stack) => {
+        const current = stackMap.get(stack.name) ?? { total: 0, count: 0 };
+        current.total += stack.match;
+        current.count += 1;
+        stackMap.set(stack.name, current);
+      });
+    });
+
+    return [...stackMap.entries()]
+      .map(([name, value]) => ({
+        name,
+        match: Math.round(value.total / value.count),
+      }))
+      .sort((left, right) => right.match - left.match)
+      .slice(0, 5);
+  }
+
+  private buildVisiblePages(total: number, current: number): number[] {
+    if (total <= 4) {
+      return Array.from({ length: total }, (_value, index) => index + 1);
+    }
+
+    if (current <= 2) {
+      return [1, 2, 3, 4];
+    }
+
+    if (current >= total - 1) {
+      return [total - 3, total - 2, total - 1, total];
+    }
+
+    return [current - 1, current, current + 1, current + 2];
+  }
+
+  private resolveDefaultSelectedCompanyId(): string {
+    const filteredWithJobs = this.filteredCompaniesSnapshot.find((entry) => entry.jobCount > 0)?.company.id;
+    if (filteredWithJobs) {
+      return filteredWithJobs;
+    }
+
+    const allWithJobs = this.companyViewModels.find((entry) => entry.jobCount > 0)?.company.id;
+    if (allWithJobs) {
+      return allWithJobs;
+    }
+
+    return this.filteredCompaniesSnapshot[0]?.company.id ?? this.companyViewModels[0]?.company.id ?? '';
   }
 
   private createEmptyForm(): CompanyFormModel {
@@ -847,5 +1232,36 @@ export class EmpresaPage implements OnDestroy {
       .map((part) => part.charAt(0))
       .join('')
       .toUpperCase();
+  }
+
+  private normalizeCompanyKey(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLocaleLowerCase('pt-BR');
+  }
+
+  private createSyntheticCompanyFromJob(job: MockJobRecord): CompanyRecord {
+    const now = new Date().toISOString();
+
+    return {
+      id: `synthetic-company-${job.company.toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g, '-')}`,
+      name: job.company,
+      sector: 'Tecnologia',
+      location: job.location || 'Brasil',
+      description: job.summary?.trim() || `Empresa vinculada pela massa de vagas em ${job.title}.`,
+      followers: '0 seguidores',
+      linkedinCount: '0 no LinkedIn',
+      logoLabel: this.buildLogoLabel(job.company).toLowerCase(),
+      logoUrl: job.companyLogoUrl?.trim() || undefined,
+      website: undefined,
+      emailDomain: undefined,
+      monthlyHiringCount: Math.max(1, job.talents || job.candidates?.length || 0),
+      active: true,
+      notes: 'Empresa derivada automaticamente das vagas do ecossistema.',
+      createdAt: now,
+      updatedAt: now,
+    };
   }
 }

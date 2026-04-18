@@ -79,14 +79,7 @@
 }
 
 
-.empresa-page__column {
-  background: linear-gradient(180deg, #e0e0e0, #ffffff);
-  border-radius: 14px;
-  box-sizing: border-box;
-  overflow: hidden;
-  min-width: 0;
-  min-height: 0;
-}
+
 
 .empresa-page__topbar-right {
   display: flex;
@@ -157,6 +150,40 @@
   gap: 12px;
 }
 
+.empresa-page__column {
+  background: linear-gradient(180deg, #e0e0e0, #ffffff);
+  border-radius: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+.empresa-page__column-back {
+  background: linear-gradient(180deg, #e0e0e0, #ffffff);
+  border-radius: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.empresa-page__column--side-back {
+  grid-area: side;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column; /* 🔥 empilha vertical */
+
+  gap: 12px;
+  padding: 18px;
+
+  box-sizing: border-box;
+  border: 1px solid rgba(47, 50, 50, 0.08);
+  border-radius: 14px;
+}
 .empresa-page__column--bottom {
   grid-area: side-bottom;
   width: 100%;
@@ -491,10 +518,7 @@
   display: grid;
   gap: 18px;
   padding: 32px 28px 18px;
-  border-radius: 24px;
-  //background: #ffffff;
-  //border: 1px solid rgba(47, 50, 50, 0.08);
-  //box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+  border-radius: 24px; 
 }
 
 .company-context__edit-btn-top {
@@ -1259,8 +1283,9 @@
 
 .company-identity__bottom-jobs-grid--workspace {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 14px;
+  align-items: start;
 }
 
 .company-identity__bottom-jobs-grid--workspace .empresa-vaga-card__item {
@@ -1293,6 +1318,18 @@
   margin: 0;
   padding: 0 0 1px;
 }
+
+.company-identity__bottom-header--side-back{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  text-align: left;
+  margin: 0;
+  padding: 0 0 1px;
+}
+
 
 .company-identity__bottom .company-identity__bottom-header--side {
   width: 100%;
@@ -1600,9 +1637,9 @@
   justify-content: center;
 
   img {
-    width: 108%;
-    height: 108%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
     filter: grayscale(1) contrast(1.05);
   }
@@ -1675,6 +1712,78 @@
   strong {
     font-weight: 800;
   }
+}
+
+.empresa-vaga-talent-card--pagination {
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+.empresa-vaga-talent-card__pagination-header {
+  display: grid;
+  gap: 4px;
+
+  strong {
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #2f3232;
+  }
+
+  span {
+    font-size: 13px;
+    line-height: 1.4;
+    color: #7a8080;
+  }
+}
+
+.empresa-vaga-talent-card__pagination-pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.empresa-vaga-talent-card__pagination-nav,
+.empresa-vaga-talent-card__pagination-page {
+  min-width: 38px;
+  height: 38px;
+  border: 1px solid rgba(47, 50, 50, 0.1);
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #2f3232;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.empresa-vaga-talent-card__pagination-nav:hover,
+.empresa-vaga-talent-card__pagination-page:hover {
+  background: #eef2f7;
+  transform: translateY(-1px);
+}
+
+.empresa-vaga-talent-card__pagination-page--active {
+  background: #2f3232;
+  color: #ffffff;
+  border-color: #2f3232;
+}
+
+.empresa-vaga-talent-card__pagination-nav:disabled {
+  opacity: 0.42;
+  cursor: default;
+  transform: none;
+}
+
+.empresa-vaga-talent-card__pagination-copy {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #7a8080;
 }
 
 .empresa-vaga-talent-card__track {
@@ -2403,6 +2512,8 @@
   border: 1px solid rgba(47, 50, 50, 0.06);
   display: grid;
   gap: 14px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .empresa-vaga-card__item-header {
@@ -2410,6 +2521,14 @@
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
+  min-width: 0;
+}
+
+.empresa-vaga-card__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-self: end;
 }
 
 .empresa-vaga-card__item-brand {
@@ -2430,7 +2549,8 @@
   min-width: 0;
   display: grid;
   gap: 6px;
-  padding: 16px 18px;
+  padding: 0;
+  margin-left: 22px;
 }
 
 .empresa-vaga-card__item-title {
@@ -2438,6 +2558,7 @@
   line-height: 1.25;
   font-weight: 800;
   color: #2f3232;
+  word-break: break-word;
 }
 
 .empresa-vaga-card__item-company {
@@ -2459,6 +2580,22 @@
   color: #7a8080;
 }
 
+.empresa-vaga-card__item-summary {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #7a8080;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.empresa-vaga-card__divider {
+  width: 100%;
+  border-top: 1px dashed rgba(47, 50, 50, 0.18);
+}
+
 .empresa-vaga-card__item-chip {
   min-height: 26px;
   padding: 0 10px;
@@ -2478,10 +2615,11 @@
 }
 
 .empresa-vaga-card__item-footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
+  min-width: 0;
 }
 
 .empresa-vaga-card__item-salary {
@@ -2495,22 +2633,54 @@
 .empresa-vaga-card__item-tags {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
   flex-wrap: wrap;
+  min-width: 0;
+  justify-self: end;
+}
+
+.empresa-vaga-card__chat {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(47, 50, 50, 0.08);
+  color: #2f3232;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+  align-self: center;
+
+  .mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+}
+
+.empresa-vaga-card__chat:hover {
+  transform: translateY(-1px);
+  background: rgba(239, 148, 11, 0.18);
 }
 
 .empresa-vaga-card__avatars {
   display: flex;
   align-items: center;
   justify-self: end;
-  margin-right: 0;
+  margin-right: 14px;
+  padding-left: 0;
+  max-width: 164px;
+  min-width: 0;
+  overflow: hidden;
 
   img,
   .empresa-vaga-card__avatars-more {
     width: 46px;
     height: 46px;
-    margin-left: -12px;
+    margin-left: -22px;
     border-radius: 50%;
     border: 3px solid #ffffff;
   }
@@ -2522,6 +2692,16 @@
   img {
     object-fit: cover;
     display: block;
+  }
+
+  .empresa-vaga-card__avatars-more {
+    margin-left: -12px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .company-identity__bottom-jobs-grid--workspace {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
 }
 
