@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
@@ -22,6 +21,7 @@ type CompanyFormModel = {
   location: string;
   description: string;
   logoUrl: string;
+  panelImageUrl: string;
   logoLabel: string;
   active: boolean;
 };
@@ -80,7 +80,7 @@ type CompanyViewModel = {
 @Component({
   standalone: true,
   selector: 'app-empresa-page',
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './empresa.page.html',
   styleUrls: ['./empresa.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -336,6 +336,38 @@ export class EmpresaPage implements OnDestroy {
     return `${monthlyHiringCount} contratações/mês`;
   }
 
+  get selectedCompanyPanelImageUrl(): string {
+    return this.selectedCompanyRecord?.panelImageUrl?.trim() || 'assets/images/image-yourlogo.png';
+  }
+
+  get companyFormLogoPreviewUrl(): string {
+    return this.companyForm.logoUrl.trim();
+  }
+
+  get hasSelectedCompanyLogo(): boolean {
+    return !!this.selectedCompanyLogoUrl;
+  }
+
+  get hasCompanyFormLogo(): boolean {
+    return !!this.companyFormLogoPreviewUrl;
+  }
+
+  get companyFormPreviewName(): string {
+    return this.companyForm.name.trim() || 'Empresa';
+  }
+
+  get companyFormPreviewLocation(): string {
+    return this.companyForm.location.trim() || 'Brasil';
+  }
+
+  hasJobLogo(job: ResourcePanelJobVm): boolean {
+    return !!this.jobCompanyLogoUrl(job);
+  }
+
+  hasSideJobCardLogo(card: SideJobCardVm): boolean {
+    return !!card.companyLogoUrl?.trim();
+  }
+
   get selectedCompanySideJobCards(): SideJobCardVm[] {
     return this.selectedCompanySideJobCardsSnapshot;
   }
@@ -537,6 +569,7 @@ export class EmpresaPage implements OnDestroy {
       location: company.location ?? '',
       description: company.description ?? '',
       logoUrl: company.logoUrl ?? '',
+      panelImageUrl: company.panelImageUrl ?? '',
       logoLabel: company.logoLabel ?? '',
       active: !!company.active,
     };
@@ -546,6 +579,96 @@ export class EmpresaPage implements OnDestroy {
   closeModal(): void {
     this.isModalOpen = false;
     this.modalError = '';
+  }
+
+  onCompanyLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.modalError = 'Selecione um arquivo de imagem válido para o logo.';
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      if (!result) {
+        this.modalError = 'Não foi possível carregar o logo selecionado.';
+        this.cdr.markForCheck();
+        return;
+      }
+
+      this.companyForm.logoUrl = result;
+      this.modalError = '';
+      this.cdr.markForCheck();
+    };
+    reader.onerror = () => {
+      this.modalError = 'Não foi possível carregar o logo selecionado.';
+      this.cdr.markForCheck();
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+  }
+
+  clearCompanyLogo(): void {
+    this.companyForm.logoUrl = '';
+    this.modalError = '';
+  }
+
+  onCompanyPanelImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+    const company = this.selectedCompanyRecord;
+
+    if (!file || !company) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      if (!result) {
+        this.cdr.markForCheck();
+        return;
+      }
+
+      this.companiesFacade.saveCompany({
+        id: company.id,
+        name: company.name,
+        sector: company.sector,
+        location: company.location,
+        description: company.description,
+        followers: company.followers,
+        linkedinCount: company.linkedinCount,
+        logoLabel: company.logoLabel,
+        logoUrl: company.logoUrl,
+        panelImageUrl: result,
+        website: company.website,
+        emailDomain: company.emailDomain,
+        monthlyHiringCount: company.monthlyHiringCount,
+        active: company.active,
+        notes: company.notes,
+      });
+
+      input.value = '';
+      this.refreshViewState();
+    };
+    reader.onerror = () => {
+      input.value = '';
+      this.cdr.markForCheck();
+    };
+    reader.readAsDataURL(file);
   }
 
   saveCompany(): void {
@@ -562,6 +685,7 @@ export class EmpresaPage implements OnDestroy {
       location: this.companyForm.location.trim(),
       description: this.companyForm.description.trim(),
       logoUrl: this.companyForm.logoUrl.trim(),
+      panelImageUrl: this.companyForm.panelImageUrl.trim(),
       logoLabel: (this.companyForm.logoLabel.trim() || this.buildLogoLabel(this.companyForm.name)).slice(0, 2).toUpperCase(),
       active: this.companyForm.active,
     };
@@ -578,6 +702,7 @@ export class EmpresaPage implements OnDestroy {
       location: payload.location,
       description: payload.description,
       logoUrl: payload.logoUrl || undefined,
+      panelImageUrl: payload.panelImageUrl || existing?.panelImageUrl,
       logoLabel: payload.logoLabel,
       active: payload.active,
       followers: existing?.followers ?? '120.000 seguidores',
@@ -775,7 +900,7 @@ export class EmpresaPage implements OnDestroy {
   }
 
   jobCompanyLogoUrl(job: ResourcePanelJobVm): string {
-    return job.companyLogoUrl?.trim() ?? '';
+    return this.selectedCompanyLogoUrl || job.companyLogoUrl?.trim() || '';
   }
 
   jobCompanyLogoLabel(job: ResourcePanelJobVm): string {
@@ -892,7 +1017,7 @@ export class EmpresaPage implements OnDestroy {
     }
   }
 
-  private refreshViewState(): void {
+  private refreshViewState(markForCheck = true): void {
     this.recruiterAccessibleActiveJobsSnapshot = this.jobsFacade.getJobs()
       .filter((job) => job.status === 'ativas')
       .filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
@@ -908,7 +1033,7 @@ export class EmpresaPage implements OnDestroy {
       .sort((first, second) => first.localeCompare(second, 'pt-BR'));
     this.locationOptionsSnapshot = [...new Set(this.companyViewModels.map(({ formattedLocation }) => formattedLocation).filter(Boolean))]
       .sort((first, second) => first.localeCompare(second, 'pt-BR'));
-    this.applyFilters(false);
+    this.applyFilters(markForCheck);
   }
 
   private applyFilters(markForCheck = true): void {
@@ -1081,7 +1206,7 @@ export class EmpresaPage implements OnDestroy {
       salary: job.salaryRange?.trim() || 'Faixa sob consulta',
       workModel: job.workModel,
       contractType: job.contractType,
-      companyLogoUrl: job.companyLogoUrl?.trim() || selectedCompanyLogoUrl || undefined,
+      companyLogoUrl: selectedCompanyLogoUrl || job.companyLogoUrl?.trim() || undefined,
       companyLogoLabel: this.buildLogoLabel(job.company),
       avatarBadges: this.jobCandidateAvatarBadges(job),
       avatarExtraCount: this.jobCandidateAvatarExtraCount(job),
@@ -1106,7 +1231,7 @@ export class EmpresaPage implements OnDestroy {
     const primaryJob = this.companyResourcePrimaryJobSnapshot;
     this.companyResourceAvatarBadgesSnapshot = primaryJob ? this.jobCandidateAvatarBadges(primaryJob) : [];
     this.companyResourceAvatarExtraCountSnapshot = primaryJob ? this.jobCandidateAvatarExtraCount(primaryJob) : 0;
-    this.companyResourceStacksSnapshot = this.buildCompanyResourceStacks(this.selectedCompanyJobsSnapshot);
+    this.companyResourceStacksSnapshot = this.buildPrimaryJobStacks(primaryJob);
     this.companyResourceAdherenceSnapshot = this.selectedCompanyJobsSnapshot.length
       ? Math.round(this.selectedCompanyJobsSnapshot.reduce((sum, job) => sum + job.match, 0) / this.selectedCompanyJobsSnapshot.length)
       : 0;
@@ -1129,7 +1254,7 @@ export class EmpresaPage implements OnDestroy {
       : this.fallbackResourcePanelJob;
     this.resourcePanelStacksSnapshot = this.companyResourceStacksSnapshot.length
       ? this.companyResourceStacksSnapshot
-      : this.resourcePanelJobSnapshot.techStack.slice(0, 5);
+      : this.buildPrimaryJobStacks(this.companyResourcePrimaryJobSnapshot);
     this.resourcePanelAdherenceSnapshot = this.companyResourceAdherenceSnapshot || 91;
     this.resourcePanelSalarySnapshot = this.resourcePanelJobSnapshot.salaryRange?.trim() || 'R$ 9.500 - R$ 12.000';
 
@@ -1156,25 +1281,18 @@ export class EmpresaPage implements OnDestroy {
     this.candidateVisiblePagesSnapshot = this.buildVisiblePages(this.candidateTotalPagesSnapshot, this.candidateCurrentPage);
   }
 
-  private buildCompanyResourceStacks(jobs: MockJobRecord[]): Array<{ name: string; match: number }> {
-    const stackMap = new Map<string, { total: number; count: number }>();
+  private buildPrimaryJobStacks(job: MockJobRecord | undefined): Array<{ name: string; match: number }> {
+    if (!job) {
+      return [];
+    }
 
-    jobs.forEach((job) => {
-      job.techStack.forEach((stack) => {
-        const current = stackMap.get(stack.name) ?? { total: 0, count: 0 };
-        current.total += stack.match;
-        current.count += 1;
-        stackMap.set(stack.name, current);
-      });
-    });
-
-    return [...stackMap.entries()]
-      .map(([name, value]) => ({
-        name,
-        match: Math.round(value.total / value.count),
-      }))
+    return [...job.techStack]
       .sort((left, right) => right.match - left.match)
-      .slice(0, 5);
+      .slice(0, 3)
+      .map((stack) => ({
+        name: stack.name,
+        match: stack.match,
+      }));
   }
 
   private buildVisiblePages(total: number, current: number): number[] {
@@ -1215,6 +1333,7 @@ export class EmpresaPage implements OnDestroy {
       location: '',
       description: '',
       logoUrl: '',
+      panelImageUrl: '',
       logoLabel: '',
       active: true,
     };
@@ -1255,6 +1374,7 @@ export class EmpresaPage implements OnDestroy {
       linkedinCount: '0 no LinkedIn',
       logoLabel: this.buildLogoLabel(job.company).toLowerCase(),
       logoUrl: job.companyLogoUrl?.trim() || undefined,
+      panelImageUrl: undefined,
       website: undefined,
       emailDomain: undefined,
       monthlyHiringCount: Math.max(1, job.talents || job.candidates?.length || 0),

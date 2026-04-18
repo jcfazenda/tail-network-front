@@ -8,6 +8,7 @@ export interface CompanyRecord {
   linkedinCount: string;
   logoLabel: string;
   logoUrl?: string;
+  panelImageUrl?: string;
   website?: string;
   emailDomain?: string;
   monthlyHiringCount: number;
@@ -27,6 +28,7 @@ export interface CompanyDraft {
   linkedinCount: string;
   logoLabel: string;
   logoUrl?: string;
+  panelImageUrl?: string;
   website?: string;
   emailDomain?: string;
   monthlyHiringCount: number;

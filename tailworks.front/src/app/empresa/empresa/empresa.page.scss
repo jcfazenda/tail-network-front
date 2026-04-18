@@ -601,14 +601,25 @@
   border-radius: 18px;
   overflow: hidden;
   margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  background: #f3f4f6;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
     display: block;
     filter: contrast(1.02) saturate(1.02);
   }
+}
+
+.company-context__company-media-input {
+  display: none;
 }
  
 
@@ -990,12 +1001,16 @@
   justify-content: center;
 
   img {
-    width: 78%;
-    height: 78%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    filter: grayscale(1) contrast(1.05);
+    filter: none;
   }
+}
+
+.company-card__logo--placeholder img {
+  filter: grayscale(1) contrast(1.05);
 }
 
 .company-card__name {
@@ -2224,6 +2239,7 @@
   width: 100%;
   min-width: 0;
   padding-left: 12px;
+  padding-top: 48px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -3061,6 +3077,96 @@
   cursor: pointer;
 }
 
+.empresa-modal__brand-editor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 138, 61, 0.1), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(236, 102, 45, 0.14);
+}
+
+.empresa-modal__brand-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.empresa-modal__brand-logo-card {
+  width: 84px;
+  height: 84px;
+  flex: 0 0 84px;
+  border-radius: 22px;
+  background: #fff7ed;
+  border: 1px solid rgba(236, 102, 45, 0.16);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: none;
+  }
+
+  span {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #c2410c;
+  }
+}
+
+.empresa-modal__brand-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+
+  strong {
+    font-size: 18px;
+    color: #2f3232;
+  }
+
+  span {
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+.empresa-modal__brand-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.empresa-modal__logo-input {
+  display: none;
+}
+
+.empresa-modal__logo-button {
+  height: 40px;
+  border-radius: 999px;
+  border: 0;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.empresa-modal__logo-button--primary {
+  background: linear-gradient(180deg, #ff8a3d, #ec662d);
+  color: #fff;
+}
+
+.empresa-modal__logo-button--ghost {
+  background: #ffffff;
+  color: #92400e;
+  border: 1px solid rgba(236, 102, 45, 0.18);
+}
+
 .empresa-modal__body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3128,6 +3234,21 @@
   background: linear-gradient(180deg, #ff8a3d, #ec662d);
   color: #ffffff;
 }
+
+@media (max-width: 640px) {
+  .empresa-modal__brand-editor {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .empresa-modal__brand-actions {
+    justify-content: stretch;
+  }
+
+  .empresa-modal__logo-button {
+    width: 100%;
+  }
+}
  
 /* --------------------------------  COOQUE AQUI ESSES DADOS DA EMPRESA -------------------------  */
 .company-context__company-panel {
@@ -3174,12 +3295,16 @@
     0 10px 24px rgba(15, 23, 42, 0.05);
 
   img {
-    width: 68%;
-    height: 68%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    filter: grayscale(1) contrast(1.04);
+    filter: none;
   }
+}
+
+.company-context__company-logo-box--placeholder img {
+  filter: grayscale(1) contrast(1.04);
 }
 
 .company-context__company-top-copy {
