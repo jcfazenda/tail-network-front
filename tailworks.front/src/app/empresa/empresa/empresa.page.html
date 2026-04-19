@@ -144,7 +144,17 @@
                     </div>
 
                     <div class="job-side-title-wrap">
-                      <h3>{{ resourcePanelJob.title }}</h3>
+                      <div class="job-side-title-row">
+                        <h3>{{ resourcePanelJob.title }}</h3>
+                        <button
+                          type="button"
+                          class="job-side-title-chat"
+                          aria-label="Abrir chat do candidato"
+                          (click)="openSelectedCandidateChat()">
+                          <span class="material-symbols-rounded">chat</span>
+                          <span class="job-side-title-chat__badge">3</span>
+                        </button>
+                      </div>
                       <strong>{{ resourcePanelJob.company }}</strong>
                     </div>
 
@@ -474,7 +484,17 @@
                     </div>
 
                     <div class="job-side-title-wrap">
-                      <h3>{{ resourcePanelJob.title }}</h3>
+                      <div class="job-side-title-row">
+                        <h3>{{ resourcePanelJob.title }}</h3>
+                        <button
+                          type="button"
+                          class="job-side-title-chat"
+                          aria-label="Abrir chat do candidato"
+                          (click)="openSelectedCandidateChat()">
+                          <span class="material-symbols-rounded">chat</span>
+                          <span class="job-side-title-chat__badge">3</span>
+                        </button>
+                      </div>
                       <strong>{{ resourcePanelJob.company }}</strong>
                     </div>
 
@@ -552,8 +572,7 @@
                 <div
                   class="empresa-vaga-talent-card"
                   *ngFor="let candidate of pagedSelectedCompanyCandidates; trackBy: trackCandidate"
-                  [class.empresa-vaga-talent-card--active]="candidate.id === selectedCompanyCandidate?.id"
-                  (click)="selectCandidate(candidate.id)">
+                  [class.empresa-vaga-talent-card--active]="candidate.id === selectedCompanyCandidate?.id">
 
                   <div class="empresa-vaga-talent-card__top">
                     <div class="empresa-vaga-talent-card__avatar">
@@ -648,7 +667,16 @@
               <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side">
                 <strong>{{ candidate.name }}</strong>
                 <span>{{ candidate.location }}</span> 
-              </div> 
+              </div>
+
+              <button
+                type="button"
+                class="company-context__candidate-chat"
+                aria-label="Abrir chat do candidato"
+                (click)="openSelectedCandidateChat()">
+                <span class="material-symbols-rounded">chat</span>
+                <span class="company-context__candidate-chat-badge">3</span>
+              </button>
 
             </div>
 

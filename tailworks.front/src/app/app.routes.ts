@@ -64,9 +64,8 @@ export const routes: Routes = [
   },
   {
     path: 'vagas/chat-candidatos',
-    loadComponent: () => import('./vagas/chat-candidatos/chat-candidatos.page').then((m) => m.ChatCandidatosPage),
-    data: { title: 'Chat com Candidatos' },
-    canActivate: [recruiterAuthGuard],
+    redirectTo: 'empresa',
+    pathMatch: 'full',
   },
   {
     path: 'recruiter/panel',

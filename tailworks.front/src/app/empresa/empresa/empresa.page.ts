@@ -987,6 +987,10 @@ export class EmpresaPage implements OnDestroy {
     }
   }
 
+  openSelectedCandidateChat(): void {
+    void this.router.navigateByUrl('/empresa');
+  }
+
   showIdentityCenter(): void {
     if (this.centerView === 'identity') {
       return;
