@@ -201,7 +201,7 @@ export class EmpresaPage implements OnDestroy {
   private resourcePanelSalarySnapshot = 'R$ 9.500 - R$ 12.000';
   private selectedCompanyRecruiterVideoResolvedUrl = 'assets/videos/VG-0001-Recruiter.mp4';
   private recruiterVideoResolveToken = 0;
-  private selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+  private selectedCompanyCandidateVideoResolvedUrl = '';
   private candidateVideoResolveToken = 0;
   private selectedCompanyRecruiterPosterResolvedUrl = 'assets/images/image-video.png';
   private recruiterPosterResolveToken = 0;
@@ -426,6 +426,10 @@ export class EmpresaPage implements OnDestroy {
 
   get selectedCompanyCandidateVideoUrl(): string {
     return this.selectedCompanyCandidateVideoResolvedUrl;
+  }
+
+  get hasSelectedCompanyCandidateVideo(): boolean {
+    return !!this.selectedCompanyCandidate?.videoUrl?.trim() && !!this.selectedCompanyCandidateVideoResolvedUrl;
   }
 
   get selectedCompanyCandidatePosterUrl(): string {
@@ -1716,7 +1720,7 @@ export class EmpresaPage implements OnDestroy {
       if (resolveToken !== this.candidateVideoResolveToken) {
         return;
       }
-      this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+      this.selectedCompanyCandidateVideoResolvedUrl = '';
       this.cdr.markForCheck();
       return;
     }
@@ -1740,12 +1744,12 @@ export class EmpresaPage implements OnDestroy {
       }
       this.selectedCompanyCandidateVideoResolvedUrl = blob
         ? URL.createObjectURL(blob)
-        : 'assets/videos/VG-0001.mp4';
+        : '';
     } catch {
       if (resolveToken !== this.candidateVideoResolveToken) {
         return;
       }
-      this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+      this.selectedCompanyCandidateVideoResolvedUrl = '';
     }
 
     this.cdr.markForCheck();
@@ -1757,7 +1761,7 @@ export class EmpresaPage implements OnDestroy {
     }
 
     URL.revokeObjectURL(this.selectedCompanyCandidateVideoResolvedUrl);
-    this.selectedCompanyCandidateVideoResolvedUrl = 'assets/videos/VG-0001.mp4';
+    this.selectedCompanyCandidateVideoResolvedUrl = '';
   }
 
   private async refreshSelectedCompanyCandidatePosterUrl(): Promise<void> {
