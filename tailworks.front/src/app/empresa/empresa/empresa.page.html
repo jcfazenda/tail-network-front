@@ -651,78 +651,78 @@
       </div>
     </div>
 
-    <div class="empresa-page__column empresa-page__column--side" *ngIf="centerView === 'job'">
+    <div class="empresa-page__column empresa-page__column--job-panel" *ngIf="centerView === 'job'">
 
-      <div class="company-context__company-panel">
+      <div
+        class="company-context__company-panel company-context__company-panel--job-upper"
+        *ngIf="!isCandidateChatPanelVisible">
         <div class="company-context__profile-card">
 
           <div class="company-context__company-panel">
+            <div class="company-context__candidate-default-panel">
+              <!-- HEADER DO CANDIDATO -->
+              <div class="company-context__company-top-left" *ngIf="selectedCompanyCandidate as candidate">
+                <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--side">
+                  <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
+                </div>
 
-            <!-- HEADER DO CANDIDATO -->
-            <div class="company-context__company-top-left" *ngIf="selectedCompanyCandidate as candidate">
-              <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--side">
-                <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
+                <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side">
+                  <strong>{{ candidate.name }}</strong>
+                  <span>{{ candidate.location }}</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="company-context__candidate-chat"
+                  aria-label="Abrir chat do candidato"
+                  (click)="openSelectedCandidateChat()">
+                  <span class="material-symbols-rounded">chat</span>
+                  <span class="company-context__candidate-chat-badge">3</span>
+                </button>
               </div>
 
-              <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side">
-                <strong>{{ candidate.name }}</strong>
-                <span>{{ candidate.location }}</span> 
-              </div>
-
-              <button
-                type="button"
-                class="company-context__candidate-chat"
-                aria-label="Abrir chat do candidato"
-                (click)="openSelectedCandidateChat()">
-                <span class="material-symbols-rounded">chat</span>
-                <span class="company-context__candidate-chat-badge">3</span>
-              </button>
-
-            </div>
-
-                          <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side" *ngIf="selectedCompanyCandidate as candidate"> 
+              <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side" *ngIf="selectedCompanyCandidate as candidate">
                 <div class="company-context__candidate-education" *ngIf="candidate.educationLabel">
                   <strong class="company-context__candidate-education-title">{{ selectedCompanyCandidateEducationLabel }}</strong>
                   <small class="company-context__candidate-education-chip">{{ selectedCompanyCandidateEducationStatus }}</small>
                 </div>
-              </div> 
-
-
-            <!-- ADERENCIA CANDIDATO -->
-            <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
-              <div class="company-context__candidate-adherence-header">
-                <strong>Stacks de Aderência</strong>
-                <span>Top 3 do candidato selecionado</span>
               </div>
 
-              <div class="company-context__candidate-adherence-list">
-                <div
-                  class="company-context__candidate-adherence-item"
-                  *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
-                  <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
-                  <div class="company-context__candidate-adherence-track">
-                    <div
-                      class="company-context__candidate-adherence-fill"
-                      [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
-                      [style.width.%]="stack.match"></div>
+              <!-- ADERENCIA CANDIDATO -->
+              <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
+                <div class="company-context__candidate-adherence-header">
+                  <strong>Stacks de Aderência</strong>
+                  <span>Top 3 do candidato selecionado</span>
+                </div>
+
+                <div class="company-context__candidate-adherence-list">
+                  <div
+                    class="company-context__candidate-adherence-item"
+                    *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
+                    <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
+                    <div class="company-context__candidate-adherence-track">
+                      <div
+                        class="company-context__candidate-adherence-fill"
+                        [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
+                        [style.width.%]="stack.match"></div>
+                    </div>
+                    <strong class="company-context__candidate-adherence-value">{{ stack.match }}%</strong>
                   </div>
-                  <strong class="company-context__candidate-adherence-value">{{ stack.match }}%</strong>
                 </div>
               </div>
-            </div> 
+            </div>
           </div>
-
 
         </div>
       </div>
 
-    </div>
+      <div
+        class="company-context__company-panel company-context__company-panel--bottom company-context__company-panel--job-lower"
+        *ngIf="!isCandidateChatPanelVisible">
 
-    <div class="empresa-page__column-down empresa-page__column--bottom" *ngIf="centerView === 'job'">
-      <div class="company-context__company-panel company-context__company-panel--bottom">
         <div class="company-context__bottom-stack">
           <!-- VIDEO DO CANDIDATO -->
-          <div class="menu-feature-card-candidate"> 
+          <div class="menu-feature-card-candidate">
             <div
               class="menu-feature-video-candidate"
               [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
@@ -745,7 +745,6 @@
             </div>
           </div>
 
-              
           <div class="empresa-candidate-timeline" *ngIf="selectedCompanyCandidate as candidate">
             <div
               class="empresa-candidate-timeline__step"
@@ -767,8 +766,7 @@
             </div>
           </div>
 
-          <div class="company-context__profile-card company-context__profile-card--bottom-candidate">  
-
+          <div class="company-context__profile-card company-context__profile-card--bottom-candidate">
             <div class="company-context__quick-actions-front company-context__quick-actions-front--job">
               <button class="company-context__quick-action" type="button">
                 <span class="material-symbols-rounded">record_voice_over</span>
@@ -787,12 +785,34 @@
                 <span>Videos</span>
               </button>
             </div>
+          </div>
+        </div>
+        
+      </div>
 
+      <div class="company-context__candidate-chat-panel" *ngIf="isCandidateChatPanelVisible">
+        <!-- HEADER DO CANDIDATO -->
+        <div class="company-context__company-top-left" *ngIf="selectedCompanyCandidate as candidate">
+          <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--side">
+            <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
           </div>
 
+          <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side">
+            <strong>{{ candidate.name }}</strong>
+            <span>{{ candidate.location }}</span>
+          </div>
+
+          <button
+            type="button"
+            class="company-context__candidate-chat"
+            aria-label="Voltar para dados do candidato"
+            (click)="openSelectedCandidateChat()">
+            <span class="material-symbols-rounded">arrow_back</span> 
+          </button>
         </div>
 
       </div>
+
     </div>
 
   </div>

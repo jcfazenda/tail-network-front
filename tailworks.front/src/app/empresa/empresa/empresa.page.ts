@@ -241,6 +241,7 @@ export class EmpresaPage implements OnDestroy {
   selectedCandidateId = '';
   activeDetailTab: CompanyDetailTab = 'recruiters';
   centerView: EmpresaCenterView = 'identity';
+  isCandidateChatPanelVisible = false;
 
   private readonly fallbackResourcePanelJob: ResourcePanelJobVm = {
     id: 'vaga-demo',
@@ -946,6 +947,7 @@ export class EmpresaPage implements OnDestroy {
     }
 
     this.selectedCompanyJobId = jobId;
+    this.isCandidateChatPanelVisible = false;
     this.candidateCurrentPage = 1;
     this.rebuildSelectedCompanyJobSnapshot();
     this.cdr.markForCheck();
@@ -957,6 +959,7 @@ export class EmpresaPage implements OnDestroy {
     }
 
     this.selectedCandidateId = candidateId;
+    this.isCandidateChatPanelVisible = false;
     this.rebuildSelectedCompanyJobSnapshot();
     this.cdr.markForCheck();
   }
@@ -988,7 +991,8 @@ export class EmpresaPage implements OnDestroy {
   }
 
   openSelectedCandidateChat(): void {
-    void this.router.navigateByUrl('/empresa');
+    this.isCandidateChatPanelVisible = !this.isCandidateChatPanelVisible;
+    this.cdr.markForCheck();
   }
 
   showIdentityCenter(): void {
