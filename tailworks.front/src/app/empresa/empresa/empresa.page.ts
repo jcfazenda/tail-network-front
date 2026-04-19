@@ -939,7 +939,7 @@ export class EmpresaPage implements OnDestroy {
   }
 
   selectCandidate(candidateId: string): void {
-    if (!candidateId.trim() || this.selectedCandidateId === candidateId) {
+    if (!candidateId.trim()) {
       return;
     }
 

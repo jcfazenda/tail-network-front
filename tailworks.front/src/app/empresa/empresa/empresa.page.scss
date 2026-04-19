@@ -515,8 +515,10 @@
 
 .company-context__profile-card {
   position: relative;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 18px;
+  height: 100%;
   padding: 32px 28px 18px;
   border-radius: 24px; 
 }
@@ -689,11 +691,9 @@
 
 .company-context__quick-actions-front {
   width: 100%;
-  height: 100%;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
-  padding-top: 40px;
 }
 
 .company-context__info-grid-front {
@@ -701,7 +701,24 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
+}
+
+.company-context__info-grid-front--identity {
+  margin-top: auto;
+}
+
+.company-context__info-grid-front--job {
   margin-top: 42px;
+}
+
+.company-context__quick-actions-front--identity {
+  margin-top: 18px;
+  padding-top: 0;
+}
+
+.company-context__quick-actions-front--job {
+  margin-top: 0;
+  padding-top: 40px;
 }
 
 .company-context__candidate-adherence {
@@ -2075,6 +2092,47 @@
     object-fit: cover;
     object-position: center; // 👈 controla foco
     display: block;
+  }
+}
+
+.menu-feature-video-candidate--empty {
+  background: #fafafa;
+  border: 2px dashed rgba(47, 50, 50, 0.18);
+  box-shadow: none;
+}
+
+.menu-feature-video-candidate__empty {
+  width: 100%;
+  height: 100%;
+  padding: 32px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 10px;
+  color: #767676;
+
+  .material-symbols-rounded {
+    font-size: 48px;
+    color: #9a9a9a;
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400;
+  }
+
+  strong {
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 800;
+    color: #3a3a3a;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    max-width: 320px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #7b7b7b;
   }
 }
 

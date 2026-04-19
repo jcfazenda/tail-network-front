@@ -325,7 +325,7 @@
         <div class="company-context__profile-card">
 
 
-          <div class="company-context__info-grid-front">
+          <div class="company-context__info-grid-front company-context__info-grid-front--identity">
 
             <div class="company-context__info-item">
               <span class="material-symbols-rounded">mail</span>
@@ -360,7 +360,7 @@
             </div>
 
           </div>
-          <div class="company-context__quick-actions-front">
+          <div class="company-context__quick-actions-front company-context__quick-actions-front--identity">
             <button class="company-context__quick-action" type="button">
               <span class="material-symbols-rounded">record_voice_over</span>
               <span>Entrevistas</span>
@@ -565,8 +565,8 @@
                       <span>{{ candidate.role }}</span>
                     </div>
 
-                    <button type="button" class="empresa-vaga-talent-card__action" aria-label="Abrir perfil" (click)="selectCandidate(candidate.id); $event.stopPropagation()">
-                      <span class="material-symbols-rounded">badge</span>
+                    <button type="button" class="empresa-vaga-talent-card__action" aria-label="Ver candidato" (click)="selectCandidate(candidate.id); $event.stopPropagation()">
+                      <span class="material-symbols-rounded">search</span>
                     </button>
                   </div>
 
@@ -657,44 +657,8 @@
                   <strong class="company-context__candidate-education-title">{{ selectedCompanyCandidateEducationLabel }}</strong>
                   <small class="company-context__candidate-education-chip">{{ selectedCompanyCandidateEducationStatus }}</small>
                 </div>
-              </div>
+              </div> 
 
-
-          <div class="company-context__info-grid-front">
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">mail</span>
-              <div class="company-context__info-copy">
-                <span>Email</span>
-                <strong>{{ selectedCompanyEmail }}</strong>
-              </div>
-            </div>
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">language</span>
-              <div class="company-context__info-copy">
-                <span>Website</span>
-                <strong>{{ selectedCompanyWebsite }}</strong>
-              </div>
-            </div>
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">location_on</span>
-              <div class="company-context__info-copy">
-                <span>Location</span>
-                <strong>{{ selectedCompanyLocation }}</strong>
-              </div>
-            </div>
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">insights</span>
-              <div class="company-context__info-copy">
-                <span>Hiring</span>
-                <strong>{{ selectedCompanyMonthlyHiringLabel }}</strong>
-              </div>
-            </div>
-
-          </div>
 
             <!-- ADERENCIA CANDIDATO -->
             <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
@@ -730,32 +694,81 @@
       <div class="company-context__company-panel company-context__company-panel--bottom">
 
 
-            <!-- VIDEO DO CANDIDATO -->
-            <div class="menu-feature-card-candidate" *ngIf="hasSelectedCompanyCandidateVideo">
-  
-                <div class="title-candidate-video">
-                    <h3>Sobre mim</h3>
-                    <p class="job-side-match__desc">
-                      Saiba um pouco sobre mim e minhas habilidades ditas de forma mais informal.
-                    </p> 
-                </div>
+        <!-- VIDEO DO CANDIDATO -->
+        <div class="menu-feature-card-candidate">
 
-
-              <div class="menu-feature-video-candidate">
-                <video
-                  class="menu-feature-video__player"
-                  [src]="selectedCompanyCandidateVideoUrl"
-                  [poster]="selectedCompanyCandidatePosterUrl"
-                  controls
-                  playsinline
-                  preload="metadata"></video>
-              </div>
+            <div class="title-candidate-video">
+                <h3>{{ hasSelectedCompanyCandidateVideo ? 'Sobre mim' : 'Sem Video' }}</h3>
+                <p class="job-side-match__desc">
+                  {{ hasSelectedCompanyCandidateVideo
+                    ? 'Saiba um pouco sobre mim e minhas habilidades ditas de forma mais informal.'
+                    : 'O candidato ainda nao publicou um video para vc ver.' }}
+                </p> 
             </div>
 
+
+          <div
+            class="menu-feature-video-candidate"
+            [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
+            <video
+              *ngIf="hasSelectedCompanyCandidateVideo; else candidateVideoEmptyState"
+              class="menu-feature-video__player"
+              [src]="selectedCompanyCandidateVideoUrl"
+              [poster]="selectedCompanyCandidatePosterUrl"
+              controls
+              playsinline
+              preload="metadata"></video>
+
+            <ng-template #candidateVideoEmptyState>
+              <div class="menu-feature-video-candidate__empty">
+                <span class="material-symbols-rounded">videocam_off</span>
+                <strong>Sem Video</strong>
+                <p>O candidato ainda nao publicou um video para vc ver.</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
             
+        <div class="company-context__info-grid-front company-context__info-grid-front--job">
+
+          <div class="company-context__info-item">
+            <span class="material-symbols-rounded">mail</span>
+            <div class="company-context__info-copy">
+              <span>Email</span>
+              <strong>{{ selectedCompanyEmail }}</strong>
+            </div>
+          </div>
+
+          <div class="company-context__info-item">
+            <span class="material-symbols-rounded">language</span>
+            <div class="company-context__info-copy">
+              <span>Website</span>
+              <strong>{{ selectedCompanyWebsite }}</strong>
+            </div>
+          </div>
+
+          <div class="company-context__info-item">
+            <span class="material-symbols-rounded">location_on</span>
+            <div class="company-context__info-copy">
+              <span>Location</span>
+              <strong>{{ selectedCompanyLocation }}</strong>
+            </div>
+          </div>
+
+          <div class="company-context__info-item">
+            <span class="material-symbols-rounded">insights</span>
+            <div class="company-context__info-copy">
+              <span>Hiring</span>
+              <strong>{{ selectedCompanyMonthlyHiringLabel }}</strong>
+            </div>
+          </div>
+
+        </div>
+
         <div class="company-context__profile-card company-context__profile-card--bottom-candidate">  
 
-          <div class="company-context__quick-actions-front">
+          <div class="company-context__quick-actions-front company-context__quick-actions-front--job">
             <button class="company-context__quick-action" type="button">
               <span class="material-symbols-rounded">record_voice_over</span>
               <span>Entrevistas</span>
@@ -775,6 +788,7 @@
           </div>
 
         </div>
+
       </div>
     </div>
 
