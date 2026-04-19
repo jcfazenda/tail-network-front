@@ -1,0 +1,52 @@
+<div class="chat-candidato">
+  <div class="chat-candidato__messages">
+    <div
+      class="chat-candidato__message"
+      *ngFor="let message of messages"
+      [class.chat-candidato__message--recruiter]="message.author === 'recruiter'"
+      [class.chat-candidato__message--candidate]="message.author === 'candidate'">
+      <div
+        class="chat-candidato__bubble"
+        [class.chat-candidato__bubble--recruiter]="message.author === 'recruiter'"
+        [class.chat-candidato__bubble--candidate]="message.author === 'candidate'">
+        <p>{{ message.text }}</p>
+      </div>
+      <span class="chat-candidato__time">{{ message.time }}</span>
+    </div>
+  </div>
+
+  <div class="chat-candidato__composer">
+    <label class="chat-candidato__composer-field">
+      <span class="material-symbols-rounded">edit_note</span>
+      <input
+        type="text"
+        [(ngModel)]="draftMessage"
+        placeholder="Ask me anything..."
+        (keydown.enter)="sendMessage()" />
+    </label>
+
+    <div class="chat-candidato__composer-actions">
+      <button type="button" class="chat-candidato__action-pill chat-candidato__action-pill--source">
+        <span>Select Source</span>
+        <span class="material-symbols-rounded">expand_more</span>
+      </button>
+
+      <div class="chat-candidato__action-group">
+        <button type="button" class="chat-candidato__action-pill">
+          <span class="material-symbols-rounded">attach_file</span>
+          <span>Attach</span>
+        </button>
+
+        <button type="button" class="chat-candidato__action-pill">
+          <span class="material-symbols-rounded">mic</span>
+          <span>Voice</span>
+        </button>
+
+        <button type="button" class="chat-candidato__send" (click)="sendMessage()">
+          <span class="material-symbols-rounded">arrow_upward</span>
+          <span>Send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

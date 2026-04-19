@@ -11,6 +11,7 @@ import { LocalMediaStorageService } from '../../core/storage/local-media-storage
 import { CompanyRecord } from '../empresa.models';
 import { RecruiterRecord } from '../../recruiter/recruiter.models';
 import { MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
+import { ChatCandidatoComponent } from '../../vagas/chat-candidato/chat-candidato.component';
 import { SeededTalentProfile, TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
@@ -95,7 +96,7 @@ type CompanyViewModel = {
 @Component({
   standalone: true,
   selector: 'app-empresa-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChatCandidatoComponent],
   templateUrl: './empresa.page.html',
   styleUrls: ['./empresa.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -225,7 +226,7 @@ export class EmpresaPage implements OnDestroy {
   currentPage = 1;
   readonly pageSize = 6;
   candidateCurrentPage = 1;
-  readonly candidatePageSize = 8;
+  readonly candidatePageSize = 14;
 
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
@@ -875,6 +876,56 @@ export class EmpresaPage implements OnDestroy {
 
   trackCandidate(_index: number, candidate: CompanyCandidateVm): string {
     return candidate.id;
+  }
+
+  getCandidateStateCode(location: string | undefined): string {
+    const normalized = location?.trim() || '';
+    if (!normalized) {
+      return '--';
+    }
+
+    const segments = normalized.split('-').map((part) => part.trim()).filter(Boolean);
+    const lastSegment = segments[segments.length - 1] || normalized;
+
+    if (lastSegment.length <= 3) {
+      return lastSegment.toUpperCase();
+    }
+
+    const mapped = this.brazilStateAbbreviations[lastSegment];
+    if (mapped) {
+      return mapped;
+    }
+
+    return lastSegment.slice(0, 2).toUpperCase();
+  }
+
+  getCandidatePrimaryStack(candidate: CompanyCandidateVm): { label: string; match: number; isAdherence: boolean } | null {
+    return candidate.topStacks[0] ?? null;
+  }
+
+  getCandidateCardSpecialty(role: string | undefined): string {
+    const normalized = role?.trim() || '';
+    if (!normalized) {
+      return 'Especialidade não informada';
+    }
+
+    return normalized
+      .split('•')[0]
+      .split(' - ')[0]
+      .trim();
+  }
+
+  getCandidateCardMatch(candidate: CompanyCandidateVm): number | null {
+    return candidate.topStacks[0]?.match ?? null;
+  }
+
+  getCandidateCardMatchLabel(candidate: CompanyCandidateVm): string | null {
+    const match = this.getCandidateCardMatch(candidate);
+    if (match === null) {
+      return null;
+    }
+
+    return String(Math.min(99, Math.max(0, Math.round(match)))).padStart(2, '0');
   }
 
   trackCandidateStack(_index: number, stack: { label: string; match: number }): string {
