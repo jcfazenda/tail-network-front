@@ -74,6 +74,12 @@ type CompanyCandidateVm = {
   videoUrl?: string;
   videoPosterUrl?: string;
   topStacks: Array<{ label: string; match: number; isAdherence: boolean }>;
+  timeline: Array<{
+    id: string;
+    label: string;
+    icon: string;
+    state: 'done' | 'current' | 'pending' | 'cancelled';
+  }>;
 };
 
 type CompanyViewModel = {
@@ -874,6 +880,13 @@ export class EmpresaPage implements OnDestroy {
     return `${stack.label}:${stack.match}`;
   }
 
+  trackCandidateTimelineStage(
+    _index: number,
+    stage: { id: string; label: string; state: 'done' | 'current' | 'pending' | 'cancelled' },
+  ): string {
+    return `${stage.id}:${stage.label}:${stage.state}`;
+  }
+
   trackPage(_index: number, page: number): number {
     return page;
   }
@@ -1508,6 +1521,7 @@ export class EmpresaPage implements OnDestroy {
               videoUrl: candidateProfile?.basicDraft.candidateVideoUrl?.trim() || undefined,
               videoPosterUrl: candidateProfile?.basicDraft.candidateVideoPosterUrl?.trim() || undefined,
               topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 3),
+              timeline: this.buildCandidateTimeline(candidate.match, index),
             };
           })
       : [];
@@ -1556,6 +1570,41 @@ export class EmpresaPage implements OnDestroy {
     }
 
     return [current - 1, current, current + 1, current + 2];
+  }
+
+  private buildCandidateTimeline(
+    rawMatch: number | undefined,
+    index: number,
+  ): Array<{ id: string; label: string; icon: string; state: 'done' | 'current' | 'pending' | 'cancelled' }> {
+    const match = this.matchDomainService.clampScore(rawMatch || 0);
+    const isCancelled = match <= 55 && index % 2 === 0;
+    const finalLabel = isCancelled ? 'Cancelado' : 'Contratado';
+
+    let currentIndex = 1;
+    if (match >= 90 || isCancelled) {
+      currentIndex = 3;
+    } else if (match >= 72) {
+      currentIndex = 2;
+    }
+
+    const stages = [
+      { id: 'radar', label: 'Radar', icon: 'radar' },
+      { id: 'candidate', label: 'Candidato', icon: 'person_search' },
+      { id: 'screening', label: 'Triagem', icon: 'checklist' },
+      { id: 'outcome', label: finalLabel, icon: isCancelled ? 'cancel' : 'verified' },
+    ];
+
+    return stages.map((stage, stageIndex) => {
+      if (stageIndex < currentIndex) {
+        return { ...stage, state: 'done' as const };
+      }
+
+      if (stageIndex === currentIndex) {
+        return { ...stage, state: isCancelled && stageIndex === 3 ? 'cancelled' as const : 'current' as const };
+      }
+
+      return { ...stage, state: 'pending' as const };
+    });
   }
 
   private syncCompanySelectorCurrentPage(): void {

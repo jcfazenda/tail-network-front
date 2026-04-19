@@ -692,53 +692,74 @@
 
     <div class="empresa-page__column-down empresa-page__column--bottom" *ngIf="centerView === 'job'">
       <div class="company-context__company-panel company-context__company-panel--bottom">
- 
-        <!-- VIDEO DO CANDIDATO -->
-        <div class="menu-feature-card-candidate"> 
-          <div
-            class="menu-feature-video-candidate"
-            [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
-            <video
-              *ngIf="hasSelectedCompanyCandidateVideo; else candidateVideoEmptyState"
-              class="menu-feature-video__player"
-              [src]="selectedCompanyCandidateVideoUrl"
-              [poster]="selectedCompanyCandidatePosterUrl"
-              controls
-              playsinline
-              preload="metadata"></video>
+        <div class="company-context__bottom-stack">
+          <!-- VIDEO DO CANDIDATO -->
+          <div class="menu-feature-card-candidate"> 
+            <div
+              class="menu-feature-video-candidate"
+              [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
+              <video
+                *ngIf="hasSelectedCompanyCandidateVideo; else candidateVideoEmptyState"
+                class="menu-feature-video__player"
+                [src]="selectedCompanyCandidateVideoUrl"
+                [poster]="selectedCompanyCandidatePosterUrl"
+                controls
+                playsinline
+                preload="metadata"></video>
 
-            <ng-template #candidateVideoEmptyState>
-              <div class="menu-feature-video-candidate__empty">
-                <span class="material-symbols-rounded">videocam_off</span>
-                <strong>Sem Video</strong>
-                <p>O candidato ainda nao publicou um video para vc ver.</p>
-              </div>
-            </ng-template>
+              <ng-template #candidateVideoEmptyState>
+                <div class="menu-feature-video-candidate__empty">
+                  <span class="material-symbols-rounded">videocam_off</span>
+                  <strong>Sem Video</strong>
+                  <p>O candidato ainda nao publicou um video para vc ver.</p>
+                </div>
+              </ng-template>
+            </div>
           </div>
-        </div>
 
-            
+              
+          <div class="empresa-candidate-timeline" *ngIf="selectedCompanyCandidate as candidate">
+            <div
+              class="empresa-candidate-timeline__step"
+              *ngFor="let stage of candidate.timeline; let isLast = last; trackBy: trackCandidateTimelineStage"
+              [class.empresa-candidate-timeline__step--done]="stage.state === 'done'"
+              [class.empresa-candidate-timeline__step--current]="stage.state === 'current'"
+              [class.empresa-candidate-timeline__step--pending]="stage.state === 'pending'"
+              [class.empresa-candidate-timeline__step--cancelled]="stage.state === 'cancelled'">
+              <div
+                class="empresa-candidate-timeline__line"
+                *ngIf="!isLast"
+                [class.empresa-candidate-timeline__line--active]="stage.state === 'done' || stage.state === 'current' || stage.state === 'cancelled'"></div>
 
+              <div class="empresa-candidate-timeline__marker">
+                <span class="material-symbols-rounded">{{ stage.icon }}</span>
+              </div>
 
-        <div class="company-context__profile-card company-context__profile-card--bottom-candidate">  
+              <span class="empresa-candidate-timeline__label">{{ stage.label }}</span>
+            </div>
+          </div>
 
-          <div class="company-context__quick-actions-front company-context__quick-actions-front--job">
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">record_voice_over</span>
-              <span>Entrevistas</span>
-            </button>
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">mail</span>
-              <span>Message</span>
-            </button>
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">chat</span>
-              <span>Chat</span>
-            </button>
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">videocam</span>
-              <span>Videos</span>
-            </button>
+          <div class="company-context__profile-card company-context__profile-card--bottom-candidate">  
+
+            <div class="company-context__quick-actions-front company-context__quick-actions-front--job">
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">record_voice_over</span>
+                <span>Entrevistas</span>
+              </button>
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">mail</span>
+                <span>Message</span>
+              </button>
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">chat</span>
+                <span>Chat</span>
+              </button>
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">videocam</span>
+                <span>Videos</span>
+              </button>
+            </div>
+
           </div>
 
         </div>
