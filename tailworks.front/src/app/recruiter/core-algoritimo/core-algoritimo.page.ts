@@ -294,7 +294,7 @@ export class CoreAlgoritimoPage implements OnInit, OnDestroy {
     this.ecosystemEntryService.setMode('talent');
     this.jobsFacade.signInAsTalent(session.name, session.location);
     this.loginStatus = `Entrando como ${account.name}.`;
-    void this.router.navigateByUrl('/usuario/ecossistema');
+    void this.router.navigateByUrl('/usuario/dados-cadastrais');
   }
 
   async signInAsCandidateEntry(entry: MatchLabRankingEntry): Promise<void> {

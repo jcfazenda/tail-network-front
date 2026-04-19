@@ -59,7 +59,7 @@ export class HomePage {
     if (!this.authService.canUseTalent() || this.authService.canUseRecruiter()) {
       void this.router.navigate(['/login'], {
         queryParams: {
-          returnUrl: '/usuario/ecossistema',
+          returnUrl: '/usuario/dados-cadastrais',
         },
       });
       return;
@@ -73,7 +73,7 @@ export class HomePage {
 
     this.ecosystemEntryService.setMode('talent');
     this.jobsFacade.signInAsTalent(session?.name ?? 'Talento', session?.location);
-    void this.router.navigateByUrl('/usuario/ecossistema');
+    void this.router.navigateByUrl('/usuario/dados-cadastrais');
   }
 
   protected async resetWorkspace(event: Event): Promise<void> {

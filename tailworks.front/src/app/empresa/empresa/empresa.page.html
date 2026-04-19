@@ -16,58 +16,28 @@
       <div class="empresa-page__topbar-right">
 
         <div class="empresa-filter-block">
-          <button
-            *ngIf="isCompanyFilterOpen"
-            type="button"
-            class="empresa-filter__backdrop"
-            aria-label="Fechar lista de empresas"
-            (click)="closeCompanyFilter()">
-          </button>
-
-          <span class="empresa-filter__label">Empresa selecionada</span>
-
           <div class="empresa-filter-row">
             <div class="empresa-filter">
               <button
                 type="button"
                 class="empresa-filter__trigger"
-                [attr.aria-expanded]="isCompanyFilterOpen"
-                (click)="toggleCompanyFilter()">
-                <span class="material-symbols-rounded empresa-filter__icon" aria-hidden="true">apartment</span>
+                [attr.aria-expanded]="isCompanySelectorModalOpen"
+                (click)="openCompanySelectorModal()">
+                <div class="empresa-filter__trigger-side">
+                  <span class="empresa-filter__trigger-action">Escolher empresa</span>
+                  <div class="empresa-filter__trigger-icons" aria-hidden="true">
+                    <span class="empresa-filter__icon-chip">
+                      <span class="material-symbols-rounded">chat</span>
+                      <span class="empresa-filter__icon-badge">2</span>
+                    </span>
 
-                <div class="empresa-filter__trigger-copy" *ngIf="selectedCompanySelectionOption as option">
-                  <div class="empresa-filter__trigger-title">{{ option.company.name }}</div>
-                  <div class="empresa-filter__trigger-meta">{{ option.formattedLocation }}</div>
+                    <span class="empresa-filter__icon-chip">
+                      <span class="material-symbols-rounded">notifications</span>
+                      <span class="empresa-filter__icon-badge">3</span>
+                    </span>
+                  </div>
                 </div>
-
-                <span class="material-symbols-rounded empresa-filter__arrow" aria-hidden="true">
-                  {{ isCompanyFilterOpen ? 'expand_less' : 'expand_more' }}
-                </span>
               </button>
-
-              <div class="empresa-filter__menu" *ngIf="isCompanyFilterOpen">
-                <button
-                  *ngFor="let option of companySelectionOptions; trackBy: trackCompanyOption"
-                  type="button"
-                  class="empresa-filter__option"
-                  [class.empresa-filter__option--active]="option.company.id === selectedCompanyId"
-                  (click)="onSelectedCompanyChange(option.company.id)">
-                  <div class="empresa-filter__option-main">
-                    <strong>{{ option.company.name }}</strong>
-                    <span>{{ option.formattedLocation }}</span>
-                  </div>
-
-                  <div class="empresa-filter__option-side">
-                    <span class="empresa-filter__option-count">{{ option.jobCount }}</span>
-                    <span class="empresa-filter__option-label">vagas abertas</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            <div class="empresa-filter__outside-badge" *ngIf="selectedCompanySelectionOption as option">
-              <strong>{{ option.jobCount }}</strong>
-              <span>vagas abertas</span>
             </div>
           </div>
         </div>
@@ -810,6 +780,84 @@
 
   </div>
 
+</div>
+
+<div class="empresa-company-selector" *ngIf="isCompanySelectorModalOpen">
+  <button
+    type="button"
+    class="empresa-company-selector__backdrop"
+    aria-label="Fechar seletor de empresas"
+    (click)="closeCompanySelectorModal()">
+  </button>
+
+  <div class="empresa-company-selector__dialog" role="dialog" aria-modal="true" aria-label="Selecionar empresa">
+    <div class="empresa-company-selector__header">
+      <div>
+        <strong>Escolher empresa</strong>
+        <span>Selecione a empresa para atualizar a visão da página.</span>
+      </div>
+
+      <button type="button" class="empresa-company-selector__close" (click)="closeCompanySelectorModal()">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <div class="empresa-company-selector__grid">
+      <button
+        *ngFor="let option of pagedCompanySelectionOptions; trackBy: trackCompanyOption"
+        type="button"
+        class="empresa-company-selector__card"
+        [class.empresa-company-selector__card--active]="option.company.id === selectedCompanyId"
+        (click)="onSelectedCompanyChange(option.company.id)">
+        <div class="empresa-company-selector__card-top">
+          <div class="company-card__logo empresa-company-selector__logo" [class.company-card__logo--placeholder]="!option.company.logoUrl?.trim()">
+            <img [src]="option.company.logoUrl?.trim() || 'assets/images/logo-tail.png'" [alt]="option.company.name" />
+          </div>
+
+          <div class="empresa-company-selector__badge">
+            <strong>{{ option.jobCount }}</strong>
+            <span>vagas</span>
+          </div>
+        </div>
+
+        <div class="empresa-company-selector__copy">
+          <strong>{{ option.company.name }}</strong>
+          <span>{{ option.formattedLocation }}</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="empresa-company-selector__footer" *ngIf="companySelectorTotalPages > 1">
+      <button
+        type="button"
+        class="empresa-company-selector__nav empresa-company-selector__nav--ghost"
+        [disabled]="companySelectorCurrentPage === 1"
+        (click)="setCompanySelectorPage(companySelectorCurrentPage - 1)">
+        <span class="material-symbols-rounded">chevron_left</span>
+        <span>Anterior</span>
+      </button>
+
+      <div class="empresa-company-selector__pages">
+        <button
+          *ngFor="let page of companySelectorVisiblePages; trackBy: trackPage"
+          type="button"
+          class="empresa-company-selector__page"
+          [class.empresa-company-selector__page--active]="page === companySelectorCurrentPage"
+          (click)="setCompanySelectorPage(page)">
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="empresa-company-selector__nav empresa-company-selector__nav--primary"
+        [disabled]="companySelectorCurrentPage === companySelectorTotalPages"
+        (click)="setCompanySelectorPage(companySelectorCurrentPage + 1)">
+        <span>Próxima</span>
+        <span class="material-symbols-rounded">chevron_right</span>
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="empresa-modal" *ngIf="isModalOpen">

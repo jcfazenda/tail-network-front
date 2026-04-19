@@ -13,18 +13,9 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
     data: { title: 'Principal' },
   },
-  {
-    path: 'home/ecossistema',
-    loadComponent: () => import('./home/ecossistema/ecossistema.page').then((m) => m.EcossistemaPage),
-    data: { title: 'Ecossistema (Template)' },
-  },
-  { path: 'usuario', redirectTo: 'usuario/ecossistema', pathMatch: 'full' },
-  {
-    path: 'usuario/ecossistema',
-    loadComponent: () => import('./usuario/ecossistema/usuario-ecossistema.page').then((m) => m.UsuarioEcossistemaPage),
-    data: { title: 'Ecossistema' },
-    canActivate: [talentAuthGuard],
-  },
+  { path: 'home/ecossistema', redirectTo: 'empresa', pathMatch: 'full' },
+  { path: 'usuario', redirectTo: 'usuario/dados-cadastrais', pathMatch: 'full' },
+  { path: 'usuario/ecossistema', redirectTo: 'usuario/dados-cadastrais', pathMatch: 'full' },
   {
     path: 'usuario/dados-cadastrais',
     loadComponent: () => import('./usuario/usuario.page').then((m) => m.UsuarioPage),

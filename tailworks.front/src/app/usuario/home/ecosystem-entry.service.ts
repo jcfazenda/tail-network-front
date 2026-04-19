@@ -35,9 +35,7 @@ export class EcosystemEntryService {
     }
 
     if (
-      primaryPath === '/home/ecossistema'
-      || primaryPath.startsWith('/home/ecossistema')
-      || primaryPath.startsWith('/recruiter')
+      primaryPath.startsWith('/recruiter')
       || primaryPath.startsWith('/empresa')
       || primaryPath === '/vagas'
       || primaryPath === '/radar'

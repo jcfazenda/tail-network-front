@@ -112,7 +112,7 @@ export class TopbarComponent {
   }
 
   get isTemplateLanding(): boolean {
-    return this.primaryPath === '/home/ecossistema';
+    return false;
   }
 
   get isCadastroPage(): boolean {
@@ -128,7 +128,7 @@ export class TopbarComponent {
   }
 
   get isCandidateEcosystem(): boolean {
-    return this.primaryPath === '/usuario/ecossistema';
+    return false;
   }
 
   get isRecruiterEcosystem(): boolean {
@@ -136,7 +136,7 @@ export class TopbarComponent {
   }
 
   get isAnyEcosystem(): boolean {
-    return this.primaryPath === '/home/ecossistema' || this.primaryPath === '/usuario/ecossistema';
+    return false;
   }
 
   get hasSavedEcosystemFilters(): boolean {
@@ -625,7 +625,7 @@ export class TopbarComponent {
   private readEcosystemJobs(): MockJobRecord[] {
     const jobs = this.jobsFacade.getJobs().filter((job) => job.status === 'ativas');
 
-    if (this.primaryPath === '/home/ecossistema') {
+    if (this.primaryPath === '/empresa') {
       return jobs.filter((job) => this.jobsFacade.canCurrentRecruiterAccessJob(job));
     }
 

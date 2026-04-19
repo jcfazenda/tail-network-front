@@ -207,6 +207,7 @@ export class EmpresaPage implements OnDestroy {
   private recruiterPosterResolveToken = 0;
   private selectedCompanyCandidatePosterResolvedUrl = 'assets/images/image-video.png';
   private candidatePosterResolveToken = 0;
+  private readonly companySelectorPageSize = 4;
 
   searchTerm = '';
   statusFilter: CompanyStatusFilter = 'all';
@@ -225,7 +226,8 @@ export class EmpresaPage implements OnDestroy {
   modalError = '';
 
   isFilterModalOpen = false;
-  isCompanyFilterOpen = false;
+  isCompanySelectorModalOpen = false;
+  companySelectorCurrentPage = 1;
 
   companyForm: CompanyFormModel = this.createEmptyForm();
   selectedCompanyId = '';
@@ -329,6 +331,19 @@ export class EmpresaPage implements OnDestroy {
   get selectedCompanySelectionOption(): CompanyViewModel | undefined {
     return this.companySelectionOptions.find((option) => option.company.id === this.selectedCompanyId)
       ?? this.selectedCompany;
+  }
+
+  get companySelectorTotalPages(): number {
+    return Math.max(1, Math.ceil(this.companySelectionOptions.length / this.companySelectorPageSize));
+  }
+
+  get companySelectorVisiblePages(): number[] {
+    return this.buildVisiblePages(this.companySelectorTotalPages, this.companySelectorCurrentPage);
+  }
+
+  get pagedCompanySelectionOptions(): CompanyViewModel[] {
+    const start = (this.companySelectorCurrentPage - 1) * this.companySelectorPageSize;
+    return this.companySelectionOptions.slice(start, start + this.companySelectorPageSize);
   }
 
   get selectedCompanyRecord(): CompanyRecord | null {
@@ -867,23 +882,34 @@ export class EmpresaPage implements OnDestroy {
     return option.company.id;
   }
 
-  toggleCompanyFilter(): void {
-    this.isCompanyFilterOpen = !this.isCompanyFilterOpen;
+  openCompanySelectorModal(): void {
+    this.syncCompanySelectorCurrentPage();
+    this.isCompanySelectorModalOpen = true;
     this.cdr.markForCheck();
   }
 
-  closeCompanyFilter(): void {
-    if (!this.isCompanyFilterOpen) {
+  closeCompanySelectorModal(): void {
+    if (!this.isCompanySelectorModalOpen) {
       return;
     }
 
-    this.isCompanyFilterOpen = false;
+    this.isCompanySelectorModalOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  setCompanySelectorPage(page: number): void {
+    const safePage = Math.min(Math.max(page, 1), this.companySelectorTotalPages);
+    if (safePage === this.companySelectorCurrentPage) {
+      return;
+    }
+
+    this.companySelectorCurrentPage = safePage;
     this.cdr.markForCheck();
   }
 
   selectCompany(companyId: string): void {
     if (this.selectedCompanyId === companyId) {
-      this.closeCompanyFilter();
+      this.closeCompanySelectorModal();
       return;
     }
 
@@ -891,7 +917,7 @@ export class EmpresaPage implements OnDestroy {
     this.selectedCompanyJobId = '';
     this.candidateCurrentPage = 1;
     this.activeDetailTab = 'recruiters';
-    this.isCompanyFilterOpen = false;
+    this.isCompanySelectorModalOpen = false;
     this.rebuildSelectedCompanySnapshot();
     this.cdr.markForCheck();
   }
@@ -1313,6 +1339,7 @@ export class EmpresaPage implements OnDestroy {
     }
 
     this.rebuildSelectedCompanySnapshot();
+    this.syncCompanySelectorCurrentPage();
 
     if (markForCheck) {
       this.cdr.markForCheck();
@@ -1529,6 +1556,18 @@ export class EmpresaPage implements OnDestroy {
     }
 
     return [current - 1, current, current + 1, current + 2];
+  }
+
+  private syncCompanySelectorCurrentPage(): void {
+    const totalPages = this.companySelectorTotalPages;
+    const selectedIndex = this.companySelectionOptions.findIndex((option) => option.company.id === this.selectedCompanyId);
+
+    if (selectedIndex >= 0) {
+      this.companySelectorCurrentPage = Math.floor(selectedIndex / this.companySelectorPageSize) + 1;
+      return;
+    }
+
+    this.companySelectorCurrentPage = Math.min(Math.max(this.companySelectorCurrentPage, 1), totalPages);
   }
 
   private resolveDefaultSelectedCompanyId(): string {

@@ -44,7 +44,7 @@ export class AppShellComponent {
   }
 
   get isCandidateEcosystem(): boolean {
-    return this.primaryPath === '/usuario/ecossistema';
+    return false;
   }
 
   get isCandidateBasicDataPage(): boolean {
@@ -61,7 +61,7 @@ export class AppShellComponent {
   }
 
   get isTemplateEcosystem(): boolean {
-    return this.primaryPath === '/home/ecossistema';
+    return false;
   }
 
   get isJobCreatePage(): boolean {
