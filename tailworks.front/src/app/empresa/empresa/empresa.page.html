@@ -692,21 +692,9 @@
 
     <div class="empresa-page__column-down empresa-page__column--bottom" *ngIf="centerView === 'job'">
       <div class="company-context__company-panel company-context__company-panel--bottom">
-
-
+ 
         <!-- VIDEO DO CANDIDATO -->
-        <div class="menu-feature-card-candidate">
-
-            <div class="title-candidate-video">
-                <h3>{{ hasSelectedCompanyCandidateVideo ? 'Sobre mim' : 'Sem Video' }}</h3>
-                <p class="job-side-match__desc">
-                  {{ hasSelectedCompanyCandidateVideo
-                    ? 'Saiba um pouco sobre mim e minhas habilidades ditas de forma mais informal.'
-                    : 'O candidato ainda nao publicou um video para vc ver.' }}
-                </p> 
-            </div>
-
-
+        <div class="menu-feature-card-candidate"> 
           <div
             class="menu-feature-video-candidate"
             [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
@@ -730,41 +718,7 @@
         </div>
 
             
-        <div class="company-context__info-grid-front company-context__info-grid-front--job">
 
-          <div class="company-context__info-item">
-            <span class="material-symbols-rounded">mail</span>
-            <div class="company-context__info-copy">
-              <span>Email</span>
-              <strong>{{ selectedCompanyEmail }}</strong>
-            </div>
-          </div>
-
-          <div class="company-context__info-item">
-            <span class="material-symbols-rounded">language</span>
-            <div class="company-context__info-copy">
-              <span>Website</span>
-              <strong>{{ selectedCompanyWebsite }}</strong>
-            </div>
-          </div>
-
-          <div class="company-context__info-item">
-            <span class="material-symbols-rounded">location_on</span>
-            <div class="company-context__info-copy">
-              <span>Location</span>
-              <strong>{{ selectedCompanyLocation }}</strong>
-            </div>
-          </div>
-
-          <div class="company-context__info-item">
-            <span class="material-symbols-rounded">insights</span>
-            <div class="company-context__info-copy">
-              <span>Hiring</span>
-              <strong>{{ selectedCompanyMonthlyHiringLabel }}</strong>
-            </div>
-          </div>
-
-        </div>
 
         <div class="company-context__profile-card company-context__profile-card--bottom-candidate">  
 
