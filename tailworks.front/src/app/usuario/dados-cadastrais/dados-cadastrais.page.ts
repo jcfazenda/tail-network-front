@@ -61,6 +61,8 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     this.photoFileName = customEvent.detail?.photoFileName ?? this.photoFileName;
     this.photoError = '';
   };
+  private readonly acceptedPhotoMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  private readonly maxPhotoSizeBytes = 5 * 1024 * 1024;
 
   readonly stateOptions = [
     { value: 'SP', label: 'São Paulo' },
@@ -131,6 +133,10 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     return !!this.candidateVideoPreviewUrl.trim();
   }
 
+  get hasPhotoPreview(): boolean {
+    return !!this.photoPreviewUrl.trim();
+  }
+
   get currentCandidateVideoPosterUrl(): string {
     return this.candidateVideoPosterPreviewUrl.trim() || this.photoPreviewUrl || 'assets/images/image-video.png';
   }
@@ -178,6 +184,32 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     void this.router.navigate(['/usuario/dados-cadastrais'], {
       queryParams: { modal: 'formacao' },
     });
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.handlePhotoFile(input?.files?.[0] ?? null);
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  clearPhoto(): void {
+    this.revokePhotoPreviewUrl();
+    this.photoPreviewUrl = '';
+    this.photoFileName = '';
+    this.photoError = '';
+    this.persistDraft();
+    window.dispatchEvent(
+      new CustomEvent(DadosCadastraisPage.photoUpdatedEventName, {
+        detail: {
+          photoPreviewUrl: '',
+          photoFileName: '',
+        },
+      }),
+    );
+    this.cdr.markForCheck();
   }
 
   async onCandidateVideoSelected(event: Event): Promise<void> {
@@ -358,6 +390,53 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     }
 
     URL.revokeObjectURL(this.photoPreviewUrl);
+    this.photoPreviewUrl = '';
+  }
+
+  private handlePhotoFile(file: File | null): void {
+    this.photoError = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.acceptedPhotoMimeTypes.includes(file.type)) {
+      this.photoError = 'Use JPG, PNG, GIF ou WEBP.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (file.size > this.maxPhotoSizeBytes) {
+      this.photoError = 'A foto deve ter no máximo 5MB.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.revokePhotoPreviewUrl();
+      this.photoPreviewUrl = typeof reader.result === 'string' ? reader.result : '';
+      this.photoFileName = file.name;
+      this.photoError = '';
+      this.persistDraft();
+      window.dispatchEvent(
+        new CustomEvent(DadosCadastraisPage.photoUpdatedEventName, {
+          detail: {
+            photoPreviewUrl: this.photoPreviewUrl,
+            photoFileName: this.photoFileName,
+          },
+        }),
+      );
+      this.cdr.markForCheck();
+    };
+
+    reader.onerror = () => {
+      this.photoError = 'Não foi possível carregar a foto selecionada.';
+      this.cdr.markForCheck();
+    };
+
+    reader.readAsDataURL(file);
   }
 
   private revokeCandidateVideoPreviewUrl(): void {

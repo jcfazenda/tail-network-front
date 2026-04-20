@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, injec
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthFacade } from '../../core/facades/auth.facade';
 import { CompaniesFacade } from '../../core/facades/companies.facade';
 import { JobsFacade } from '../../core/facades/jobs.facade';
 import { RecruitersFacade } from '../../core/facades/recruiters.facade';
@@ -102,6 +103,7 @@ type CompanyViewModel = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaPage implements OnDestroy {
+  private static readonly candidateBasicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   readonly fallbackAvatarUrl = 'assets/avatars/john-doe.png';
 
   readonly recruiterShowcasePhotos = [
@@ -142,6 +144,7 @@ export class EmpresaPage implements OnDestroy {
   };
 
   private readonly companiesFacade = inject(CompaniesFacade);
+  private readonly authFacade = inject(AuthFacade);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly jobsFacade = inject(JobsFacade);
   private readonly matchDomainService = inject(MatchDomainService);
@@ -210,6 +213,7 @@ export class EmpresaPage implements OnDestroy {
   private recruiterVideoResolveToken = 0;
   private selectedCompanyCandidateVideoResolvedUrl = '';
   private candidateVideoResolveToken = 0;
+  private readonly candidateVideoObjectUrlCache = new Map<string, string>();
   private selectedCompanyRecruiterPosterResolvedUrl = 'assets/images/image-video.png';
   private recruiterPosterResolveToken = 0;
   private selectedCompanyCandidatePosterResolvedUrl = 'assets/images/image-video.png';
@@ -271,6 +275,7 @@ export class EmpresaPage implements OnDestroy {
   ngOnDestroy(): void {
     this.revokeSelectedCompanyRecruiterVideoResolvedUrl();
     this.revokeSelectedCompanyCandidateVideoResolvedUrl();
+    this.revokeCandidateVideoCache();
     this.revokeSelectedCompanyRecruiterPosterResolvedUrl();
     this.revokeSelectedCompanyCandidatePosterResolvedUrl();
     this.subscriptions.unsubscribe();
@@ -453,6 +458,10 @@ export class EmpresaPage implements OnDestroy {
 
   get hasSelectedCompanyCandidateVideo(): boolean {
     return !!this.selectedCompanyCandidate?.videoUrl?.trim() && !!this.selectedCompanyCandidateVideoResolvedUrl;
+  }
+
+  get hasSelectedCompanyCandidateResolvedVideo(): boolean {
+    return !!this.selectedCompanyCandidateVideoResolvedUrl;
   }
 
   get selectedCompanyCandidatePosterUrl(): string {
@@ -928,6 +937,19 @@ export class EmpresaPage implements OnDestroy {
     return String(Math.min(99, Math.max(0, Math.round(match)))).padStart(2, '0');
   }
 
+  toggleCandidateHeroVideo(video: HTMLVideoElement): void {
+    if (video.paused) {
+      void video.play();
+      return;
+    }
+
+    video.pause();
+  }
+
+  toggleCandidateHeroVideoMute(video: HTMLVideoElement): void {
+    video.muted = !video.muted;
+  }
+
   trackCandidateStack(_index: number, stack: { label: string; match: number }): string {
     return `${stack.label}:${stack.match}`;
   }
@@ -1138,12 +1160,60 @@ export class EmpresaPage implements OnDestroy {
       : this.fallbackAvatarUrl;
   }
 
+  private resolveCandidateAvatar(
+    candidateAvatar: string | undefined,
+    candidateProfile: SeededTalentProfile | undefined,
+    candidateName: string,
+  ): string {
+    const profileAvatar = candidateProfile?.basicDraft.photoPreviewUrl?.trim() || '';
+    if (profileAvatar) {
+      return profileAvatar;
+    }
+
+    const draftAvatar = this.resolveCurrentWorkspaceCandidateAvatar(candidateName);
+    if (draftAvatar) {
+      return draftAvatar;
+    }
+
+    return this.resolveAvatar(candidateAvatar);
+  }
+
+  private resolveCurrentWorkspaceCandidateAvatar(candidateName: string): string {
+    const session = this.authFacade.getSession();
+    const rawDraft = localStorage.getItem(EmpresaPage.candidateBasicDraftStorageKey);
+    if (!rawDraft) {
+      return '';
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as {
+        profile?: { name?: string; email?: string };
+        photoPreviewUrl?: string;
+      };
+      const draftAvatar = draft.photoPreviewUrl?.trim() || '';
+      if (!draftAvatar) {
+        return '';
+      }
+
+      const draftName = draft.profile?.name?.trim() || session?.name?.trim() || '';
+      if (!draftName) {
+        return '';
+      }
+
+      return this.normalizeCompanyKey(draftName) === this.normalizeCompanyKey(candidateName)
+        ? draftAvatar
+        : '';
+    } catch {
+      return '';
+    }
+  }
+
   private jobCandidateAvatarBadges(job: MockJobRecord): Array<{ src: string; label: string }> {
     const radarCandidates = this.companyJobCandidates(job);
     const candidateBadges = radarCandidates
       .slice(0, 4)
       .map((candidate) => ({
-        src: this.resolveAvatar(candidate.avatar),
+        src: this.resolveCandidateAvatar(candidate.avatar, this.findTalentProfileByName(candidate.name), candidate.name),
         label: candidate.name,
       }));
 
@@ -1574,7 +1644,7 @@ export class EmpresaPage implements OnDestroy {
               name: candidate.name,
               role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
               location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
-              avatarUrl: this.resolveAvatar(candidate.avatar),
+              avatarUrl: this.resolveCandidateAvatar(candidate.avatar, candidateProfile, candidate.name),
               educationLabel: this.buildCandidateEducationLabel(candidateProfile),
               educationStatus: this.buildCandidateEducationStatus(candidateProfile),
               videoUrl: candidateProfile?.basicDraft.candidateVideoUrl?.trim() || undefined,
@@ -1881,6 +1951,16 @@ export class EmpresaPage implements OnDestroy {
       return;
     }
 
+    const cachedObjectUrl = this.candidateVideoObjectUrlCache.get(candidateVideoRef);
+    if (cachedObjectUrl) {
+      if (resolveToken !== this.candidateVideoResolveToken) {
+        return;
+      }
+      this.selectedCompanyCandidateVideoResolvedUrl = cachedObjectUrl;
+      this.cdr.markForCheck();
+      return;
+    }
+
     try {
       const blob = await this.localMediaStorage.readBlob(candidateVideoRef);
       if (
@@ -1889,9 +1969,13 @@ export class EmpresaPage implements OnDestroy {
       ) {
         return;
       }
-      this.selectedCompanyCandidateVideoResolvedUrl = blob
-        ? URL.createObjectURL(blob)
-        : '';
+      if (!blob) {
+        this.selectedCompanyCandidateVideoResolvedUrl = '';
+      } else {
+        const objectUrl = URL.createObjectURL(blob);
+        this.candidateVideoObjectUrlCache.set(candidateVideoRef, objectUrl);
+        this.selectedCompanyCandidateVideoResolvedUrl = objectUrl;
+      }
     } catch {
       if (resolveToken !== this.candidateVideoResolveToken) {
         return;
@@ -1904,11 +1988,16 @@ export class EmpresaPage implements OnDestroy {
 
   private revokeSelectedCompanyCandidateVideoResolvedUrl(): void {
     if (!this.selectedCompanyCandidateVideoResolvedUrl.startsWith('blob:')) {
+      this.selectedCompanyCandidateVideoResolvedUrl = '';
       return;
     }
 
-    URL.revokeObjectURL(this.selectedCompanyCandidateVideoResolvedUrl);
     this.selectedCompanyCandidateVideoResolvedUrl = '';
+  }
+
+  private revokeCandidateVideoCache(): void {
+    this.candidateVideoObjectUrlCache.forEach((objectUrl) => URL.revokeObjectURL(objectUrl));
+    this.candidateVideoObjectUrlCache.clear();
   }
 
   private async refreshSelectedCompanyCandidatePosterUrl(): Promise<void> {

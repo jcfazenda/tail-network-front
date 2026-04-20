@@ -15,6 +15,7 @@ import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemFilterModalService } from '../ecosystem-filter-modal.service';
 import { RecruitersFacade } from '../../facades/recruiters.facade';
 import { CompaniesFacade } from '../../facades/companies.facade';
+import { TalentProfileStoreService } from '../../../talent/talent-profile-store.service';
 
 type NavItem = { label: string; route: string; icon: string };
 
@@ -88,6 +89,7 @@ export class SidebarComponent {
   private readonly ecosystemFilterModalService = inject(EcosystemFilterModalService);
   private readonly recruitersFacade = inject(RecruitersFacade);
   private readonly companiesFacade = inject(CompaniesFacade);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly currentUrl = toSignal(
@@ -255,17 +257,26 @@ return [
 
   get candidateAvatarUrl(): string {
     const rawDraft = this.browserStorage.getItem(SidebarComponent.basicDraftStorageKey);
-    if (!rawDraft) {
+    if (rawDraft) {
+      try {
+        const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
+        const draftAvatar = draft.photoPreviewUrl?.trim() || '';
+        if (draftAvatar) {
+          return draftAvatar;
+        }
+      } catch {
+        this.browserStorage.removeItem(SidebarComponent.basicDraftStorageKey);
+      }
+    }
+
+    const sessionEmail = this.authService.getSession()?.email?.trim().toLocaleLowerCase('pt-BR');
+    if (!sessionEmail) {
       return '';
     }
 
-    try {
-      const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
-      return draft.photoPreviewUrl?.trim() || '';
-    } catch {
-      this.browserStorage.removeItem(SidebarComponent.basicDraftStorageKey);
-      return '';
-    }
+    return this.talentProfileStore.listProfiles().find((profile) =>
+      profile.email.toLocaleLowerCase('pt-BR') === sessionEmail,
+    )?.basicDraft.photoPreviewUrl?.trim() || '';
   }
 
   get candidateDisplayName(): string {

@@ -16,6 +16,7 @@ import { EcosystemSearchService } from '../ecosystem-search.service';
 import { BrowserStorageService } from '../../storage/browser-storage.service';
 import { EcosystemJobFiltersService } from '../ecosystem-job-filters.service';
 import { EcosystemViewFilterService } from '../ecosystem-view-filter.service';
+import { TalentProfileStoreService } from '../../../talent/talent-profile-store.service';
 
 type FormationCopyDraft = {
   endMonth?: string;
@@ -84,6 +85,7 @@ export class TopbarComponent {
   private readonly ecosystemViewFilterService = inject(EcosystemViewFilterService);
   private readonly sidebarVisibilityService = inject(SidebarVisibilityService);
   private readonly browserStorage = inject(BrowserStorageService);
+  private readonly talentProfileStore = inject(TalentProfileStoreService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   filterCompany = '';
@@ -202,17 +204,26 @@ export class TopbarComponent {
     }
 
     const rawDraft = this.browserStorage.getItem(TopbarComponent.basicDraftStorageKey);
-    if (!rawDraft) {
+    if (rawDraft) {
+      try {
+        const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
+        const draftAvatar = draft.photoPreviewUrl?.trim() || '';
+        if (draftAvatar) {
+          return draftAvatar;
+        }
+      } catch {
+        this.browserStorage.removeItem(TopbarComponent.basicDraftStorageKey);
+      }
+    }
+
+    const sessionEmail = this.authFacade.getSession()?.email?.trim().toLocaleLowerCase('pt-BR');
+    if (!sessionEmail) {
       return '';
     }
 
-    try {
-      const draft = JSON.parse(rawDraft) as CandidateBasicDraft;
-      return draft.photoPreviewUrl?.trim() || '';
-    } catch {
-      this.browserStorage.removeItem(TopbarComponent.basicDraftStorageKey);
-      return '';
-    }
+    return this.talentProfileStore.listProfiles().find((profile) =>
+      profile.email.toLocaleLowerCase('pt-BR') === sessionEmail,
+    )?.basicDraft.photoPreviewUrl?.trim() || '';
   }
 
   get recruiterTopbarAvatarUrl(): string {

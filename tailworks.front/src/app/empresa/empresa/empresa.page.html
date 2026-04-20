@@ -599,17 +599,61 @@
      
         <div class="company-context__candidate-default-panel" *ngIf="selectedCompanyCandidate as candidate">
 
-          <div class="company-context__candidate-note-hero">
+            <div class="company-context__candidate-note-hero">
 
-            <div class="company-context__candidate-note-cover">
+              <div class="company-context__candidate-note-cover">
+                <ng-container *ngIf="hasSelectedCompanyCandidateResolvedVideo; else candidateHeroPoster">
+                  <video
+                    #candidateHeroVideo
+                    class="company-context__candidate-note-cover-image company-context__candidate-note-cover-video"
+                    [src]="selectedCompanyCandidateVideoUrl"
+                    [poster]="selectedCompanyCandidatePosterUrl"
+                    playsinline
+                    preload="metadata"
+                    muted>
+                  </video>
 
-              <img class="company-context__candidate-note-cover-image" [src]="selectedCompanyCandidatePosterUrl" alt="Foto do perfil do candidato" />
+                  <button
+                    type="button"
+                    class="company-context__candidate-note-control company-context__candidate-note-control--center"
+                    (click)="toggleCandidateHeroVideo(candidateHeroVideo)">
+                    <span class="material-symbols-rounded">{{ candidateHeroVideo.paused ? 'play_arrow' : 'pause' }}</span>
+                  </button>
 
-              <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
-                aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
-                <span class="material-symbols-rounded">chat</span>
-                <span class="company-context__candidate-chat-badge">3</span>
-              </button>
+                  <div class="company-context__candidate-note-topbar">
+                    <div class="company-context__candidate-note-controls">
+                      <button
+                        type="button"
+                        class="company-context__candidate-note-control"
+                        (click)="toggleCandidateHeroVideoMute(candidateHeroVideo)">
+                        <span class="material-symbols-rounded">{{ candidateHeroVideo.muted ? 'volume_off' : 'volume_up' }}</span>
+                      </button>
+                    </div>
+
+                    <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
+                      aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
+                      <span class="material-symbols-rounded">chat</span>
+                      <span class="company-context__candidate-chat-badge">3</span>
+                    </button>
+                  </div>
+                </ng-container>
+
+                <ng-template #candidateHeroPoster>
+                  <img
+                    class="company-context__candidate-note-cover-image"
+                    [src]="selectedCompanyCandidatePosterUrl"
+                    alt="Foto do perfil do candidato" />
+
+                  <div class="company-context__candidate-note-topbar">
+                    <div></div>
+
+                    <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
+                      aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
+                      <span class="material-symbols-rounded">chat</span>
+                      <span class="company-context__candidate-chat-badge">3</span>
+                    </button>
+                  </div>
+                </ng-template>
  
               <div class="company-context__candidate-note-copy">
                 <strong>{{ candidate.name }}</strong>
@@ -695,24 +739,6 @@
         *ngIf="!isCandidateChatPanelVisible">
 
         <div class="company-context__bottom-stack">
-
-          <!-- VIDEO DO CANDIDATO -->
-          <div class="menu-feature-card-candidate">
-            <div class="menu-feature-video-candidate"
-              [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
-              <video *ngIf="hasSelectedCompanyCandidateVideo; else candidateVideoEmptyState"
-                class="menu-feature-video__player" [src]="selectedCompanyCandidateVideoUrl"
-                [poster]="selectedCompanyCandidatePosterUrl" controls playsinline preload="metadata"></video>
-
-              <ng-template #candidateVideoEmptyState>
-                <div class="menu-feature-video-candidate__empty">
-                  <span class="material-symbols-rounded">videocam_off</span>
-                  <strong>Sem Video</strong>
-                  <p>O candidato ainda nao publicou um video para vc ver.</p>
-                </div>
-              </ng-template>
-            </div>
-          </div>
 
           <div class="empresa-candidate-timeline" *ngIf="selectedCompanyCandidate as candidate">
             <div class="empresa-candidate-timeline__step"

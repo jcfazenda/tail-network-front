@@ -35,6 +35,49 @@
 
           <div class="candidate-profile__divider"></div>
 
+          <div class="candidate-profile__photo-card">
+            <input
+              #candidatePhotoInput
+              class="candidate-profile__media-input"
+              type="file"
+              accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp"
+              (change)="onPhotoSelected($event)"
+            />
+
+            <div class="candidate-profile__photo-preview">
+              <img
+                *ngIf="hasPhotoPreview; else candidatePhotoPlaceholder"
+                class="candidate-profile__photo-image"
+                [src]="photoPreviewUrl"
+                [alt]="displayName"
+              />
+
+              <ng-template #candidatePhotoPlaceholder>
+                <span class="material-symbols-rounded" aria-hidden="true">person</span>
+              </ng-template>
+            </div>
+
+            <div class="candidate-profile__photo-copy">
+              <strong>Avatar do perfil</strong>
+              <span>Essa imagem será usada no seu perfil e nas telas onde seu talento aparece.</span>
+              <span class="candidate-profile__media-helper" *ngIf="photoFileName">Arquivo atual: {{ photoFileName }}</span>
+              <span class="candidate-profile__media-error" *ngIf="photoError">{{ photoError }}</span>
+            </div>
+
+            <div class="candidate-profile__photo-actions">
+              <button class="candidate-profile__button candidate-profile__button--primary" type="button" (click)="candidatePhotoInput.click()">
+                Alterar avatar
+              </button>
+              <button
+                *ngIf="hasPhotoPreview"
+                class="candidate-profile__button candidate-profile__button--ghost"
+                type="button"
+                (click)="clearPhoto()">
+                Remover
+              </button>
+            </div>
+          </div>
+
           <div class="candidate-profile__grid candidate-profile__grid--basic">
             <label class="candidate-profile__field candidate-profile__field--full">
               <span>Nome</span>

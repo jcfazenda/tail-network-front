@@ -4250,6 +4250,65 @@
   filter: grayscale(1) contrast(1.02);
 }
 
+.company-context__candidate-note-cover-video {
+  filter: grayscale(1) contrast(1.02);
+}
+
+.company-context__candidate-note-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.company-context__candidate-note-topbar {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.company-context__candidate-note-control {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.48);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+
+  .material-symbols-rounded {
+    font-size: 30px;
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 500;
+  }
+}
+
+.company-context__candidate-note-control--center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 72px;
+  height: 72px;
+  background: rgba(15, 23, 42, 0.42);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.22);
+
+  .material-symbols-rounded {
+    font-size: 38px;
+  }
+}
+
 .company-context__candidate-note-cover::after {
   content: "";
   position: absolute;
@@ -4263,10 +4322,8 @@
 }
 
 .company-context__candidate-chat--hero {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 2;
+  position: relative;
+  z-index: 3;
   color: #ffffff;
 }
 

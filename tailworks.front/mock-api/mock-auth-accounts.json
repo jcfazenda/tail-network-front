@@ -1,53 +1,64 @@
 [
   {
-    "id": "auth-julio-fazenda-recruiter",
-    "name": "Julio Fazenda",
-    "email": "julio@tailworks.com",
-    "password": "julio@56",
+    "id": "auth-recutador-sr",
+    "name": "Recutador Sr.",
+    "email": "julio#tailworks.com",
+    "password": "tail@56",
     "canUseRecruiter": true,
     "canUseTalent": true,
-    "recruiterId": "julio-fazenda-recruiter",
-    "company": "Banco Itaú",
+    "recruiterId": "recutador-sr",
+    "company": "Empresa SA",
     "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054342-7bcbcf",
+    "id": "auth-recrutador-jr",
+    "name": "Recrutador Jr.",
+    "email": "recrutador@tailworks.com",
+    "password": "12345",
+    "canUseRecruiter": true,
+    "canUseTalent": true,
+    "recruiterId": "recrutador-jr",
+    "company": "Empresa SA",
+    "location": "Rio de Janeiro - RJ"
+  },
+  {
+    "id": "auth-talent-1776649166289-7bd150",
     "name": "Janaina Talento",
     "email": "janaina.talento.1@talent.local",
     "password": "talento@001",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "São Paulo - SP"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054342-16bb68",
+    "id": "auth-talent-1776649166289-9ad384",
     "name": "Thais Talento",
     "email": "thais.talento.2@talent.local",
     "password": "talento@002",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054342-0ecf0a",
+    "id": "auth-talent-1776649166290-f5b147",
     "name": "Lucas Ventura",
     "email": "lucas.ventura.3@talent.local",
     "password": "talento@003",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054342-fda466",
+    "id": "auth-talent-1776649166290-6667b8",
     "name": "Marina Prado",
     "email": "marina.prado.4@talent.local",
     "password": "talento@004",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054342-be6135",
+    "id": "auth-talent-1776649166290-99da51",
     "name": "Felipe Barros",
     "email": "felipe.barros.5@talent.local",
     "password": "talento@005",
@@ -56,7 +67,7 @@
     "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054343-49ec56",
+    "id": "auth-talent-1776649166290-6baaa0",
     "name": "Renata Salles",
     "email": "renata.salles.6@talent.local",
     "password": "talento@006",
@@ -65,16 +76,16 @@
     "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054343-9c3fa4",
+    "id": "auth-talent-1776649166290-f6eb42",
     "name": "Gustavo Leal",
     "email": "gustavo.leal.7@talent.local",
     "password": "talento@007",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054343-a49cfb",
+    "id": "auth-talent-1776649166290-557f40",
     "name": "Camila Moura",
     "email": "camila.moura.8@talent.local",
     "password": "talento@008",
@@ -83,61 +94,61 @@
     "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054343-f663de",
+    "id": "auth-talent-1776649166290-e4642b",
     "name": "Diego Matos",
     "email": "diego.matos.9@talent.local",
     "password": "talento@009",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054343-c4b4ff",
+    "id": "auth-talent-1776649166290-7303cc",
     "name": "Bianca Pires",
     "email": "bianca.pires.10@talent.local",
     "password": "talento@010",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054343-ce9fda",
+    "id": "auth-talent-1776649166290-bb2e54",
     "name": "Rafael Nogueira",
     "email": "rafael.nogueira.11@talent.local",
     "password": "talento@011",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054343-bbb849",
+    "id": "auth-talent-1776649166290-be25d3",
     "name": "Priscila Faria",
     "email": "priscila.faria.12@talent.local",
     "password": "talento@012",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054343-d64e32",
+    "id": "auth-talent-1776649166290-d9f2b3",
     "name": "Joao Vilar",
     "email": "joao.vilar.13@talent.local",
     "password": "talento@013",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054343-6c0c13",
+    "id": "auth-talent-1776649166290-819037",
     "name": "Patricia Coelho",
     "email": "patricia.coelho.14@talent.local",
     "password": "talento@014",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054343-5dd2e5",
+    "id": "auth-talent-1776649166290-bbe57e",
     "name": "Vinicius Rocha",
     "email": "vinicius.rocha.15@talent.local",
     "password": "talento@015",
@@ -146,16 +157,16 @@
     "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054343-34daa2",
+    "id": "auth-talent-1776649166290-fb73b3",
     "name": "Aline Freitas",
     "email": "aline.freitas.16@talent.local",
     "password": "talento@016",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Salvador - BA"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054343-ec6ef7",
+    "id": "auth-talent-1776649166290-1daa22",
     "name": "Matheus Teles",
     "email": "matheus.teles.17@talent.local",
     "password": "talento@017",
@@ -164,124 +175,124 @@
     "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054343-a836f8",
+    "id": "auth-talent-1776649166290-840965",
     "name": "Daniela Paixao",
     "email": "daniela.paixao.18@talent.local",
     "password": "talento@018",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054344-d4b09e",
+    "id": "auth-talent-1776649166291-895bf4",
     "name": "Caio Araujo",
     "email": "caio.araujo.19@talent.local",
     "password": "talento@019",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054344-31eee5",
+    "id": "auth-talent-1776649166291-7c4a4a",
     "name": "Larissa Mota",
     "email": "larissa.mota.20@talent.local",
     "password": "talento@020",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "São Paulo - SP"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054344-06c42e",
+    "id": "auth-talent-1776649166291-4a791b",
     "name": "Bruno Rezende",
     "email": "bruno.rezende.21@talent.local",
     "password": "talento@021",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054344-413b70",
+    "id": "auth-talent-1776649166291-43bcb2",
     "name": "Amanda Silveira",
     "email": "amanda.silveira.22@talent.local",
     "password": "talento@022",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054344-e6154a",
+    "id": "auth-talent-1776649166291-6166d4",
     "name": "Eduardo Braga",
     "email": "eduardo.braga.23@talent.local",
     "password": "talento@023",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054344-72eaed",
+    "id": "auth-talent-1776649166291-e5339b",
     "name": "Vanessa Nunes",
     "email": "vanessa.nunes.24@talent.local",
     "password": "talento@024",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054344-d0c6de",
+    "id": "auth-talent-1776649166291-dd77a7",
     "name": "Thiago Porto",
     "email": "thiago.porto.25@talent.local",
     "password": "talento@025",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054344-82bf76",
+    "id": "auth-talent-1776649166291-58dfef",
     "name": "Carla Medeiros",
     "email": "carla.medeiros.26@talent.local",
     "password": "talento@026",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054344-c65a20",
+    "id": "auth-talent-1776649166291-b8e543",
     "name": "Leonardo Brito",
     "email": "leonardo.brito.27@talent.local",
     "password": "talento@027",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Salvador - BA"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054345-c86236",
+    "id": "auth-talent-1776649166292-313c94",
     "name": "Fernanda Luz",
     "email": "fernanda.luz.28@talent.local",
     "password": "talento@028",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054345-13a431",
+    "id": "auth-talent-1776649166292-870bb9",
     "name": "Igor Santana",
     "email": "igor.santana.29@talent.local",
     "password": "talento@029",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054345-c62fb1",
+    "id": "auth-talent-1776649166292-dde1ef",
     "name": "Juliana Neves",
     "email": "juliana.neves.30@talent.local",
     "password": "talento@030",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054345-4f06e4",
+    "id": "auth-talent-1776649166292-d78e36",
     "name": "Andre Dantas",
     "email": "andre.dantas.31@talent.local",
     "password": "talento@031",
@@ -290,160 +301,160 @@
     "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054345-50580b",
+    "id": "auth-talent-1776649166292-5900b8",
     "name": "Sabrina Peixoto",
     "email": "sabrina.peixoto.32@talent.local",
     "password": "talento@032",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "São Paulo - SP"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054345-6cadd1",
+    "id": "auth-talent-1776649166292-83a5fd",
     "name": "Henrique Lins",
     "email": "henrique.lins.33@talent.local",
     "password": "talento@033",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054346-4fe70b",
+    "id": "auth-talent-1776649166293-821775",
     "name": "Natalia Torres",
     "email": "natalia.torres.34@talent.local",
     "password": "talento@034",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054346-5ee29a",
+    "id": "auth-talent-1776649166293-ef6bb2",
     "name": "Pedro Lemos",
     "email": "pedro.lemos.35@talent.local",
     "password": "talento@035",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Brasília - DF"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054346-b10d48",
+    "id": "auth-talent-1776649166293-009f9f",
     "name": "Monique Duarte",
     "email": "monique.duarte.36@talent.local",
     "password": "talento@036",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054346-cde4f7",
+    "id": "auth-talent-1776649166293-fed05a",
     "name": "Vitor Aguiar",
     "email": "vitor.aguiar.37@talent.local",
     "password": "talento@037",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054346-6d245d",
+    "id": "auth-talent-1776649166293-4047de",
     "name": "Tatiane Melo",
     "email": "tatiane.melo.38@talent.local",
     "password": "talento@038",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054347-cb60a8",
+    "id": "auth-talent-1776649166293-1d6256",
     "name": "Cesar Campos",
     "email": "cesar.campos.39@talent.local",
     "password": "talento@039",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054347-efc502",
+    "id": "auth-talent-1776649166294-d55fb1",
     "name": "Raquel Pinho",
     "email": "raquel.pinho.40@talent.local",
     "password": "talento@040",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054347-f0df22",
+    "id": "auth-talent-1776649166294-20f42c",
     "name": "Murilo Bastos",
     "email": "murilo.bastos.41@talent.local",
     "password": "talento@041",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054347-3e85d1",
+    "id": "auth-talent-1776649166294-626b65",
     "name": "Livia Teixeira",
     "email": "livia.teixeira.42@talent.local",
     "password": "talento@042",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Brasília - DF"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054347-b68671",
+    "id": "auth-talent-1776649166294-c5b528",
     "name": "Arthur Vieira",
     "email": "arthur.vieira.43@talent.local",
     "password": "talento@043",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Brasília - DF"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054348-754d20",
+    "id": "auth-talent-1776649166294-07a63d",
     "name": "Gabriela Dias",
     "email": "gabriela.dias.44@talent.local",
     "password": "talento@044",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054348-f14bcc",
+    "id": "auth-talent-1776649166295-7044fc",
     "name": "Enzo Tavares",
     "email": "enzo.tavares.45@talent.local",
     "password": "talento@045",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054348-ee3175",
+    "id": "auth-talent-1776649166295-8671f2",
     "name": "Paula Rios",
     "email": "paula.rios.46@talent.local",
     "password": "talento@046",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054348-5e84f4",
+    "id": "auth-talent-1776649166295-8ea293",
     "name": "Vinicius Marins",
     "email": "vinicius.marins.47@talent.local",
     "password": "talento@047",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054348-4d9960",
+    "id": "auth-talent-1776649166295-e611c6",
     "name": "Beatriz Mello",
     "email": "beatriz.mello.48@talent.local",
     "password": "talento@048",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Salvador - BA"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054349-8aed92",
+    "id": "auth-talent-1776649166295-ceea89",
     "name": "Ramon Xavier",
     "email": "ramon.xavier.49@talent.local",
     "password": "talento@049",
@@ -452,16 +463,16 @@
     "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054349-7a71bd",
+    "id": "auth-talent-1776649166296-899146",
     "name": "Nicole Antunes",
     "email": "nicole.antunes.50@talent.local",
     "password": "talento@050",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "São Paulo - SP"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054349-9d50e0",
+    "id": "auth-talent-1776649166296-8ddd7e",
     "name": "Otavio Lima",
     "email": "otavio.lima.51@talent.local",
     "password": "talento@051",
@@ -470,34 +481,34 @@
     "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054349-07d1df",
+    "id": "auth-talent-1776649166296-4b0899",
     "name": "Clara Azevedo",
     "email": "clara.azevedo.52@talent.local",
     "password": "talento@052",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054350-2f3522",
+    "id": "auth-talent-1776649166296-1e9d09",
     "name": "Yuri Castro",
     "email": "yuri.castro.53@talent.local",
     "password": "talento@053",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Brasília - DF"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054350-4a9502",
+    "id": "auth-talent-1776649166297-558d2a",
     "name": "Mirela Goulart",
     "email": "mirela.goulart.54@talent.local",
     "password": "talento@054",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054350-776b8a",
+    "id": "auth-talent-1776649166297-a6f4ce",
     "name": "Davi Ribeiro",
     "email": "davi.ribeiro.55@talent.local",
     "password": "talento@055",
@@ -506,52 +517,52 @@
     "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054350-b13626",
+    "id": "auth-talent-1776649166297-334962",
     "name": "Luana Barreto",
     "email": "luana.barreto.56@talent.local",
     "password": "talento@056",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054351-9fa2dc",
+    "id": "auth-talent-1776649166297-fedf45",
     "name": "Samuel Pacheco",
     "email": "samuel.pacheco.57@talent.local",
     "password": "talento@057",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Salvador - BA"
   },
   {
-    "id": "auth-talent-1776516054351-348163",
+    "id": "auth-talent-1776649166298-4f34a8",
     "name": "Evelyn Soares",
     "email": "evelyn.soares.58@talent.local",
     "password": "talento@058",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "São Paulo - SP"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054351-124412",
+    "id": "auth-talent-1776649166298-cddda0",
     "name": "Nicolas Furtado",
     "email": "nicolas.furtado.59@talent.local",
     "password": "talento@059",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054351-e06387",
+    "id": "auth-talent-1776649166298-f2c990",
     "name": "Isabela Pacheco",
     "email": "isabela.pacheco.60@talent.local",
     "password": "talento@060",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054352-2ce23d",
+    "id": "auth-talent-1776649166298-b5a193",
     "name": "Guilherme Tenorio",
     "email": "guilherme.tenorio.61@talent.local",
     "password": "talento@061",
@@ -560,7 +571,7 @@
     "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054352-b9053e",
+    "id": "auth-talent-1776649166299-c25c84",
     "name": "Helena Macedo",
     "email": "helena.macedo.62@talent.local",
     "password": "talento@062",
@@ -569,7 +580,7 @@
     "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054352-7e220c",
+    "id": "auth-talent-1776649166299-a447d0",
     "name": "Alan Costa",
     "email": "alan.costa.63@talent.local",
     "password": "talento@063",
@@ -578,61 +589,61 @@
     "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054353-c5fdd4",
+    "id": "auth-talent-1776649166299-0bbcec",
     "name": "Marcela Reis",
     "email": "marcela.reis.64@talent.local",
     "password": "talento@064",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054353-65dca4",
+    "id": "auth-talent-1776649166299-de73ca",
     "name": "Danilo Amaral",
     "email": "danilo.amaral.65@talent.local",
     "password": "talento@065",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054353-725374",
+    "id": "auth-talent-1776649166300-c9bda3",
     "name": "Milena Rosa",
     "email": "milena.rosa.66@talent.local",
     "password": "talento@066",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054353-473a42",
+    "id": "auth-talent-1776649166300-3a089e",
     "name": "Rodrigo Cezar",
     "email": "rodrigo.cezar.67@talent.local",
     "password": "talento@067",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Salvador - BA"
   },
   {
-    "id": "auth-talent-1776516054354-49b81d",
+    "id": "auth-talent-1776649166300-422a22",
     "name": "Flavia Bittencourt",
     "email": "flavia.bittencourt.68@talent.local",
     "password": "talento@068",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054354-b01d0a",
+    "id": "auth-talent-1776649166301-783ba1",
     "name": "Tiago Cunha",
     "email": "tiago.cunha.69@talent.local",
     "password": "talento@069",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Salvador - BA"
   },
   {
-    "id": "auth-talent-1776516054354-053cab",
+    "id": "auth-talent-1776649166301-276240",
     "name": "Nina Ferraz",
     "email": "nina.ferraz.70@talent.local",
     "password": "talento@070",
@@ -641,16 +652,16 @@
     "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054355-322b5b",
+    "id": "auth-talent-1776649166301-147f6c",
     "name": "Icaro Gomes",
     "email": "icaro.gomes.71@talent.local",
     "password": "talento@071",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054355-befc9b",
+    "id": "auth-talent-1776649166301-d76c7c",
     "name": "Elaine Gomes",
     "email": "elaine.gomes.72@talent.local",
     "password": "talento@072",
@@ -659,43 +670,43 @@
     "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054355-476edf",
+    "id": "auth-talent-1776649166302-b95f5d",
     "name": "Pietro Pacheco",
     "email": "pietro.pacheco.73@talent.local",
     "password": "talento@073",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054356-61a729",
+    "id": "auth-talent-1776649166302-cf6c57",
     "name": "Malu Bernardes",
     "email": "malu.bernardes.74@talent.local",
     "password": "talento@074",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Brasília - DF"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054356-fbb38a",
+    "id": "auth-talent-1776649166302-1c8fa8",
     "name": "Wesley Moura",
     "email": "wesley.moura.75@talent.local",
     "password": "talento@075",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Salvador - BA"
   },
   {
-    "id": "auth-talent-1776516054356-78be88",
+    "id": "auth-talent-1776649166303-ab0e7d",
     "name": "Alice Tavares",
     "email": "alice.tavares.76@talent.local",
     "password": "talento@076",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054357-c3be7e",
+    "id": "auth-talent-1776649166303-74565a",
     "name": "Heitor Lobo",
     "email": "heitor.lobo.77@talent.local",
     "password": "talento@077",
@@ -704,52 +715,52 @@
     "location": "Fortaleza - CE"
   },
   {
-    "id": "auth-talent-1776516054357-468f3f",
+    "id": "auth-talent-1776649166303-573a31",
     "name": "Lorena Cardoso",
     "email": "lorena.cardoso.78@talent.local",
     "password": "talento@078",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054357-d584b6",
+    "id": "auth-talent-1776649166304-f22232",
     "name": "Luan Bessa",
     "email": "luan.bessa.79@talent.local",
     "password": "talento@079",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054358-7f51a3",
+    "id": "auth-talent-1776649166304-65a5fc",
     "name": "Jade Montenegro",
     "email": "jade.montenegro.80@talent.local",
     "password": "talento@080",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054358-49d9c7",
+    "id": "auth-talent-1776649166304-0546d1",
     "name": "Augusto Paiva",
     "email": "augusto.paiva.81@talent.local",
     "password": "talento@081",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Curitiba - PR"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054358-3a37c9",
+    "id": "auth-talent-1776649166305-152864",
     "name": "Yasmin Falcao",
     "email": "yasmin.falcao.82@talent.local",
     "password": "talento@082",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054359-42a051",
+    "id": "auth-talent-1776649166305-cfb08a",
     "name": "Breno Vieira",
     "email": "breno.vieira.83@talent.local",
     "password": "talento@083",
@@ -758,124 +769,124 @@
     "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054359-8aebfb",
+    "id": "auth-talent-1776649166306-df9cc3",
     "name": "Nathalia Pena",
     "email": "nathalia.pena.84@talent.local",
     "password": "talento@084",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054359-e4666e",
+    "id": "auth-talent-1776649166306-d55317",
     "name": "Fernando Chaves",
     "email": "fernando.chaves.85@talent.local",
     "password": "talento@085",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Recife - PE"
+    "location": "Salvador - BA"
   },
   {
-    "id": "auth-talent-1776516054360-c1174c",
+    "id": "auth-talent-1776649166306-eea868",
     "name": "Elisa Queiroz",
     "email": "elisa.queiroz.86@talent.local",
     "password": "talento@086",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054360-d0a449",
+    "id": "auth-talent-1776649166307-e5f0b4",
     "name": "Ruan Sales",
     "email": "ruan.sales.87@talent.local",
     "password": "talento@087",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Fortaleza - CE"
+    "location": "Salvador - BA"
   },
   {
-    "id": "auth-talent-1776516054361-6d0456",
+    "id": "auth-talent-1776649166307-2c95d2",
     "name": "Rita Carvalho",
     "email": "rita.carvalho.88@talent.local",
     "password": "talento@088",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Porto Alegre - RS"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054361-3b6199",
+    "id": "auth-talent-1776649166307-1bee80",
     "name": "Douglas Freire",
     "email": "douglas.freire.89@talent.local",
     "password": "talento@089",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Salvador - BA"
+    "location": "Curitiba - PR"
   },
   {
-    "id": "auth-talent-1776516054361-1f96dc",
+    "id": "auth-talent-1776649166308-3cd29f",
     "name": "Mariana Gama",
     "email": "mariana.gama.90@talent.local",
     "password": "talento@090",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "São Paulo - SP"
   },
   {
-    "id": "auth-talent-1776516054362-f5dfd4",
+    "id": "auth-talent-1776649166308-b3bdbb",
     "name": "Caua Torres",
     "email": "caua.torres.91@talent.local",
     "password": "talento@091",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Belo Horizonte - MG"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054362-f44ab8",
+    "id": "auth-talent-1776649166309-6a90d3",
     "name": "Vivian Soares",
     "email": "vivian.soares.92@talent.local",
     "password": "talento@092",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "São Paulo - SP"
+    "location": "Belo Horizonte - MG"
   },
   {
-    "id": "auth-talent-1776516054363-c9610e",
+    "id": "auth-talent-1776649166309-119a5e",
     "name": "Diego Rangel",
     "email": "diego.rangel.93@talent.local",
     "password": "talento@093",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Recife - PE"
   },
   {
-    "id": "auth-talent-1776516054363-e88de8",
+    "id": "auth-talent-1776649166309-4a3c57",
     "name": "Taina Lopes",
     "email": "taina.lopes.94@talent.local",
     "password": "talento@094",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Brasília - DF"
+    "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054363-fe999a",
+    "id": "auth-talent-1776649166310-426818",
     "name": "Marcos Veiga",
     "email": "marcos.veiga.95@talent.local",
     "password": "talento@095",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Brasília - DF"
   },
   {
-    "id": "auth-talent-1776516054364-d8e8a3",
+    "id": "auth-talent-1776649166310-9cb8cf",
     "name": "Stella Mendes",
     "email": "stella.mendes.96@talent.local",
     "password": "talento@096",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Florianópolis - SC"
+    "location": "Porto Alegre - RS"
   },
   {
-    "id": "auth-talent-1776516054364-fb1a24",
+    "id": "auth-talent-1776649166311-cb6f58",
     "name": "Ciro Valente",
     "email": "ciro.valente.97@talent.local",
     "password": "talento@097",
@@ -884,30 +895,30 @@
     "location": "Florianópolis - SC"
   },
   {
-    "id": "auth-talent-1776516054365-149c03",
+    "id": "auth-talent-1776649166311-9ee113",
     "name": "Leticia Braga",
     "email": "leticia.braga.98@talent.local",
     "password": "talento@098",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Salvador - BA"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054365-8ac8e8",
+    "id": "auth-talent-1776649166311-c268e4",
     "name": "Fabio Maciel",
     "email": "fabio.maciel.99@talent.local",
     "password": "talento@099",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Salvador - BA"
+    "location": "Rio de Janeiro - RJ"
   },
   {
-    "id": "auth-talent-1776516054366-188c6d",
+    "id": "auth-talent-1776649166312-c470e2",
     "name": "Karen Assis",
     "email": "karen.assis.100@talent.local",
     "password": "talento@100",
     "canUseRecruiter": false,
     "canUseTalent": true,
-    "location": "Rio de Janeiro - RJ"
+    "location": "Porto Alegre - RS"
   }
 ]
