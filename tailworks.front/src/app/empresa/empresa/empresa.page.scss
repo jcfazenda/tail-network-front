@@ -25,7 +25,7 @@
   padding: 0;
   box-sizing: border-box;
   overflow: hidden;
-  background: var(--bg); 
+  background: var(--bg);
 }
 
 .empresa-page__shell {
@@ -36,9 +36,7 @@
   box-sizing: border-box;
   display: grid;
   grid-template-columns:
-    minmax(0, 1.9fr)
-    minmax(160px, 0.38fr)
-    minmax(160px, 0.38fr);
+    minmax(0, 1.9fr) minmax(160px, 0.38fr) minmax(160px, 0.38fr);
 
   /* 3 linhas */
   grid-template-rows: 150px minmax(0, 1fr) minmax(180px, 0.62fr);
@@ -51,6 +49,7 @@
   gap: 12px;
   overflow: hidden;
 }
+
 /* =========================================================
    TOPBAR
 ========================================================= */
@@ -68,7 +67,7 @@
   min-width: 0;
   display: block;
 }
-  
+
 .empresa-page__column-down {
   background: linear-gradient(180deg, #ffffff, #ffffff);
   border-radius: 14px;
@@ -167,14 +166,16 @@
   gap: 12px;
 }
 
+/* PANEL DIREITO CANDIDATO */
 .empresa-page__column {
-  background: linear-gradient(180deg, #e0e0e0, #ffffff);
+  background: linear-gradient(180deg, #ffffff, #fefefe);
   border-radius: 14px;
   box-sizing: border-box;
   overflow: hidden;
   min-width: 0;
   min-height: 0;
 }
+
 .empresa-page__column-back {
   background: linear-gradient(180deg, #e0e0e0, #ffffff);
   border-radius: 14px;
@@ -192,7 +193,8 @@
   height: 100%;
 
   display: flex;
-  flex-direction: column; /* 🔥 empilha vertical */
+  flex-direction: column;
+  /* 🔥 empilha vertical */
 
   gap: 12px;
   padding: 18px;
@@ -201,6 +203,7 @@
   border: 1px solid rgba(47, 50, 50, 0.08);
   border-radius: 14px;
 }
+
 .empresa-page__column--bottom {
   grid-area: side-bottom;
   width: 100%;
@@ -232,7 +235,7 @@
   width: 100%;
   height: 100%;
   padding: 12px;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   overflow: hidden;
   border-radius: 18px;
 }
@@ -415,7 +418,7 @@
 .company-context__candidate-journey {
   display: grid;
   gap: 14px;
-  padding-top: 18px; 
+  padding-top: 18px;
   padding: 46px 46px 16px;
 }
 
@@ -423,7 +426,7 @@
   display: grid;
   gap: 4px;
   text-align: center;
-  
+
   strong {
     font-size: 17px;
     font-weight: 800;
@@ -442,7 +445,7 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
-  
+
   span,
   strong {
     font-size: 16px;
@@ -537,7 +540,12 @@
   gap: 18px;
   height: 100%;
   padding: 32px 28px 18px;
-  border-radius: 24px; 
+  border-radius: 24px;
+}
+
+.company-context__profile-card--candidate-note {
+  padding: 0;
+  gap: 10px;
 }
 
 .company-context__edit-btn-top {
@@ -614,6 +622,7 @@
   color: #2f3232;
   text-align: center;
 }
+
 .company-context__company-media {
   width: 100%;
   height: 455px;
@@ -640,7 +649,7 @@
 .company-context__company-media-input {
   display: none;
 }
- 
+
 
 
 .company-context__info-item {
@@ -650,7 +659,7 @@
   gap: 12px;
   align-items: start;
   padding: 14px;
-  border-radius: 16px;  
+  border-radius: 16px;
 
   mat-icon {
     grid-column: 1;
@@ -768,11 +777,10 @@
     0 2px 0 rgba(255, 255, 255, 0.88) inset;
 }
 
-.company-context__candidate-adherence {
-  margin-top: 22px;
-  padding: 22px 24px;
+.company-context__candidate-adherence { 
+  margin: 20px -1px 0;
+  padding: 35px 24px;
   border-radius: 22px; 
-  border: 1px solid rgba(47, 50, 50, 0.08);
   display: grid;
   gap: 18px;
 }
@@ -1083,11 +1091,11 @@
   display: grid;
   gap: 10px;
 }
-  
+
 /* =========================================================
    COMPANY LIST
 ========================================================= */
- 
+
 .company-list--compact {
   gap: 12px;
 }
@@ -1218,7 +1226,7 @@
   font-weight: 800;
   letter-spacing: 0.01em;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
-   margin-top: 10px;
+  margin-top: 10px;
 }
 
 .company-card__type-chip--cliente {
@@ -1253,7 +1261,7 @@
   align-items: center;
   gap: 14px;
   margin-top: 18px;
-  padding-top: 12px; 
+  padding-top: 12px;
 }
 
 .company-card__footer-item {
@@ -1300,11 +1308,11 @@
 
 .company-identity__hero {
   position: relative;
-  padding: 30px 32px 72px; 
+  padding: 30px 32px 72px;
   overflow: visible;
   height: 70%;
 }
- 
+
 .company-identity__hero-content {
   max-width: 20px;
   display: flex;
@@ -1378,7 +1386,7 @@
   transform: translateY(-1px);
   background: #f3f4f6;
 }
-  
+
 
 /* DEIXAR O BOTÃO MAIS BONITO */
 .button-cria-vaga button {
@@ -1427,7 +1435,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  margin-top: 60px; 
+  margin-top: 60px;
 }
 
 .company-identity__bottom-jobs {
@@ -1505,7 +1513,7 @@
   padding: 0 0 1px;
 }
 
-.company-identity__bottom-header--side-back{
+.company-identity__bottom-header--side-back {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -1527,12 +1535,12 @@
   margin-top: 42px;
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side .company-identity__bottom-header-main {
+.company-identity__bottom>.company-identity__bottom-header--side .company-identity__bottom-header-main {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side .empresa-vaga-card__button--header {
+.company-identity__bottom>.company-identity__bottom-header--side .empresa-vaga-card__button--header {
   width: auto;
   min-width: 164px;
   margin: 0;
@@ -1571,24 +1579,24 @@
   }
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side .job-side-people {
+.company-identity__bottom>.company-identity__bottom-header--side .job-side-people {
   gap: 0;
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side .job-side-avatars {
+.company-identity__bottom>.company-identity__bottom-header--side .job-side-avatars {
   display: flex;
   align-items: center;
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side .job-side-avatars img,
-.company-identity__bottom > .company-identity__bottom-header--side .job-side-avatars__more {
+.company-identity__bottom>.company-identity__bottom-header--side .job-side-avatars img,
+.company-identity__bottom>.company-identity__bottom-header--side .job-side-avatars__more {
   width: 42px;
   height: 42px;
   margin-left: -10px;
   border-width: 2px;
 }
 
-.company-identity__bottom > .company-identity__bottom-header--side .job-side-avatars img:first-child {
+.company-identity__bottom>.company-identity__bottom-header--side .job-side-avatars img:first-child {
   margin-left: 0;
 }
 
@@ -1762,6 +1770,7 @@
       'opsz' 20;
   }
 }
+
 .company-context__quick-action .material-symbols-rounded {
   font-size: 34px;
   font-variation-settings:
@@ -1770,6 +1779,7 @@
     'GRAD' 0,
     'opsz' 24;
 }
+
 .company-identity__bottom-meta {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1800,15 +1810,15 @@
 
 .empresa-vaga-shell {
   width: 100%;
-  height: 150%; 
-  box-sizing: border-box; 
+  height: 150%;
+  box-sizing: border-box;
   display: grid;
   grid-template-rows: auto auto auto;
   gap: 12px;
   overflow: auto;
   align-content: start;
   justify-content: stretch;
-  padding: 40px 42px 92px; 
+  padding: 40px 42px 92px;
 }
 
 .empresa-vaga-shell__topbar {
@@ -1906,8 +1916,13 @@
   z-index: 1;
 }
 
-.empresa-vaga-talent-card--active {
+.empresa-vaga-talents__grid .empresa-vaga-talent-card.empresa-vaga-talent-card--active {
   transform: translateY(-1px);
+  background: rgba(255, 138, 61, 0.12);
+  border-color: rgba(255, 138, 61, 0.34);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 138, 61, 0.16),
+    0 12px 28px rgba(255, 138, 61, 0.12);
 }
 
 .empresa-vaga-talent-card__avatar--side {
@@ -2013,8 +2028,7 @@
   width: 100%;
   max-width: 980px;
   padding: 10px 12px 28px;
-  border-radius: 14px;
-  background: #f8fafc;
+  border-radius: 14px; 
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -2226,6 +2240,7 @@
   border-radius: 22px;
   overflow: visible;
 }
+
 .ecosystem-desktop__panel-resorces-candidate {
   min-height: auto;
   height: auto;
@@ -2327,7 +2342,7 @@
 }
 
 //
-.menu-feature-card-candidate {  
+.menu-feature-card-candidate {
   padding: 10px 12px 28px;
   margin-top: -12px;
   width: 100%;
@@ -2351,7 +2366,7 @@
 
   img {
     position: absolute; // 🔥 chave
-    inset: 0;           // 🔥 ocupa toda a div
+    inset: 0; // 🔥 ocupa toda a div
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -2402,7 +2417,7 @@
 }
 
 /* VIDEO */
-.menu-feature-card {  
+.menu-feature-card {
   grid-area: video;
   width: 100%;
   max-width: 480px;
@@ -2426,7 +2441,7 @@
 
   img {
     position: absolute; // 🔥 chave
-    inset: 0;           // 🔥 ocupa toda a div
+    inset: 0; // 🔥 ocupa toda a div
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -2444,6 +2459,7 @@
   display: block;
   background: #111827;
 }
+
 .menu-feature-video__placeholder {
   width: 100%;
   height: 100%;
@@ -2749,7 +2765,7 @@
 
 .job-side-dashed-line {
   width: 100%;
-  margin: 46px 0 22px; 
+  margin: 46px 0 22px;
 }
 
 .job-side-bottom-grid {
@@ -2878,11 +2894,11 @@
   flex-direction: column;
   gap: 12px;
 }
- 
+
 .company-card__contact-item {
   display: flex;
   align-items: center;
-  gap: 12px; 
+  gap: 12px;
 
   span:last-child {
     font-size: 14px;
@@ -2897,7 +2913,7 @@
   color: #fff;
 
   font-variation-settings:
-    'FILL' 1,   // 🔥 ícone preenchido (mais forte)
+    'FILL' 1, // 🔥 ícone preenchido (mais forte)
     'wght' 700, // 🔥 mais “bold”
     'GRAD' 0,
     'opsz' 24;
@@ -3271,11 +3287,11 @@
 }
 
 // =========================================================
- .empresa-vaga-card {
+.empresa-vaga-card {
   width: 100%;
   padding: 16px;
   box-sizing: border-box;
-  border-radius: 14px;  
+  border-radius: 14px;
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -3304,12 +3320,12 @@
 }
 
 .empresa-candidate-card__title {
-  margin-top: 42px;  
+  margin-top: 42px;
   font-size: 28px;
   font-weight: 800;
   color: #2f3232;
 }
- 
+
 
 .empresa-candidatos-talents {
   margin-top: 8px;
@@ -3583,7 +3599,7 @@
 .company-context,
 .company-panel,
 .company-identity,
-.empresa-vaga-shell, 
+.empresa-vaga-shell,
 .ecosystem-desktop__panel-resorces,
 .empresa-vaga-talent-card,
 .empresa-vaga-card__item,
@@ -3592,11 +3608,11 @@
 }
 
 .company-context,
-.company-panel, 
+.company-panel,
 .ecosystem-desktop__panel-resorces,
 .empresa-vaga-talent-card,
 .empresa-vaga-card__item,
-.company-identity__mini-card, 
+.company-identity__mini-card,
 .empresa-filter {
   background: var(--card-strong);
   border-color: var(--border);
@@ -3607,14 +3623,16 @@
 }
 
 /* VAGAS DA EMPRESA */
-.company-identity__bottom {  
- margin-top: -350px;
- height: 1089px;
- background: linear-gradient(180deg, #f3f3f3, #ffffff); 
+.company-identity__bottom {
+  margin-top: -350px;
+  height: 1089px;
+  background: linear-gradient(180deg, #f3f3f3, #ffffff);
 }
+
 .company-identity {
-  background: linear-gradient(180deg, #d4d4d4, #ffffff); 
-} 
+  background: linear-gradient(180deg, #d4d4d4, #ffffff);
+}
+
 .company-identity__cards {
   background: transparent;
 }
@@ -4084,7 +4102,7 @@
     width: 100%;
   }
 }
- 
+
 /* --------------------------------  COOQUE AQUI ESSES DADOS DA EMPRESA -------------------------  */
 .company-context__company-panel {
   display: flex;
@@ -4094,11 +4112,13 @@
   height: 100%;
   min-width: 0;
   min-height: 0;
+  margin: -15px -10px 0;
 }
 
 .company-context__company-panel--job-upper {
   min-height: 0;
   overflow: hidden;
+  margin: -18px -18px 0;
 }
 
 .company-context__company-panel--job-lower {
@@ -4189,6 +4209,166 @@
 .company-context__candidate-chat-panel {
   width: 100%;
   min-width: 0;
+}
+
+.company-context__candidate-default-panel {
+  width: calc(100% + 40px);
+  margin: 0 -72px 0 -18px;
+  display: grid;
+  gap: 12px;
+  margin-top: -20px;
+}
+
+.company-context__candidate-note-hero {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 0;
+  border-radius: 28px 28px 0 0;
+  overflow: hidden;
+  background: #ffffff; 
+}
+
+.company-context__candidate-note-cover {
+  position: relative;
+  min-height: 396px;
+  padding: 28px 28px 92px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.32), rgba(17, 24, 39, 0.52));
+}
+
+.company-context__candidate-note-cover-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+  filter: grayscale(1) contrast(1.02);
+}
+
+.company-context__candidate-note-cover::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  bottom: -44px;
+  height: 104px;
+  background: #ffffff;
+  transform: rotate(-7deg);
+  transform-origin: center;
+}
+
+.company-context__candidate-chat--hero {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.company-context__candidate-note-copy { 
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+
+  strong {
+    font-size: 38px;
+    line-height: 0.98;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+  }
+
+  >span {
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.86); 
+  }
+}
+
+.company-context__candidate-note-tags {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap; 
+
+  span {
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    backdrop-filter: blur(6px);
+  }
+}
+
+.company-context__candidate-note-sheet {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 26px;
+  align-items: end;
+  padding: 0 28px 22px;
+  margin-top: -58px;
+}
+
+.company-context__candidate-note-avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 5px solid #ffffff;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+  background: #eef2f7;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.company-context__candidate-note-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding-bottom: 8px;
+}
+
+.company-context__candidate-note-stat {
+  display: grid;
+  gap: 4px;
+
+  strong {
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 800;
+    color: #2f3232;
+  }
+
+  span {
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7a8080;
+  }
 }
 
 .company-context__candidate-chat-panel {
@@ -4624,7 +4804,7 @@
   cursor: pointer;
 
   /* SOMBRA LARANJA */
-  box-shadow: 
+  box-shadow:
     0 18px 34px rgba(236, 102, 45, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
 
@@ -4668,7 +4848,7 @@
 
   background: linear-gradient(180deg, #ff9a4d 0%, #f97316 100%);
 
-  box-shadow: 
+  box-shadow:
     0 26px 60px rgba(236, 102, 45, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }

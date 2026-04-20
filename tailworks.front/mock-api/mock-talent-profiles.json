@@ -20006,14 +20006,20 @@
       "profile": {
         "name": "Caua Torres",
         "email": "caua.torres.91@talent.local",
-        "phone": "(21) 9 8810-90",
+        "phone": "(21) 9 9247-8317",
         "linkedin": "https://linkedin.com/in/caua.torres",
         "state": "MG",
         "city": "Belo Horizonte",
         "location": "Belo Horizonte - MG",
         "portfolio": "https://portfolio.tail/caua.torres",
         "formation": "Pós-graduação em Engenharia de Software"
-      }
+      },
+      "photoPreviewUrl": "",
+      "photoFileName": "",
+      "candidateVideoUrl": "",
+      "candidateVideoFileName": "",
+      "candidateVideoPosterUrl": "local-media://local-media-1776644668640-9m6sddr8",
+      "candidateVideoPosterFileName": "images.jpeg"
     },
     "formationCopy": {
       "graduation": "Pós-graduação em Engenharia de Software",
@@ -20026,67 +20032,47 @@
     "stacksDraft": {
       "primary": [
         {
-          "id": "repo:dotnet",
-          "name": ".NET / C#",
-          "short": ".NET / C#",
-          "tone": "gold",
-          "category": "backend",
-          "knowledge": 94,
-          "description": "Dominio declarado em .NET / C# com foco em compatibilidade de radar."
+          "id": "repo:angular",
+          "name": "Angular",
+          "short": "Angular",
+          "tone": "orange",
+          "category": "frontend",
+          "knowledge": 74,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
-          "id": "repo:azure",
-          "name": "Azure",
-          "short": "Azure",
-          "tone": "azure",
-          "category": "cloud",
-          "knowledge": 84,
-          "description": "Dominio declarado em Azure com foco em compatibilidade de radar."
+          "id": "repo:typescript",
+          "name": "TypeScript",
+          "short": "TypeScript",
+          "tone": "orange",
+          "category": "frontend",
+          "knowledge": 70,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         },
         {
-          "id": "repo:docker",
-          "name": "Docker",
-          "short": "Docker",
+          "id": "repo:ux",
+          "name": "UX / UI",
+          "short": "UX / UI",
           "tone": "neutral",
-          "category": "devops",
-          "knowledge": 72,
-          "description": "Dominio declarado em Docker com foco em compatibilidade de radar."
+          "category": "other",
+          "knowledge": 70,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
+        },
+        {
+          "id": "repo:javascript",
+          "name": "JavaScript",
+          "short": "JavaScript",
+          "tone": "neutral",
+          "category": "other",
+          "knowledge": 70,
+          "description": "Média calculada automaticamente a partir das experiências do candidato."
         }
       ],
-      "extra": [
-        {
-          "id": "repo:sql-server",
-          "name": "SQL / Dados",
-          "short": "SQL / Dados",
-          "tone": "neutral",
-          "category": "database",
-          "knowledge": 50,
-          "description": "Dominio declarado em SQL / Dados com foco em compatibilidade de radar."
-        },
-        {
-          "id": "repo:kubernetes",
-          "name": "Kubernetes",
-          "short": "Kubernetes",
-          "tone": "neutral",
-          "category": "devops",
-          "knowledge": 45,
-          "description": "Dominio declarado em Kubernetes com foco em compatibilidade de radar."
-        },
-        {
-          "id": "repo:java",
-          "name": "Java / Spring",
-          "short": "Java / Spring",
-          "tone": "gold",
-          "category": "backend",
-          "knowledge": 20,
-          "description": "Dominio declarado em Java / Spring com foco em compatibilidade de radar."
-        }
-      ]
+      "extra": []
     },
     "experiencesDraft": [
       {
         "id": "backend-dotnet-exp-90-0",
-        "companyId": "accenture",
         "company": "Accenture",
         "role": "Software Engineer",
         "workModel": "Remoto",
@@ -20103,40 +20089,28 @@
         "actuation": 78,
         "appliedStacks": [
           {
-            "repoId": "repo:dotnet",
-            "name": ".NET / C#",
-            "knowledge": 94,
-            "description": "Uso prático de .NET / C# em contexto real."
+            "repoId": "repo:angular",
+            "name": "Angular",
+            "knowledge": 70,
+            "description": ""
           },
           {
-            "repoId": "repo:sql-server",
-            "name": "SQL / Dados",
-            "knowledge": 50,
-            "description": "Uso prático de SQL / Dados em contexto real."
+            "repoId": "repo:typescript",
+            "name": "TypeScript",
+            "knowledge": 70,
+            "description": ""
           },
           {
-            "repoId": "repo:azure",
-            "name": "Azure",
-            "knowledge": 84,
-            "description": "Uso prático de Azure em contexto real."
-          },
-          {
-            "repoId": "repo:docker",
-            "name": "Docker",
-            "knowledge": 72,
-            "description": "Uso prático de Docker em contexto real."
-          },
-          {
-            "repoId": "repo:java",
-            "name": "Java / Spring",
-            "knowledge": 20,
-            "description": "Uso prático de Java / Spring em contexto real."
+            "repoId": "repo:ux",
+            "name": "UX / UI",
+            "knowledge": 70,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "accenture"
       },
       {
         "id": "backend-dotnet-exp-90-1",
-        "companyId": "itau-unibanco",
         "company": "Itaú Unibanco",
         "role": "Backend .NET Senior",
         "workModel": "Presencial",
@@ -20153,34 +20127,28 @@
         "actuation": 72,
         "appliedStacks": [
           {
-            "repoId": "repo:dotnet",
-            "name": ".NET / C#",
-            "knowledge": 94,
-            "description": "Uso prático de .NET / C# em contexto real."
+            "repoId": "repo:angular",
+            "name": "Angular",
+            "knowledge": 70,
+            "description": ""
           },
           {
-            "repoId": "repo:azure",
-            "name": "Azure",
-            "knowledge": 84,
-            "description": "Uso prático de Azure em contexto real."
+            "repoId": "repo:typescript",
+            "name": "TypeScript",
+            "knowledge": 70,
+            "description": ""
           },
           {
-            "repoId": "repo:docker",
-            "name": "Docker",
-            "knowledge": 72,
-            "description": "Uso prático de Docker em contexto real."
-          },
-          {
-            "repoId": "repo:java",
-            "name": "Java / Spring",
-            "knowledge": 20,
-            "description": "Uso prático de Java / Spring em contexto real."
+            "repoId": "repo:ux",
+            "name": "UX / UI",
+            "knowledge": 70,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "itau-unibanco"
       },
       {
         "id": "backend-dotnet-exp-90-2",
-        "companyId": "accenture",
         "company": "Accenture",
         "role": "Software Engineer",
         "workModel": "Híbrido",
@@ -20197,40 +20165,28 @@
         "actuation": 66,
         "appliedStacks": [
           {
-            "repoId": "repo:dotnet",
-            "name": ".NET / C#",
-            "knowledge": 94,
-            "description": "Uso prático de .NET / C# em contexto real."
+            "repoId": "repo:angular",
+            "name": "Angular",
+            "knowledge": 70,
+            "description": ""
           },
           {
-            "repoId": "repo:sql-server",
-            "name": "SQL / Dados",
-            "knowledge": 50,
-            "description": "Uso prático de SQL / Dados em contexto real."
+            "repoId": "repo:javascript",
+            "name": "JavaScript",
+            "knowledge": 70,
+            "description": ""
           },
           {
-            "repoId": "repo:azure",
-            "name": "Azure",
-            "knowledge": 84,
-            "description": "Uso prático de Azure em contexto real."
-          },
-          {
-            "repoId": "repo:docker",
-            "name": "Docker",
-            "knowledge": 72,
-            "description": "Uso prático de Docker em contexto real."
-          },
-          {
-            "repoId": "repo:java",
-            "name": "Java / Spring",
-            "knowledge": 20,
-            "description": "Uso prático de Java / Spring em contexto real."
+            "repoId": "repo:ux",
+            "name": "UX / UI",
+            "knowledge": 70,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "accenture"
       },
       {
         "id": "backend-dotnet-exp-90-3",
-        "companyId": "accenture",
         "company": "Accenture",
         "role": "Software Engineer",
         "workModel": "Remoto",
@@ -20247,18 +20203,25 @@
         "actuation": 60,
         "appliedStacks": [
           {
-            "repoId": "repo:dotnet",
-            "name": ".NET / C#",
-            "knowledge": 94,
-            "description": "Uso prático de .NET / C# em contexto real."
+            "repoId": "repo:angular",
+            "name": "Angular",
+            "knowledge": 89,
+            "description": ""
           },
           {
-            "repoId": "repo:sql-server",
-            "name": "SQL / Dados",
-            "knowledge": 50,
-            "description": "Uso prático de SQL / Dados em contexto real."
+            "repoId": "repo:typescript",
+            "name": "TypeScript",
+            "knowledge": 70,
+            "description": ""
+          },
+          {
+            "repoId": "repo:ux",
+            "name": "UX / UI",
+            "knowledge": 70,
+            "description": ""
           }
-        ]
+        ],
+        "companyId": "accenture"
       }
     ]
   },

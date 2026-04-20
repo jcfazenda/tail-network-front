@@ -18,10 +18,7 @@
         <div class="empresa-filter-block">
           <div class="empresa-filter-row">
             <div class="empresa-filter">
-              <button
-                type="button"
-                class="empresa-filter__trigger"
-                [attr.aria-expanded]="isCompanySelectorModalOpen"
+              <button type="button" class="empresa-filter__trigger" [attr.aria-expanded]="isCompanySelectorModalOpen"
                 (click)="openCompanySelectorModal()">
                 <div class="empresa-filter__trigger-side">
                   <span class="empresa-filter__trigger-action">Escolher empresa</span>
@@ -55,8 +52,10 @@
           <!-- HEADER DA EMPRESA -->
           <div class="company-context__company-top">
 
-            <div class="company-context__company-logo-box" [class.company-context__company-logo-box--placeholder]="!hasSelectedCompanyLogo">
-              <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'" [alt]="'Logo da empresa ' + selectedCompanyName" />
+            <div class="company-context__company-logo-box"
+              [class.company-context__company-logo-box--placeholder]="!hasSelectedCompanyLogo">
+              <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'"
+                [alt]="'Logo da empresa ' + selectedCompanyName" />
             </div>
 
             <div class="company-context__company-top-copy">
@@ -98,14 +97,9 @@
             <div class="menu-feature-card">
 
               <div class="menu-feature-video">
-                <video
-                  class="menu-feature-video__player"
-                  [attr.data-job-id]="resourcePanelJob.id"
-                  [src]="selectedCompanyRecruiterVideoUrl"
-                  [poster]="selectedCompanyRecruiterPosterUrl"
-                  controls
-                  playsinline
-                  preload="metadata"></video>
+                <video class="menu-feature-video__player" [attr.data-job-id]="resourcePanelJob.id"
+                  [src]="selectedCompanyRecruiterVideoUrl" [poster]="selectedCompanyRecruiterPosterUrl" controls
+                  playsinline preload="metadata"></video>
 
                 <ng-template #pendingVideoPreviewHero>
                   <div class="menu-feature-video__placeholder">
@@ -117,7 +111,8 @@
                     </div>
                     <div class="menu-feature-video__placeholder-bottom">
                       <div class="company-card__logo" [class.company-card__logo--placeholder]="!hasSelectedCompanyLogo">
-                        <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'" [alt]="selectedCompanyName" />
+                        <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'"
+                          [alt]="selectedCompanyName" />
                       </div>
                     </div>
                   </div>
@@ -135,8 +130,10 @@
                 <div class="job-side-top">
                   <div class="job-side-brand-row">
                     <div class="job-side-logo">
-                      <div class="company-card__logo" [class.company-card__logo--placeholder]="!hasJobLogo(resourcePanelJob)">
-                        <img [src]="jobCompanyLogoUrl(resourcePanelJob) || 'assets/images/logo-tail.png'" [alt]="resourcePanelJob.company" />
+                      <div class="company-card__logo"
+                        [class.company-card__logo--placeholder]="!hasJobLogo(resourcePanelJob)">
+                        <img [src]="jobCompanyLogoUrl(resourcePanelJob) || 'assets/images/logo-tail.png'"
+                          [alt]="resourcePanelJob.company" />
                       </div>
                       <ng-template #resourcePanelLogoFallbackHero>
                         {{ jobCompanyLogoLabel(resourcePanelJob) }}
@@ -146,10 +143,7 @@
                     <div class="job-side-title-wrap">
                       <div class="job-side-title-row">
                         <h3>{{ resourcePanelJob.title }}</h3>
-                        <button
-                          type="button"
-                          class="job-side-title-chat"
-                          aria-label="Abrir chat do candidato"
+                        <button type="button" class="job-side-title-chat" aria-label="Abrir chat do candidato"
                           (click)="openSelectedCandidateChat()">
                           <span class="material-symbols-rounded">chat</span>
                           <span class="job-side-title-chat__badge">3</span>
@@ -242,17 +236,14 @@
 
                   <div class="empresa-vaga-card__header-actions">
                     <div class="empresa-vaga-card__avatars ">
-                      <img *ngFor="let avatar of vaga.avatarBadges; let i = index"
-                        [src]="avatar.src" [alt]="avatar.label || ('Avatar ' + (i + 1))" />
+                      <img *ngFor="let avatar of vaga.avatarBadges; let i = index" [src]="avatar.src"
+                        [alt]="avatar.label || ('Avatar ' + (i + 1))" />
                       <div class="empresa-vaga-card__avatars-more" *ngIf="vaga.avatarExtraCount > 0">
                         +{{ vaga.avatarExtraCount }}
                       </div>
                     </div>
 
-                    <button
-                      class="empresa-vaga-card__chat"
-                      type="button"
-                      aria-label="Editar vaga"
+                    <button class="empresa-vaga-card__chat" type="button" aria-label="Editar vaga"
                       (click)="openEditJob(vaga.id, $event)">
                       <span class="material-symbols-rounded">edit</span>
                     </button>
@@ -293,8 +284,10 @@
             <!-- HEADER DA EMPRESA -->
             <div class="company-context__company-top-left">
 
-              <div class="company-context__company-logo-box" [class.company-context__company-logo-box--placeholder]="!hasSelectedCompanyLogo">
-                <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'" [alt]="'Logo da empresa ' + selectedCompanyName" />
+              <div class="company-context__company-logo-box"
+                [class.company-context__company-logo-box--placeholder]="!hasSelectedCompanyLogo">
+                <img [src]="selectedCompanyLogoUrl || 'assets/images/logo-tail.png'"
+                  [alt]="'Logo da empresa ' + selectedCompanyName" />
               </div>
 
               <div class="company-context__company-top-copy">
@@ -303,8 +296,7 @@
               </div>
 
               <button class="company-context__edit-btn" type="button" aria-label="Editar empresa"
-                *ngIf="selectedCompanyRecord as company"
-                (click)="openEditModal(company)">
+                *ngIf="selectedCompanyRecord as company" (click)="openEditModal(company)">
                 <span class="material-symbols-rounded">edit</span>
               </button>
 
@@ -312,13 +304,8 @@
 
             <!-- THUMB / IMAGEM DA EMPRESA -->
             <div class="company-context__company-media" (click)="companyPanelImageInputIdentity.click()">
-              <input
-                #companyPanelImageInputIdentity
-                class="company-context__company-media-input"
-                type="file"
-                accept="image/*"
-                (click)="$event.stopPropagation()"
-                (change)="onCompanyPanelImageSelected($event)" />
+              <input #companyPanelImageInputIdentity class="company-context__company-media-input" type="file"
+                accept="image/*" (click)="$event.stopPropagation()" (change)="onCompanyPanelImageSelected($event)" />
               <img [src]="selectedCompanyPanelImageUrl" [alt]="selectedCompanyName" />
             </div>
 
@@ -394,7 +381,8 @@
     </div>
 
     <!-- LEFT BACK - CANDIDATES  -->
-    <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job" *ngIf="centerView === 'job'">
+    <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job"
+      *ngIf="centerView === 'job'">
 
       <div class="company-identity">
 
@@ -426,14 +414,9 @@
 
             <div class="menu-feature-card">
               <div class="menu-feature-video">
-                <video
-                  class="menu-feature-video__player"
-                  [attr.data-job-id]="resourcePanelJob.id"
-                  [src]="selectedCompanyRecruiterVideoUrl"
-                  [poster]="selectedCompanyRecruiterPosterUrl"
-                  controls
-                  playsinline
-                  preload="metadata"></video>
+                <video class="menu-feature-video__player" [attr.data-job-id]="resourcePanelJob.id"
+                  [src]="selectedCompanyRecruiterVideoUrl" [poster]="selectedCompanyRecruiterPosterUrl" controls
+                  playsinline preload="metadata"></video>
 
                 <ng-template #pendingVideoPreviewHero>
                   <div class="menu-feature-video__placeholder">
@@ -460,8 +443,10 @@
                 <div class="job-side-top">
                   <div class="job-side-brand-row">
                     <div class="job-side-logo">
-                      <div class="company-card__logo" [class.company-card__logo--placeholder]="!hasJobLogo(resourcePanelJob)">
-                        <img [src]="jobCompanyLogoUrl(resourcePanelJob) || 'assets/images/logo-tail.png'" [alt]="resourcePanelJob.company" />
+                      <div class="company-card__logo"
+                        [class.company-card__logo--placeholder]="!hasJobLogo(resourcePanelJob)">
+                        <img [src]="jobCompanyLogoUrl(resourcePanelJob) || 'assets/images/logo-tail.png'"
+                          [alt]="resourcePanelJob.company" />
                       </div>
                       <ng-template #resourcePanelLogoFallbackHero>
                         {{ jobCompanyLogoLabel(resourcePanelJob) }}
@@ -471,10 +456,7 @@
                     <div class="job-side-title-wrap">
                       <div class="job-side-title-row">
                         <h3>{{ resourcePanelJob.title }}</h3>
-                        <button
-                          type="button"
-                          class="job-side-title-chat"
-                          aria-label="Abrir chat do candidato"
+                        <button type="button" class="job-side-title-chat" aria-label="Abrir chat do candidato"
                           (click)="openSelectedCandidateChat()">
                           <span class="material-symbols-rounded">chat</span>
                           <span class="job-side-title-chat__badge">3</span>
@@ -540,7 +522,7 @@
               <div class="company-identity__bottom-subtitle">
                 Visualize as oportunidades ativas e acompanhe rapidamente as posições em andamento.
               </div>
-              
+
             </div>
 
             <div class="company-identity__bottom-header-actions"></div>
@@ -552,22 +534,22 @@
           <div class="company-identity__bottom-jobs company-identity__bottom-jobs--workspace">
             <div class="empresa-candidatos-talents">
               <div class="empresa-vaga-talents__grid">
-                <button
-                  type="button"
-                  class="empresa-vaga-talent-card"
+                <button type="button" class="empresa-vaga-talent-card"
                   *ngFor="let candidate of pagedSelectedCompanyCandidates; trackBy: trackCandidate"
                   [class.empresa-vaga-talent-card--active]="candidate.id === selectedCompanyCandidate?.id"
                   (click)="selectCandidate(candidate.id)">
                   <strong class="empresa-vaga-talent-card__name">{{ candidate.name }}</strong>
 
                   <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--card">
-                    <div class="empresa-vaga-talent-card__match-badge" *ngIf="getCandidateCardMatchLabel(candidate)"></div>
+                    <div class="empresa-vaga-talent-card__match-badge" *ngIf="getCandidateCardMatchLabel(candidate)">
+                    </div>
                     <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
                   </div>
 
                   <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--card">
                     <span>{{ getCandidateCardSpecialty(candidate.role) }}</span>
-                    <small class="empresa-vaga-talent-card__adherence" *ngIf="getCandidateCardMatchLabel(candidate) as matchLabel">
+                    <small class="empresa-vaga-talent-card__adherence"
+                      *ngIf="getCandidateCardMatchLabel(candidate) as matchLabel">
                       {{ matchLabel }}% Aderencia
                     </small>
                   </div>
@@ -584,28 +566,20 @@
                   </div>
 
                   <div class="empresa-vaga-talent-card__header-pagination">
-                    <button
-                      type="button"
-                      class="empresa-vaga-talent-card__pagination-nav"
-                      [disabled]="candidateCurrentPage === 1"
-                      (click)="goToPreviousCandidatePage()">
+                    <button type="button" class="empresa-vaga-talent-card__pagination-nav"
+                      [disabled]="candidateCurrentPage === 1" (click)="goToPreviousCandidatePage()">
                       <span class="material-symbols-rounded">chevron_left</span>
                     </button>
 
-                    <button
-                      *ngFor="let page of candidateVisiblePages; trackBy: trackPage"
-                      type="button"
+                    <button *ngFor="let page of candidateVisiblePages; trackBy: trackPage" type="button"
                       class="empresa-vaga-talent-card__pagination-page"
                       [class.empresa-vaga-talent-card__pagination-page--active]="page === candidateCurrentPage"
                       (click)="goToCandidatePage(page)">
                       {{ page }}
                     </button>
 
-                    <button
-                      type="button"
-                      class="empresa-vaga-talent-card__pagination-nav"
-                      [disabled]="candidateCurrentPage === candidateTotalPages"
-                      (click)="goToNextCandidatePage()">
+                    <button type="button" class="empresa-vaga-talent-card__pagination-nav"
+                      [disabled]="candidateCurrentPage === candidateTotalPages" (click)="goToNextCandidatePage()">
                       <span class="material-symbols-rounded">chevron_right</span>
                     </button>
                   </div>
@@ -621,29 +595,62 @@
 
     <div class="empresa-page__column empresa-page__column--job-panel" *ngIf="centerView === 'job'">
 
-      <div class="company-context__company-panel company-context__company-panel--job-upper" *ngIf="!isCandidateChatPanelVisible">        
-        <div class="company-context__profile-card">
+      <div *ngIf="!isCandidateChatPanelVisible">        
+     
+        <div class="company-context__candidate-default-panel" *ngIf="selectedCompanyCandidate as candidate">
 
-          <div class="company-context__company-panel">
+          <div class="company-context__candidate-note-hero">
 
-            <div class="company-context__candidate-default-panel">
-              <!-- HEADER DO CANDIDATO -->
-              <div class="company-context__company-top-left" *ngIf="selectedCompanyCandidate as candidate">
-                <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--side">
-                  <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
-                </div>
+            <div class="company-context__candidate-note-cover">
 
-                <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--side">
-                  <strong>{{ candidate.name }}</strong>
-                  <span>{{ candidate.location }}</span>
-                </div>
+              <img class="company-context__candidate-note-cover-image" [src]="selectedCompanyCandidatePosterUrl" alt="Foto do perfil do candidato" />
 
+              <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
+                aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
+                <span class="material-symbols-rounded">chat</span>
+                <span class="company-context__candidate-chat-badge">3</span>
+              </button>
  
+              <div class="company-context__candidate-note-copy">
+                <strong>{{ candidate.name }}</strong>
+                <span>{{ candidate.role }}</span>
+
+                <div class="company-context__candidate-note-tags">
+                  <span>{{ getCandidateStateCode(candidate.location) }}</span>
+                  <span *ngIf="getCandidateCardMatchLabel(candidate) as matchLabel">{{ matchLabel }}% Match</span>
+                </div>
               </div>
 
- 
+            </div>
 
-              <!-- ADERENCIA CANDIDATO -->
+            <div class="company-context__candidate-note-sheet">
+              
+              <div class="company-context__candidate-note-avatar">
+                <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
+              </div>
+
+              <div class="company-context__candidate-note-stats">
+                <div class="company-context__candidate-note-stat"
+                  *ngIf="getCandidateCardMatchLabel(candidate) as matchLabel">
+                  <strong>{{ matchLabel }}%</strong>
+                  <span>Aderencia</span>
+                </div>
+
+                <div class="company-context__candidate-note-stat">
+                  <strong>{{ candidate.topStacks.length }}</strong>
+                  <span>Stacks</span>
+                </div>
+
+                <div class="company-context__candidate-note-stat">
+                  <strong>{{ getCandidateStateCode(candidate.location) }}</strong>
+                  <span>Minas Gerais</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="company-context__company-panel">
+
+              <!-- STACKS -->
               <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
                 <div class="company-context__candidate-adherence-header">
                   <strong>Stacks de Aderência</strong>
@@ -651,13 +658,11 @@
                 </div>
 
                 <div class="company-context__candidate-adherence-list">
-                  <div
-                    class="company-context__candidate-adherence-item"
+                  <div class="company-context__candidate-adherence-item"
                     *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
                     <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
                     <div class="company-context__candidate-adherence-track">
-                      <div
-                        class="company-context__candidate-adherence-fill"
+                      <div class="company-context__candidate-adherence-fill"
                         [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
                         [style.width.%]="stack.match"></div>
                     </div>
@@ -665,11 +670,24 @@
                   </div>
                 </div>
               </div>
+
             </div>
 
           </div>
 
         </div>
+
+        <div class="company-context__company-panel company-context__company-panel--job-upper">
+
+          <div class="company-context__profile-card company-context__profile-card--candidate-note">
+
+
+
+          </div>
+
+
+        </div>
+ 
       </div>
 
       <div
@@ -680,17 +698,11 @@
 
           <!-- VIDEO DO CANDIDATO -->
           <div class="menu-feature-card-candidate">
-            <div
-              class="menu-feature-video-candidate"
+            <div class="menu-feature-video-candidate"
               [class.menu-feature-video-candidate--empty]="!hasSelectedCompanyCandidateVideo">
-              <video
-                *ngIf="hasSelectedCompanyCandidateVideo; else candidateVideoEmptyState"
-                class="menu-feature-video__player"
-                [src]="selectedCompanyCandidateVideoUrl"
-                [poster]="selectedCompanyCandidatePosterUrl"
-                controls
-                playsinline
-                preload="metadata"></video>
+              <video *ngIf="hasSelectedCompanyCandidateVideo; else candidateVideoEmptyState"
+                class="menu-feature-video__player" [src]="selectedCompanyCandidateVideoUrl"
+                [poster]="selectedCompanyCandidatePosterUrl" controls playsinline preload="metadata"></video>
 
               <ng-template #candidateVideoEmptyState>
                 <div class="menu-feature-video-candidate__empty">
@@ -703,17 +715,15 @@
           </div>
 
           <div class="empresa-candidate-timeline" *ngIf="selectedCompanyCandidate as candidate">
-            <div
-              class="empresa-candidate-timeline__step"
+            <div class="empresa-candidate-timeline__step"
               *ngFor="let stage of candidate.timeline; let isLast = last; trackBy: trackCandidateTimelineStage"
               [class.empresa-candidate-timeline__step--done]="stage.state === 'done'"
               [class.empresa-candidate-timeline__step--current]="stage.state === 'current'"
               [class.empresa-candidate-timeline__step--pending]="stage.state === 'pending'"
               [class.empresa-candidate-timeline__step--cancelled]="stage.state === 'cancelled'">
-              <div
-                class="empresa-candidate-timeline__line"
-                *ngIf="!isLast"
-                [class.empresa-candidate-timeline__line--active]="stage.state === 'done' || stage.state === 'current' || stage.state === 'cancelled'"></div>
+              <div class="empresa-candidate-timeline__line" *ngIf="!isLast"
+                [class.empresa-candidate-timeline__line--active]="stage.state === 'done' || stage.state === 'current' || stage.state === 'cancelled'">
+              </div>
 
               <div class="empresa-candidate-timeline__marker">
                 <span class="material-symbols-rounded">{{ stage.icon }}</span>
@@ -733,7 +743,8 @@
                 <span class="material-symbols-rounded">mail</span>
                 <span>Message</span>
               </button>
-              <button class="company-context__quick-action company-context__quick-action--chat" type="button" (click)="openSelectedCandidateChat()">
+              <button class="company-context__quick-action company-context__quick-action--chat" type="button"
+                (click)="openSelectedCandidateChat()">
                 <span class="company-context__quick-action-icon">
                   <span class="material-symbols-rounded">chat</span>
                   <span class="company-context__quick-action-badge">3</span>
@@ -747,7 +758,7 @@
             </div>
           </div>
         </div>
-        
+
       </div>
 
       <div class="company-context__candidate-chat-panel" *ngIf="isCandidateChatPanelVisible">
@@ -762,22 +773,15 @@
             <span>{{ candidate.location }}</span>
           </div>
 
-          <button
-            type="button"
-            class="company-context__candidate-chat"
-            aria-label="Voltar para dados do candidato"
+          <button type="button" class="company-context__candidate-chat" aria-label="Voltar para dados do candidato"
             (click)="openSelectedCandidateChat()">
-            <span class="material-symbols-rounded">arrow_back</span> 
+            <span class="material-symbols-rounded">arrow_back</span>
           </button>
         </div>
 
-        <app-chat-candidato
-          *ngIf="selectedCompanyCandidate as candidate"
-          [candidateName]="candidate.name"
-          [candidateLocation]="candidate.location"
-          [candidateAvatarUrl]="candidate.avatarUrl"
-          [jobTitle]="resourcePanelJob.title"
-          [companyName]="selectedCompanyName">
+        <app-chat-candidato *ngIf="selectedCompanyCandidate as candidate" [candidateName]="candidate.name"
+          [candidateLocation]="candidate.location" [candidateAvatarUrl]="candidate.avatarUrl"
+          [jobTitle]="resourcePanelJob.title" [companyName]="selectedCompanyName">
         </app-chat-candidato>
 
       </div>
@@ -789,10 +793,7 @@
 </div>
 
 <div class="empresa-company-selector" *ngIf="isCompanySelectorModalOpen">
-  <button
-    type="button"
-    class="empresa-company-selector__backdrop"
-    aria-label="Fechar seletor de empresas"
+  <button type="button" class="empresa-company-selector__backdrop" aria-label="Fechar seletor de empresas"
     (click)="closeCompanySelectorModal()">
   </button>
 
@@ -809,14 +810,13 @@
     </div>
 
     <div class="empresa-company-selector__grid">
-      <button
-        *ngFor="let option of pagedCompanySelectionOptions; trackBy: trackCompanyOption"
-        type="button"
+      <button *ngFor="let option of pagedCompanySelectionOptions; trackBy: trackCompanyOption" type="button"
         class="empresa-company-selector__card"
         [class.empresa-company-selector__card--active]="option.company.id === selectedCompanyId"
         (click)="onSelectedCompanyChange(option.company.id)">
         <div class="empresa-company-selector__card-top">
-          <div class="company-card__logo empresa-company-selector__logo" [class.company-card__logo--placeholder]="!option.company.logoUrl?.trim()">
+          <div class="company-card__logo empresa-company-selector__logo"
+            [class.company-card__logo--placeholder]="!option.company.logoUrl?.trim()">
             <img [src]="option.company.logoUrl?.trim() || 'assets/images/logo-tail.png'" [alt]="option.company.name" />
           </div>
 
@@ -834,19 +834,14 @@
     </div>
 
     <div class="empresa-company-selector__footer" *ngIf="companySelectorTotalPages > 1">
-      <button
-        type="button"
-        class="empresa-company-selector__nav empresa-company-selector__nav--ghost"
-        [disabled]="companySelectorCurrentPage === 1"
-        (click)="setCompanySelectorPage(companySelectorCurrentPage - 1)">
+      <button type="button" class="empresa-company-selector__nav empresa-company-selector__nav--ghost"
+        [disabled]="companySelectorCurrentPage === 1" (click)="setCompanySelectorPage(companySelectorCurrentPage - 1)">
         <span class="material-symbols-rounded">chevron_left</span>
         <span>Anterior</span>
       </button>
 
       <div class="empresa-company-selector__pages">
-        <button
-          *ngFor="let page of companySelectorVisiblePages; trackBy: trackPage"
-          type="button"
+        <button *ngFor="let page of companySelectorVisiblePages; trackBy: trackPage" type="button"
           class="empresa-company-selector__page"
           [class.empresa-company-selector__page--active]="page === companySelectorCurrentPage"
           (click)="setCompanySelectorPage(page)">
@@ -854,9 +849,7 @@
         </button>
       </div>
 
-      <button
-        type="button"
-        class="empresa-company-selector__nav empresa-company-selector__nav--primary"
+      <button type="button" class="empresa-company-selector__nav empresa-company-selector__nav--primary"
         [disabled]="companySelectorCurrentPage === companySelectorTotalPages"
         (click)="setCompanySelectorPage(companySelectorCurrentPage + 1)">
         <span>Próxima</span>
@@ -883,10 +876,9 @@
 
     <div class="empresa-modal__brand-editor">
       <div class="empresa-modal__brand-preview">
-        <div class="company-card__logo empresa-modal__brand-logo-card" [class.company-card__logo--placeholder]="!hasCompanyFormLogo">
-          <img
-            *ngIf="companyFormLogoPreviewUrl; else companyModalLogoFallback"
-            [src]="companyFormLogoPreviewUrl"
+        <div class="company-card__logo empresa-modal__brand-logo-card"
+          [class.company-card__logo--placeholder]="!hasCompanyFormLogo">
+          <img *ngIf="companyFormLogoPreviewUrl; else companyModalLogoFallback" [src]="companyFormLogoPreviewUrl"
             [alt]="'Logo da empresa ' + companyFormPreviewName" />
           <ng-template #companyModalLogoFallback>
             <img src="assets/images/logo-tail.png" [alt]="'Logo padrão da empresa ' + companyFormPreviewName" />
@@ -900,22 +892,16 @@
       </div>
 
       <div class="empresa-modal__brand-actions">
-        <input
-          #companyLogoInput
-          class="empresa-modal__logo-input"
-          type="file"
-          accept="image/*"
+        <input #companyLogoInput class="empresa-modal__logo-input" type="file" accept="image/*"
           (change)="onCompanyLogoSelected($event)" />
 
-        <button type="button" class="empresa-modal__logo-button empresa-modal__logo-button--primary" (click)="companyLogoInput.click()">
+        <button type="button" class="empresa-modal__logo-button empresa-modal__logo-button--primary"
+          (click)="companyLogoInput.click()">
           Alterar logo
         </button>
 
-        <button
-          *ngIf="companyFormLogoPreviewUrl"
-          type="button"
-          class="empresa-modal__logo-button empresa-modal__logo-button--ghost"
-          (click)="clearCompanyLogo()">
+        <button *ngIf="companyFormLogoPreviewUrl" type="button"
+          class="empresa-modal__logo-button empresa-modal__logo-button--ghost" (click)="clearCompanyLogo()">
           Remover
         </button>
       </div>
