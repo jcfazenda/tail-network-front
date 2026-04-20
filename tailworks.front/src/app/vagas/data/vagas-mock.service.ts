@@ -19,6 +19,7 @@ type CandidateBasicProfile = {
 
 type CandidateBasicDraft = {
   profile?: Partial<CandidateBasicProfile>;
+  availabilitySignal?: 'available' | 'open' | '';
   photoPreviewUrl?: string;
 };
 

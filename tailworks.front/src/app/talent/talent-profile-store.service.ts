@@ -16,6 +16,7 @@ export type SeededCandidateBasicDraft = {
     portfolio?: string;
     formation?: string;
   };
+  availabilitySignal?: 'available' | 'open' | '';
   photoPreviewUrl?: string;
   photoFileName?: string;
   candidateVideoUrl?: string;

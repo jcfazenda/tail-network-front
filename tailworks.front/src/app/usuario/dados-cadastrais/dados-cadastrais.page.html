@@ -164,6 +164,17 @@
                 <small class="candidate-profile__error" *ngIf="showFieldError(cityModel)">Informe a cidade.</small>
               </label>
             </div>
+
+            <label class="candidate-profile__field candidate-profile__field--full">
+              <span>Sinal no radar</span>
+              <div class="candidate-profile__input-shell">
+                <span class="material-symbols-rounded" aria-hidden="true">notifications_active</span>
+                <select [(ngModel)]="availabilitySignal" name="availabilitySignal">
+                  <option *ngFor="let item of availabilityOptions" [value]="item.value">{{ item.label }}</option>
+                </select>
+                <span class="material-symbols-rounded candidate-profile__select-chevron" aria-hidden="true">expand_more</span>
+              </div>
+            </label>
           </div>
         </section>
 

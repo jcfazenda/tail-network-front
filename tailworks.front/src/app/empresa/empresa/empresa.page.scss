@@ -16,10 +16,9 @@
   position: relative;
   inset: 0;
   width: calc(100% - var(--empresa-sidebar-offset));
-  max-width: 100%;
-  min-width: 0;
-  height: 100%;
-  min-height: 100%;
+  max-width: 100%; 
+  height: calc(100vh - 32px);
+  min-height: 0;
   margin: 0;
   margin-left: var(--empresa-sidebar-offset);
   padding: 0;
@@ -37,14 +36,11 @@
   display: grid;
   grid-template-columns:
     minmax(0, 1.9fr) minmax(160px, 0.38fr) minmax(160px, 0.38fr);
-
-  /* 3 linhas */
-  grid-template-rows: 150px minmax(0, 1fr) minmax(180px, 0.62fr);
+  grid-template-rows: 150px minmax(0, 1fr);
 
   grid-template-areas:
     "topbar topbar topbar"
-    "left   side side"
-    "left   side-bottom side-bottom";
+    "left   side side" ;
 
   gap: 12px;
   overflow: hidden;
@@ -151,7 +147,7 @@
 
 .empresa-page__column--job-panel {
   grid-column: 2 / 4;
-  grid-row: 2 / 4;
+  grid-row: 2;
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -162,18 +158,19 @@
   justify-self: stretch;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(240px, 0.72fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: start;
   gap: 12px;
+  border-radius: 14px;
 }
 
 /* PANEL DIREITO CANDIDATO */
-.empresa-page__column {
-  background: linear-gradient(180deg, #ffffff, #fefefe);
+.empresa-page__column { 
   border-radius: 14px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: hidden;background: linear-gradient(180deg, #d6d6d6, #ffffff);
   min-width: 0;
-  min-height: 0;
+  min-height: 0; 
 }
 
 .empresa-page__column-back {
@@ -183,7 +180,7 @@
   overflow: hidden;
   min-width: 0;
   min-height: 0;
-  height: 100%;
+  height: 150px;
 }
 
 .empresa-page__column--side-back {
@@ -778,11 +775,11 @@
 }
 
 .company-context__candidate-adherence { 
-  margin: 20px -1px 0;
-  padding: 35px 24px;
+  margin: 12px -1px 0;
+  padding: 20px 20px;
   border-radius: 22px; 
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .empresa-page__column--side .company-context__candidate-adherence,
@@ -1018,7 +1015,7 @@
   min-height: 0;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .company-panel--left {
@@ -1890,12 +1887,19 @@
   background: #e9eaec;
   position: relative;
   overflow: visible;
+  box-shadow: inset 0 0 0 6px rgba(207, 212, 220, 0.9);
 
   img {
     object-fit: cover;
     filter: grayscale(1) contrast(1.04);
     border-radius: 999px;
   }
+}
+
+.empresa-vaga-talent-card__avatar--card.is-available,
+.empresa-vaga-talent-card__avatar--card.is-open,
+.empresa-vaga-talent-card__avatar--card.is-neutral {
+  box-shadow: inset 0 0 0 6px rgba(207, 212, 220, 0.9);
 }
 
 .empresa-vaga-talent-card__match-badge {
@@ -1925,6 +1929,11 @@
     0 12px 28px rgba(255, 138, 61, 0.12);
 }
 
+.empresa-vaga-talents__grid .empresa-vaga-talent-card.empresa-vaga-talent-card--active .empresa-vaga-talent-card__avatar img,
+.empresa-vaga-talents__grid .empresa-vaga-talent-card.empresa-vaga-talent-card--active .empresa-vaga-talent-card__avatar--card img {
+  filter: none;
+}
+
 .empresa-vaga-talent-card__avatar--side {
   width: 88px;
   height: 88px;
@@ -1951,25 +1960,57 @@
 
 .empresa-vaga-talent-card__identity--card {
   justify-items: center;
-  gap: 2px;
-  padding: 0 18px 6px;
+  gap: 3px;
+  padding: 10px 18px 6px;
 
   span {
-    font-size: 13px;
-    line-height: 1.2;
+    font-size: 17px;
+    line-height: 1.18;
     font-weight: 500;
-    color: #9aa1ac;
+    color: #6b7280;
     font-style: italic;
     white-space: nowrap;
   }
 }
 
+.empresa-vaga-talent-card__availability-pill {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  min-height: 34px;
+  padding: 0 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
+  z-index: 2;
+}
+
+.empresa-vaga-talent-card__availability-pill--is-available {
+  background: linear-gradient(135deg, #43d56f 0%, #2fcb62 100%);
+}
+
+.empresa-vaga-talent-card__availability-pill--is-open {
+  background: linear-gradient(135deg, #ffc562 0%, #f4a93c 100%);
+}
+
+.empresa-vaga-talent-card__availability-pill--is-neutral {
+  background: linear-gradient(135deg, #cfd4dc 0%, #bcc3cd 100%);
+}
+
 .empresa-vaga-talent-card__adherence {
-  margin-top: 6px;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  margin-top: 2px;
+  font-size: 15px;
+  line-height: 1.1;
+  font-weight: 900;
   color: #2f3232;
   white-space: nowrap;
 }
@@ -3803,7 +3844,7 @@
   }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 180%) {
   .empresa-page {
     --empresa-sidebar-offset: 0px;
   }
@@ -3813,9 +3854,7 @@
     grid-template-rows: 150px minmax(0, 1fr) minmax(280px, 1fr) minmax(220px, 1fr);
     grid-template-areas:
       "topbar topbar"
-      "left side"
-      "left side-bottom"
-      "left side-bottom";
+      "left side"  ;
   }
 
   .empresa-page__topbar {
@@ -3864,7 +3903,7 @@
   .empresa-page__column--side,
   .empresa-page__column--job-panel,
   .empresa-page__column--bottom {
-    height: auto;
+    height: 0;
     min-height: 0;
   }
 }
@@ -4116,8 +4155,9 @@
 }
 
 .company-context__company-panel--job-upper {
+  height: auto;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   margin: -18px -18px 0;
 }
 
@@ -4137,7 +4177,7 @@
 .company-context__bottom-stack {
   width: 100%;
   max-width: 980px;
-  margin-top: auto;
+  margin-top: 30px;
   display: grid;
   gap: 14px;
 }
@@ -4215,8 +4255,10 @@
   width: calc(100% + 40px);
   margin: 0 -72px 0 -18px;
   display: grid;
-  gap: 12px;
+  gap: 10px;
   margin-top: -20px;
+  height: auto;
+  border-radius: 28px 28px 0 0;
 }
 
 .company-context__candidate-note-hero {
@@ -4227,12 +4269,13 @@
   border-radius: 28px 28px 0 0;
   overflow: hidden;
   background: #ffffff; 
+  height: auto;
 }
 
 .company-context__candidate-note-cover {
   position: relative;
-  min-height: 396px;
-  padding: 28px 28px 92px;
+  height: 352px;
+  padding: 18px 24px 79px;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -4335,7 +4378,7 @@
   gap: 8px;
 
   strong {
-    font-size: 38px;
+    font-size: 32px;
     line-height: 0.98;
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -4343,7 +4386,7 @@
   }
 
   >span {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.2;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.86); 
@@ -4353,12 +4396,12 @@
 .company-context__candidate-note-tags {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 14px;
   flex-wrap: wrap; 
 
   span {
     min-height: 30px;
-    padding: 0 12px;
+    padding: 0 10px;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
@@ -4366,10 +4409,20 @@
     background: rgba(255, 255, 255, 0.18);
     border: 1px solid rgba(255, 255, 255, 0.22);
     color: #ffffff;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     backdrop-filter: blur(6px);
   }
+}
+
+.company-context__candidate-note-tag--is-available {
+  background: rgba(34, 197, 94, 0.2) !important;
+  border-color: rgba(34, 197, 94, 0.38) !important;
+}
+
+.company-context__candidate-note-tag--is-open {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: rgba(245, 158, 11, 0.38) !important;
 }
 
 .company-context__candidate-note-sheet {
@@ -4377,21 +4430,21 @@
   z-index: 2;
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr);
-  gap: 26px;
+  gap: 20px;
   align-items: end;
-  padding: 0 28px 22px;
-  margin-top: -58px;
+  padding: 0 24px 14px;
+  margin-top: 0;
 }
 
 .company-context__candidate-note-avatar {
-  width: 128px;
-  height: 128px;
+  width: 110px;
+  height: 110px;
   border-radius: 999px;
   overflow: hidden;
   border: 5px solid #ffffff;
   box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
   background: #eef2f7;
-
+  margin-top: -50px;
   img {
     width: 100%;
     height: 100%;
@@ -4400,11 +4453,149 @@
   }
 }
 
+.company-context__candidate-note-avatar--is-available {
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.14),
+    0 0 0 7px rgba(34, 197, 94, 0.92);
+}
+
+.company-context__candidate-note-avatar--is-open {
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.14),
+    0 0 0 7px rgba(245, 158, 11, 0.9);
+}
+
+.company-context__candidate-journey-preview {
+  display: grid;
+  gap: 45px;
+  margin-top: 20px;
+  padding: 14px 16px; 
+  background: rgba(255, 255, 255, 0.74);
+  height: auto;
+}
+
+.company-context__candidate-journey-preview-head {
+  display: grid;
+  gap: 4px;
+
+  strong {
+    color: #2f3232;
+    font-size: 15px;
+    line-height: 1.1;
+    font-weight: 800;
+    gap:10px;
+  }
+
+  span {
+    color: #7a8080;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+}
+
+.company-context__candidate-journey-preview-step {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.company-context__candidate-journey-preview-axis {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  height: 100%;
+}
+
+.company-context__candidate-journey-preview-line {
+  width: 2px;
+  flex: 1 1 auto;
+  min-height: 24px;
+  margin-top: 4px;
+  background: rgba(207, 212, 220, 0.92);
+}
+
+.company-context__candidate-journey-preview-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid rgba(207, 212, 220, 0.96);
+  color: #8d97a5;
+
+  .material-symbols-rounded {
+    font-size: 14px;
+    line-height: 1;
+  }
+}
+
+.company-context__candidate-journey-preview-dot--done {
+  background: #35c96c;
+  border-color: #35c96c;
+  color: #ffffff;
+}
+
+.company-context__candidate-journey-preview-dot--current {
+  background: #f4a93c;
+  border-color: #f4a93c;
+  box-shadow: 0 0 0 5px rgba(244, 169, 60, 0.16);
+}
+
+.company-context__candidate-journey-preview-dot--cancelled {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.company-context__candidate-journey-preview-dot--pending {
+  background: #ffffff;
+  border-color: rgba(207, 212, 220, 0.96);
+}
+
+.company-context__candidate-journey-preview-body {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 2px;
+
+  p {
+    margin: 0;
+    color: rgba(28, 33, 41, 0.72);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+}
+
+.company-context__candidate-journey-preview-meta {
+  display: grid;
+  gap: 12px;
+
+  strong {
+    color: rgba(18, 22, 28, 0.92);
+    font-size: 13px;
+    line-height: 1.1;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  small {
+    color: rgba(63, 70, 82, 0.6);
+    font-size: 10px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
 .company-context__candidate-note-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  padding-bottom: 8px;
+  gap: 14px;
+  padding-top: 8px;
+  padding-bottom: 4px;
 }
 
 .company-context__candidate-note-stat {
@@ -4412,14 +4603,14 @@
   gap: 4px;
 
   strong {
-    font-size: 26px;
+    font-size: 22px;
     line-height: 1;
     font-weight: 800;
     color: #2f3232;
   }
 
   span {
-    font-size: 11px;
+    font-size: 10px;
     line-height: 1.2;
     font-weight: 700;
     letter-spacing: 0.08em;

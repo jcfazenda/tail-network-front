@@ -313,14 +313,9 @@
 
 
         </div>
-      </div>
 
-    </div>
-
-    <div class="empresa-page__column-down empresa-page__column--bottom" *ngIf="centerView === 'identity'">
       <div class="company-context__company-panel">
         <div class="company-context__profile-card">
-
 
           <div class="company-context__info-grid-front company-context__info-grid-front--identity">
 
@@ -378,7 +373,12 @@
 
         </div>
       </div>
+      
+      
+      </div>
+
     </div>
+ 
 
     <!-- LEFT BACK - CANDIDATES  -->
     <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job"
@@ -540,10 +540,16 @@
                   (click)="selectCandidate(candidate.id)">
                   <strong class="empresa-vaga-talent-card__name">{{ candidate.name }}</strong>
 
-                  <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--card">
+                  <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--card"
+                    [ngClass]="getCandidateAvailabilityClass(candidate)">
                     <div class="empresa-vaga-talent-card__match-badge" *ngIf="getCandidateCardMatchLabel(candidate)">
                     </div>
                     <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
+                    <span *ngIf="getCandidateAvailabilityLabel(candidate) as availabilityLabel"
+                      class="empresa-vaga-talent-card__availability-pill"
+                      [ngClass]="'empresa-vaga-talent-card__availability-pill--' + getCandidateAvailabilityClass(candidate)">
+                      {{ availabilityLabel }}
+                    </span>
                   </div>
 
                   <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--card">
@@ -595,66 +601,58 @@
 
     <div class="empresa-page__column empresa-page__column--job-panel" *ngIf="centerView === 'job'">
 
-      <div *ngIf="!isCandidateChatPanelVisible">        
-     
+      <div *ngIf="!isCandidateChatPanelVisible">
+
         <div class="company-context__candidate-default-panel" *ngIf="selectedCompanyCandidate as candidate">
 
-            <div class="company-context__candidate-note-hero">
+          <div class="company-context__candidate-note-hero">
 
-              <div class="company-context__candidate-note-cover">
-                <ng-container *ngIf="hasSelectedCompanyCandidateResolvedVideo; else candidateHeroPoster">
-                  <video
-                    #candidateHeroVideo
-                    class="company-context__candidate-note-cover-image company-context__candidate-note-cover-video"
-                    [src]="selectedCompanyCandidateVideoUrl"
-                    [poster]="selectedCompanyCandidatePosterUrl"
-                    playsinline
-                    preload="metadata"
-                    muted>
-                  </video>
+            <div class="company-context__candidate-note-cover">
+              <ng-container *ngIf="hasSelectedCompanyCandidateResolvedVideo; else candidateHeroPoster">
+                <video #candidateHeroVideo
+                  class="company-context__candidate-note-cover-image company-context__candidate-note-cover-video"
+                  [src]="selectedCompanyCandidateVideoUrl" [poster]="selectedCompanyCandidatePosterUrl" playsinline
+                  preload="metadata" muted>
+                </video>
 
-                  <button
-                    type="button"
-                    class="company-context__candidate-note-control company-context__candidate-note-control--center"
-                    (click)="toggleCandidateHeroVideo(candidateHeroVideo)">
-                    <span class="material-symbols-rounded">{{ candidateHeroVideo.paused ? 'play_arrow' : 'pause' }}</span>
+                <button type="button"
+                  class="company-context__candidate-note-control company-context__candidate-note-control--center"
+                  (click)="toggleCandidateHeroVideo(candidateHeroVideo)">
+                  <span class="material-symbols-rounded">{{ candidateHeroVideo.paused ? 'play_arrow' : 'pause' }}</span>
+                </button>
+
+                <div class="company-context__candidate-note-topbar">
+                  <div class="company-context__candidate-note-controls">
+                    <button type="button" class="company-context__candidate-note-control"
+                      (click)="toggleCandidateHeroVideoMute(candidateHeroVideo)">
+                      <span class="material-symbols-rounded">{{ candidateHeroVideo.muted ? 'volume_off' : 'volume_up'
+                        }}</span>
+                    </button>
+                  </div>
+
+                  <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
+                    aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
+                    <span class="material-symbols-rounded">chat</span>
+                    <span class="company-context__candidate-chat-badge">3</span>
                   </button>
+                </div>
+              </ng-container>
 
-                  <div class="company-context__candidate-note-topbar">
-                    <div class="company-context__candidate-note-controls">
-                      <button
-                        type="button"
-                        class="company-context__candidate-note-control"
-                        (click)="toggleCandidateHeroVideoMute(candidateHeroVideo)">
-                        <span class="material-symbols-rounded">{{ candidateHeroVideo.muted ? 'volume_off' : 'volume_up' }}</span>
-                      </button>
-                    </div>
+              <ng-template #candidateHeroPoster>
+                <img class="company-context__candidate-note-cover-image" [src]="selectedCompanyCandidatePosterUrl"
+                  alt="Foto do perfil do candidato" />
 
-                    <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
-                      aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
-                      <span class="material-symbols-rounded">chat</span>
-                      <span class="company-context__candidate-chat-badge">3</span>
-                    </button>
-                  </div>
-                </ng-container>
+                <div class="company-context__candidate-note-topbar">
+                  <div></div>
 
-                <ng-template #candidateHeroPoster>
-                  <img
-                    class="company-context__candidate-note-cover-image"
-                    [src]="selectedCompanyCandidatePosterUrl"
-                    alt="Foto do perfil do candidato" />
+                  <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
+                    aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
+                    <span class="material-symbols-rounded">chat</span>
+                    <span class="company-context__candidate-chat-badge">3</span>
+                  </button>
+                </div>
+              </ng-template>
 
-                  <div class="company-context__candidate-note-topbar">
-                    <div></div>
-
-                    <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
-                      aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
-                      <span class="material-symbols-rounded">chat</span>
-                      <span class="company-context__candidate-chat-badge">3</span>
-                    </button>
-                  </div>
-                </ng-template>
- 
               <div class="company-context__candidate-note-copy">
                 <strong>{{ candidate.name }}</strong>
                 <span>{{ candidate.role }}</span>
@@ -662,14 +660,19 @@
                 <div class="company-context__candidate-note-tags">
                   <span>{{ getCandidateStateCode(candidate.location) }}</span>
                   <span *ngIf="getCandidateCardMatchLabel(candidate) as matchLabel">{{ matchLabel }}% Match</span>
+                  <span *ngIf="getCandidateAvailabilityLabel(candidate) as availabilityLabel"
+                    class="company-context__candidate-note-tag"
+                    [ngClass]="'company-context__candidate-note-tag--' + getCandidateAvailabilityClass(candidate)">
+                    {{ availabilityLabel }}
+                  </span>
                 </div>
               </div>
 
             </div>
 
             <div class="company-context__candidate-note-sheet">
-              
-              <div class="company-context__candidate-note-avatar">
+              <div class="company-context__candidate-note-avatar"
+                [ngClass]="'company-context__candidate-note-avatar--' + getCandidateAvailabilityClass(candidate)">
                 <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
               </div>
 
@@ -692,101 +695,73 @@
               </div>
             </div>
 
-            <div class="company-context__company-panel">
+            <!-- STAKS  -->
+            <div class="company-context__bottom-stack">
 
-              <!-- STACKS -->
-              <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
-                <div class="company-context__candidate-adherence-header">
-                  <strong>Stacks de Aderência</strong>
-                  <span>Top 3 do candidato selecionado</span>
-                </div>
+              <div class="company-context__company-panel">
 
-                <div class="company-context__candidate-adherence-list">
-                  <div class="company-context__candidate-adherence-item"
-                    *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
-                    <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
-                    <div class="company-context__candidate-adherence-track">
-                      <div class="company-context__candidate-adherence-fill"
-                        [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
-                        [style.width.%]="stack.match"></div>
+                <!-- STACKS -->
+                <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
+                  <div class="company-context__candidate-adherence-header">
+                    <strong>Stacks de Aderência</strong>
+                  </div>
+
+                  <div class="company-context__candidate-adherence-list">
+                    <div class="company-context__candidate-adherence-item"
+                      *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
+                      <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
+                      <div class="company-context__candidate-adherence-track">
+                        <div class="company-context__candidate-adherence-fill"
+                          [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
+                          [style.width.%]="stack.match"></div>
+                      </div>
+                      <strong class="company-context__candidate-adherence-value">{{ stack.match }}%</strong>
                     </div>
-                    <strong class="company-context__candidate-adherence-value">{{ stack.match }}%</strong>
                   </div>
                 </div>
+
               </div>
 
             </div>
 
-          </div>
-
-        </div>
-
-        <div class="company-context__company-panel company-context__company-panel--job-upper">
-
-          <div class="company-context__profile-card company-context__profile-card--candidate-note">
-
-
-
-          </div>
-
-
-        </div>
- 
-      </div>
-
-      <div
-        class="company-context__company-panel company-context__company-panel--bottom company-context__company-panel--job-lower"
-        *ngIf="!isCandidateChatPanelVisible">
-
-        <div class="company-context__bottom-stack">
-
-          <div class="empresa-candidate-timeline" *ngIf="selectedCompanyCandidate as candidate">
-            <div class="empresa-candidate-timeline__step"
-              *ngFor="let stage of candidate.timeline; let isLast = last; trackBy: trackCandidateTimelineStage"
-              [class.empresa-candidate-timeline__step--done]="stage.state === 'done'"
-              [class.empresa-candidate-timeline__step--current]="stage.state === 'current'"
-              [class.empresa-candidate-timeline__step--pending]="stage.state === 'pending'"
-              [class.empresa-candidate-timeline__step--cancelled]="stage.state === 'cancelled'">
-              <div class="empresa-candidate-timeline__line" *ngIf="!isLast"
-                [class.empresa-candidate-timeline__line--active]="stage.state === 'done' || stage.state === 'current' || stage.state === 'cancelled'">
+            <!-- STATUS CANDIDATO -->
+            <div class="company-context__candidate-journey-preview" *ngIf="candidate.timeline?.length">
+              <div class="company-context__candidate-journey-preview-head">
+                <strong>Status do Candidato</strong>
+                <span>Prévia da jornada na vaga</span>
               </div>
 
-              <div class="empresa-candidate-timeline__marker">
-                <span class="material-symbols-rounded">{{ stage.icon }}</span>
+              <div class="company-context__candidate-journey-preview-step"
+                *ngFor="let stage of candidate.timeline; let isLast = last; trackBy: trackCandidateTimelineStage">
+                <div class="company-context__candidate-journey-preview-axis">
+                  <span class="company-context__candidate-journey-preview-dot"
+                    [class.company-context__candidate-journey-preview-dot--done]="stage.state === 'done'"
+                    [class.company-context__candidate-journey-preview-dot--current]="stage.state === 'current'"
+                    [class.company-context__candidate-journey-preview-dot--pending]="stage.state === 'pending'"
+                    [class.company-context__candidate-journey-preview-dot--cancelled]="stage.state === 'cancelled'">
+                    <span class="material-symbols-rounded"
+                      *ngIf="stage.state === 'done' || stage.state === 'cancelled'">check</span>
+                  </span>
+                  <span class="company-context__candidate-journey-preview-line" *ngIf="!isLast"></span>
+                </div>
+
+                <div class="company-context__candidate-journey-preview-body">
+                  <div class="company-context__candidate-journey-preview-meta">
+                    <strong>{{ stage.label }}</strong>
+                    <small>{{ stage.ownerText }}</small>
+                  </div>
+                  <p>{{ stage.description }}</p>
+                </div>
               </div>
+            </div>           
+            
+          </div>          
 
-              <span class="empresa-candidate-timeline__label">{{ stage.label }}</span>
-            </div>
-          </div>
-
-          <div class="company-context__profile-card company-context__profile-card--bottom-candidate">
-            <div class="company-context__quick-actions-front company-context__quick-actions-front--job">
-              <button class="company-context__quick-action" type="button">
-                <span class="material-symbols-rounded">record_voice_over</span>
-                <span>Entrevistas</span>
-              </button>
-              <button class="company-context__quick-action" type="button">
-                <span class="material-symbols-rounded">mail</span>
-                <span>Message</span>
-              </button>
-              <button class="company-context__quick-action company-context__quick-action--chat" type="button"
-                (click)="openSelectedCandidateChat()">
-                <span class="company-context__quick-action-icon">
-                  <span class="material-symbols-rounded">chat</span>
-                  <span class="company-context__quick-action-badge">3</span>
-                </span>
-                <span>Chat</span>
-              </button>
-              <button class="company-context__quick-action" type="button">
-                <span class="material-symbols-rounded">videocam</span>
-                <span>Chamada</span>
-              </button>
-            </div>
-          </div>
         </div>
 
       </div>
 
+      <!-- CHAT -->
       <div class="company-context__candidate-chat-panel" *ngIf="isCandidateChatPanelVisible">
         <!-- HEADER DO CANDIDATO -->
         <div class="company-context__company-top-left" *ngIf="selectedCompanyCandidate as candidate">

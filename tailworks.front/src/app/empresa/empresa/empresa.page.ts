@@ -11,7 +11,7 @@ import { MatchDomainService } from '../../core/matching/match-domain.service';
 import { LocalMediaStorageService } from '../../core/storage/local-media-storage.service';
 import { CompanyRecord } from '../empresa.models';
 import { RecruiterRecord } from '../../recruiter/recruiter.models';
-import { MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
+import { CandidateStage, MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
 import { ChatCandidatoComponent } from '../../vagas/chat-candidato/chat-candidato.component';
 import { SeededTalentProfile, TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
@@ -65,23 +65,28 @@ type SideJobCardVm = {
   avatarExtraCount: number;
 };
 
+type CompanyCandidateTimelineStepVm = {
+  id: string;
+  label: string;
+  icon: string;
+  ownerText: string;
+  description: string;
+  state: 'done' | 'current' | 'pending' | 'cancelled';
+};
+
 type CompanyCandidateVm = {
   id: string;
   name: string;
   role: string;
   location: string;
   avatarUrl: string;
+  availabilitySignal: 'available' | 'open' | '';
   educationLabel?: string;
   educationStatus?: string;
   videoUrl?: string;
   videoPosterUrl?: string;
   topStacks: Array<{ label: string; match: number; isAdherence: boolean }>;
-  timeline: Array<{
-    id: string;
-    label: string;
-    icon: string;
-    state: 'done' | 'current' | 'pending' | 'cancelled';
-  }>;
+  timeline: CompanyCandidateTimelineStepVm[];
 };
 
 type CompanyViewModel = {
@@ -937,6 +942,30 @@ export class EmpresaPage implements OnDestroy {
     return String(Math.min(99, Math.max(0, Math.round(match)))).padStart(2, '0');
   }
 
+  getCandidateAvailabilityClass(candidate: CompanyCandidateVm): string {
+    if (candidate.availabilitySignal === 'available') {
+      return 'is-available';
+    }
+
+    if (candidate.availabilitySignal === 'open') {
+      return 'is-open';
+    }
+
+    return 'is-neutral';
+  }
+
+  getCandidateAvailabilityLabel(candidate: CompanyCandidateVm): string | null {
+    if (candidate.availabilitySignal === 'available') {
+      return 'ABERTO';
+    }
+
+    if (candidate.availabilitySignal === 'open') {
+      return 'RADAR';
+    }
+
+    return null;
+  }
+
   toggleCandidateHeroVideo(video: HTMLVideoElement): void {
     if (video.paused) {
       void video.play();
@@ -956,7 +985,7 @@ export class EmpresaPage implements OnDestroy {
 
   trackCandidateTimelineStage(
     _index: number,
-    stage: { id: string; label: string; state: 'done' | 'current' | 'pending' | 'cancelled' },
+    stage: CompanyCandidateTimelineStepVm,
   ): string {
     return `${stage.id}:${stage.label}:${stage.state}`;
   }
@@ -1066,6 +1095,29 @@ export class EmpresaPage implements OnDestroy {
   openSelectedCandidateChat(): void {
     this.isCandidateChatPanelVisible = !this.isCandidateChatPanelVisible;
     this.cdr.markForCheck();
+  }
+
+  openSelectedCandidateCurriculum(): void {
+    const candidate = this.selectedCompanyCandidate;
+    if (!candidate) {
+      return;
+    }
+
+    const job = this.resourcePanelJob;
+    void this.router.navigate(['/talent/curriculum'], {
+      queryParams: {
+        candidate: candidate.id,
+        name: candidate.name,
+        jobId: job.id,
+        jobTitle: job.title,
+        jobCompany: job.company,
+        jobLocation: job.location,
+        jobWorkModel: job.workModel,
+        jobSalary: this.resourcePanelSalary,
+        jobContractType: job.contractType,
+        jobLogo: this.jobCompanyLogoUrl(job),
+      },
+    });
   }
 
   showIdentityCenter(): void {
@@ -1202,6 +1254,34 @@ export class EmpresaPage implements OnDestroy {
 
       return this.normalizeCompanyKey(draftName) === this.normalizeCompanyKey(candidateName)
         ? draftAvatar
+        : '';
+    } catch {
+      return '';
+    }
+  }
+
+  private resolveCurrentWorkspaceCandidateAvailability(candidateName: string): 'available' | 'open' | '' {
+    const rawDraft = localStorage.getItem(EmpresaPage.candidateBasicDraftStorageKey);
+    if (!rawDraft) {
+      return '';
+    }
+
+    try {
+      const draft = JSON.parse(rawDraft) as {
+        profile?: { name?: string };
+        availabilitySignal?: 'available' | 'open' | '';
+      };
+      const draftName = draft.profile?.name?.trim() || this.authFacade.getSession()?.name?.trim() || '';
+      if (!draftName) {
+        return '';
+      }
+
+      if (this.normalizeCompanyKey(draftName) !== this.normalizeCompanyKey(candidateName)) {
+        return '';
+      }
+
+      return draft.availabilitySignal === 'available' || draft.availabilitySignal === 'open'
+        ? draft.availabilitySignal
         : '';
     } catch {
       return '';
@@ -1645,12 +1725,13 @@ export class EmpresaPage implements OnDestroy {
               role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
               location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
               avatarUrl: this.resolveCandidateAvatar(candidate.avatar, candidateProfile, candidate.name),
+              availabilitySignal: candidateProfile?.basicDraft.availabilitySignal || this.resolveCurrentWorkspaceCandidateAvailability(candidate.name),
               educationLabel: this.buildCandidateEducationLabel(candidateProfile),
               educationStatus: this.buildCandidateEducationStatus(candidateProfile),
               videoUrl: candidateProfile?.basicDraft.candidateVideoUrl?.trim() || undefined,
               videoPosterUrl: candidateProfile?.basicDraft.candidateVideoPosterUrl?.trim() || undefined,
               topStacks: this.buildCandidateTopStacks(candidate, this.resourcePanelJobSnapshot).slice(0, 3),
-              timeline: this.buildCandidateTimeline(candidate.match, index),
+              timeline: this.buildCandidateTimeline(candidate),
             };
           })
       : [];
@@ -1702,38 +1783,149 @@ export class EmpresaPage implements OnDestroy {
   }
 
   private buildCandidateTimeline(
-    rawMatch: number | undefined,
-    index: number,
-  ): Array<{ id: string; label: string; icon: string; state: 'done' | 'current' | 'pending' | 'cancelled' }> {
-    const match = this.matchDomainService.clampScore(rawMatch || 0);
-    const isCancelled = match <= 55 && index % 2 === 0;
-    const finalLabel = isCancelled ? 'Cancelado' : 'Contratado';
+    candidate: MockJobCandidate,
+  ): CompanyCandidateTimelineStepVm[] {
+    const stage = this.jobsFacade.getEffectiveCandidateStage(candidate) ?? 'radar';
+    const activeIndex = this.getCandidateJourneyStageIndex(stage);
+    const decisionAccepted = stage === 'aceito';
+    const decisionNext = stage === 'proxima' || stage === 'cancelado';
+    const hired = stage === 'contratado';
+    const reviewingDocuments = stage === 'documentacao' || hired;
 
-    let currentIndex = 1;
-    if (match >= 90 || isCancelled) {
-      currentIndex = 3;
-    } else if (match >= 72) {
-      currentIndex = 2;
+    const steps = [
+      {
+        id: 'radar',
+        label: 'Talento no radar',
+        icon: 'radar',
+        ownerText: 'Movido pelo sistema',
+        description: 'O sistema encontrou esse talento no radar da vaga e ele ainda não iniciou candidatura.',
+      },
+      {
+        id: 'candidatura',
+        label: 'Candidatura enviada',
+        icon: 'person_add',
+        ownerText: 'Ação do talento',
+        description: 'O talento demonstrou interesse e a candidatura já entrou no seu funil.',
+      },
+      {
+        id: 'processo',
+        label: 'Em processo',
+        icon: 'checklist',
+        ownerText: 'Ação do recruiter',
+        description: 'Você avançou o perfil para análise, conversa e próximas etapas do processo.',
+      },
+      {
+        id: 'solicitada',
+        label: 'Contratação solicitada',
+        icon: 'outgoing_mail',
+        ownerText: 'Ação do recruiter',
+        description: 'A proposta ou solicitação final foi enviada e agora depende do retorno do talento.',
+      },
+      {
+        id: 'decisao',
+        label: decisionAccepted ? 'Aceito' : decisionNext ? 'Ficou pra próxima' : 'Aceito / Ficou pra próxima',
+        icon: decisionAccepted ? 'verified' : decisionNext ? 'update' : 'help',
+        ownerText: 'Ação do talento',
+        description: decisionAccepted
+          ? 'O talento aceitou a proposta e agora pode enviar os documentos da contratação.'
+          : decisionNext
+            ? 'Esse ciclo foi encerrado para esta vaga e o talento pode continuar elegível para novas oportunidades.'
+            : 'Aqui o talento responde se aceita a proposta ou se prefere ficar para uma próxima oportunidade.',
+      },
+      {
+        id: 'documentacao',
+        label: 'Validando documentos',
+        icon: 'description',
+        ownerText: 'Ação do recruiter',
+        description: 'Depois do envio dos documentos pelo talento, o recruiter revisa tudo e dá o ok para seguir.',
+      },
+      {
+        id: 'encerramento',
+        label: hired ? 'Contratado' : decisionNext ? 'Encerrado' : 'Contratado / encerrado',
+        icon: hired ? 'celebration' : decisionNext ? 'cancel' : 'task_alt',
+        ownerText: 'Ação do recruiter',
+        description: decisionNext
+          ? 'Esse ciclo foi encerrado para esta vaga e o talento pode continuar elegível para novas oportunidades.'
+          : hired
+            ? 'Contratação concluída e fluxo encerrado com sucesso.'
+            : 'Ao final da validação, você encerra o ciclo contratando o talento ou encerrando esta vaga para o perfil.',
+      },
+    ] satisfies Array<Omit<CompanyCandidateTimelineStepVm, 'state'>>;
+
+    return steps.map((step, index) => {
+      const isCompleted = this.isCandidateJourneyStepCompleted(index, stage, reviewingDocuments);
+
+      if (isCompleted) {
+        return { ...step, state: 'done' as const };
+      }
+
+      if (index === activeIndex) {
+        return {
+          ...step,
+          state: decisionNext && (step.id === 'decisao' || step.id === 'encerramento')
+            ? 'cancelled' as const
+            : 'current' as const,
+        };
+      }
+
+      return { ...step, state: 'pending' as const };
+    });
+  }
+
+  private getCandidateJourneyStageIndex(stage: CandidateStage): number {
+    switch (stage) {
+      case 'radar':
+        return 0;
+      case 'candidatura':
+        return 1;
+      case 'processo':
+      case 'tecnica':
+        return 2;
+      case 'aguardando':
+        return 3;
+      case 'aceito':
+      case 'proxima':
+      case 'cancelado':
+        return 4;
+      case 'documentacao':
+        return 5;
+      case 'contratado':
+        return 6;
+      default:
+        return 0;
+    }
+  }
+
+  private isCandidateJourneyStepCompleted(index: number, stage: CandidateStage, reviewingDocuments: boolean): boolean {
+    if (stage === 'radar') {
+      return index === 0;
     }
 
-    const stages = [
-      { id: 'radar', label: 'Radar', icon: 'radar' },
-      { id: 'candidate', label: 'Candidato', icon: 'person_search' },
-      { id: 'screening', label: 'Triagem', icon: 'checklist' },
-      { id: 'outcome', label: finalLabel, icon: isCancelled ? 'cancel' : 'verified' },
-    ];
+    if (stage === 'proxima' || stage === 'cancelado') {
+      return index <= 4;
+    }
 
-    return stages.map((stage, stageIndex) => {
-      if (stageIndex < currentIndex) {
-        return { ...stage, state: 'done' as const };
-      }
+    if (stage === 'contratado') {
+      return true;
+    }
 
-      if (stageIndex === currentIndex) {
-        return { ...stage, state: isCancelled && stageIndex === 3 ? 'cancelled' as const : 'current' as const };
-      }
+    if (reviewingDocuments) {
+      return index <= 5;
+    }
 
-      return { ...stage, state: 'pending' as const };
-    });
+    switch (stage) {
+      case 'candidatura':
+        return index <= 1;
+      case 'processo':
+      case 'tecnica':
+        return index <= 2;
+      case 'aguardando':
+        return index <= 3;
+      case 'aceito':
+        return index <= 4;
+      default:
+        return index === 0;
+    }
   }
 
   private syncCompanySelectorCurrentPage(): void {

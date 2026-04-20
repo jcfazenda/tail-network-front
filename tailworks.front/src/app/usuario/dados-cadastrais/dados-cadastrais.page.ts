@@ -20,6 +20,7 @@ type CandidateBasicProfile = {
 
 type CandidateBasicDraft = {
   profile?: Partial<CandidateBasicProfile>;
+  availabilitySignal?: 'available' | 'open' | '';
   photoPreviewUrl?: string;
   photoFileName?: string;
   candidateVideoUrl?: string;
@@ -71,6 +72,11 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
     { value: 'PR', label: 'Paraná' },
     { value: 'RS', label: 'Rio Grande do Sul' },
   ];
+  readonly availabilityOptions = [
+    { value: '', label: 'Não informar' },
+    { value: 'available', label: 'Disponível agora' },
+    { value: 'open', label: 'Aberto a conversas' },
+  ] as const;
 
   profile: CandidateBasicProfile = {
     name: '',
@@ -85,6 +91,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
   };
 
   submitAttempted = false;
+  availabilitySignal: 'available' | 'open' | '' = '';
   isPhotoDragging = false;
   photoPreviewUrl = '';
   photoFileName = '';
@@ -311,6 +318,9 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
         ...this.profile,
         ...draft.profile,
       };
+      this.availabilitySignal = draft.availabilitySignal === 'available' || draft.availabilitySignal === 'open'
+        ? draft.availabilitySignal
+        : '';
       this.restoreLocationParts();
       this.photoPreviewUrl = draft.photoPreviewUrl ?? '';
       this.photoFileName = draft.photoFileName ?? '';
@@ -364,6 +374,7 @@ export class DadosCadastraisPage implements OnInit, OnDestroy {
       DadosCadastraisPage.draftStorageKey,
       JSON.stringify({
         profile: this.profile,
+        availabilitySignal: this.availabilitySignal,
         photoPreviewUrl: this.photoPreviewUrl,
         photoFileName: this.photoFileName,
         candidateVideoUrl: this.candidateVideoUrl,
