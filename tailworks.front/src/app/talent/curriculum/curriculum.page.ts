@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MatStepperModule } from '@angular/material/stepper';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { JobsFacade } from '../../core/facades/jobs.facade';
@@ -106,7 +106,7 @@ export class CurriculumPage {
     map((params) => {
       const candidateName = params.get('name')?.trim() || '';
       const profile = candidateName ? this.talentProfileStore.findProfileByName(candidateName) : null;
-      return this.buildCurriculumProfileView(profile, candidateName);
+      return this.buildCurriculumProfileView(profile, candidateName, this.readCandidateOverrides(params));
     }),
   );
 
@@ -536,9 +536,18 @@ export class CurriculumPage {
     return (initial || name.slice(0, 1) || 'C').toUpperCase();
   }
 
-  private buildCurriculumProfileView(profile: SeededTalentProfile | null, candidateName: string): CurriculumProfileViewModel {
+  private buildCurriculumProfileView(
+    profile: SeededTalentProfile | null,
+    candidateName: string,
+    overrides: {
+      avatarUrl?: string;
+      roleTitle?: string;
+      location?: string;
+      summary?: string;
+    } = {},
+  ): CurriculumProfileViewModel {
     if (!profile) {
-      return this.buildFallbackCurriculumProfile(candidateName);
+      return this.buildFallbackCurriculumProfile(candidateName, overrides);
     }
 
     const basic = profile.basicDraft.profile ?? {};
@@ -557,10 +566,11 @@ export class CurriculumPage {
       .slice(0, 8);
 
     return {
-      avatarUrl: profile.basicDraft.photoPreviewUrl?.trim() || '/assets/avatars/john-doe.jpeg',
+      avatarUrl: overrides.avatarUrl?.trim() || profile.basicDraft.photoPreviewUrl?.trim() || '/assets/avatars/john-doe.jpeg',
       name: basic.name?.trim() || candidateName || 'Candidato em análise',
-      roleTitle: latestExperience?.role?.trim() || 'Profissional em análise',
-      profileCopy: latestExperience?.responsibilities?.trim()
+      roleTitle: overrides.roleTitle?.trim() || latestExperience?.role?.trim() || 'Profissional em análise',
+      profileCopy: overrides.summary?.trim()
+        || latestExperience?.responsibilities?.trim()
         || `Perfil construído a partir das experiências e stacks cadastradas por ${basic.name?.trim() || 'este candidato'}.`,
       contactItems: this.buildContactItems(profile),
       socialLinks: this.buildSocialLinks(profile),
@@ -576,13 +586,26 @@ export class CurriculumPage {
     };
   }
 
-  private buildFallbackCurriculumProfile(candidateName: string): CurriculumProfileViewModel {
+  private buildFallbackCurriculumProfile(
+    candidateName: string,
+    overrides: {
+      avatarUrl?: string;
+      roleTitle?: string;
+      location?: string;
+      summary?: string;
+    } = {},
+  ): CurriculumProfileViewModel {
     return {
-      avatarUrl: '/assets/avatars/john-doe.jpeg',
+      avatarUrl: overrides.avatarUrl?.trim() || '/assets/avatars/john-doe.jpeg',
       name: candidateName || 'Candidato em análise',
-      roleTitle: 'Profissional em análise',
-      profileCopy: 'Os dados reais deste currículo ainda não foram encontrados no cadastro do candidato.',
-      contactItems: [],
+      roleTitle: overrides.roleTitle?.trim() || 'Profissional em análise',
+      profileCopy: overrides.summary?.trim()
+        || (overrides.location?.trim()
+          ? `Dados recebidos diretamente do contexto da vaga. Localização do candidato: ${overrides.location.trim()}.`
+          : 'Os dados reais deste currículo ainda não foram encontrados no cadastro do candidato.'),
+      contactItems: [
+        { icon: 'location_on', label: overrides.location?.trim() || '' },
+      ].filter((item) => !!item.label),
       socialLinks: [],
       personalSkills: [],
       education: [],
@@ -608,6 +631,20 @@ export class CurriculumPage {
       { icon: 'work', label: basic.linkedin?.trim() || '' },
       { icon: 'language', label: basic.portfolio?.trim() || '' },
     ].filter((item) => !!item.label);
+  }
+
+  private readCandidateOverrides(params: ParamMap): {
+    avatarUrl?: string;
+    roleTitle?: string;
+    location?: string;
+    summary?: string;
+  } {
+    return {
+      avatarUrl: params.get('candidateAvatar')?.trim() || '',
+      roleTitle: params.get('candidateRole')?.trim() || '',
+      location: params.get('candidateLocation')?.trim() || '',
+      summary: params.get('candidateSummary')?.trim() || '',
+    };
   }
 
   private buildPersonalSkills(profile: SeededTalentProfile): Array<{ label: string; score: number }> {

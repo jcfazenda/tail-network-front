@@ -314,71 +314,71 @@
 
         </div>
 
-      <div class="company-context__company-panel">
-        <div class="company-context__profile-card">
+        <div class="company-context__company-panel">
+          <div class="company-context__profile-card">
 
-          <div class="company-context__info-grid-front company-context__info-grid-front--identity">
+            <div class="company-context__info-grid-front company-context__info-grid-front--identity">
 
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">mail</span>
-              <div class="company-context__info-copy">
-                <span>Email</span>
-                <strong>{{ selectedCompanyEmail }}</strong>
+              <div class="company-context__info-item">
+                <span class="material-symbols-rounded">mail</span>
+                <div class="company-context__info-copy">
+                  <span>Email</span>
+                  <strong>{{ selectedCompanyEmail }}</strong>
+                </div>
               </div>
+
+              <div class="company-context__info-item">
+                <span class="material-symbols-rounded">language</span>
+                <div class="company-context__info-copy">
+                  <span>Website</span>
+                  <strong>{{ selectedCompanyWebsite }}</strong>
+                </div>
+              </div>
+
+              <div class="company-context__info-item">
+                <span class="material-symbols-rounded">location_on</span>
+                <div class="company-context__info-copy">
+                  <span>Location</span>
+                  <strong>{{ selectedCompanyLocation }}</strong>
+                </div>
+              </div>
+
+              <div class="company-context__info-item">
+                <span class="material-symbols-rounded">insights</span>
+                <div class="company-context__info-copy">
+                  <span>Hiring</span>
+                  <strong>{{ selectedCompanyMonthlyHiringLabel }}</strong>
+                </div>
+              </div>
+
             </div>
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">language</span>
-              <div class="company-context__info-copy">
-                <span>Website</span>
-                <strong>{{ selectedCompanyWebsite }}</strong>
-              </div>
-            </div>
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">location_on</span>
-              <div class="company-context__info-copy">
-                <span>Location</span>
-                <strong>{{ selectedCompanyLocation }}</strong>
-              </div>
-            </div>
-
-            <div class="company-context__info-item">
-              <span class="material-symbols-rounded">insights</span>
-              <div class="company-context__info-copy">
-                <span>Hiring</span>
-                <strong>{{ selectedCompanyMonthlyHiringLabel }}</strong>
-              </div>
+            <div class="company-context__quick-actions-front company-context__quick-actions-front--identity">
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">record_voice_over</span>
+                <span>Entrevistas</span>
+              </button>
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">mail</span>
+                <span>Message</span>
+              </button>
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">chat</span>
+                <span>Chat</span>
+              </button>
+              <button class="company-context__quick-action" type="button">
+                <span class="material-symbols-rounded">videocam</span>
+                <span>Videos</span>
+              </button>
             </div>
 
           </div>
-          <div class="company-context__quick-actions-front company-context__quick-actions-front--identity">
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">record_voice_over</span>
-              <span>Entrevistas</span>
-            </button>
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">mail</span>
-              <span>Message</span>
-            </button>
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">chat</span>
-              <span>Chat</span>
-            </button>
-            <button class="company-context__quick-action" type="button">
-              <span class="material-symbols-rounded">videocam</span>
-              <span>Videos</span>
-            </button>
-          </div>
-
         </div>
-      </div>
-      
-      
+
+
       </div>
 
     </div>
- 
+
 
     <!-- LEFT BACK - CANDIDATES  -->
     <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job"
@@ -631,7 +631,7 @@
                   </div>
 
                   <button type="button" class="company-context__candidate-chat company-context__candidate-chat--hero"
-                    aria-label="Abrir chat do candidato" (click)="openSelectedCandidateChat()">
+                    aria-label="Abrir chat do candidato">
                     <span class="material-symbols-rounded">chat</span>
                     <span class="company-context__candidate-chat-badge">3</span>
                   </button>
@@ -683,82 +683,198 @@
                   <span>Aderencia</span>
                 </div>
 
-                <div class="company-context__candidate-note-stat">
-                  <strong>{{ candidate.topStacks.length }}</strong>
-                  <span>Stacks</span>
+                <div class="company-context__candidate-note-stat" (click)="openSelectedCandidateCurriculum()">
+                  <span class="material-symbols-rounded">assignment</span>
+                  <span>Curriculo</span>
                 </div>
 
-                <div class="company-context__candidate-note-stat">
-                  <strong>{{ getCandidateStateCode(candidate.location) }}</strong>
-                  <span>Minas Gerais</span>
+                <div class="company-context__candidate-note-stat" (click)="openSelectedCandidateChat()">
+                  <span class="material-symbols-rounded">chat</span>
+                  <span>Chat</span>
                 </div>
               </div>
             </div>
 
-            <!-- STAKS  -->
-            <div class="company-context__bottom-stack">
+            <!-- TABS ------------------------------------- START --> 
+            <div class="company-context__tabs">
 
-              <div class="company-context__company-panel">
+              <button
+                type="button"
+                class="company-context__tabs-item"
+                [class.company-context__tabs-item--active]="activeTab === 'experience'"
+                (click)="activeTab = 'experience'">
 
-                <!-- STACKS -->
-                <div class="company-context__candidate-adherence" *ngIf="selectedCompanyCandidate?.topStacks?.length">
-                  <div class="company-context__candidate-adherence-header">
+                <span class="material-symbols-rounded company-context__tabs-item-icon">
+                  work_history
+                </span>
+
+                <span class="company-context__tabs-item-label">
+                  Experiência Profissional
+                </span>
+              </button>
+
+              <button
+                type="button"
+                class="company-context__tabs-item"
+                [class.company-context__tabs-item--active]="activeTab === 'status'"
+                (click)="activeTab = 'status'">
+
+                <span class="material-symbols-rounded company-context__tabs-item-icon">
+                  checklist
+                </span>
+
+                <span class="company-context__tabs-item-label">
+                  Status do Candidato
+                </span>
+              </button>
+
+            </div>
+
+            <!-- ABA 1 - EXPERIÊNCIA --> 
+            <div *ngIf="activeTab === 'experience'">
+
+              <div class="company-context__candidate-journey">
+
+                <div class="company-context__candidate-stacks-head">
+                  <div class="company-context__candidate-stacks-head-text">
                     <strong>Stacks de Aderência</strong>
+                    <span>Prévia das tecnologias com maior compatibilidade</span>
+                  </div>
+                </div>
+
+                <div class="company-context__candidate-stacks-list">
+
+                  <div
+                    class="company-context__candidate-stacks-item"
+                    *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
+
+                    <div class="company-context__candidate-stacks-item-logo-wrap">
+                      <img
+                        class="company-context__candidate-stacks-item-logo"
+                        [src]="getStackIcon(stack)"
+                        [alt]="stack.label" />
+                    </div>
+
+                    <div class="company-context__candidate-stacks-item-content">
+
+                      <div class="company-context__candidate-stacks-item-top">
+                        <span class="company-context__candidate-stacks-item-title">
+                          {{ stack.label }}
+                        </span>
+
+                        <strong class="company-context__candidate-stacks-item-value">
+                          {{ stack.match }}%
+                        </strong>
+                      </div>
+
+                      <div class="company-context__candidate-stacks-item-track">
+                        <div
+                          class="company-context__candidate-stacks-item-fill"
+                          [class.company-context__candidate-stacks-item-fill--extra]="!stack.isAdherence"
+                          [style.width.%]="stack.match">
+                        </div>
+                      </div>
+
+                      <div class="company-context__candidate-stacks-item-bottom">
+                        <span class="company-context__candidate-stacks-item-caption">
+                          {{ stack.isAdherence ? 'Stack aderente' : 'Stack complementar' }}
+                        </span>
+                      </div>
+
+                    </div>
+
                   </div>
 
-                  <div class="company-context__candidate-adherence-list">
-                    <div class="company-context__candidate-adherence-item"
-                      *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
-                      <span class="company-context__candidate-adherence-name">{{ stack.label }}</span>
-                      <div class="company-context__candidate-adherence-track">
-                        <div class="company-context__candidate-adherence-fill"
-                          [class.company-context__candidate-adherence-fill--extra]="!stack.isAdherence"
-                          [style.width.%]="stack.match"></div>
-                      </div>
-                      <strong class="company-context__candidate-adherence-value">{{ stack.match }}%</strong>
-                    </div>
-                  </div>
                 </div>
 
               </div>
 
             </div>
 
-            <!-- STATUS CANDIDATO -->
-            <div class="company-context__candidate-journey-preview" *ngIf="candidate.timeline?.length">
-              <div class="company-context__candidate-journey-preview-head">
-                <strong>Status do Candidato</strong>
-                <span>Prévia da jornada na vaga</span>
-              </div>
+            <!-- ABA 2 - STATUS --> 
+            <div *ngIf="activeTab === 'status'">
 
-              <div class="company-context__candidate-journey-preview-step"
-                *ngFor="let stage of candidate.timeline; let isLast = last; trackBy: trackCandidateTimelineStage">
-                <div class="company-context__candidate-journey-preview-axis">
-                  <span class="company-context__candidate-journey-preview-dot"
-                    [class.company-context__candidate-journey-preview-dot--done]="stage.state === 'done'"
-                    [class.company-context__candidate-journey-preview-dot--current]="stage.state === 'current'"
-                    [class.company-context__candidate-journey-preview-dot--pending]="stage.state === 'pending'"
-                    [class.company-context__candidate-journey-preview-dot--cancelled]="stage.state === 'cancelled'">
-                    <span class="material-symbols-rounded"
-                      *ngIf="stage.state === 'done' || stage.state === 'cancelled'">check</span>
-                  </span>
-                  <span class="company-context__candidate-journey-preview-line" *ngIf="!isLast"></span>
-                </div>
+              <div class="company-context__candidate-journey">
 
-                <div class="company-context__candidate-journey-preview-body">
-                  <div class="company-context__candidate-journey-preview-meta">
-                    <strong>{{ stage.label }}</strong>
-                    <small>{{ stage.ownerText }}</small>
+                <div class="company-context__candidate-journey-head">
+                  <div>
+                    <strong>Status do Candidato</strong>
+                    <span>Prévia da jornada na vaga</span>
                   </div>
-                  <p>{{ stage.description }}</p>
+ 
                 </div>
+
+                <div class="company-context__candidate-journey-list">
+
+                  <article
+                    class="company-context__candidate-journey-card"
+                    *ngFor="let stage of candidate.timeline; let i = index; trackBy: trackCandidateTimelineStage">
+
+                    <div class="company-context__candidate-journey-card-visual">
+                      <div class="company-context__candidate-journey-card-icon">
+                        <img [src]="getStageIcon(stage, i)" alt="stage icon" />
+                      </div>
+                    </div>
+
+                    <div class="company-context__candidate-journey-card-content">
+
+                      <div class="company-context__candidate-journey-card-header">
+                        <strong class="company-context__candidate-journey-card-title">
+                          {{ stage.label }}
+                        </strong>
+
+                        <span
+                          class="company-context__candidate-journey-badge"
+                          [class.company-context__candidate-journey-badge--done]="stage.state === 'done'"
+                          [class.company-context__candidate-journey-badge--current]="stage.state === 'current'"
+                          [class.company-context__candidate-journey-badge--pending]="stage.state === 'pending'"
+                          [class.company-context__candidate-journey-badge--cancelled]="stage.state === 'cancelled'">
+
+                          {{
+                            stage.state === 'done'
+                              ? 'Concluído'
+                              : stage.state === 'current'
+                              ? 'Atual'
+                              : stage.state === 'cancelled'
+                              ? 'Cancelado'
+                              : 'Pendente'
+                          }}
+
+                        </span>
+                      </div>
+
+                      <div class="company-context__candidate-journey-card-info-row">
+                        <div class="company-context__candidate-journey-card-subtitle">
+                          {{ stage.ownerText }}
+                        </div>
+
+                        <div class="company-context__candidate-journey-card-datetime">
+                          <span class="company-context__candidate-journey-card-datetime-item">
+                            <span class="material-symbols-rounded">calendar_month</span>
+                            25 Maio
+                          </span>
+
+                          <span class="company-context__candidate-journey-card-datetime-item">
+                            <span class="material-symbols-rounded">schedule</span>
+                            09:00
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </article>
+
+                </div>
+
               </div>
-            </div>           
-            
-          </div>          
+
+            </div> 
+            <!-- TABS ------------------------------------- END --> 
+
+          </div>
 
         </div>
-
       </div>
 
       <!-- CHAT -->

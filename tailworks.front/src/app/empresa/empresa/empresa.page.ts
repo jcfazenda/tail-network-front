@@ -118,6 +118,9 @@ export class EmpresaPage implements OnDestroy {
     'assets/images/polaroid/marcos-oliveira.png',
   ];
 
+  activeTab: 'status' | 'experience' = 'experience';
+
+
   private readonly brazilStateAbbreviations: Record<string, string> = {
     Acre: 'AC',
     Alagoas: 'AL',
@@ -252,6 +255,40 @@ export class EmpresaPage implements OnDestroy {
   activeDetailTab: CompanyDetailTab = 'recruiters';
   centerView: EmpresaCenterView = 'identity';
   isCandidateChatPanelVisible = false;
+
+getStackIcon(stack: any): string {
+
+  stack = 'qrcode';
+
+  const map: Record<string, string> = {
+    'qrcode': 'assets/images/image-qrcode.png',
+    '.net': 'assets/images/dot-net.png',
+    'c#': 'assets/images/dot-net.png',
+    'angular': 'assets/images/image-angular.png',
+    'react': 'assets/images/react.png',
+    'ux': 'assets/images/image-uxui.png',
+    'docker': 'assets/images/docker.png',
+    'typescript': 'assets/images/image-typescript.png'
+  };
+
+  const key = stack.label?.toLowerCase();  
+
+  return map[key] || 'assets/images/image-qrcode.png';
+}
+
+  getStageIcon(stage: any, index: number): string {
+  const icons: string[] = [
+    'assets/images/image-radar.png',        // 01
+    'assets/images/image-candidatouse.png',         // 02
+    'assets/images/image-processo.png',      // 03
+    'assets/images/image-solicitacao.png',       // 04
+    'assets/images/image-aceito.png',    // 05
+    'assets/images/image-valida-documentos.png',         // 06
+    'assets/images/image-contratado.png'        // 07
+  ];
+
+  return icons[index] || 'assets/images/image-default.png';
+}
 
   private readonly fallbackResourcePanelJob: ResourcePanelJobVm = {
     id: 'vaga-demo',
@@ -1108,6 +1145,10 @@ export class EmpresaPage implements OnDestroy {
       queryParams: {
         candidate: candidate.id,
         name: candidate.name,
+        candidateRole: candidate.role,
+        candidateLocation: candidate.location,
+        candidateAvatar: candidate.avatarUrl,
+        candidateSummary: candidate.role,
         jobId: job.id,
         jobTitle: job.title,
         jobCompany: job.company,
