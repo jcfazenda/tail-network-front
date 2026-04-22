@@ -80,6 +80,7 @@ type CompanyCandidateVm = {
   role: string;
   location: string;
   avatarUrl: string;
+  match: number;
   availabilitySignal: 'available' | 'open' | '';
   educationLabel?: string;
   educationStatus?: string;
@@ -1054,7 +1055,7 @@ getStackIcon(stack: any): string {
   }
 
   getCandidateCardMatch(candidate: CompanyCandidateVm): number | null {
-    return candidate.topStacks[0]?.match ?? null;
+    return candidate.match ?? null;
   }
 
   getCandidateCardMatchLabel(candidate: CompanyCandidateVm): string | null {
@@ -1230,14 +1231,21 @@ getStackIcon(stack: any): string {
   }
 
   selectCompanyJob(jobId: string): void {
-    if (!jobId.trim() || this.selectedCompanyJobId === jobId) {
+    if (!jobId.trim()) {
       return;
     }
+
+    const shouldSwitchToJobView = this.centerView !== 'job';
 
     this.selectedCompanyJobId = jobId;
     this.isCandidateChatPanelVisible = false;
     this.candidateCurrentPage = 1;
     this.rebuildSelectedCompanyJobSnapshot();
+
+    if (shouldSwitchToJobView) {
+      this.centerView = 'job';
+    }
+
     this.cdr.markForCheck();
   }
 
@@ -2018,8 +2026,10 @@ getStackIcon(stack: any): string {
     void this.refreshSelectedCompanyRecruiterVideoUrl();
     void this.refreshSelectedCompanyRecruiterPosterUrl();
 
+    const minimumAdherence = this.resourcePanelAdherence;
     this.selectedCompanyCandidatesSnapshot = primaryJob
       ? this.companyJobCandidates(primaryJob)
+          .filter((candidate) => (candidate.match ?? 0) >= minimumAdherence)
           .slice()
           .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
           .map((candidate, index) => {
@@ -2032,6 +2042,7 @@ getStackIcon(stack: any): string {
               role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
               location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
               avatarUrl: this.resolveCandidateAvatar(candidate.avatar, candidateProfile, candidate.name, candidateStage),
+              match: candidate.match,
               availabilitySignal: candidateProfile?.basicDraft.availabilitySignal || this.resolveCurrentWorkspaceCandidateAvailability(candidate.name),
               educationLabel: this.buildCandidateEducationLabel(candidateProfile),
               educationStatus: this.buildCandidateEducationStatus(candidateProfile),

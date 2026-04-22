@@ -1,5 +1,898 @@
 [
   {
+    "id": "vaga-1776884991773-968de4ce",
+    "code": "VG-0023",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 70,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-22T19:09:51.773Z",
+    "updatedAt": "2026-04-22T19:23:33.532Z",
+    "title": "Backend .NET Sênior",
+    "company": "B3",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "",
+    "recruiterVideoPosterUrl": "local-media://local-media-1776885810817-wavhqdvq",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "15.200,00",
+    "radarAdherenceThreshold": 79,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 92
+      },
+      {
+        "name": "Entity Framework",
+        "match": 65
+      },
+      {
+        "name": "REST API",
+        "match": 75
+      },
+      {
+        "name": "SQL Server",
+        "match": 70
+      },
+      {
+        "name": "Azure",
+        "match": 40
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:dotnet",
+        "name": ".NET / C#",
+        "knowledge": 92,
+        "description": ""
+      },
+      {
+        "repoId": "repo:entity-framework",
+        "name": "Entity Framework",
+        "knowledge": 65,
+        "description": ""
+      },
+      {
+        "repoId": "repo:rest-api",
+        "name": "REST API",
+        "knowledge": 75,
+        "description": ""
+      },
+      {
+        "repoId": "repo:sql-server",
+        "name": "SQL Server",
+        "knowledge": 70,
+        "description": ""
+      },
+      {
+        "repoId": "repo:azure",
+        "name": "Azure",
+        "knowledge": 40,
+        "description": ""
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "vaga-1776885041846-b93551c9",
+    "code": "VG-0024",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 70,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-22T19:10:41.846Z",
+    "updatedAt": "2026-04-22T19:23:22.139Z",
+    "title": "Backend .NET Sênior",
+    "company": "B3",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "",
+    "recruiterVideoPosterUrl": "local-media://local-media-1776885800663-yjop3nel",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "15.450,00",
+    "radarAdherenceThreshold": 79,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 92
+      },
+      {
+        "name": "Entity Framework",
+        "match": 65
+      },
+      {
+        "name": "REST API",
+        "match": 75
+      },
+      {
+        "name": "SQL Server",
+        "match": 70
+      },
+      {
+        "name": "Azure",
+        "match": 40
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:dotnet",
+        "name": ".NET / C#",
+        "knowledge": 92,
+        "description": ""
+      },
+      {
+        "repoId": "repo:entity-framework",
+        "name": "Entity Framework",
+        "knowledge": 65,
+        "description": ""
+      },
+      {
+        "repoId": "repo:rest-api",
+        "name": "REST API",
+        "knowledge": 75,
+        "description": ""
+      },
+      {
+        "repoId": "repo:sql-server",
+        "name": "SQL Server",
+        "knowledge": 70,
+        "description": ""
+      },
+      {
+        "repoId": "repo:azure",
+        "name": "Azure",
+        "knowledge": 40,
+        "description": ""
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "lab-job-18",
+    "code": "VG-0018",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "SALVADOR - BA",
+    "match": 61,
+    "talents": 18,
+    "radarCount": 18,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 15,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-20T01:22:26.277Z",
+    "updatedAt": "2026-04-22T19:23:06.773Z",
+    "title": "Frontend Angular Junior",
+    "company": "B3",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "local-media://local-media-1776885780422-2sgwohq7",
+    "recruiterVideoPosterUrl": "local-media://local-media-1776885762075-gnf2eoht",
+    "location": "Salvador - BA",
+    "workModel": "Presencial",
+    "seniority": "Junior",
+    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time interno.",
+    "contractType": "CLT",
+    "salaryRange": "R$ 4.200",
+    "radarAdherenceThreshold": 63,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": false,
+    "benefits": [],
+    "hiringDocuments": [],
+    "techStack": [
+      {
+        "name": "Angular",
+        "match": 96
+      },
+      {
+        "name": "TypeScript",
+        "match": 68
+      },
+      {
+        "name": "Figma",
+        "match": 26
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:angular",
+        "name": "Angular",
+        "knowledge": 96,
+        "description": ""
+      },
+      {
+        "repoId": "repo:typescript",
+        "name": "TypeScript",
+        "knowledge": 68,
+        "description": ""
+      },
+      {
+        "repoId": "repo:figma",
+        "name": "Figma",
+        "knowledge": 26,
+        "description": ""
+      }
+    ],
+    "differentials": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "vaga-1776885741908-981453b4",
+    "code": "VG-0025",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 70,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-22T19:22:21.907Z",
+    "updatedAt": "2026-04-22T19:22:21.907Z",
+    "title": "Backend .NET Sênior",
+    "company": "Banco Itaú",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "",
+    "recruiterVideoPosterUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "14.200,00",
+    "radarAdherenceThreshold": 79,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 92
+      },
+      {
+        "name": "Entity Framework",
+        "match": 65
+      },
+      {
+        "name": "REST API",
+        "match": 75
+      },
+      {
+        "name": "SQL Server",
+        "match": 70
+      },
+      {
+        "name": "Azure",
+        "match": 40
+      }
+    ],
+    "experienceStacks": [
+      {
+        "name": ".NET / C#",
+        "knowledge": 92,
+        "description": "",
+        "repoId": "repo:dotnet"
+      },
+      {
+        "name": "Entity Framework",
+        "knowledge": 65,
+        "description": "",
+        "repoId": "repo:entity-framework"
+      },
+      {
+        "name": "REST API",
+        "knowledge": 75,
+        "description": "",
+        "repoId": "repo:rest-api"
+      },
+      {
+        "name": "SQL Server",
+        "knowledge": 70,
+        "description": "",
+        "repoId": "repo:sql-server"
+      },
+      {
+        "name": "Azure",
+        "knowledge": 40,
+        "description": "",
+        "repoId": "repo:azure"
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "vaga-1776884967335-84bd7943",
+    "code": "VG-0022",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 70,
+    "talents": 0,
+    "radarCount": 0,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [],
+    "extraCount": 0,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [],
+    "createdAt": "2026-04-22T19:09:27.335Z",
+    "updatedAt": "2026-04-22T19:09:27.335Z",
+    "title": "Backend .NET Sênior",
+    "company": "Banco Itaú",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "",
+    "recruiterVideoPosterUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "16.000,00",
+    "radarAdherenceThreshold": 79,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 92
+      },
+      {
+        "name": "Entity Framework",
+        "match": 65
+      },
+      {
+        "name": "REST API",
+        "match": 75
+      },
+      {
+        "name": "SQL Server",
+        "match": 70
+      },
+      {
+        "name": "Azure",
+        "match": 40
+      }
+    ],
+    "experienceStacks": [
+      {
+        "name": ".NET / C#",
+        "knowledge": 92,
+        "description": "",
+        "repoId": "repo:dotnet"
+      },
+      {
+        "name": "Entity Framework",
+        "knowledge": 65,
+        "description": "",
+        "repoId": "repo:entity-framework"
+      },
+      {
+        "name": "REST API",
+        "knowledge": 75,
+        "description": "",
+        "repoId": "repo:rest-api"
+      },
+      {
+        "name": "SQL Server",
+        "knowledge": 70,
+        "description": "",
+        "repoId": "repo:sql-server"
+      },
+      {
+        "name": "Azure",
+        "knowledge": 40,
+        "description": "",
+        "repoId": "repo:azure"
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
+    "id": "vaga-1776874067687-45bf1269",
+    "code": "VG-0021",
+    "createdByRecruiterId": "julio-fazenda-recruiter",
+    "createdByRecruiterName": "Julio Fazenda",
+    "createdByRecruiterRole": "Talent Acquisition Lead",
+    "recruiterWatcherIds": [
+      "julio-fazenda-recruiter"
+    ],
+    "priority": "RIO DE JANEIRO - RJ",
+    "match": 58,
+    "talents": 4,
+    "radarCount": 4,
+    "ageLabel": "Agora",
+    "postedLabel": "",
+    "avatars": [
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg",
+      "/assets/avatars/avatar-default.svg"
+    ],
+    "extraCount": 1,
+    "status": "ativas",
+    "talentSubmittedDocuments": [],
+    "talentDocumentsConsentAccepted": false,
+    "candidates": [
+      {
+        "id": "realtime-vaga-1776874067687-45bf1269-41",
+        "name": "Murilo Bastos",
+        "role": "Backend .NET Senior",
+        "location": "Belo Horizonte - MG",
+        "match": 60,
+        "minutesAgo": 45,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-vaga-1776874067687-45bf1269-49",
+        "name": "Ramon Xavier",
+        "role": "Software Engineer",
+        "location": "Curitiba - PR",
+        "match": 60,
+        "minutesAgo": 53,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-vaga-1776874067687-45bf1269-39",
+        "name": "Cesar Campos",
+        "role": "Backend .NET Senior",
+        "location": "Rio de Janeiro - RJ",
+        "match": 59,
+        "minutesAgo": 43,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      },
+      {
+        "id": "realtime-vaga-1776874067687-45bf1269-90",
+        "name": "Mariana Gama",
+        "role": "Backend .NET Senior",
+        "location": "São Paulo - SP",
+        "match": 59,
+        "minutesAgo": 94,
+        "status": "online",
+        "avatar": "/assets/avatars/avatar-default.svg",
+        "stage": "radar",
+        "radarOnly": true,
+        "source": "seed",
+        "availabilityLabel": "Disponibilidade imediata"
+      }
+    ],
+    "createdAt": "2026-04-22T16:07:47.687Z",
+    "updatedAt": "2026-04-22T16:26:48.718Z",
+    "title": "Backend .NET Sênior",
+    "company": "Banco Itaú",
+    "companyLogoUrl": "",
+    "homeAnnouncementImageUrl": "",
+    "recruiterVideoUrl": "",
+    "recruiterVideoPosterUrl": "",
+    "location": "Rio de Janeiro - RJ",
+    "workModel": "Remoto",
+    "seniority": "Senior",
+    "summary": "Profissional para evoluir APIs, sustentar arquitetura distribuida e acelerar entregas criticas junto ao time de produtos e plataforma.",
+    "contractType": "CLT",
+    "salaryRange": "15.200,00",
+    "radarAdherenceThreshold": 59,
+    "showSalaryRangeInCard": true,
+    "allowCandidateSalarySuggestion": true,
+    "benefits": [
+      {
+        "title": "Plano de Saúde",
+        "sideLabel": "Cobre 50%",
+        "description": "Sulamerica Seguros + Leito e Internação"
+      },
+      {
+        "title": "Plano Odontológico",
+        "sideLabel": "100%",
+        "description": "Cobertura nacional com reembolso e rede credenciada"
+      },
+      {
+        "title": "Day Off Aniversário",
+        "sideLabel": "Abonado",
+        "description": "Folga remunerada no mês do aniversario"
+      }
+    ],
+    "hiringDocuments": [
+      "Copia do Certificado de conclusão",
+      "Copia da Identidade e CPF",
+      "Comprovante de Residencia"
+    ],
+    "techStack": [
+      {
+        "name": ".NET / C#",
+        "match": 61
+      },
+      {
+        "name": "SQL Server",
+        "match": 61
+      },
+      {
+        "name": "Angular",
+        "match": 56
+      }
+    ],
+    "experienceStacks": [
+      {
+        "repoId": "repo:dotnet",
+        "name": ".NET / C#",
+        "knowledge": 61,
+        "description": ""
+      },
+      {
+        "repoId": "repo:sql-server",
+        "name": "SQL Server",
+        "knowledge": 61,
+        "description": ""
+      },
+      {
+        "repoId": "repo:angular",
+        "name": "Angular",
+        "knowledge": 56,
+        "description": ""
+      }
+    ],
+    "differentials": [
+      "Experiência com Azure ou Aws",
+      "Trabalho em Equipe",
+      "Teste Unitário e Integrado",
+      "Viajar a Trabalho"
+    ],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Graduação em Ciência da Computação, Tecnologia da Informação ou área relacionada;",
+          "Experiência sólida em desenvolvimento com Frontend nas tecnologias Angular ou React;",
+          "Experiência em desenvolvimento backend Java, Spring ou Quarkus, NodeJS, Express.js, Python Flask/Django;",
+          "Desenvolvimento de APIs Rest: habilidade em criar e manter APIs Restful;",
+          "Compreensão profunda dos conceitos e práticas de backend;",
+          "Proficiência no uso de Git para controle de versões;",
+          "Experiência na configuração e manutenção de pipelines de CI/CD utilizando Jenkins e Argo;",
+          "Conhecimento em desenvolvimento de back-end utilizando arquitetura de microsserviços e tecnologias de cloud;",
+          "Experiência em práticas DevOps, incluindo o uso de Kubernetes e Docker.;",
+          "Habilidade em criar e executar testes de integração e unitários;",
+          "Banco de Dados relacional com utilização de linguagem SQL;",
+          "HTML5, CSS3, Angular ou React.js, TypeScript, next.js, Javascript, Java, SQL, Spring ou Quarkus. Ferramentas de versionamento de código."
+        ]
+      },
+      {
+        "id": "summary-section-2",
+        "pageId": "front",
+        "title": "Desejável:",
+        "items": [
+          "Pós-graduação em tecnologia ou gestão;",
+          "Experiencia com Java com Quarkus."
+        ]
+      }
+    ],
+    "recruiterBoardStatusId": "radar"
+  },
+  {
     "id": "lab-job-01",
     "code": "VG-0001",
     "title": "Backend .NET Senior",
@@ -42,7 +935,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -51,8 +954,8 @@
     ],
     "priority": "Carga local",
     "match": 97,
-    "talents": 9,
-    "radarCount": 9,
+    "talents": 10,
+    "radarCount": 10,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -60,14 +963,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 6,
+    "extraCount": 7,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:39:26.274Z",
     "updatedAt": "2026-04-20T01:39:26.274Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-02",
@@ -112,7 +1016,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -137,7 +1051,8 @@
     "updatedAt": "2026-04-20T01:38:26.275Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-03",
@@ -182,7 +1097,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -191,8 +1116,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 6,
-    "radarCount": 6,
+    "talents": 8,
+    "radarCount": 8,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -200,14 +1125,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 3,
+    "extraCount": 5,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:37:26.275Z",
     "updatedAt": "2026-04-20T01:37:26.275Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-04",
@@ -252,7 +1178,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -261,8 +1197,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 13,
-    "radarCount": 13,
+    "talents": 18,
+    "radarCount": 18,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -270,14 +1206,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 10,
+    "extraCount": 15,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:36:26.275Z",
     "updatedAt": "2026-04-20T01:36:26.275Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-05",
@@ -322,7 +1259,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -331,8 +1278,8 @@
     ],
     "priority": "Carga local",
     "match": 100,
-    "talents": 12,
-    "radarCount": 12,
+    "talents": 14,
+    "radarCount": 14,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -340,14 +1287,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 9,
+    "extraCount": 11,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:35:26.275Z",
     "updatedAt": "2026-04-20T01:35:26.275Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-06",
@@ -392,7 +1340,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -413,7 +1371,8 @@
     "updatedAt": "2026-04-20T01:34:26.275Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-07",
@@ -458,7 +1417,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -479,7 +1448,8 @@
     "updatedAt": "2026-04-20T01:33:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-08",
@@ -524,7 +1494,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -545,7 +1525,8 @@
     "updatedAt": "2026-04-20T01:32:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-09",
@@ -590,7 +1571,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -599,8 +1590,8 @@
     ],
     "priority": "Carga local",
     "match": 91,
-    "talents": 12,
-    "radarCount": 12,
+    "talents": 15,
+    "radarCount": 15,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -608,14 +1599,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 9,
+    "extraCount": 12,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:31:26.276Z",
     "updatedAt": "2026-04-20T01:31:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-10",
@@ -660,7 +1652,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -669,11 +1671,12 @@
     ],
     "priority": "Carga local",
     "match": 86,
-    "talents": 1,
-    "radarCount": 1,
+    "talents": 2,
+    "radarCount": 2,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
+      "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
     "extraCount": 0,
@@ -683,7 +1686,8 @@
     "updatedAt": "2026-04-20T01:30:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-11",
@@ -728,7 +1732,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -737,11 +1751,12 @@
     ],
     "priority": "Carga local",
     "match": 86,
-    "talents": 1,
-    "radarCount": 1,
+    "talents": 2,
+    "radarCount": 2,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
+      "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
     "extraCount": 0,
@@ -751,7 +1766,8 @@
     "updatedAt": "2026-04-20T01:29:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-12",
@@ -796,7 +1812,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -805,8 +1831,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 36,
-    "radarCount": 36,
+    "talents": 37,
+    "radarCount": 37,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -814,14 +1840,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 33,
+    "extraCount": 34,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:28:26.276Z",
     "updatedAt": "2026-04-20T01:28:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-13",
@@ -866,7 +1893,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -891,7 +1928,8 @@
     "updatedAt": "2026-04-20T01:27:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-14",
@@ -936,7 +1974,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -945,8 +1993,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 13,
-    "radarCount": 13,
+    "talents": 12,
+    "radarCount": 12,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -954,14 +2002,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 10,
+    "extraCount": 9,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:26:26.276Z",
     "updatedAt": "2026-04-20T01:26:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-15",
@@ -1006,7 +2055,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1027,7 +2086,8 @@
     "updatedAt": "2026-04-20T01:25:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-16",
@@ -1072,7 +2132,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1097,7 +2167,8 @@
     "updatedAt": "2026-04-20T01:24:26.276Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-17",
@@ -1142,7 +2213,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1151,8 +2232,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 31,
-    "radarCount": 31,
+    "talents": 34,
+    "radarCount": 34,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1160,84 +2241,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 28,
+    "extraCount": 31,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:23:26.277Z",
     "updatedAt": "2026-04-20T01:23:26.277Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
-  },
-  {
-    "id": "lab-job-18",
-    "code": "VG-0018",
-    "title": "Frontend Angular Junior",
-    "company": "B3",
-    "companyLogoUrl": "",
-    "homeAnnouncementImageUrl": "",
-    "location": "Salvador - BA",
-    "workModel": "Presencial",
-    "seniority": "Junior",
-    "summary": "Profissional para evoluir interfaces, sustentar arquitetura de componentes e acelerar entregas críticas junto ao time interno.",
-    "contractType": "CLT",
-    "statusReason": "",
-    "salaryRange": "R$ 4.200",
-    "radarAdherenceThreshold": 85,
-    "showSalaryRangeInCard": true,
-    "allowCandidateSalarySuggestion": false,
-    "hybridOnsiteDaysDescription": "",
-    "benefits": [],
-    "hiringDocuments": [],
-    "techStack": [
-      {
-        "name": "Angular",
-        "match": 88
-      },
-      {
-        "name": "TypeScript",
-        "match": 68
-      },
-      {
-        "name": "UX / UI",
-        "match": 28
-      },
-      {
-        "name": "Figma",
-        "match": 26
-      },
-      {
-        "name": "QA Automação",
-        "match": 25
-      }
-    ],
-    "differentials": [],
-    "responsibilitySections": [],
-    "createdByRecruiterId": "julio-fazenda-recruiter",
-    "createdByRecruiterName": "Julio Fazenda",
-    "createdByRecruiterRole": "Talent Acquisition Lead",
-    "recruiterWatcherIds": [
-      "julio-fazenda-recruiter"
-    ],
-    "priority": "Carga local",
-    "match": 90,
-    "talents": 8,
-    "radarCount": 8,
-    "ageLabel": "Agora",
-    "postedLabel": "Carga local",
-    "avatars": [
-      "/assets/avatars/avatar-default.svg",
-      "/assets/avatars/avatar-default.svg",
-      "/assets/avatars/avatar-default.svg"
-    ],
-    "extraCount": 5,
-    "status": "ativas",
-    "candidates": [],
-    "createdAt": "2026-04-20T01:22:26.277Z",
-    "updatedAt": "2026-04-20T01:22:26.277Z",
-    "talentSubmittedDocuments": [],
-    "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-19",
@@ -1282,7 +2294,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1291,8 +2313,8 @@
     ],
     "priority": "Carga local",
     "match": 90,
-    "talents": 16,
-    "radarCount": 16,
+    "talents": 19,
+    "radarCount": 19,
     "ageLabel": "Agora",
     "postedLabel": "Carga local",
     "avatars": [
@@ -1300,14 +2322,15 @@
       "/assets/avatars/avatar-default.svg",
       "/assets/avatars/avatar-default.svg"
     ],
-    "extraCount": 13,
+    "extraCount": 16,
     "status": "ativas",
     "candidates": [],
     "createdAt": "2026-04-20T01:21:26.277Z",
     "updatedAt": "2026-04-20T01:21:26.277Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   },
   {
     "id": "lab-job-20",
@@ -1352,7 +2375,17 @@
       }
     ],
     "differentials": [],
-    "responsibilitySections": [],
+    "responsibilitySections": [
+      {
+        "id": "summary-section-1",
+        "pageId": "front",
+        "title": "Requisitos e habilidades que buscamos:",
+        "items": [
+          "Trabalho em Equipe",
+          "Teste Unitário e Integrado"
+        ]
+      }
+    ],
     "createdByRecruiterId": "julio-fazenda-recruiter",
     "createdByRecruiterName": "Julio Fazenda",
     "createdByRecruiterRole": "Talent Acquisition Lead",
@@ -1373,6 +2406,7 @@
     "updatedAt": "2026-04-20T01:20:26.277Z",
     "talentSubmittedDocuments": [],
     "talentDocumentsConsentAccepted": false,
-    "recruiterBoardStatusId": "radar"
+    "recruiterBoardStatusId": "radar",
+    "experienceStacks": []
   }
 ]
