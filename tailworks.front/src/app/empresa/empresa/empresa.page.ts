@@ -13,7 +13,7 @@ import { CompanyRecord } from '../empresa.models';
 import { RecruiterRecord } from '../../recruiter/recruiter.models';
 import { CandidateStage, MockJobCandidate, MockJobRecord } from '../../vagas/data/vagas.models';
 import { ChatCandidatoComponent } from '../../vagas/chat-candidato/chat-candidato.component';
-import { SeededTalentProfile, TalentProfileStoreService } from '../../talent/talent-profile-store.service';
+import { SeededExperienceDraft, SeededTalentProfile, TalentProfileStoreService } from '../../talent/talent-profile-store.service';
 
 type CompanyStatusFilter = 'all' | 'active' | 'inactive';
 type RecruiterFilter = 'all' | 'withRecruiters' | 'withoutRecruiters';
@@ -89,6 +89,26 @@ type CompanyCandidateVm = {
   timeline: CompanyCandidateTimelineStepVm[];
 };
 
+type CompanyExperienceVm = {
+  title: string;
+  meta: string;
+  description: string;
+  highlights: Array<{
+    label: string;
+    match: number;
+  }>;
+};
+
+type CompanyCandidateBusinessCardVm = {
+  name: string;
+  role: string;
+  avatarUrl: string;
+  phone: string;
+  email: string;
+  location: string;
+  portfolio: string;
+};
+
 type CompanyViewModel = {
   company: CompanyRecord;
   formattedLocation: string;
@@ -118,7 +138,7 @@ export class EmpresaPage implements OnDestroy {
     'assets/images/polaroid/marcos-oliveira.png',
   ];
 
-  activeTab: 'status' | 'experience' = 'experience';
+  activeTab: 'status' | 'experience' | 'stacks' = 'experience';
 
 
   private readonly brazilStateAbbreviations: Record<string, string> = {
@@ -256,6 +276,14 @@ export class EmpresaPage implements OnDestroy {
   centerView: EmpresaCenterView = 'identity';
   isCandidateChatPanelVisible = false;
 
+getQrCode(stack: string): string {
+  const map: Record<string, string> = {
+    qrcode: 'assets/images/image-qrcode.png', 
+  };
+
+  return map[stack] || 'assets/images/image-qrcode.png';
+}
+
 getStackIcon(stack: any): string {
 
   stack = 'qrcode';
@@ -278,13 +306,13 @@ getStackIcon(stack: any): string {
 
   getStageIcon(stage: any, index: number): string {
   const icons: string[] = [
-    'assets/images/image-radar.png',        // 01
-    'assets/images/image-candidatouse.png',         // 02
-    'assets/images/image-processo.png',      // 03
-    'assets/images/image-solicitacao.png',       // 04
-    'assets/images/image-aceito.png',    // 05
-    'assets/images/image-valida-documentos.png',         // 06
-    'assets/images/image-contratado.png'        // 07
+    'assets/images/image-radar.png',        
+    'assets/images/image-candidatouse.png',       
+    'assets/images/image-processo.png',      
+    'assets/images/image-solicitacao.png',    
+    'assets/images/image-aceito.png',     
+    'assets/images/image-valida-documentos.png',         
+    'assets/images/image-contratado.png'         
   ];
 
   return icons[index] || 'assets/images/image-default.png';
@@ -492,6 +520,54 @@ getStackIcon(stack: any): string {
 
   get selectedCompanyCandidateEducationStatus(): string {
     return this.selectedCompanyCandidate?.educationStatus?.trim() || 'Não informado';
+  }
+
+  get selectedCompanyCandidateBusinessCard(): CompanyCandidateBusinessCardVm | undefined {
+    const candidate = this.selectedCompanyCandidate;
+    if (!candidate) {
+      return undefined;
+    }
+
+    const profile = this.findTalentProfileByName(candidate.name);
+    const contact = profile?.basicDraft.profile;
+
+    return {
+      name: candidate.name,
+      role: candidate.role,
+      avatarUrl: candidate.avatarUrl || this.fallbackAvatarUrl,
+      phone: contact?.phone?.trim() || 'Telefone não informado',
+      email: contact?.email?.trim() || 'Email não informado',
+      location: contact?.location?.trim() || candidate.location?.trim() || 'Brasil',
+      portfolio: contact?.portfolio?.trim() || contact?.linkedin?.trim() || 'Portfolio não informado',
+    };
+  }
+
+  get selectedCompanyCandidateExperiences(): CompanyExperienceVm[] {
+    const candidate = this.selectedCompanyCandidate;
+    if (!candidate) {
+      return [];
+    }
+
+    const profile = this.findTalentProfileByName(candidate.name);
+    if (!profile) {
+      return [];
+    }
+
+    return profile.experiencesDraft
+      .slice()
+      .sort((left, right) => this.experienceSortValue(right) - this.experienceSortValue(left))
+      .slice(0, 5)
+      .map((experience) => this.toCompanyExperienceItem(experience));
+  }
+
+  experienceCompanyLine(meta: string): string {
+    const parts = meta.split('|').map((part) => part.trim()).filter(Boolean);
+    return parts.slice(0, -1).join(' / ') || meta;
+  }
+
+  experienceDateLine(meta: string): string {
+    const parts = meta.split('|').map((part) => part.trim()).filter(Boolean);
+    return parts.at(-1) ?? meta;
   }
 
   get selectedCompanyCandidateVideoUrl(): string {
@@ -1141,6 +1217,11 @@ getStackIcon(stack: any): string {
     }
 
     const job = this.resourcePanelJob;
+    const candidateSummary = [
+      candidate.role?.trim(),
+      candidate.location?.trim(),
+    ].filter(Boolean).join(' • ');
+
     void this.router.navigate(['/talent/curriculum'], {
       queryParams: {
         candidate: candidate.id,
@@ -1148,7 +1229,7 @@ getStackIcon(stack: any): string {
         candidateRole: candidate.role,
         candidateLocation: candidate.location,
         candidateAvatar: candidate.avatarUrl,
-        candidateSummary: candidate.role,
+        candidateSummary: candidateSummary || candidate.role,
         jobId: job.id,
         jobTitle: job.title,
         jobCompany: job.company,
@@ -1468,6 +1549,53 @@ getStackIcon(stack: any): string {
     return profile.formationCopy?.educationStatus?.trim()
       || (profile.formationCopy?.graduated === false ? 'Em andamento' : undefined)
       || (this.buildCandidateEducationLabel(profile) ? 'Concluído' : undefined);
+  }
+
+  private toCompanyExperienceItem(experience: SeededExperienceDraft): CompanyExperienceVm {
+    const companyLine = [experience.company?.trim(), experience.workModel?.trim()].filter(Boolean).join(' / ');
+    const dateLine = `${experience.startMonth} ${experience.startYear} - ${experience.currentlyWorkingHere ? 'Atual' : `${experience.endMonth} ${experience.endYear}`}`;
+    const appliedStacks = (experience.appliedStacks ?? [])
+      .slice()
+      .sort((left, right) => Number(right.knowledge ?? 0) - Number(left.knowledge ?? 0))
+      .slice(0, 3)
+      .map((item) => ({
+        label: item.name?.trim() || 'Stack',
+        match: Math.max(0, Math.min(100, Math.round(Number(item.knowledge ?? 0)))),
+      }));
+
+    return {
+      title: experience.role?.trim() || 'Experiência registrada',
+      meta: [companyLine, dateLine].filter(Boolean).join(' | '),
+      description: experience.responsibilities?.trim() || 'Sem descrição detalhada.',
+      highlights: appliedStacks.length ? appliedStacks : [{ label: 'Sem stacks detalhadas nesta experiência.', match: 0 }],
+    };
+  }
+
+  private experienceSortValue(experience: SeededExperienceDraft): number {
+    const currentFlag = experience.currentlyWorkingHere ? 10_000_000 : 0;
+    const endYear = Number(experience.currentlyWorkingHere ? '2026' : experience.endYear || '0');
+    const endMonth = this.monthOrder(experience.currentlyWorkingHere ? 'Mar' : experience.endMonth);
+    return currentFlag + (endYear * 100) + endMonth;
+  }
+
+  private monthOrder(month?: string): number {
+    const map: Record<string, number> = {
+      Jan: 1,
+      Fev: 2,
+      Mar: 3,
+      Abr: 4,
+      Mai: 5,
+      Jun: 6,
+      Jul: 7,
+      Ago: 8,
+      Set: 9,
+      Out: 10,
+      Nov: 11,
+      Dez: 12,
+      Atual: 3,
+    };
+
+    return map[month ?? ''] ?? 0;
   }
 
   private buildTalentProfileStackScores(profile: SeededTalentProfile): Record<string, number> {

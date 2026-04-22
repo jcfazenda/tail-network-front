@@ -372,17 +372,14 @@
             </div>
 
           </div>
-        </div>
-
+        </div> 
 
       </div>
 
     </div>
 
-
     <!-- LEFT BACK - CANDIDATES  -->
-    <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job"
-      *ngIf="centerView === 'job'">
+    <div class="empresa-page__column empresa-page__column--workspace empresa-page__column--workspace-job" *ngIf="centerView === 'job'">
 
       <div class="company-identity">
 
@@ -599,15 +596,17 @@
       </div>
     </div>
 
-    <div class="empresa-page__column empresa-page__column--job-panel" *ngIf="centerView === 'job'">
+    <div class="empresa-page__column empresa-page__column--job-panel"
+      *ngIf="centerView === 'job' && !isCandidateChatPanelVisible && selectedCompanyCandidate as candidate">
 
       <div *ngIf="!isCandidateChatPanelVisible">
 
-        <div class="company-context__candidate-default-panel" *ngIf="selectedCompanyCandidate as candidate">
+        <div class="company-context__candidate-default-panel">
 
           <div class="company-context__candidate-note-hero">
 
             <div class="company-context__candidate-note-cover">
+
               <ng-container *ngIf="hasSelectedCompanyCandidateResolvedVideo; else candidateHeroPoster">
                 <video #candidateHeroVideo
                   class="company-context__candidate-note-cover-image company-context__candidate-note-cover-video"
@@ -695,99 +694,152 @@
               </div>
             </div>
 
-            <!-- TABS ------------------------------------- START --> 
-            <div class="company-context__tabs">
+          <!-- CARTÃO CONTATO -->
+          <div class="business-card" *ngIf="selectedCompanyCandidateBusinessCard as contact">
+            <div class="business-card__left">
 
-              <button
-                type="button"
-                class="company-context__tabs-item"
-                [class.company-context__tabs-item--active]="activeTab === 'experience'"
-                (click)="activeTab = 'experience'">
+                <div class="company-context__candidate-journey-head">
+                  <div>
+                    <strong>Cartão de Contato</strong>
+                    <span>Dados de contato do candidato disponibilizado.</span>
+                  </div>
+ 
+                </div>
 
-                <span class="material-symbols-rounded company-context__tabs-item-icon">
-                  work_history
-                </span>
+              <div class="business-card__header">
+ 
+              </div>
 
-                <span class="company-context__tabs-item-label">
-                  Experiência Profissional
-                </span>
-              </button>
+              <div class="business-card__info-list">
+                <div class="business-card__info-item">
+                  <span class="material-symbols-rounded">call</span>
+                  <span>{{ contact.phone }}</span>
+                </div>
 
-              <button
-                type="button"
-                class="company-context__tabs-item"
-                [class.company-context__tabs-item--active]="activeTab === 'status'"
-                (click)="activeTab = 'status'">
+                <div class="business-card__info-item">
+                  <span class="material-symbols-rounded">mail</span>
+                  <span>{{ contact.email }}</span>
+                </div>
 
-                <span class="material-symbols-rounded company-context__tabs-item-icon">
-                  checklist
-                </span>
+                <div class="business-card__info-item">
+                  <span class="material-symbols-rounded">location_on</span>
+                  <span>{{ contact.location }}</span>
+                </div>
 
-                <span class="company-context__tabs-item-label">
-                  Status do Candidato
-                </span>
-              </button>
-
+                <div class="business-card__info-item">
+                  <span class="material-symbols-rounded">language</span>
+                  <span>{{ contact.portfolio }}</span>
+                </div>
+              </div>
             </div>
 
-            <!-- ABA 1 - EXPERIÊNCIA --> 
-            <div *ngIf="activeTab === 'experience'">
-
-              <div class="company-context__candidate-journey">
-
-                <div class="company-context__candidate-stacks-head">
-                  <div class="company-context__candidate-stacks-head-text">
-                    <strong>Stacks de Aderência</strong>
-                    <span>Prévia das tecnologias com maior compatibilidade</span>
-                  </div>
-                </div>
-
-                <div class="company-context__candidate-stacks-list">
-
-                  <div
-                    class="company-context__candidate-stacks-item"
-                    *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
-
-                    <div class="company-context__candidate-stacks-item-logo-wrap">
-                      <img
-                        class="company-context__candidate-stacks-item-logo"
-                        [src]="getStackIcon(stack)"
-                        [alt]="stack.label" />
-                    </div>
-
-                    <div class="company-context__candidate-stacks-item-content">
-
-                      <div class="company-context__candidate-stacks-item-top">
-                        <span class="company-context__candidate-stacks-item-title">
-                          {{ stack.label }}
-                        </span>
-
-                        <strong class="company-context__candidate-stacks-item-value">
-                          {{ stack.match }}%
-                        </strong>
-                      </div>
-
-                      <div class="company-context__candidate-stacks-item-track">
-                        <div
-                          class="company-context__candidate-stacks-item-fill"
-                          [class.company-context__candidate-stacks-item-fill--extra]="!stack.isAdherence"
-                          [style.width.%]="stack.match">
-                        </div>
-                      </div>
-
-                      <div class="company-context__candidate-stacks-item-bottom">
-                        <span class="company-context__candidate-stacks-item-caption">
-                          {{ stack.isAdherence ? 'Stack aderente' : 'Stack complementar' }}
-                        </span>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
+            <div class="business-card__right">
+              <div class="business-card__logo-placeholder">
+                 
               </div>
+
+              <div class="business-card__qr">
+                <img [src]="getQrCode('qrcode')" alt="QR Code" />
+              </div>
+            </div>
+          </div>
+
+          <!-- TABS ------------------------------------- START --> 
+          <div class="company-context__tabs">
+
+            <button
+              type="button"
+              class="company-context__tabs-item"
+              [class.company-context__tabs-item--active]="activeTab === 'experience'"
+              (click)="activeTab = 'experience'">
+
+              <span class="material-symbols-rounded company-context__tabs-item-icon">
+                work_history
+              </span>
+
+              <span class="company-context__tabs-item-label">
+                Experiência Profissional
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="company-context__tabs-item"
+              [class.company-context__tabs-item--active]="activeTab === 'status'"
+              (click)="activeTab = 'status'">
+
+              <span class="material-symbols-rounded company-context__tabs-item-icon">
+                checklist
+              </span>
+
+              <span class="company-context__tabs-item-label">
+                Status do Candidato
+              </span>
+            </button>
+
+            <!-- NOVA ABA -->
+            <button
+              type="button"
+              class="company-context__tabs-item"
+              [class.company-context__tabs-item--active]="activeTab === 'stacks'"
+              (click)="activeTab = 'stacks'">
+
+              <span class="material-symbols-rounded company-context__tabs-item-icon">
+                hub <!-- pode trocar depois -->
+              </span>
+
+              <span class="company-context__tabs-item-label">
+                Stacks de Aderência
+              </span>
+            </button>
+
+          </div>
+
+            <!-- ABA 1 - EXPERIÊNCIA --> 
+            <div *ngIf="activeTab === 'experience'"> 
+                              
+                <!-- EXPERIENCIA PROFISSIONAL CURRICULUM --> 
+                <div class="company-context__candidate-experience-curriculum" *ngIf="selectedCompanyCandidateExperiences.length">
+                  <section class="curriculum-page__resume-section">
+                    <div class="curriculum-page__section-title">
+                      <span class="material-symbols-rounded" aria-hidden="true">work_history</span>
+                      <strong>Experiência profissional</strong>
+                    </div>
+
+                    <article class="curriculum-page__timeline-item" *ngFor="let item of selectedCompanyCandidateExperiences; let index = index">
+                      <div class="curriculum-page__timeline-axis" aria-hidden="true">
+                        <span class="curriculum-page__timeline-marker">{{ index + 1 }}</span>
+                      </div>
+
+                      <div class="curriculum-page__timeline-content">
+                        <header class="curriculum-page__timeline-head">
+                          <div class="curriculum-page__timeline-heading-row">
+                            <h3>{{ item.title }}</h3>
+                            <strong class="curriculum-page__timeline-date">{{ experienceDateLine(item.meta) }}</strong>
+                          </div>
+                          <span>{{ experienceCompanyLine(item.meta) }}</span>
+                        </header>
+
+                        <p>{{ item.description }}</p>
+                        <p></p>
+                        <ul>
+                          <li *ngFor="let highlight of item.highlights">
+                            <span class="curriculum-page__timeline-highlight-label">{{ highlight.label }}</span>
+
+                            <span class="curriculum-page__timeline-highlight-track" aria-hidden="true">
+                              <span
+                                class="curriculum-page__timeline-highlight-fill"
+                                [style.width.%]="highlight.match">
+                              </span>
+                            </span>
+
+                            <strong class="curriculum-page__timeline-highlight-percent">{{ highlight.match }}%</strong>
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+                  </section>
+                </div> 
 
             </div>
 
@@ -870,12 +922,72 @@
               </div>
 
             </div> 
-            <!-- TABS ------------------------------------- END --> 
+            <!-- TABS ------------------------------------- END -->  
+                        
+            <!-- STAKS --> 
+            <div *ngIf="activeTab === 'stacks'">
+              <div class="company-context__candidate-journey">
+
+                <div class="company-context__candidate-stacks-head">
+                  <div class="company-context__candidate-stacks-head-text">
+                    <strong>Stacks de Aderência</strong>
+                    <span>Prévia das tecnologias com maior compatibilidade</span>
+                  </div>
+                </div>
+
+                <div class="company-context__candidate-stacks-list">
+
+                  <div
+                    class="company-context__candidate-stacks-item"
+                    *ngFor="let stack of selectedCompanyCandidate?.topStacks; trackBy: trackCandidateStack">
+
+                    <div class="company-context__candidate-stacks-item-logo-wrap">
+                      <img
+                        class="company-context__candidate-stacks-item-logo"
+                        [src]="getStackIcon(stack)"
+                        [alt]="stack.label" />
+                    </div>
+
+                    <div class="company-context__candidate-stacks-item-content">
+
+                      <div class="company-context__candidate-stacks-item-top">
+                        <span class="company-context__candidate-stacks-item-title">
+                          {{ stack.label }}
+                        </span>
+
+                        <strong class="company-context__candidate-stacks-item-value">
+                          {{ stack.match }}%
+                        </strong>
+                      </div>
+
+                      <div class="company-context__candidate-stacks-item-track">
+                        <div
+                          class="company-context__candidate-stacks-item-fill"
+                          [class.company-context__candidate-stacks-item-fill--extra]="!stack.isAdherence"
+                          [style.width.%]="stack.match">
+                        </div>
+                      </div>
+
+                      <div class="company-context__candidate-stacks-item-bottom">
+                        <span class="company-context__candidate-stacks-item-caption">
+                          {{ stack.isAdherence ? 'Stack aderente' : 'Stack complementar' }}
+                        </span>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
 
           </div>
 
-        </div>
-      </div>
+        </div> 
+
+      </div> 
 
       <!-- CHAT -->
       <div class="company-context__candidate-chat-panel" *ngIf="isCandidateChatPanelVisible">

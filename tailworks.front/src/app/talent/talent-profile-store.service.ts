@@ -309,9 +309,7 @@ export class TalentProfileStoreService {
       return 'Talento disponível no radar.';
     }
 
-    return [latestExperience.role?.trim(), latestExperience.company?.trim()]
-      .filter(Boolean)
-      .join(' • ') || 'Talento disponível no radar.';
+    return latestExperience.role?.trim() || 'Talento disponível no radar.';
   }
 
   private toMatchStacks(profile: SeededTalentProfile): MatchLabCandidate['stacks'] {
