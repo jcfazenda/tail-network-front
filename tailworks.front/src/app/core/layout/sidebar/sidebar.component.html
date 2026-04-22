@@ -14,22 +14,13 @@
     <ng-container *ngIf="isProfileSidebarMode">
       <div class="brandCandidate-position" *ngIf="!isCollapsed">
         <div class="brandCandidate">
-          <input
-            #sidebarAvatarInput
-            class="brandAvatarInput"
-            type="file"
-            accept=".jpg,.jpeg,.png,.gif,.webp"
+          <input #sidebarAvatarInput class="brandAvatarInput" type="file" accept=".jpg,.jpeg,.png,.gif,.webp"
             (change)="onSidebarAvatarSelected($event)" />
 
-          <button
-            class="brandAvatarButton"
-            type="button"
-            (click)="openSidebarAvatarPicker(sidebarAvatarInput)"
+          <button class="brandAvatarButton" type="button" (click)="openSidebarAvatarPicker(sidebarAvatarInput)"
             [attr.aria-label]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'"
             [title]="isCandidateMode ? 'Trocar foto do perfil' : 'Esconder sidebar'">
-            <div
-              class="brandAvatar"
-              [class.brandAvatar--image]="!!sidebarAvatarUrl"
+            <div class="brandAvatar" [class.brandAvatar--image]="!!sidebarAvatarUrl"
               [style.backgroundImage]="sidebarAvatarUrl ? 'url(' + sidebarAvatarUrl + ')' : null"
               [attr.aria-label]="sidebarDisplayName">
               <span *ngIf="!sidebarAvatarUrl">{{ sidebarDisplayInitials }}</span>
@@ -54,19 +45,12 @@
 
           <div class="menuTree__branch">
             <ng-container *ngFor="let item of group.items">
-              <a *ngIf="item.route; else placeholderItem"
-                class="menuTree__item"
-                [attr.aria-label]="item.label"
-                [title]="item.label"
-                [class.menuTree__item--active]="isCandidateTreeItemActive(item)"
-                [routerLink]="item.route"
-                [queryParams]="item.queryParams ?? null"
-                (click)="handleTreeItemClick(item)">
+              <a *ngIf="item.route; else placeholderItem" class="menuTree__item" [attr.aria-label]="item.label"
+                [title]="item.label" [class.menuTree__item--active]="isCandidateTreeItemActive(item)"
+                [routerLink]="item.route" [queryParams]="item.queryParams ?? null" (click)="handleTreeItemClick(item)">
                 <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
                 <span class="menuTree__itemLabel" *ngIf="!isCollapsed">{{ item.label }}</span>
-                <span
-                  class="menuTree__itemBadge"
-                  *ngIf="!isCollapsed && item.badge"
+                <span class="menuTree__itemBadge" *ngIf="!isCollapsed && item.badge"
                   [class.menuTree__itemBadge--jobs]="item.label === 'Minhas Vagas'"
                   [class.menuTree__itemBadge--recruiters]="item.label === 'Recruiters'"
                   [class.menuTree__itemBadge--companies]="item.label === 'Empresas'">
@@ -75,8 +59,7 @@
               </a>
 
               <ng-template #placeholderItem>
-                <div class="menuTree__item menuTree__item--placeholder"
-                  [attr.aria-label]="item.label"
+                <div class="menuTree__item menuTree__item--placeholder" [attr.aria-label]="item.label"
                   [title]="item.label">
                   <span class="material-symbols-rounded menuTree__icon" aria-hidden="true">{{ item.icon }}</span>
                   <span class="menuTree__itemLabel" *ngIf="!isCollapsed">{{ item.label }}</span>
@@ -91,13 +74,8 @@
 
     <ng-template #flatMenu>
       <nav class="menu" [class.menu--candidate]="isCandidateMode">
-        <a *ngFor="let item of items"
-          class="menuItem"
-          [attr.aria-label]="item.label"
-          [title]="item.label"
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: isExactRoute(item) }"
+        <a *ngFor="let item of items" class="menuItem" [attr.aria-label]="item.label" [title]="item.label"
+          [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: isExactRoute(item) }"
           (click)="handleFlatItemClick(item)">
           <span class="activeBar" aria-hidden="true"></span>
           <span class="material-symbols-rounded icon" aria-hidden="true">{{ item.icon }}</span>
@@ -110,46 +88,33 @@
   <div class="sidebar__bottom" *ngIf="!isCollapsed">
     <div class="brand">
 
-
-
-      
       <div class="sidebarFooterBrand sidebarFooterBrand--top" aria-hidden="true">
 
-<button class="menuItem sidebarLogout" type="button" (click)="logoutFromFooter()" aria-label="Sair">
-  <span class="material-symbols-rounded icon">logout</span>
-  <span>Sair</span>
-</button>
+        <button class="menuItem sidebarLogout" type="button" (click)="logoutFromFooter()" aria-label="Sair">
+          <span class="material-symbols-rounded icon">logout</span>
+          <span>Sair</span>
+        </button>
 
         <img src="/assets/images/logo-tail.png" alt="TailWorks" class="sidebarFooterBrand__image" />
         <span class="sidebarFooterBrand__copyright">All rights reserved © 2026</span>
       </div>
     </div>
 
-
-
     <div class="sidebarTheme" *ngIf="isProfileSidebarMode">
-      <button
-        class="sidebarTheme__option"
-        type="button"
-        [class.sidebarTheme__option--active]="activeThemeMode === 'dark'"
-        (click)="setTheme('dark')">
+      <button class="sidebarTheme__option" type="button"
+        [class.sidebarTheme__option--active]="activeThemeMode === 'dark'" (click)="setTheme('dark')">
         <span class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
         <span>Dark</span>
       </button>
 
-      <button
-        class="sidebarTheme__option"
-        type="button"
-        [class.sidebarTheme__option--active]="activeThemeMode === 'light'"
-        (click)="setTheme('light')">
+      <button class="sidebarTheme__option" type="button"
+        [class.sidebarTheme__option--active]="activeThemeMode === 'light'" (click)="setTheme('light')">
         <span class="material-symbols-rounded" aria-hidden="true">light_mode</span>
         <span>Light</span>
       </button>
     </div>
 
- 
-  </div>
- 
-</aside>
 
- 
+  </div>
+
+</aside>

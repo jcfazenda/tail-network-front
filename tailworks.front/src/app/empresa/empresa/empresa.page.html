@@ -617,11 +617,9 @@
     </div>
 
     <div class="empresa-page__column empresa-page__column--job-panel"
-      *ngIf="centerView === 'job' && !isCandidateChatPanelVisible && selectedCompanyCandidate as candidate">
+      *ngIf="centerView === 'job' && selectedCompanyCandidate as candidate">
 
-      <div *ngIf="!isCandidateChatPanelVisible">
-
-        <div class="company-context__candidate-default-panel">
+      <div class="company-context__candidate-default-panel" *ngIf="!isCandidateChatPanelVisible">
 
           <div class="company-context__candidate-note-hero">
 
@@ -717,15 +715,19 @@
                   <span>Aderencia</span>
                 </div>
 
-                <div class="company-context__candidate-note-stat" (click)="openSelectedCandidateCurriculum()">
+                <div
+                  class="company-context__candidate-note-stat"
+                  *ngIf="selectedCompanyCandidate ? !isCandidatePullAction(selectedCompanyCandidate) : true"
+                  (click)="openSelectedCandidateCurriculum()">
                   <span class="material-symbols-rounded">assignment</span>
                   <span>Curriculo</span>
                 </div>
 
-                <div class="company-context__candidate-note-stat" (click)="openSelectedCandidateChat()">
+                <button type="button" class="company-context__candidate-note-stat company-context__candidate-note-stat--action"
+                  (click)="openSelectedCandidateChat()">
                   <span class="material-symbols-rounded">chat</span>
                   <span>Chat</span>
-                </div>
+                </button>
               </div>
             </div>
 
@@ -1022,9 +1024,7 @@
 
           </div>
 
-        </div> 
-
-      </div> 
+      </div>
 
       <!-- CHAT -->
       <div class="company-context__candidate-chat-panel" *ngIf="isCandidateChatPanelVisible">
@@ -1040,7 +1040,7 @@
           </div>
 
           <button type="button" class="company-context__candidate-chat" aria-label="Voltar para dados do candidato"
-            (click)="openSelectedCandidateChat()">
+            (click)="closeSelectedCandidateChat()">
             <span class="material-symbols-rounded">arrow_back</span>
           </button>
         </div>

@@ -1316,10 +1316,9 @@ getStackIcon(stack: any): string {
   }
 
   openSelectedCandidateChat(): void {
-    const openingChat = !this.isCandidateChatPanelVisible;
-    this.isCandidateChatPanelVisible = openingChat;
+    this.isCandidateChatPanelVisible = true;
 
-    if (openingChat && this.selectedCompanyCandidateChatSeedMessage) {
+    if (this.selectedCompanyCandidateChatSeedMessage) {
       const seedId = this.selectedCompanyCandidateChatSeedMessage.id;
       setTimeout(() => {
         if (this.selectedCompanyCandidateChatSeedMessage?.id === seedId) {
@@ -1329,6 +1328,11 @@ getStackIcon(stack: any): string {
       }, 0);
     }
 
+    this.cdr.markForCheck();
+  }
+
+  closeSelectedCandidateChat(): void {
+    this.isCandidateChatPanelVisible = false;
     this.cdr.markForCheck();
   }
 
