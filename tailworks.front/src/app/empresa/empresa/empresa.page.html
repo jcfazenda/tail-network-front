@@ -531,10 +531,15 @@
           <div class="company-identity__bottom-jobs company-identity__bottom-jobs--workspace">
             <div class="empresa-candidatos-talents">
               <div class="empresa-vaga-talents__grid">
-                <button type="button" class="empresa-vaga-talent-card"
+                <div
+                  class="empresa-vaga-talent-card"
                   *ngFor="let candidate of pagedSelectedCompanyCandidates; trackBy: trackCandidate"
                   [class.empresa-vaga-talent-card--active]="candidate.id === selectedCompanyCandidate?.id"
-                  (click)="selectCandidate(candidate.id)">
+                  role="button"
+                  tabindex="0"
+                  (click)="selectCandidate(candidate.id, $event)"
+                  (keydown.enter)="selectCandidate(candidate.id, $event)"
+                  (keydown.space)="$event.preventDefault(); selectCandidate(candidate.id)">
                   <strong class="empresa-vaga-talent-card__name">{{ candidate.name }}</strong>
 
                   <div class="empresa-vaga-talent-card__avatar empresa-vaga-talent-card__avatar--card"
@@ -542,11 +547,26 @@
                     <div class="empresa-vaga-talent-card__match-badge" *ngIf="getCandidateCardMatchLabel(candidate)">
                     </div>
                     <img [src]="candidate.avatarUrl" [alt]="candidate.name" />
-                    <span *ngIf="getCandidateAvailabilityLabel(candidate) as availabilityLabel"
-                      class="empresa-vaga-talent-card__availability-pill"
-                      [ngClass]="'empresa-vaga-talent-card__availability-pill--' + getCandidateAvailabilityClass(candidate)">
-                      {{ availabilityLabel }}
-                    </span>
+                    <ng-container *ngIf="getCandidateAvailabilityLabel(candidate) as availabilityLabel">
+                      <button
+                        *ngIf="availabilityLabel === 'PUXAR'; else availabilityPill"
+                        type="button"
+                        class="empresa-vaga-talent-card__availability-pill empresa-vaga-talent-card__availability-pill--action"
+                        [ngClass]="'empresa-vaga-talent-card__availability-pill--' + getCandidateAvailabilityClass(candidate)"
+                        aria-label="Puxar candidato"
+                        (mousedown)="$event.stopPropagation()"
+                        (click)="openPullMessageModal(candidate, $event)">
+                        {{ availabilityLabel }}
+                      </button>
+
+                      <ng-template #availabilityPill>
+                        <span
+                          class="empresa-vaga-talent-card__availability-pill"
+                          [ngClass]="'empresa-vaga-talent-card__availability-pill--' + getCandidateAvailabilityClass(candidate)">
+                          {{ availabilityLabel }}
+                        </span>
+                      </ng-template>
+                    </ng-container>
                   </div>
 
                   <div class="empresa-vaga-talent-card__identity empresa-vaga-talent-card__identity--card">
@@ -556,7 +576,7 @@
                       {{ matchLabel }}% Aderencia
                     </small>
                   </div>
-                </button>
+                </div>
               </div>
 
               <div class="empresa-vaga-talent-card__footer-pagination" *ngIf="selectedCompanyCandidates.length > 8">
@@ -659,11 +679,26 @@
                 <div class="company-context__candidate-note-tags">
                   <span>{{ getCandidateStateCode(candidate.location) }}</span>
                   <span *ngIf="getCandidateCardMatchLabel(candidate) as matchLabel">{{ matchLabel }}% Match</span>
-                  <span *ngIf="getCandidateAvailabilityLabel(candidate) as availabilityLabel"
-                    class="company-context__candidate-note-tag"
-                    [ngClass]="'company-context__candidate-note-tag--' + getCandidateAvailabilityClass(candidate)">
-                    {{ availabilityLabel }}
-                  </span>
+                  <ng-container *ngIf="getCandidateAvailabilityLabel(candidate) as availabilityLabel">
+                    <button
+                      *ngIf="availabilityLabel === 'PUXAR'; else availabilityTag"
+                      type="button"
+                      class="company-context__candidate-note-tag company-context__candidate-note-tag--action"
+                      [ngClass]="'company-context__candidate-note-tag--' + getCandidateAvailabilityClass(candidate)"
+                      aria-label="Puxar candidato"
+                      (mousedown)="$event.stopPropagation()"
+                      (click)="openPullMessageModal(candidate, $event)">
+                      {{ availabilityLabel }}
+                    </button>
+
+                    <ng-template #availabilityTag>
+                      <span
+                        class="company-context__candidate-note-tag"
+                        [ngClass]="'company-context__candidate-note-tag--' + getCandidateAvailabilityClass(candidate)">
+                        {{ availabilityLabel }}
+                      </span>
+                    </ng-template>
+                  </ng-container>
                 </div>
               </div>
 
@@ -695,7 +730,8 @@
             </div>
 
           <!-- CARTÃO CONTATO -->
-          <div class="business-card" *ngIf="selectedCompanyCandidateBusinessCard as contact">
+          <div class="business-card"
+            *ngIf="selectedCompanyCandidateSupportsStatusAndContact && selectedCompanyCandidateBusinessCard as contact">
             <div class="business-card__left">
 
                 <div class="company-context__candidate-journey-head">
@@ -747,6 +783,22 @@
           <!-- TABS ------------------------------------- START --> 
           <div class="company-context__tabs">
 
+            <!-- NOVA ABA -->
+            <button
+              type="button"
+              class="company-context__tabs-item"
+              [class.company-context__tabs-item--active]="activeTab === 'stacks'"
+              (click)="activeTab = 'stacks'">
+
+              <span class="material-symbols-rounded company-context__tabs-item-icon">
+                hub <!-- pode trocar depois -->
+              </span>
+
+              <span class="company-context__tabs-item-label">
+                Stacks de Aderência
+              </span>
+            </button>
+
             <button
               type="button"
               class="company-context__tabs-item"
@@ -763,6 +815,7 @@
             </button>
 
             <button
+              *ngIf="selectedCompanyCandidateSupportsStatusAndContact"
               type="button"
               class="company-context__tabs-item"
               [class.company-context__tabs-item--active]="activeTab === 'status'"
@@ -774,22 +827,6 @@
 
               <span class="company-context__tabs-item-label">
                 Status do Candidato
-              </span>
-            </button>
-
-            <!-- NOVA ABA -->
-            <button
-              type="button"
-              class="company-context__tabs-item"
-              [class.company-context__tabs-item--active]="activeTab === 'stacks'"
-              (click)="activeTab = 'stacks'">
-
-              <span class="material-symbols-rounded company-context__tabs-item-icon">
-                hub <!-- pode trocar depois -->
-              </span>
-
-              <span class="company-context__tabs-item-label">
-                Stacks de Aderência
               </span>
             </button>
 
@@ -860,7 +897,7 @@
 
                   <article
                     class="company-context__candidate-journey-card"
-                    *ngFor="let stage of candidate.timeline; let i = index; trackBy: trackCandidateTimelineStage">
+                    *ngFor="let stage of selectedCompanyCandidateStatusTimeline(candidate); let i = index; trackBy: trackCandidateTimelineStage">
 
                     <div class="company-context__candidate-journey-card-visual">
                       <div class="company-context__candidate-journey-card-icon">
@@ -1010,6 +1047,7 @@
 
         <app-chat-candidato *ngIf="selectedCompanyCandidate as candidate" [candidateName]="candidate.name"
           [candidateLocation]="candidate.location" [candidateAvatarUrl]="candidate.avatarUrl"
+          [recruiterSeedMessage]="selectedCompanyCandidateChatSeedMessage"
           [jobTitle]="resourcePanelJob.title" [companyName]="selectedCompanyName">
         </app-chat-candidato>
 
@@ -1019,6 +1057,49 @@
 
   </div>
 
+</div>
+
+<div class="empresa-pull-message-modal" *ngIf="isPullMessageModalOpen">
+  <button type="button" class="empresa-pull-message-modal__backdrop" aria-label="Fechar modal de mensagem"
+    (click)="closePullMessageModal()"></button>
+
+  <div class="empresa-pull-message-modal__dialog" role="dialog" aria-modal="true"
+    aria-label="Enviar mensagem para o candidato">
+    <div class="empresa-pull-message-modal__header">
+      <div>
+        <strong>Puxar candidato</strong>
+        <span>{{ pullMessageTargetCandidateName }}</span>
+      </div>
+
+      <button type="button" class="empresa-pull-message-modal__close" (click)="closePullMessageModal()">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <label class="empresa-pull-message-modal__field">
+      <span>Mensagem</span>
+      <textarea
+        [(ngModel)]="pullMessageDraft"
+        rows="5"
+        placeholder="Escreva a mensagem para chamar o candidato..."></textarea>
+    </label>
+
+    <div class="empresa-pull-message-modal__error" *ngIf="pullMessageError">
+      {{ pullMessageError }}
+    </div>
+
+    <div class="empresa-pull-message-modal__actions">
+      <button type="button" class="empresa-pull-message-modal__button empresa-pull-message-modal__button--ghost"
+        (click)="closePullMessageModal()">
+        Cancelar
+      </button>
+
+      <button type="button" class="empresa-pull-message-modal__button empresa-pull-message-modal__button--primary"
+        (click)="sendPullMessage()">
+        Enviar
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="empresa-company-selector" *ngIf="isCompanySelectorModalOpen">

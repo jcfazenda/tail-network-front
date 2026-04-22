@@ -2318,6 +2318,11 @@
   background: linear-gradient(135deg, #cfd4dc 0%, #bcc3cd 100%);
 }
 
+.empresa-vaga-talent-card__availability-pill--action {
+  border: 0;
+  cursor: pointer;
+}
+
 .empresa-vaga-talent-card__adherence {
   margin-top: 2px;
   font-size: 15px;
@@ -4730,6 +4735,25 @@
   }
 }
 
+.company-context__candidate-note-tag {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(6px);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 .company-context__candidate-note-tag--is-available {
   background: rgba(34, 197, 94, 0.2) !important;
   border-color: rgba(34, 197, 94, 0.38) !important;
@@ -4738,6 +4762,142 @@
 .company-context__candidate-note-tag--is-open {
   background: rgba(245, 158, 11, 0.2) !important;
   border-color: rgba(245, 158, 11, 0.38) !important;
+}
+
+.company-context__candidate-note-tag--is-neutral {
+  background: rgba(148, 163, 184, 0.18) !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+.company-context__candidate-note-tag--action {
+  border: 0;
+  cursor: pointer;
+}
+
+.empresa-pull-message-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.empresa-pull-message-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.54);
+  backdrop-filter: blur(8px);
+}
+
+.empresa-pull-message-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  border-radius: 28px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.24);
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+}
+
+.empresa-pull-message-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  strong {
+    display: block;
+    font-size: 22px;
+    line-height: 1.08;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  span {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+.empresa-pull-message-modal__close {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 14px;
+  background: #eff1f4;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.empresa-pull-message-modal__field {
+  display: grid;
+  gap: 8px;
+
+  span {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    resize: vertical;
+    border: 1px solid rgba(47, 50, 50, 0.12);
+    border-radius: 18px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #111827;
+    outline: none;
+    box-sizing: border-box;
+    background: #ffffff;
+  }
+}
+
+.empresa-pull-message-modal__error {
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.empresa-pull-message-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.empresa-pull-message-modal__button {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(47, 50, 50, 0.1);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.empresa-pull-message-modal__button--ghost {
+  background: #ffffff;
+  color: #374151;
+}
+
+.empresa-pull-message-modal__button--primary {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
 }
 
 .company-context__candidate-note-sheet {

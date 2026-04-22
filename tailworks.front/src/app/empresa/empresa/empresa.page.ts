@@ -109,6 +109,11 @@ type CompanyCandidateBusinessCardVm = {
   portfolio: string;
 };
 
+type ChatSeedMessageVm = {
+  id: number;
+  text: string;
+};
+
 type CompanyViewModel = {
   company: CompanyRecord;
   formattedLocation: string;
@@ -130,6 +135,7 @@ type CompanyViewModel = {
 export class EmpresaPage implements OnDestroy {
   private static readonly candidateBasicDraftStorageKey = 'tailworks:candidate-basic-draft:v1';
   readonly fallbackAvatarUrl = 'assets/avatars/john-doe.png';
+  readonly radarAvatarUrl = 'assets/images/avatar-radar.png';
 
   readonly recruiterShowcasePhotos = [
     'assets/images/polaroid/daniela-costa.png',
@@ -138,7 +144,7 @@ export class EmpresaPage implements OnDestroy {
     'assets/images/polaroid/marcos-oliveira.png',
   ];
 
-  activeTab: 'status' | 'experience' | 'stacks' = 'experience';
+  activeTab: 'status' | 'experience' | 'stacks' = 'stacks';
 
 
   private readonly brazilStateAbbreviations: Record<string, string> = {
@@ -203,6 +209,7 @@ export class EmpresaPage implements OnDestroy {
   private pagedSelectedCompanyCandidatesSnapshot: CompanyCandidateVm[] = [];
   private candidateTotalPagesSnapshot = 1;
   private candidateVisiblePagesSnapshot: number[] = [1];
+  private pullMessageTargetCandidateSnapshot?: CompanyCandidateVm;
   private companyResourcePrimaryJobSnapshot?: MockJobRecord;
   private companyResourceSummarySnapshot =
     'Selecione uma empresa para visualizar contexto, recruiters e vagas vinculadas no ecossistema.';
@@ -263,6 +270,10 @@ export class EmpresaPage implements OnDestroy {
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
   modalError = '';
+  isPullMessageModalOpen = false;
+  pullMessageDraft = '';
+  pullMessageError = '';
+  selectedCompanyCandidateChatSeedMessage: ChatSeedMessageVm | null = null;
 
   isFilterModalOpen = false;
   isCompanySelectorModalOpen = false;
@@ -556,7 +567,7 @@ getStackIcon(stack: any): string {
     return profile.experiencesDraft
       .slice()
       .sort((left, right) => this.experienceSortValue(right) - this.experienceSortValue(left))
-      .slice(0, 5)
+      .slice(0, 3)
       .map((experience) => this.toCompanyExperienceItem(experience));
   }
 
@@ -1055,6 +1066,10 @@ getStackIcon(stack: any): string {
     return String(Math.min(99, Math.max(0, Math.round(match)))).padStart(2, '0');
   }
 
+  selectedCompanyCandidateStatusTimeline(candidate: CompanyCandidateVm): CompanyCandidateTimelineStepVm[] {
+    return candidate.timeline.filter((stage) => stage.id !== 'radar');
+  }
+
   getCandidateAvailabilityClass(candidate: CompanyCandidateVm): string {
     if (candidate.availabilitySignal === 'available') {
       return 'is-available';
@@ -1076,7 +1091,65 @@ getStackIcon(stack: any): string {
       return 'RADAR';
     }
 
-    return null;
+    return 'PUXAR';
+  }
+
+  isCandidatePullAction(candidate: CompanyCandidateVm): boolean {
+    return this.getCandidateAvailabilityLabel(candidate) === 'PUXAR';
+  }
+
+  shouldShowCandidateStatusAndContact(candidate?: CompanyCandidateVm): boolean {
+    return !!candidate && !this.isCandidatePullAction(candidate);
+  }
+
+  get selectedCompanyCandidateSupportsStatusAndContact(): boolean {
+    return this.shouldShowCandidateStatusAndContact(this.selectedCompanyCandidate);
+  }
+
+  openPullMessageModal(candidate: CompanyCandidateVm, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.selectedCandidateId = candidate.id;
+    this.isCandidateChatPanelVisible = false;
+    this.rebuildSelectedCompanyJobSnapshot();
+    this.ensureCandidateTabVisibility(candidate);
+    this.pullMessageTargetCandidateSnapshot = candidate;
+    this.pullMessageDraft = this.buildPullMessageDraft(candidate);
+    this.pullMessageError = '';
+    this.isPullMessageModalOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closePullMessageModal(): void {
+    this.isPullMessageModalOpen = false;
+    this.pullMessageDraft = '';
+    this.pullMessageError = '';
+    this.pullMessageTargetCandidateSnapshot = undefined;
+    this.cdr.markForCheck();
+  }
+
+  sendPullMessage(): void {
+    const candidate = this.pullMessageTargetCandidateSnapshot;
+    const text = this.pullMessageDraft.trim();
+
+    if (!candidate) {
+      this.pullMessageError = 'Selecione um candidato antes de enviar.';
+      return;
+    }
+
+    if (!text) {
+      this.pullMessageError = 'Digite uma mensagem para enviar.';
+      return;
+    }
+
+    this.selectedCompanyCandidateChatSeedMessage = {
+      id: Date.now(),
+      text,
+    };
+    this.isPullMessageModalOpen = false;
+    this.pullMessageDraft = '';
+    this.pullMessageError = '';
+    this.cdr.markForCheck();
   }
 
   toggleCandidateHeroVideo(video: HTMLVideoElement): void {
@@ -1168,15 +1241,48 @@ getStackIcon(stack: any): string {
     this.cdr.markForCheck();
   }
 
-  selectCandidate(candidateId: string): void {
+  selectCandidate(candidateId: string, event?: Event): void {
     if (!candidateId.trim()) {
+      return;
+    }
+
+    if (event && this.isPullActionEvent(event)) {
+      event.stopPropagation();
       return;
     }
 
     this.selectedCandidateId = candidateId;
     this.isCandidateChatPanelVisible = false;
     this.rebuildSelectedCompanyJobSnapshot();
+    this.ensureSelectedCandidateTabVisibility();
     this.cdr.markForCheck();
+  }
+
+  private ensureSelectedCandidateTabVisibility(): void {
+    this.ensureCandidateTabVisibility(this.selectedCompanyCandidate);
+  }
+
+  private ensureCandidateTabVisibility(candidate?: CompanyCandidateVm): void {
+    if (!candidate) {
+      return;
+    }
+
+    if (!this.shouldShowCandidateStatusAndContact(candidate) && this.activeTab === 'status') {
+      this.activeTab = 'experience';
+    }
+  }
+
+  private isPullActionEvent(event: Event): boolean {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement)) {
+      return false;
+    }
+
+    return Boolean(
+      target.closest('.empresa-vaga-talent-card__availability-pill--action') ||
+        target.closest('.company-context__candidate-note-tag--action')
+    );
   }
 
   goToCandidatePage(page: number): void {
@@ -1197,6 +1303,10 @@ getStackIcon(stack: any): string {
     }
   }
 
+  get pullMessageTargetCandidateName(): string {
+    return this.pullMessageTargetCandidateSnapshot?.name ?? '';
+  }
+
   goToNextCandidatePage(): void {
     if (this.candidateCurrentPage < this.candidateTotalPages) {
       this.candidateCurrentPage += 1;
@@ -1206,7 +1316,19 @@ getStackIcon(stack: any): string {
   }
 
   openSelectedCandidateChat(): void {
-    this.isCandidateChatPanelVisible = !this.isCandidateChatPanelVisible;
+    const openingChat = !this.isCandidateChatPanelVisible;
+    this.isCandidateChatPanelVisible = openingChat;
+
+    if (openingChat && this.selectedCompanyCandidateChatSeedMessage) {
+      const seedId = this.selectedCompanyCandidateChatSeedMessage.id;
+      setTimeout(() => {
+        if (this.selectedCompanyCandidateChatSeedMessage?.id === seedId) {
+          this.selectedCompanyCandidateChatSeedMessage = null;
+          this.cdr.markForCheck();
+        }
+      }, 0);
+    }
+
     this.cdr.markForCheck();
   }
 
@@ -1338,6 +1460,7 @@ getStackIcon(stack: any): string {
     candidateAvatar: string | undefined,
     candidateProfile: SeededTalentProfile | undefined,
     candidateName: string,
+    candidateStage?: CandidateStage,
   ): string {
     const profileAvatar = candidateProfile?.basicDraft.photoPreviewUrl?.trim() || '';
     if (profileAvatar) {
@@ -1349,7 +1472,12 @@ getStackIcon(stack: any): string {
       return draftAvatar;
     }
 
-    return this.resolveAvatar(candidateAvatar);
+    const resolvedAvatar = this.resolveAvatar(candidateAvatar);
+    if (candidateStage === 'radar' && resolvedAvatar === this.fallbackAvatarUrl) {
+      return this.radarAvatarUrl;
+    }
+
+    return resolvedAvatar;
   }
 
   private resolveCurrentWorkspaceCandidateAvatar(candidateName: string): string {
@@ -1415,7 +1543,12 @@ getStackIcon(stack: any): string {
     const candidateBadges = radarCandidates
       .slice(0, 4)
       .map((candidate) => ({
-        src: this.resolveCandidateAvatar(candidate.avatar, this.findTalentProfileByName(candidate.name), candidate.name),
+        src: this.resolveCandidateAvatar(
+          candidate.avatar,
+          this.findTalentProfileByName(candidate.name),
+          candidate.name,
+          this.jobsFacade.getEffectiveCandidateStage(candidate),
+        ),
         label: candidate.name,
       }));
 
@@ -1887,13 +2020,14 @@ getStackIcon(stack: any): string {
           .sort((left, right) => right.match - left.match || left.name.localeCompare(right.name, 'pt-BR'))
           .map((candidate, index) => {
             const candidateProfile = this.findTalentProfileByName(candidate.name);
+            const candidateStage = this.jobsFacade.getEffectiveCandidateStage(candidate);
 
             return {
               id: candidate.id?.trim() || `${primaryJob.id}:${candidate.name}:${index}`,
               name: candidate.name,
               role: candidate.role?.trim() || this.resourcePanelJobSnapshot.title,
               location: candidate.location?.trim() || this.resourcePanelJobSnapshot.location,
-              avatarUrl: this.resolveCandidateAvatar(candidate.avatar, candidateProfile, candidate.name),
+              avatarUrl: this.resolveCandidateAvatar(candidate.avatar, candidateProfile, candidate.name, candidateStage),
               availabilitySignal: candidateProfile?.basicDraft.availabilitySignal || this.resolveCurrentWorkspaceCandidateAvailability(candidate.name),
               educationLabel: this.buildCandidateEducationLabel(candidateProfile),
               educationStatus: this.buildCandidateEducationStatus(candidateProfile),
@@ -2039,6 +2173,10 @@ getStackIcon(stack: any): string {
 
       return { ...step, state: 'pending' as const };
     });
+  }
+
+  private buildPullMessageDraft(candidate: CompanyCandidateVm): string {
+    return `Olá, ${candidate.name}. Vi seu perfil e gostaria de te chamar para avançar no processo da vaga ${this.resourcePanelJobSnapshot.title}. Podemos conversar?`;
   }
 
   private getCandidateJourneyStageIndex(stage: CandidateStage): number {

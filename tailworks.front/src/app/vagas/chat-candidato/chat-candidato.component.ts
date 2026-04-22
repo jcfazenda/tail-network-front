@@ -23,8 +23,25 @@ export class ChatCandidatoComponent {
   @Input() candidateAvatarUrl = 'assets/avatars/john-doe.png';
   @Input() jobTitle = 'Vaga em aberto';
   @Input() companyName = 'Empresa';
+  @Input() set recruiterSeedMessage(value: { id: number; text: string } | null) {
+    if (!value || this.appliedSeedMessageId === value.id || !value.text.trim()) {
+      return;
+    }
+
+    this.appliedSeedMessageId = value.id;
+    this.messages = [
+      ...this.messages,
+      {
+        id: `${value.id}`,
+        author: 'recruiter',
+        text: value.text.trim(),
+        time: 'agora',
+      },
+    ];
+  }
 
   draftMessage = '';
+  private appliedSeedMessageId: number | null = null;
 
   messages: ChatBubble[] = [
     {
